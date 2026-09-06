@@ -1,25 +1,24 @@
-/* site.css — 星辉网站外壳（首页 + 导航），与塔罗共用一套暗夜鎏金气质 */
+/* site.css — 工具盒 外壳：干净、现代、通用（与塔罗风格完全分开） */
 :root {
-  --bg:#0d0b09; --surface:#1a1713; --text:#efe6d3; --text-soft:#c9bca6; --muted:#958a72;
-  --accent:#b99a63; --line:rgba(185,154,99,0.18); --line-strong:rgba(185,154,99,0.4);
-  --font-display:"Cormorant Garamond","Playfair Display","Songti SC",Georgia,serif;
-  --font-ui:"Inter","Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --bg:#f6f7f9; --surface:#ffffff; --text:#16181d; --text-soft:#555a66; --muted:#8a909c;
+  --accent:#4f6ef7; --line:#e6e8ee; --line-strong:#d4d8e0;
+  --font-ui:"Inter","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
 }
 * { box-sizing:border-box; }
 html,body { margin:0; padding:0; }
-body { font-family:var(--font-ui); color:var(--text); background:linear-gradient(160deg,#1a1511 0%,#0d0b09 100%); background-attachment:fixed; min-height:100vh; -webkit-font-smoothing:antialiased; }
-.site-nav { display:flex; align-items:center; gap:14px; padding:13px 24px; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:50; background:rgba(13,11,9,0.82); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
-.site-nav a { font-family:var(--font-display); font-size:20px; color:var(--text); text-decoration:none; letter-spacing:0.02em; }
-.site-nav a b { color:var(--accent); font-weight:500; }
-.site-nav .site-nav-tag { color:var(--muted); font-size:12px; letter-spacing:0.12em; text-transform:uppercase; }
+body { font-family:var(--font-ui); color:var(--text); background:var(--bg); min-height:100vh; -webkit-font-smoothing:antialiased; }
+.site-nav { display:flex; align-items:center; gap:12px; padding:13px 24px; background:#fff; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:50; }
+.site-nav a { font-size:16px; font-weight:600; color:var(--text); text-decoration:none; }
+.site-nav .site-nav-tag { color:var(--muted); font-size:13px; }
 
-.home { max-width:960px; margin:0 auto; padding:72px 24px 96px; }
-.home-title { font-family:var(--font-display); font-size:clamp(40px,7vw,60px); font-weight:500; line-height:1.05; margin:0 0 10px; }
-.home-sub { color:var(--text-soft); font-size:18px; margin:0 0 48px; }
-.home-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:20px; }
-.module-card { display:flex; flex-direction:column; gap:10px; padding:28px 24px; border:1px solid var(--line); border-radius:14px; background:var(--surface); text-decoration:none; color:var(--text); transition:border-color .2s, transform .2s; }
-a.module-card:hover { border-color:var(--accent); transform:translateY(-3px); }
-.module-card.placeholder { opacity:0.45; cursor:default; }
-.module-icon { font-size:32px; color:var(--accent); }
-.module-name { font-size:20px; font-weight:600; }
-.module-desc { font-size:14px; color:var(--muted); }
+.home { max-width:960px; margin:0 auto; padding:64px 24px 96px; }
+.home-title { font-size:clamp(32px,5vw,44px); font-weight:700; letter-spacing:-0.01em; margin:0 0 8px; }
+.home-sub { color:var(--text-soft); font-size:16px; margin:0 0 40px; }
+.home-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; }
+.module-card { position:relative; display:flex; flex-direction:column; gap:10px; padding:24px; background:var(--surface); border:1px solid var(--line); border-radius:14px; text-decoration:none; color:var(--text); transition:border-color .15s, box-shadow .15s, transform .15s; }
+a.module-card:hover { border-color:var(--accent); box-shadow:0 6px 20px rgba(31,41,74,0.08); transform:translateY(-2px); }
+.module-card.placeholder { opacity:0.55; cursor:default; }
+.module-icon { font-size:28px; }
+.module-name { font-size:17px; font-weight:600; }
+.module-desc { font-size:13px; color:var(--text-soft); }
+.module-tag { position:absolute; top:16px; right:16px; font-size:11px; color:var(--accent); background:rgba(79,110,247,0.10); padding:2px 8px; border-radius:999px; }
