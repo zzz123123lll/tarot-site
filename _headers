@@ -1,2 +1,8 @@
 /site.css
   Cache-Control: public, max-age=0, must-revalidate
+
+/tarot/js/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/tarot/core/*
+  Cache-Control: public, max-age=0, must-revalidate

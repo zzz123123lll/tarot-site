@@ -34,14 +34,13 @@
     return segs.join('；') + '。';
   }
 
-  // 人味：一句朴实的话收尾
+  // 人味：一句朴实的话收尾——必须来自抽出的牌，不用写死的套话
   function warmTakeaway(result) {
-    var cards = result.cards || [];
-    var dom = result.intent ? result.intent.label : '';
-    var rev = cards.filter(function (c) { return c.reversed; }).length;
-    var s = '把这几张牌放在一起，其实就一句话：先看清自己此刻站在哪一步，再谈下一步。';
-    if (dom) s += ' 回到你的「' + dom + '」上，这是当下最该看清的一条线。';
-    if (rev) s += ' 有逆位在，是在提醒你：别急着硬来，先落地。';
+    var s = (result.synthesis && result.synthesis.takeaway) ? result.synthesis.takeaway : '';
+    if (!s && result.cards && result.cards.length) {
+      var moves = result.cards.map(function (c) { return (c.keywords && c.keywords.length) ? c.keywords[0] : c.card.name; });
+      s = '这几张牌放在一起，焦点落在：' + moves.join('、') + '。';
+    }
     return s;
   }
 
