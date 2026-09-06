@@ -313,3 +313,13 @@ body::before { content:""; position:fixed; inset:0; z-index:0; pointer-events:no
 .journal-empty { font-family: var(--font-serif); color: var(--muted); }
 
 .footer-credit { font-family: var(--font-ui); font-size: 0.72rem; color: var(--muted); letter-spacing: 0.02em; }
+
+.interpretation-narrative { font-family: var(--font-serif); font-size: var(--tlg); line-height:1.75; color: var(--text-soft); margin: var(--s3) 0 var(--s4); }
+
+.reading-depth { font-family: var(--font-ui); font-size: var(--txs); color: var(--muted); margin-top: var(--s2); }
+
+/* ---- 人味解读 ---- */
+.reading-lead { font-family: var(--font-display); font-size: var(--tlg); font-weight:500; color: var(--text); margin: var(--s3) 0 var(--s4); line-height:1.5; }
+.reading-narrative { font-family: var(--font-serif); font-size: var(--tlg); line-height:1.85; color: var(--text-soft); margin: 0 0 var(--s4); }
+.reading-takeaway { font-family: var(--font-serif); font-size: var(--tlg); line-height:1.7; color: var(--text); padding: var(--s3) var(--s4); border-left: 3px solid var(--accent); background: var(--surface-2); border-radius: var(--r-sm); margin: 0 0 var(--s4); }
+.reading-caution { font-family: var(--font-ui); font-size: var(--tsm); color: var(--muted); margin: 0; }

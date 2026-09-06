@@ -33,6 +33,25 @@
     core:        '这是此刻最需要被看见的一张牌，是当前能量的焦点。'
   };
 
+  const NUMEROLOGY = {
+    1: '一，是开端与种子——新的开始、初始的火花。',
+    2: '二，是平衡与选择——两股力量在此权衡、结合。',
+    3: '三，是生长与展开——初具形态，开始向外生长。',
+    4: '四，是稳固与结构——打下的地基，秩序与安顿。',
+    5: '五，是冲突与变动——失衡带来的震荡与转折。',
+    6: '六，是和谐与调和——恢复平衡、沟通与相融。',
+    7: '七，是内省与评估——停顿、回望，重新校准。',
+    8: '八，是力量与行动——推动、精进，把力使出去。',
+    9: '九，是接近圆满——收获前的沉淀与最后审视。',
+    10: '十，是完成与循环——一个周期的圆满，也孕育下一轮。'
+  };
+  const COURT = {
+    Page: '侍从，是一段新旅程的信使或初学者——带着好奇去试探。',
+    Knight: '骑士，是行动与追寻的过程——为某个目标而奔行。',
+    Queen: '皇后，是内在的成熟与滋养——以沉淀的方式照看。',
+    King: '国王，是掌控与权威——把经验化为稳定的力量。'
+  };
+
   function elementLabel(el) { return el ? (describeElement(el).label) : null; }
 
   // Build the positional reading for one drawn card in one slot.
@@ -54,7 +73,6 @@
     const ctx = [
       position.framing,
       roleNote,
-      intent.lens,
       raised ? '此牌与你的问题高度相关，尤其值得细看。' : ''
     ].filter(Boolean);
 
@@ -66,6 +84,14 @@
       element: el, elementLabel: elementLabel(el),
       keywords: kw || [],
       meaning: text || '',
+      depth: (function () {
+        if (card.arcana === 'minor') {
+          if (card.rank && COURT[card.rank]) return [COURT[card.rank]];
+          const n = typeof card.number === 'number' ? card.number : (card.number === 'Ace' ? 1 : null);
+          if (n && NUMEROLOGY[n]) return [NUMEROLOGY[n]];
+        }
+        return [];
+      })(),
       focus: intent.focusAreas,
       relevance: raised,
       context: ctx,
@@ -116,8 +142,11 @@
       if (el && (intent.emphasis || {})[el]) { kwPool.push(...(c.keywords || [])); }
     }
     for (const c of cards) { if (!kwPool.includes(c.card.name)) kwPool.push(c.card.name); }
-    const distinct = [...new Set(kwPool)].slice(0, 6);
-    parts.guidance.push('围绕你的问题（' + intent.label + '），最值得抓住的是：' + distinct.join('、') + '。');
+    // 可行动的洞见：用主导元素 + 逆位，给一句方向（不再吐关键词堆）
+    if (dominantElements.length) {
+      const top = describeElement(dominantElements[0].element);
+      parts.guidance.push('围绕你的「' + intent.label + '」问题，最该握住的方向，是把注意力放在「' + top.label + '」的领域——' + top.domain + '——上，让选择从这里生根。');
+    }
     parts.guidance.push(intent.lens);
 
     // 5) Caution — honest angle, anti Barnum / anti positivity-bias.
@@ -125,9 +154,27 @@
     if (interactions.some(x => x.rel.code === 'challenge')) parts.caution.push('存在元素相克的拉扯，某些进展可能是误解或假象；先厘清再行动。');
     if (!parts.caution.length) parts.caution.push('未见明显的逆位或相克信号，但请记住：牌面给出的是当前能量的倾向，选择权仍在你。');
 
+    // 叙事弧：把牌位串成一条故事线（非并列清单）
+    const story = [];
+    for (const c of cards) {
+      const essence = (c.keywords && c.keywords.length) ? c.keywords[0] : c.card.name;
+      story.push('「' + c.position.label + '」的【' + c.card.name + (c.reversed ? '·逆位' : '') + '】带来「' + essence + '」');
+    }
+    const narrative = (story.length > 1)
+      ? '这三张牌连起来，是一条路：' + story.join(' → ') + '。'
+      : '此刻的核心，是' + story[0] + '。';
+
+    // 一句话 takeaway：从动向 + 主导元素 + 逆位提炼
+    let takeaway = '';
+    const topEl = dominantElements.length ? dominantElements[0].element : null;
+    const move = cards.map(function (c) { return (c.keywords && c.keywords.length) ? c.keywords[0] : c.card.name; }).join('、');
+    takeaway = '把这段牌读成一个动向：' + move + '。' + (topEl ? ('而贯穿它的，是「' + (describeElement(topEl).label) + '」的能量。') : '');
+    if (reversedCount) takeaway += ' 其中逆位的部分，是在提醒你：别急着硬来，先落地。';
+
     return {
       arcana: parts.arcana, elements: parts.elements, interplay: parts.interplay,
-      guidance: parts.guidance, caution: parts.caution
+      guidance: parts.guidance, caution: parts.caution,
+      narrative: narrative, takeaway: takeaway
     };
   }
 
