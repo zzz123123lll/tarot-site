@@ -20,14 +20,40 @@
     <section class="apps">
       <div class="apps-grid">
         <a class="app" href="/tarot/">
-          <span class="app-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path fill="#e6c784" d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10Z"/>
-              <circle cx="5" cy="5" r="0.9" fill="#fff" opacity="0.75"/>
-              <circle cx="19" cy="5" r="0.7" fill="#fff" opacity="0.6"/>
-              <circle cx="5" cy="19" r="0.7" fill="#fff" opacity="0.5"/>
-            </svg>
-          </span>
+          <span class="app-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <linearGradient id="ap-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4d4a8c"/>
+      <stop offset="0.5" stop-color="#2a2e60"/>
+      <stop offset="1" stop-color="#14152f"/>
+    </linearGradient>
+    <radialGradient id="ap-glow" cx="0.28" cy="0.16" r="0.85">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.16"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.04"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ap-gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f8df96"/>
+      <stop offset="0.55" stop-color="#e4bd6b"/>
+      <stop offset="1" stop-color="#bd8b45"/>
+    </linearGradient>
+    <clipPath id="ap-clip"><rect x="0.5" y="0.5" width="23" height="23" rx="4.8"/></clipPath>
+  </defs>
+
+  <g clip-path="url(#ap-clip)">
+    <rect x="0.5" y="0.5" width="23" height="23" fill="url(#ap-bg)"/>
+    <rect x="0.5" y="0.5" width="23" height="23" fill="url(#ap-glow)"/>
+    <circle cx="2.6" cy="2.6" r="0.5" fill="#fff" opacity="0.85"/>
+    <circle cx="21.4" cy="2.6" r="0.42" fill="#fff" opacity="0.6"/>
+    <circle cx="2.6" cy="21.4" r="0.4" fill="#fff" opacity="0.5"/>
+    <circle cx="21.4" cy="21.4" r="0.44" fill="#fff" opacity="0.5"/>
+    <circle cx="19.6" cy="8.2" r="0.4" fill="#fff" opacity="0.55"/>
+    <circle cx="19.6" cy="15.8" r="0.4" fill="#fff" opacity="0.55"/>
+    <path fill-rule="evenodd" fill="url(#ap-gold)" d="M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16z M15 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"/>
+    <path fill="url(#ap-gold)" d="M15.4 9.3l.85 2.05 2.05.85-2.05.85-.85 2.05-.85-2.05-2.05-.85 2.05-.85z"/>
+  </g>
+  <rect x="0.5" y="0.5" width="23" height="23" rx="4.8" fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="0.5"/>
+</svg></span>
           <span class="app-name">塔罗占卜</span>
         </a>
       </div>
