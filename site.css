@@ -1,24 +1,54 @@
-/* site.css — 工具盒 外壳：干净、现代、通用（与塔罗风格完全分开） */
+/* site.css — 工具盒 外壳：现代深色高级风（冷靛紫，区别于塔罗的暖金） */
 :root {
-  --bg:#f6f7f9; --surface:#ffffff; --text:#16181d; --text-soft:#555a66; --muted:#8a909c;
-  --accent:#4f6ef7; --line:#e6e8ee; --line-strong:#d4d8e0;
+  --bg:#0a0a0f; --surface:#12121a; --surface-2:#171722;
+  --text:#eceef2; --text-soft:#a6abb8; --muted:#6b7280;
+  --accent:#7c7ff2; --accent-2:#9ea0ff;
+  --line:rgba(255,255,255,0.08); --line-strong:rgba(255,255,255,0.14);
   --font-ui:"Inter","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
 }
 * { box-sizing:border-box; }
 html,body { margin:0; padding:0; }
-body { font-family:var(--font-ui); color:var(--text); background:var(--bg); min-height:100vh; -webkit-font-smoothing:antialiased; }
-.site-nav { display:flex; align-items:center; gap:12px; padding:13px 24px; background:#fff; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:50; }
+body {
+  font-family:var(--font-ui); color:var(--text);
+  background: radial-gradient(60% 44% at 50% -12%, rgba(124,127,242,0.16), transparent 62%), var(--bg);
+  min-height:100vh; -webkit-font-smoothing:antialiased; letter-spacing:-0.006em;
+}
+.site-nav {
+  display:flex; align-items:center; gap:12px; padding:15px 28px;
+  position:sticky; top:0; z-index:50;
+  background:rgba(10,10,15,0.72); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
 .site-nav a { font-size:16px; font-weight:600; color:var(--text); text-decoration:none; }
+.site-nav .nav-mark { color:var(--accent); margin-right:7px; }
 .site-nav .site-nav-tag { color:var(--muted); font-size:13px; }
 
-.home { max-width:960px; margin:0 auto; padding:64px 24px 96px; }
-.home-title { font-size:clamp(32px,5vw,44px); font-weight:700; letter-spacing:-0.01em; margin:0 0 8px; }
-.home-sub { color:var(--text-soft); font-size:16px; margin:0 0 40px; }
-.home-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; }
-.module-card { position:relative; display:flex; flex-direction:column; gap:10px; padding:24px; background:var(--surface); border:1px solid var(--line); border-radius:14px; text-decoration:none; color:var(--text); transition:border-color .15s, box-shadow .15s, transform .15s; }
-a.module-card:hover { border-color:var(--accent); box-shadow:0 6px 20px rgba(31,41,74,0.08); transform:translateY(-2px); }
-.module-card.placeholder { opacity:0.55; cursor:default; }
-.module-icon { font-size:28px; }
+.home { max-width:980px; margin:0 auto; padding:88px 24px 120px; }
+.home-title { font-size:clamp(40px,6vw,60px); font-weight:700; letter-spacing:-0.03em; line-height:1.05; margin:0 0 14px; }
+.home-sub { color:var(--text-soft); font-size:17px; margin:0 0 60px; }
+.home-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:18px; }
+
+.module-card {
+  position:relative; display:flex; flex-direction:column; gap:13px; padding:26px;
+  background:linear-gradient(180deg, var(--surface-2), var(--surface));
+  border:1px solid var(--line); border-radius:16px;
+  text-decoration:none; color:var(--text);
+  transition:border-color .18s, transform .18s, box-shadow .18s;
+}
+a.module-card:hover {
+  border-color:var(--line-strong);
+  box-shadow:0 14px 44px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.04);
+  transform:translateY(-3px);
+}
+.module-card.placeholder { opacity:0.5; cursor:default; }
+.module-icon {
+  display:flex; align-items:center; justify-content:center;
+  width:48px; height:48px; font-size:24px; border-radius:12px;
+  background:linear-gradient(160deg, rgba(124,127,242,0.20), rgba(124,127,242,0.05));
+  border:1px solid rgba(124,127,242,0.20);
+}
+.module-card.placeholder .module-icon { background:rgba(255,255,255,0.04); border-color:rgba(255,255,255,0.06); filter:grayscale(0.5); }
 .module-name { font-size:17px; font-weight:600; }
-.module-desc { font-size:13px; color:var(--text-soft); }
-.module-tag { position:absolute; top:16px; right:16px; font-size:11px; color:var(--accent); background:rgba(79,110,247,0.10); padding:2px 8px; border-radius:999px; }
+.module-desc { font-size:13px; color:var(--text-soft); line-height:1.5; }
+.module-tag { position:absolute; top:20px; right:20px; font-size:11px; color:var(--accent-2); background:rgba(124,127,242,0.12); padding:3px 9px; border-radius:999px; }
+.home-foot { margin-top:60px; padding-top:22px; border-top:1px solid var(--line); color:var(--muted); font-size:13px; }
