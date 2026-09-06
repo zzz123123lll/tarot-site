@@ -6,44 +6,81 @@
   <title>工具盒</title>
   <link rel="stylesheet" href="site.css">
 </head>
-<body>
+<body class="page-home">
   <nav class="site-nav">
-    <a href="/"><span class="nav-mark">✦</span>工具盒</a>
+    <a class="nav-brand" href="/"><span class="nav-mark">✦</span>工具盒</a>
+    <div class="nav-links">
+      <a href="#tools">工具</a>
+      <a href="#about">为什么</a>
+      <a href="#road">在路上</a>
+    </div>
+    <div class="nav-actions">
+      <a class="nav-cta" href="/tarot/">开始使用</a>
+    </div>
   </nav>
-  <main class="home">
-    <header class="hero">
-      <h1 class="hero-title">工具盒</h1>
-      <p class="hero-sub">把常用的小工具，收进一个盒子里。</p>
-    </header>
 
-    <section class="section">
-      <div class="section-head"><span class="dot"></span><h2>工具</h2></div>
+  <main class="home">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="hero-kicker">TOOLBOX · 慢慢变满</p>
+        <h1 class="hero-title">把好用的工具，<br><span class="tint">收进一个盒子。</span></h1>
+        <p class="hero-sub">不追热点，不做大而全。每个工具都想清楚真的有用，才放进来——你也一样，需要时来拿。</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="/tarot/">开始第一个工具 <span class="arrow">&rarr;</span></a>
+          <a class="btn btn-ghost" href="#about">看看为什么</a>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="box box-1"><span>&#x1F0CF;</span></div>
+        <div class="box box-2"><span>&#x2726;</span></div>
+        <div class="box box-3"><span>&#x25C7;</span></div>
+        <div class="box-glow"></div>
+      </div>
+    </section>
+
+    <section class="section" id="tools">
+      <div class="section-head"><span class="pill">工具</span><h2>放进盒子里的</h2></div>
       <div class="grid">
-        <a class="card" href="/tarot/">
-          <span class="card-icon">🃏</span>
+        <a class="card featured" href="/tarot/">
+          <span class="card-top"><span class="card-num">01</span><span class="card-status">已上线</span></span>
+          <span class="card-icon">&#x1F0CF;</span>
           <span class="card-name">塔罗占卜</span>
-          <span class="card-desc">78 张韦特牌，一次有依据、不套话的解读。</span>
-          <span class="card-foot"><span class="card-status">已上线</span><span class="card-arrow">→</span></span>
+          <span class="card-desc">78 张韦特牌。一次有依据、不套话的解读，讲人话，也讲为什么这么解。</span>
+          <span class="card-foot">星辉塔罗 <span class="card-arrow">&rarr;</span></span>
         </a>
         <div class="card placeholder">
-          <span class="card-icon">✦</span>
+          <span class="card-top"><span class="card-num">02</span><span class="card-status">开发中</span></span>
+          <span class="card-icon">&#x2726;</span>
           <span class="card-name">敬请期待</span>
           <span class="card-desc">下一个工具，正在路上。</span>
-          <span class="card-foot"><span class="card-status">开发中</span></span>
         </div>
         <div class="card placeholder">
-          <span class="card-icon">◇</span>
+          <span class="card-top"><span class="card-num">03</span><span class="card-status">开发中</span></span>
+          <span class="card-icon">&#x25C7;</span>
           <span class="card-name">敬请期待</span>
           <span class="card-desc">下一个工具，正在路上。</span>
-          <span class="card-foot"><span class="card-status">开发中</span></span>
         </div>
       </div>
     </section>
 
-    <footer class="home-foot">
-      <span>工具盒</span>
-      <span>慢慢变满</span>
-    </footer>
+    <section class="section statement" id="about">
+      <div class="section-head"><span class="pill">为什么</span></div>
+      <p class="big-line">工具盒不想做"什么都有一点，什么都不好用"的东西。<br>我们只放真正用得上的工具——<span class="tint">慢慢变满</span>，也不着急。</p>
+    </section>
+
+    <section class="section" id="road">
+      <div class="section-head"><span class="pill">正在路上</span><h2>下一个会是什么</h2></div>
+      <div class="road-grid">
+        <div class="road-item"><span class="road-dot"></span><div><span class="road-name">更自然的解读</span><span class="road-desc">让每一段话都像有人陪你说</span></div></div>
+        <div class="road-item"><span class="road-dot"></span><div><span class="road-name">更多小工具</span><span class="road-desc">看见哪片空白，就用它填哪片</span></div></div>
+        <div class="road-item"><span class="road-dot"></span><div><span class="road-name">慢慢变满</span><span class="road-desc">不急，好东西值得等</span></div></div>
+      </div>
+    </section>
   </main>
+
+  <footer class="home-foot">
+    <span>工具盒</span>
+    <span>慢慢变满</span>
+  </footer>
 </body>
 </html>
