@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080c1e">
+  <title>星辉塔罗 · 预言与自我探索</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="../site.css">
+</head>
+<body>
+  <nav class="site-nav"><a href="/">✦ <b>星辉</b></a><span class="site-nav-tag">塔罗占卜</span></nav>
+  <div class="stars" aria-hidden="true"></div>
+    <header class="site-header hero">
+    <span class="hero-numeral" id="heroNumeral" aria-hidden="true">XVII</span>
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <span class="hero-moon" id="heroMoon" aria-hidden="true">☾</span>
+          <span class="hero-kicker">RIDER–WAITE · LIBER LXXVIII</span>
+        <div class="hero-title">
+          <span class="brand-mark">✦</span>
+          <h1>星辉塔罗</h1>
+          <span class="seal" aria-hidden="true">星辉</span>
+        </div>
+        <p class="hero-tagline">以牌为镜 · 照见选择与可能</p>
+        <p class="hero-desc">溯源韦特《Pictorial Key》与金色黎明《Liber LXXVIII》，以一套严谨确定性的塔罗内核，做一次真正把你置身其中的解读——不是命中注定，而是当下能量的觉察与启示。</p>
+        <div class="hero-actions">
+          <button type="button" class="btn-draw beam-border" id="heroCta">✦ 开始一次占卜</button>
+          <a class="hero-link" href="#dictionaryPanel">📖 78 张牌意</a>
+        </div>
+      </div>
+      <div class="hero-cards" aria-hidden="true">
+        <div class="hero-card hero-card-1"><img class="hc-art" src="images/cards/major_17.jpg" alt="星星"><span class="hc-caption">XVII · 星星</span></div>
+        <div class="hero-card hero-card-2"><img class="hc-art" src="images/cards/major_18.jpg" alt="月亮"><span class="hc-caption">XVIII · 月亮</span></div>
+        <div class="hero-card hero-card-3"><img class="hc-art" src="images/cards/major_19.jpg" alt="太阳"><span class="hc-caption">XIX · 太阳</span></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="notice-bar" id="noticeBar">
+      <span>🌙 新手指引：塔罗是自我探索与反思工具，不是宿命判决；结果仅供参考，请理性看待。</span>
+      <button type="button" id="noticeClose" aria-label="关闭">×</button>
+    </div>
+    <section class="panel setup-panel reveal" id="setup">
+      <p class="setup-kicker">先问你的问题</p>
+      <h2>你心里真正在想什么？</h2>
+      <div class="form-grid">
+        <label class="field question-field">
+          <span>问题 / 意图（必填）</span>
+          <textarea id="questionInput" rows="2" placeholder="例如：我该如何看待目前工作上的变化？"></textarea>
+          <p class="question-hint hidden" id="questionHint">请先写下你的问题——塔罗的价值，在于与你的问题对答。</p>
+        </label>
+        <label class="field spread-field">
+          <span>选择牌阵</span>
+          <select id="spreadSelect"></select>
+        </label>
+        <label class="checkbox-field">
+          <input type="checkbox" id="reversedToggle" checked>
+          <span>允许逆位</span>
+        </label>
+      </div>
+      <div class="spread-desc" id="spreadDesc"></div>
+      <button class="btn-draw beam-border" id="startRitualBtn">开始占卜</button>
+    </section></section>
+
+
+    
+
+    <section class="panel daily-panel reveal" id="dailyPanel">
+      <div class="daily-head">
+        <div>
+          <h2>☀ 每日一牌</h2>
+          <p>每天一张牌，给自己一个简短的内在提醒。</p>
+        </div>
+        <button class="btn-draw btn-daily" id="dailyBtn">抽取今日牌</button>
+      </div>
+      <div class="daily-result hidden" id="dailyResult"></div>
+    </section>
+
+    
+
+    <section class="panel ritual-panel hidden" id="ritualPanel">
+      <div class="ritual-steps" id="ritualSteps">
+        <span class="ritual-step" data-step="focus">1 静心</span>
+        <span class="ritual-step" data-step="shuffle">2 洗牌</span>
+        <span class="ritual-step" data-step="draw">3 抽牌</span>
+        <span class="ritual-step" data-step="reading">4 解读</span></div>
+
+      <div class="ritual-stage hidden" id="ritualFocus">
+        <div class="focus-wrap">
+          <div class="focus-circle" aria-hidden="true"><span>✦</span></div>
+          <p class="ritual-hint" id="focusHint">静心 · 默念你真正想问的问题</p>
+        </div>
+      </div>
+
+      <div class="ritual-stage" id="ritualShuffle">
+        <div class="ritual-deck" id="ritualDeck" role="button" tabindex="0" aria-label="按住牌堆洗牌">
+          <div class="ritual-deck-card"></div>
+          <div class="ritual-deck-card"></div>
+          <div class="ritual-deck-card"></div>
+          <div class="ritual-deck-card"></div>
+          <div class="ritual-deck-card"></div>
+          <div class="ritual-deck-face">✦<span>星辉塔罗</span></div>
+        </div>
+        <p class="ritual-hint" id="ritualHint">按住牌堆开始洗牌</p>
+      </div>
+
+      <div class="ritual-stage hidden" id="ritualCut">
+        <div class="cut-piles">
+          <button type="button" class="cut-pile" data-pile="0"><span class="cut-card">☽</span><span class="cut-label">左叠</span></button>
+          <button type="button" class="cut-pile" data-pile="1"><span class="cut-card">✦</span><span class="cut-label">中叠</span></button>
+          <button type="button" class="cut-pile" data-pile="2"><span class="cut-card">☾</span><span class="cut-label">右叠</span></button>
+        </div>
+        <p class="ritual-hint">凭感觉选择一叠作为切牌</p>
+      </div>
+
+      <div class="ritual-stage hidden" id="ritualDraw">
+        <div class="ritual-cards" id="ritualCards"></div>
+        <p class="ritual-hint" id="drawHint">请依次点击牌背抽牌</p>
+      </div>
+    </section>
+
+    <section class="panel reading-panel hidden" id="readingPanel">
+      <div class="reading-header">
+        <div class="reading-headline">
+          <h2 id="readingTitle">你的解读</h2>
+          <p id="readingMeta" class="reading-meta"></p>
+        </div>
+        <div class="reading-actions">
+          <button class="btn-copy" id="copyBtn" type="button">⧉ 复制</button>
+    
+        </div>
+      </div>
+
+
+      <div id="cardsGrid" class="cards-grid"></div>
+
+      <div id="interpretation" class="interpretation"></div>
+
+      <button class="btn-again" id="againBtn">重新抽牌</button>
+    </section>
+
+    <section class="panel journal-panel reveal" id="journalPanel">
+      <h2>占卜日志</h2>
+      <p class="journal-sub">每一次占卜都会留在这里；重复出现的牌，会被点亮。</p>
+      <div id="journalList" class="journal-list"></div>
+    </section>
+
+<details class="panel dictionary-panel reveal" id="dictionaryPanel">
+      <summary>📖 牌意查询 <span class="summary-hint">点击展开</span></summary>
+      <p>输入牌名、关键词或元素，查看 78 张牌的正位与逆位详解。</p>
+      <input type="search" id="dictionarySearch" class="dictionary-search" placeholder="搜索：死神 / 恋人 / 权杖 / 火 / 直觉...">
+      <div class="dictionary-grid" id="dictionaryGrid"></div>
+    </details>
+  
+    <section class="intro panel beam-border reveal">
+      <div class="intro-icon" aria-hidden="true">☾</div>
+      <div>
+        <h2>关于 · 塔罗的机制</h2>
+        <p>塔罗并非机械地“算出”未来，而是通过<strong>随机洗牌 + 提问意图 + 象征映射</strong>，把潜意识中的信息投射到牌面上。牌阵中的每一张牌都是一个“位置语言”，与正逆位、元素、大/小阿尔克纳共同构成一份自我觉察的参考。</p>
+        <p class="ethics">请把结果视为启发与反思工具，而非不可更改的命运判决。</p>
+      </div>
+    </section>
+</main>
+
+  <div class="modal-backdrop hidden" id="cardModal">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" aria-label="关闭">×</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>✦ 星辉塔罗 ✦ 仅供文化研究与自我反思 · 不替代专业心理或医疗建议</p>
+    <p class="footer-credit">卡图：Rider–Waite–Smith（公有领域，1910）· 牌义数据：StarTarot（CC BY 4.0）· 核心：确定性内核</p>
+  </footer>
+
+  <script src="js/deck.js"></script>
+
+  <!-- Deterministic tarot core (溯源: Waite + Golden Dawn) -->
+  <script src="core/data/tarot-deck.js"></script>
+  <script src="core/elements.js"></script>
+  <script src="core/spreads.js"></script>
+  <script src="core/questions.js"></script>
+  <script src="core/engine.js"></script>
+  <script src="core/prose.js"></script>
+  <script src="core/index.js"></script>
+  <script src="js/reader.js"></script>
+  <script src="js/tarot.js"></script>
+  <script src="js/motion.js"></script>
+  <script src="js/journal.js"></script>
+</body>
+</html>

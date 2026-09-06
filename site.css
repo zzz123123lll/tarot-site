@@ -1,0 +1,25 @@
+/* site.css — 星辉网站外壳（首页 + 导航），与塔罗共用一套暗夜鎏金气质 */
+:root {
+  --bg:#0d0b09; --surface:#1a1713; --text:#efe6d3; --text-soft:#c9bca6; --muted:#958a72;
+  --accent:#b99a63; --line:rgba(185,154,99,0.18); --line-strong:rgba(185,154,99,0.4);
+  --font-display:"Cormorant Garamond","Playfair Display","Songti SC",Georgia,serif;
+  --font-ui:"Inter","Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+}
+* { box-sizing:border-box; }
+html,body { margin:0; padding:0; }
+body { font-family:var(--font-ui); color:var(--text); background:linear-gradient(160deg,#1a1511 0%,#0d0b09 100%); background-attachment:fixed; min-height:100vh; -webkit-font-smoothing:antialiased; }
+.site-nav { display:flex; align-items:center; gap:14px; padding:13px 24px; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:50; background:rgba(13,11,9,0.82); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+.site-nav a { font-family:var(--font-display); font-size:20px; color:var(--text); text-decoration:none; letter-spacing:0.02em; }
+.site-nav a b { color:var(--accent); font-weight:500; }
+.site-nav .site-nav-tag { color:var(--muted); font-size:12px; letter-spacing:0.12em; text-transform:uppercase; }
+
+.home { max-width:960px; margin:0 auto; padding:72px 24px 96px; }
+.home-title { font-family:var(--font-display); font-size:clamp(40px,7vw,60px); font-weight:500; line-height:1.05; margin:0 0 10px; }
+.home-sub { color:var(--text-soft); font-size:18px; margin:0 0 48px; }
+.home-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:20px; }
+.module-card { display:flex; flex-direction:column; gap:10px; padding:28px 24px; border:1px solid var(--line); border-radius:14px; background:var(--surface); text-decoration:none; color:var(--text); transition:border-color .2s, transform .2s; }
+a.module-card:hover { border-color:var(--accent); transform:translateY(-3px); }
+.module-card.placeholder { opacity:0.45; cursor:default; }
+.module-icon { font-size:32px; color:var(--accent); }
+.module-name { font-size:20px; font-weight:600; }
+.module-desc { font-size:14px; color:var(--muted); }
