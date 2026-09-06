@@ -38,6 +38,7 @@ body.page-home .hero-sub a { color:#0071e3; text-decoration:none; }
 body.page-home .hero-sub a:hover { text-decoration:underline; }
 body.page-home .btn { display:inline-flex; align-items:center; gap:7px; padding:13px 30px; border-radius:980px; background:#0071e3; color:#fff; font-size:17px; font-weight:500; text-decoration:none; transition:background .16s, transform .16s; }
 body.page-home .btn:hover { background:#0077ed; transform:translateY(-1px); }
+body.page-home .hero-actions { display:flex; justify-content:center; gap:12px; }
 
 /* ===== 展示区：浅灰圆角产品卡（苹果 product tile）===== */
 body.page-home .showcase { max-width:1000px; margin:0 auto; padding:6px 24px 0; }
