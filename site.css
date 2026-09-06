@@ -58,12 +58,14 @@ body.page-home .btn-ghost { border:1px solid var(--line-strong); color:var(--tex
 body.page-home .btn-ghost:hover { border-color:rgba(255,255,255,0.28); background:rgba(255,255,255,0.03); }
 
 /* ---- Hero 可视化：三块叠放的"盒子"，靛紫辉光 ---- */
-body.page-home .hero-visual { position:relative; min-height:340px; display:flex; align-items:center; justify-content:center; }
-body.page-home .box { position:absolute; width:200px; height:200px; border-radius:22px; display:flex; align-items:center; justify-content:center; font-size:54px; background:linear-gradient(160deg, var(--surface-2), var(--surface)); border:1px solid var(--line-strong); box-shadow:0 24px 60px rgba(0,0,0,0.55); }
-body.page-home .box-1 { transform:translate(-34%,-8%) rotate(-9deg); opacity:0.92; }
-body.page-home .box-2 { transform:translate(12%,6%) rotate(4deg); z-index:2; border-color:rgba(124,133,240,0.5); box-shadow:0 26px 70px rgba(94,106,210,0.36); }
-body.page-home .box-3 { transform:translate(40%,-4%) rotate(12deg); opacity:0.85; }
-body.page-home .box-glow { position:absolute; width:360px; height:360px; border-radius:50%; background:radial-gradient(closest-side, rgba(124,133,240,0.28), transparent); filter:blur(24px); }
+body.page-home .hero-visual { position:relative; min-height:360px; display:flex; align-items:center; justify-content:center; }
+body.page-home .hv-board { position:relative; width:320px; max-width:82vw; aspect-ratio:1; border-radius:26px; padding:22px; display:grid; grid-template-columns:repeat(3,1fr); gap:13px; align-content:center; background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.012)), linear-gradient(180deg,#0f1013,#0a0b0d); border:1px solid var(--line-strong); box-shadow:0 44px 96px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.06); transform:perspective(1200px) rotateX(9deg) rotateY(-7deg); }
+body.page-home .hv-board::after { content:""; position:absolute; inset:0; border-radius:26px; pointer-events:none; background:repeating-linear-gradient(90deg, rgba(255,255,255,0.033) 0 1px, transparent 1px 34px), repeating-linear-gradient(0deg, rgba(255,255,255,0.033) 0 1px, transparent 1px 34px); }
+body.page-home .hv-tile { aspect-ratio:1; border-radius:15px; display:flex; align-items:center; justify-content:center; color:#cdd2ff; background:linear-gradient(160deg, rgba(124,133,240,0.18), rgba(94,106,210,0.07)); border:1px solid rgba(124,133,240,0.3); box-shadow:inset 0 1px 0 rgba(255,255,255,0.08); }
+body.page-home .hv-tile:nth-child(2) { transform:translateY(-9px); }
+body.page-home .hv-tile:nth-child(5) { transform:translateY(9px); }
+body.page-home .hv-tile svg { width:26px; height:26px; }
+body.page-home .hv-glow { position:absolute; width:420px; height:420px; border-radius:50%; background:radial-gradient(closest-side, rgba(124,133,240,0.26), transparent); filter:blur(28px); }
 
 /* ---- 节胶囊标签 + 标题（首页专属）---- */
 body.page-home .section { margin-top:44px; }
@@ -82,6 +84,8 @@ body.page-home .card-num { font-size:12px; font-weight:650; color:var(--muted); 
 body.page-home .card-status { font-size:12px; color:var(--accent-2); }
 body.page-home .card.placeholder .card-status { color:var(--muted); }
 body.page-home .card-icon { display:flex; align-items:center; justify-content:center; width:48px; height:48px; font-size:24px; border-radius:12px; background:var(--accent-soft); border:1px solid rgba(94,106,210,0.24); }
+body.page-home .card-icon svg { width:24px; height:24px; color:var(--accent-2); }
+body.page-home .card.placeholder .card-icon svg { color:var(--muted); }
 body.page-home .card.placeholder .card-icon { background:rgba(255,255,255,0.04); border-color:rgba(255,255,255,0.07); filter:grayscale(0.7); }
 body.page-home .card-name { font-size:17px; font-weight:650; }
 body.page-home .card-desc { font-size:13.5px; color:var(--text-soft); line-height:1.6; }
