@@ -25,9 +25,7 @@
 
     // —— 主解读（成熟：读画面 → 放进你的处境） ——
     var prose = (core.assembleProse ? core.assembleProse(result) : '') || '';
-    var blocks = prose.split(/
-
-+/).map(function (s) { return s.trim(); }).filter(Boolean);
+    var blocks = prose.split('\n\n').map(function (s) { return s.trim(); }).filter(Boolean);
     h.push('<div class="reading-summary">');
     if (blocks.length) {
       h.push('<h3>✦ ' + esc(blocks[0]) + '</h3>');
