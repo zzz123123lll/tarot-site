@@ -13,6 +13,7 @@ body { -webkit-font-smoothing:antialiased; }
 :focus-visible { outline:2px solid #0071e3; outline-offset:2px; border-radius:4px; }
 @media (prefers-reduced-motion: reduce) {
   body.page-home .hero-title, body.page-home .hero-sub, body.page-home .search-wrap, body.page-home .app { animation: none; }
+  body.page-home .hero-title { background:none; -webkit-text-fill-color:#1d1d1f; }
 }
 
 /* ===== 导航默认 = 深色版（塔罗页用）===== */
@@ -24,7 +25,12 @@ body { -webkit-font-smoothing:antialiased; }
 /* ===== 首页根：苹果浅色 ===== */
 body.page-home {
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
-  color:#1d1d1f; background:#fff; letter-spacing:-0.01em;
+  color:#1d1d1f; letter-spacing:-0.01em;
+  background:
+    radial-gradient(55% 42% at 18% -8%, rgba(0,113,227,0.07), transparent 60%),
+    radial-gradient(45% 36% at 88% -4%, rgba(124,133,240,0.06), transparent 62%),
+    radial-gradient(50% 40% at 50% 115%, rgba(230,199,132,0.05), transparent 60%),
+    #fff;
   min-height:100vh; display:flex; flex-direction:column;
 }
 body.page-home .site-nav { background:rgba(255,255,255,0.72); backdrop-filter:saturate(180%) blur(20px); -webkit-backdrop-filter:saturate(180%) blur(20px); border-bottom:1px solid rgba(0,0,0,0.08); }
@@ -35,7 +41,14 @@ body.page-home .home { flex:1 0 auto; width:100%; }
 
 /* ===== Hero：居中、大细字 ===== */
 body.page-home .hero { text-align:center; padding:64px 24px 36px; }
-body.page-home .hero-title { font-size:clamp(44px,7vw,80px); font-weight:600; letter-spacing:-0.032em; line-height:1.04; color:#1d1d1f; margin:0 0 20px; }
+body.page-home .hero-kicker { display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:500; color:#0071e3; background:rgba(0,113,227,0.07); border:1px solid rgba(0,113,227,0.16); border-radius:999px; padding:5px 14px; margin:0 0 22px; }
+body.page-home .hero-title { font-size:clamp(48px,7.5vw,88px); font-weight:700; letter-spacing:-0.035em; line-height:1.02; margin:0 0 16px;
+  background:linear-gradient(105deg, #1d1d1f 15%, #52525b 42%, #0071e3 68%, #1d1d1f 100%);
+  background-size:220% auto;
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent; color:transparent;
+  animation:titleShimmer 7s ease-in-out infinite; }
+@keyframes titleShimmer { 0%,100% { background-position:0% center; } 50% { background-position:100% center; } }
 body.page-home .hero-sub { font-size:clamp(18px,2.3vw,24px); color:#6e6e73; line-height:1.45; margin:0 auto; }
 body.page-home .hero-title { animation:heroIn .7s cubic-bezier(.2,.6,.2,1) both; }
 body.page-home .hero-sub { animation:heroIn .7s .12s cubic-bezier(.2,.6,.2,1) both; }
@@ -53,24 +66,32 @@ body.page-home .search:focus { background:#fff; border-color:#0071e3; box-shadow
 body.page-home #apps { max-width: 720px; margin: 0 auto; padding: 0 24px; }
 body.page-home .section-block { margin-top: 40px; }
 body.page-home .section-title { display:flex; align-items:center; gap:12px; font-size: 14px; font-weight: 600; color: #6e6e73; margin: 0 0 20px; letter-spacing: -0.01em; }
+body.page-home .section-title::before { content:""; width:7px; height:7px; border-radius:50%; flex:none; background:#6e6e73; }
+body.page-home .section-block--utility .section-title::before { background:#0071e3; }
+body.page-home .section-block--image .section-title::before { background:#1d9e4e; }
+body.page-home .section-block--pdf .section-title::before { background:#c86a1e; }
+body.page-home .section-block--divination .section-title::before { background:#e6c784; }
 body.page-home .section-title::after { content:""; flex:1; height:1px; background:rgba(0,0,0,0.06); }
 body.page-home .apps-grid { display:flex; flex-wrap:wrap; gap:32px 28px; }
 body.page-home .app { display:flex; flex-direction:column; align-items:center; gap:8px; text-decoration:none; color:#1d1d1f; animation:appIn .5s ease both; }
 @keyframes appIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
 body.page-home .app-icon {
   display:flex; align-items:center; justify-content:center;
-  width:76px; height:76px; border-radius:18px;
-  filter:drop-shadow(0 6px 14px rgba(20,23,46,0.22));
-  transition:transform .16s ease, filter .16s ease;
+  width:88px; height:88px; border-radius:20px;
+  filter:drop-shadow(0 8px 18px rgba(20,23,46,0.16));
+  transition:transform .18s ease, filter .18s ease;
 }
-body.page-home .app-icon--light { background:#f5f5f7; color:#0071e3; border:1px solid rgba(0,0,0,0.05); }
-body.page-home a.app:hover .app-icon--light { border-color:rgba(0,113,227,0.35); }
+body.page-home .app-icon--light { background:linear-gradient(160deg,#fff,#f5f5f7); color:#0071e3; border:1px solid rgba(0,0,0,0.06); }
+body.page-home .app-icon--sec-utility { background:linear-gradient(160deg,#eef4ff,#f8faff); color:#0071e3; border-color:rgba(0,113,227,0.14); }
+body.page-home .app-icon--sec-image { background:linear-gradient(160deg,#eefaf2,#f8fdfa); color:#1d9e4e; border-color:rgba(29,158,78,0.14); }
+body.page-home .app-icon--sec-pdf { background:linear-gradient(160deg,#fff5ec,#fffaf5); color:#c86a1e; border-color:rgba(200,106,30,0.16); }
+body.page-home a.app:hover .app-icon--light { border-color:rgba(0,113,227,0.4); }
 body.page-home .app-icon--soon { background:#f5f5f7; color:#86868b; opacity:0.5; }
 body.page-home .app-icon--dark { background:transparent; }
 body.page-home .app-icon svg { display:block; }
 body.page-home .app-icon--dark svg { width:100%; height:100%; }
 body.page-home .app-icon--light svg, body.page-home .app-icon--soon svg { width:42px; height:42px; }
-body.page-home a.app:hover .app-icon { transform:translateY(-3px) scale(1.03); filter:drop-shadow(0 12px 22px rgba(20,23,46,0.3)); }
+body.page-home a.app:hover .app-icon { transform:translateY(-4px) scale(1.05); filter:drop-shadow(0 16px 30px rgba(20,23,46,0.26)); }
 body.page-home .app--soon { opacity:0.6; cursor:default; }
 body.page-home .app-name { font-size:13px; color:#1d1d1f; font-weight:600; }
 body.page-home .app-desc { font-size:11.5px; color:#86868b; text-align:center; max-width:130px; line-height:1.4; }
