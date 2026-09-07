@@ -32,7 +32,7 @@ export function mount(root, H) {
     root.querySelectorAll('#mt button').forEach(function (x) { x.classList.toggle('active', x === b); });
     render();
   });
-  tcp.addEventListener('click', function () { if (prettyStr) { H.copyText(prettyStr); tcp.textContent = '已复制'; setTimeout(function(){ tcp.textContent = '复制结果'; }, 1200); } });
+  tcp.addEventListener('click', function () { if (prettyStr) { H.copyText(prettyStr, this); tcp.textContent = '已复制'; setTimeout(function(){ tcp.textContent = '复制结果'; }, 1200); } });
   tin.addEventListener('input', function () { render(); });
 
   function render() {

@@ -33,7 +33,7 @@ export function mount(root, H) {
     if (!v) { out.textContent = ''; return; }
     compute(new TextEncoder().encode(v)).then(function () { root.querySelector('#cp').disabled = false; });
   });
-  root.querySelector('#cp').addEventListener('click', function () { if (out.textContent) H.copyText(out.textContent); });
+  root.querySelector('#cp').addEventListener('click', function () { if (out.textContent) H.copyText(out.textContent, this); });
   H.makeDropZone(root.querySelector('#dz'), async function (fs) {
     var f = fs[0];
     if (f.size > 500 * 1024 * 1024) { err.textContent = '文件超过 500MB。'; err.style.display = 'block'; return; }

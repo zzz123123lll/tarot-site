@@ -26,7 +26,7 @@ export function mount(root, H) {
   root.querySelector('#u1').addEventListener('click', function () { ulist.textContent = gen(1); });
   root.querySelector('#u10').addEventListener('click', function () { ulist.textContent = gen(10); });
   root.querySelector('#u100').addEventListener('click', function () { ulist.textContent = gen(100); });
-  root.querySelector('#ucp').addEventListener('click', function () { if (ulist.textContent) H.copyText(ulist.textContent); });
+  root.querySelector('#ucp').addEventListener('click', function () { if (ulist.textContent) H.copyText(ulist.textContent, this); });
   root.querySelector('#pw').addEventListener('click', function () { pout.textContent = genPw(parseInt(root.querySelector('#len').value, 10) || 16); });
-  root.querySelector('#pcp').addEventListener('click', function () { if (pout.textContent) H.copyText(pout.textContent); });
+  root.querySelector('#pcp').addEventListener('click', function () { if (pout.textContent) H.copyText(pout.textContent, this); });
 }

@@ -55,7 +55,7 @@ export function mount(root, H) {
       showErr(terr, '');
     } catch (e) { showErr(terr, '解码失败：输入不是有效的 Base64。'); }
   });
-  root.querySelector('#cp').addEventListener('click', function () { if (out.textContent) H.copyText(out.textContent); });
+  root.querySelector('#cp').addEventListener('click', function () { if (out.textContent) H.copyText(out.textContent, this); });
 
   root.querySelector('#mt').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
@@ -81,7 +81,7 @@ export function mount(root, H) {
     reader.onerror = function () { showErr(ferr, '读取失败。'); };
     reader.readAsDataURL(f);
   });
-  root.querySelector('#fcp').addEventListener('click', function () { if (fileB64) H.copyText(fileB64); });
+  root.querySelector('#fcp').addEventListener('click', function () { if (fileB64) H.copyText(fileB64, this); });
   root.querySelector('#fb2file').addEventListener('click', function () {
     var raw = stripDataUrl(root.querySelector('#fin').value.trim()) || fileB64;
     if (!raw) { showErr(ferr, '请先粘贴 Base64 或选择文件。'); return; }

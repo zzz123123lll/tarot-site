@@ -48,5 +48,5 @@ export function mount(root, H) {
       root.querySelector('#cp').disabled = true;
     }
   });
-  root.querySelector('#cp').addEventListener('click', function () { if (payloadStr) H.copyText(payloadStr); });
+  root.querySelector('#cp').addEventListener('click', function () { if (payloadStr) H.copyText(payloadStr, this); });
 }

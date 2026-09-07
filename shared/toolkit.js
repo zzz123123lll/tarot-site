@@ -13,7 +13,7 @@ export function downloadBlob(blob, name) {
   a.href = url; a.download = name; a.click();
   setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
 }
-export function copyText(text) {
+export function copyText(text, el) {
   var t = String(text == null ? '' : text);
   function fallback() {
     var ta = document.createElement('textarea');
@@ -25,6 +25,29 @@ export function copyText(text) {
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(t).catch(fallback);
   } else { fallback(); }
+  if (el && el.getBoundingClientRect) celebrate(el);
+}
+// 复制成功的一小簇彩花（懒加载 canvas-confetti，克制不喧宾）
+export function celebrate(el) {
+  if (!el || !el.getBoundingClientRect) return;
+  function fire() {
+    if (!window.confetti) return;
+    var r = el.getBoundingClientRect();
+    if (!r.width) return;
+    window.confetti({
+      particleCount: 26,
+      spread: 55,
+      startVelocity: 24,
+      gravity: 0.85,
+      ticks: 90,
+      scalar: 0.6,
+      origin: { x: (r.left + r.width / 2) / window.innerWidth, y: (r.top + r.height / 2) / window.innerHeight },
+      colors: ['#0071e3', '#1d9e4e', '#c86a1e', '#c99a3e', '#86868b'],
+      disableForReducedMotion: true
+    });
+  }
+  if (window.confetti) { fire(); return; }
+  loadScript('/vendor/canvas-confetti.min.js?v=1').then(fire, function () {});
 }
 export function loadScript(src) {
   return new Promise(function (resolve, reject) {

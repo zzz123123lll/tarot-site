@@ -82,6 +82,6 @@ export function mount(root, H) {
   ['r', 'g', 'b'].forEach(function (k) { el[k].addEventListener('input', function () { sync('rgb'); }); });
   ['h', 's', 'l'].forEach(function (k) { el[k].addEventListener('input', function () { sync('hsl'); }); });
   el.hex2.addEventListener('input', function () { var v = el.hex.value.trim().replace('#', ''); if (/^[0-9a-fA-F]{6}$/.test(v)) checkWcag(parseInt(v.slice(0,2),16), parseInt(v.slice(2,4),16), parseInt(v.slice(4,6),16)); });
-  root.querySelector('#cp').addEventListener('click', function () { H.copyText(el.hex.value); });
+  root.querySelector('#cp').addEventListener('click', function () { H.copyText(el.hex.value, this); });
   sync('hex');
 }

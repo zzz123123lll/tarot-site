@@ -29,5 +29,5 @@ export function mount(root, H) {
       show('');
     } catch (e) { show('解析失败：' + e.message); }
   });
-  root.querySelector('#cp').addEventListener('click', function () { if (tout.textContent) H.copyText(tout.textContent); });
+  root.querySelector('#cp').addEventListener('click', function () { if (tout.textContent) H.copyText(tout.textContent, this); });
 }
