@@ -27,9 +27,9 @@ body.page-home {
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
   color:#1d1d1f; letter-spacing:-0.01em;
   background:
-    radial-gradient(55% 42% at 18% -8%, rgba(0,113,227,0.07), transparent 60%),
-    radial-gradient(45% 36% at 88% -4%, rgba(124,133,240,0.06), transparent 62%),
-    radial-gradient(50% 40% at 50% 115%, rgba(230,199,132,0.05), transparent 60%),
+    radial-gradient(55% 44% at 16% -10%, rgba(0,113,227,0.16), transparent 62%),
+    radial-gradient(46% 38% at 90% -6%, rgba(124,133,240,0.13), transparent 64%),
+    radial-gradient(52% 42% at 50% 112%, rgba(230,199,132,0.10), transparent 60%),
     #fff;
   min-height:100vh; display:flex; flex-direction:column;
 }
@@ -43,7 +43,7 @@ body.page-home .home { flex:1 0 auto; width:100%; }
 body.page-home .hero { text-align:center; padding:104px 24px 56px; }
 body.page-home .hero-kicker { display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:500; color:#0071e3; background:rgba(0,113,227,0.07); border:1px solid rgba(0,113,227,0.16); border-radius:999px; padding:5px 14px; margin:0 0 22px; }
 body.page-home .hero-title { font-size:clamp(48px,7.5vw,88px); font-weight:700; letter-spacing:-0.035em; line-height:1.02; margin:0 0 16px;
-  background:linear-gradient(105deg, #1d1d1f 15%, #52525b 42%, #0071e3 68%, #1d1d1f 100%);
+  background:linear-gradient(105deg, #1d1d1f 0%, #1d1d1f 32%, #0071e3 52%, #1d1d1f 72%, #1d1d1f 100%);
   background-size:220% auto;
   -webkit-background-clip:text; background-clip:text;
   -webkit-text-fill-color:transparent; color:transparent;
