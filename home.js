@@ -28,7 +28,10 @@
     data.sections.forEach(function (sec) {
       var list = tools.filter(function (t) { return t.section === sec.id; });
       if (!list.length) return;
-      html += '<section class="section-block section-block--' + sec.id + '"><h2 class="section-title">' + sec.name + '</h2><div class="apps-grid">';
+      html += '<section class="section-block section-block--' + sec.id + '">'
+      + '<div class="section-head"><span class="section-ic">' + (ICONS[sec.icon] || '') + '</span>'
+      + '<div><h2 class="section-title">' + sec.name + '</h2><p class="section-desc">' + (sec.desc || '') + '</p></div></div>'
+      + '<div class="apps-grid">';
       list.forEach(function (t) {
         var iconCls = t.dark ? 'app-icon app-icon--dark' : 'app-icon app-icon--light app-icon--sec-' + t.section;
         html += '<a class="app" href="' + t.url + '" style="animation-delay:' + (order * 40) + 'ms">'

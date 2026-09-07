@@ -40,7 +40,7 @@ body.page-home .nav-mark { background:#1d1d1f; color:#fff; }
 body.page-home .home { flex:1 0 auto; width:100%; }
 
 /* ===== Hero：居中、大细字 ===== */
-body.page-home .hero { text-align:center; padding:64px 24px 36px; }
+body.page-home .hero { text-align:center; padding:104px 24px 56px; }
 body.page-home .hero-kicker { display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:500; color:#0071e3; background:rgba(0,113,227,0.07); border:1px solid rgba(0,113,227,0.16); border-radius:999px; padding:5px 14px; margin:0 0 22px; }
 body.page-home .hero-title { font-size:clamp(48px,7.5vw,88px); font-weight:700; letter-spacing:-0.035em; line-height:1.02; margin:0 0 16px;
   background:linear-gradient(105deg, #1d1d1f 15%, #52525b 42%, #0071e3 68%, #1d1d1f 100%);
@@ -65,13 +65,16 @@ body.page-home .search:focus { background:#fff; border-color:#0071e3; box-shadow
 /* ===== 工具目录：分区 + 图标 ===== */
 body.page-home #apps { max-width: 720px; margin: 0 auto; padding: 0 24px; }
 body.page-home .section-block { margin-top: 40px; }
-body.page-home .section-title { display:flex; align-items:center; gap:12px; font-size: 14px; font-weight: 600; color: #6e6e73; margin: 0 0 20px; letter-spacing: -0.01em; }
-body.page-home .section-title::before { content:""; width:7px; height:7px; border-radius:50%; flex:none; background:#6e6e73; }
-body.page-home .section-block--utility .section-title::before { background:#0071e3; }
-body.page-home .section-block--image .section-title::before { background:#1d9e4e; }
-body.page-home .section-block--pdf .section-title::before { background:#c86a1e; }
-body.page-home .section-block--divination .section-title::before { background:#e6c784; }
-body.page-home .section-title::after { content:""; flex:1; height:1px; background:rgba(0,0,0,0.06); }
+body.page-home .section-head { display:flex; align-items:center; gap:14px; margin: 0 0 24px; }
+body.page-home .section-ic { display:flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:12px; flex:none; background:#f5f5f7; color:#0071e3; }
+body.page-home .section-block--utility .section-ic { background:linear-gradient(160deg,#eef4ff,#f8faff); color:#0071e3; }
+body.page-home .section-block--image .section-ic { background:linear-gradient(160deg,#eefaf2,#f8fdfa); color:#1d9e4e; }
+body.page-home .section-block--pdf .section-ic { background:linear-gradient(160deg,#fff5ec,#fffaf5); color:#c86a1e; }
+body.page-home .section-block--divination .section-ic { background:linear-gradient(160deg,#faf6ec,#fdfaf2); color:#c99a3e; }
+body.page-home .section-ic svg { width:22px; height:22px; display:block; }
+body.page-home .section-title { font-size:16px; font-weight:650; color:#1d1d1f; margin:0 0 3px; letter-spacing:-0.01em; }
+body.page-home .section-desc { font-size:13px; color:#86868b; margin:0; }
+body.page-home .section-head::after { content:""; flex:1; height:1px; background:rgba(0,0,0,0.06); align-self:center; }
 body.page-home .apps-grid { display:flex; flex-wrap:wrap; gap:32px 28px; }
 body.page-home .app { display:flex; flex-direction:column; align-items:center; gap:8px; text-decoration:none; color:#1d1d1f; animation:appIn .5s ease both; }
 @keyframes appIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
@@ -107,7 +110,11 @@ body.page-home .more-item { display:inline-flex; align-items:center; gap:8px; fo
 body.page-home a.more-item:hover { color:#0071e3; }
 
 /* ===== 页脚：居中、小灰字 ===== */
-body.page-home .home-foot { flex-shrink:0; margin-top:auto; padding:20px 24px 44px; text-align:center; color:#86868b; font-size:13px; }
+body.page-home .home-foot { flex-shrink:0; margin-top:auto; padding:64px 24px 52px; text-align:center; border-top:1px solid rgba(0,0,0,0.06); }
+body.page-home .foot-inner { max-width:720px; margin:0 auto; }
+body.page-home .foot-brand { display:inline-flex; align-items:center; gap:9px; font-size:15px; font-weight:650; color:#1d1d1f; margin-bottom:10px; }
+body.page-home .foot-line { font-size:13px; color:#6e6e73; margin:0 0 6px; }
+body.page-home .foot-note { font-size:12px; color:#86868b; margin:0; }
 
 @media (max-width:820px) {
   body.page-home .hero { padding:72px 20px 40px; }
