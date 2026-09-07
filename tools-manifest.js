@@ -24,8 +24,5 @@ window.TOOLS = {
     { slug: 'unit', name: '单位换算', desc: '长度、重量、温度、面积。', section: 'utility', icon: 'calc', url: '/tools/unit/', status: 'live' },
     { slug: 'bmi', name: 'BMI 计算器', desc: '身体质量指数计算。', section: 'utility', icon: 'calc', url: '/tools/bmi/', status: 'live' },
     { slug: 'date', name: '日期计算', desc: '日期差、加减天数、年龄。', section: 'utility', icon: 'calc', url: '/tools/date/', status: 'live' },
-    { slug: 'labor-law-ai', name: '劳动法维权 AI', desc: '引导式填表，一键生成仲裁申请书。', section: 'more', icon: 'law', url: null, status: 'soon' },
-    { slug: 'wensu', name: '文序 Wensu', desc: 'AI 原生写作系统（桌面应用）。', section: 'more', icon: 'pen', url: 'https://github.com/zzz123123lll/wensu/releases', status: 'download' },
-    { slug: 'workbench', name: '文成 Workbench', desc: '微信公众号写作台（桌面应用）。', section: 'more', icon: 'pen', url: 'https://github.com/zzz123123lll/wencheng-workbench', status: 'download' }
   ]
 };

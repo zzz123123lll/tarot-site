@@ -47,19 +47,6 @@
       });
       html += '</div></section>';
     });
-    var moreTools = tools.filter(function (t) { return t.section === 'more'; });
-    if (moreTools.length) {
-      html += '<section class="section-block section-more"><h2 class="section-title">更多</h2><div class="more-list">';
-      moreTools.forEach(function (t) {
-        var tag = t.status === 'download' ? '下载' : '敬请期待';
-        if (t.status === 'download' && t.url) {
-          html += '<a class="more-item" href="' + t.url + '" target="_blank" rel="noopener">' + t.name + ' <span class="app-badge app-badge--dl">' + tag + '</span></a>';
-        } else {
-          html += '<span class="more-item">' + t.name + ' <span class="app-badge">' + tag + '</span></span>';
-        }
-      });
-      html += '</div></section>';
-    }
     root.innerHTML = html || '<p class="footnote">没找到匹配的工具。</p>';
   }
 
