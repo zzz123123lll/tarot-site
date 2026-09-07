@@ -13,6 +13,19 @@ export function downloadBlob(blob, name) {
   a.href = url; a.download = name; a.click();
   setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
 }
+export function copyText(text) {
+  var t = String(text == null ? '' : text);
+  function fallback() {
+    var ta = document.createElement('textarea');
+    ta.value = t; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(t).catch(fallback);
+  } else { fallback(); }
+}
 export function loadScript(src) {
   return new Promise(function (resolve, reject) {
     if (document.querySelector('script[src="' + src + '"]')) { resolve(); return; }
@@ -65,7 +78,7 @@ const REGISTRY = {
   'date': { title: '日期计算', module: '/tools/date.mjs' }
 };
 
-const H = { esc, fmt, downloadBlob, injectCss, makeDropZone, loadScript };
+const H = { esc, fmt, downloadBlob, injectCss, makeDropZone, loadScript, copyText };
 
 export async function mountTool(slug, root, titleEl) {
   const t = REGISTRY[slug];
