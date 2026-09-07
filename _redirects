@@ -5,4 +5,12 @@
 /pdf-split/  /tool.html?t=pdf-split  200
 /pdf-render/  /tool.html?t=pdf-render  200
 /pdf-compress/  /tool.html?t=pdf-compress  200
-/tools/*  /tool.html?t=:splat  200
+/tools/json/  /tool.html?t=json  200
+/tools/base64/  /tool.html?t=base64  200
+/tools/regex/  /tool.html?t=regex  200
+/tools/color/  /tool.html?t=color  200
+/tools/qr/  /tool.html?t=qr  200
+/tools/uuid/  /tool.html?t=uuid  200
+/tools/unit/  /tool.html?t=unit  200
+/tools/bmi/  /tool.html?t=bmi  200
+/tools/date/  /tool.html?t=date  200
