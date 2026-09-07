@@ -2,9 +2,9 @@
 window.TOOLS = {
   sections: [
     { id: 'divination', name: '占卜' },
+    { id: 'utility', name: '开发工具' },
     { id: 'image', name: '图片工具' },
-    { id: 'pdf', name: 'PDF 工具' },
-    { id: 'utility', name: '小工具' }
+    { id: 'pdf', name: 'PDF 工具' }
   ],
   tools: [
     { slug: 'tarot', name: '塔罗占卜', desc: '78 张韦特牌，一次有依据、不套话的解读。', section: 'divination', icon: 'tarot', url: '/tarot/', status: 'live', dark: true },

@@ -4,7 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>工具盒</title>
-  <link rel="stylesheet" href="site.css?v=8">
+  <meta name="description" content="工具盒——把好用的工具收进一个盒子里。塔罗占卜、图片与 PDF 工具、开发者小工具，全部本地运行、不上传。">
+  <meta property="og:title" content="工具盒">
+  <meta property="og:description" content="把好用的工具，收进一个盒子里。">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231d1d1f'/%3E%3Cpath d='M50 16L59 41L84 50L59 59L50 84L41 59L16 50L41 41Z' fill='%23e6c784'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="site.css?v=9">
 </head>
 <body class="page-home">
   <nav class="site-nav">
@@ -18,7 +23,8 @@
     </header>
 
     <div class="search-wrap">
-      <input type="search" id="searchInput" class="search" placeholder="搜索工具…" aria-label="搜索工具">
+      <span class="search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></span>
+      <input type="search" id="searchInput" class="search" placeholder="搜索工具…（按 /）" aria-label="搜索工具">
     </div>
 
     <div id="apps"></div>
@@ -27,6 +33,6 @@
   <footer class="home-foot">工具盒 &#183; 慢慢变满</footer>
 
   <script src="tools-manifest.js?v=2"></script>
-  <script src="home.js?v=2"></script>
+  <script src="home.js?v=3"></script>
 </body>
 </html>
