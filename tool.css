@@ -1,0 +1,76 @@
+/* tool.css — 工具盒 · 浅色工具页外壳（苹果浅色，与首页一致）。
+   塔罗是深色特例，用 site.css + theme.css，不用这个。
+   层级：令牌层（:root 变量）+ 组件层（导航/容器/按钮/输入/卡片/拖拽区）。 */
+:root {
+  --t-bg: #fff; --t-text: #1d1d1f; --t-muted: #6e6e73; --t-accent: #0071e3;
+  --t-line: rgba(0,0,0,0.08); --t-line-strong: rgba(0,0,0,0.14);
+  --t-surface: #f5f5f7;
+  --t-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--t-font); color: var(--t-text); background: var(--t-bg);
+  -webkit-font-smoothing: antialiased; letter-spacing: -0.01em; min-height: 100vh;
+}
+
+/* —— 导航（浅色，解决"浅色页挂深色导航"）—— */
+.tool-nav {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 14px 24px;
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--t-line);
+}
+.tool-nav a {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--t-accent); text-decoration: none; font-size: 15px; font-weight: 500;
+}
+.tool-nav a:hover { text-decoration: underline; }
+.tool-nav .tool-nav-title { font-size: 15px; font-weight: 600; color: var(--t-text); }
+
+/* —— 容器 / 标题 —— */
+.tool-container { max-width: 760px; margin: 0 auto; padding: 40px 20px 96px; }
+.tool-h1 { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 6px; color: var(--t-text); }
+.tool-sub { font-size: 14px; color: var(--t-muted); margin: 0 0 28px; line-height: 1.5; }
+
+/* —— 按钮 —— */
+.tool-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px 20px; border-radius: 980px; border: none;
+  background: var(--t-accent); color: #fff; font-size: 15px; font-weight: 500;
+  font-family: inherit; cursor: pointer; transition: background .16s, transform .16s;
+}
+.tool-btn:hover { background: #0077ed; transform: translateY(-1px); }
+.tool-btn--ghost { background: transparent; color: var(--t-accent); border: 1px solid var(--t-line-strong); }
+.tool-btn--ghost:hover { background: rgba(0,113,227,0.06); transform: none; }
+.tool-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* —— 输入 / 选择 —— */
+.tool-input, .tool-select {
+  font-family: inherit; font-size: 14px; color: var(--t-text);
+  background: #fff; border: 1px solid var(--t-line-strong); border-radius: 10px;
+  padding: 9px 12px; outline: none; transition: border-color .15s, box-shadow .15s;
+}
+.tool-input:focus, .tool-select:focus { border-color: var(--t-accent); box-shadow: 0 0 0 3px rgba(0,113,227,0.15); }
+.tool-input[type=range] { padding: 0; accent-color: var(--t-accent); border: none; }
+
+/* —— 卡片 —— */
+.tool-card {
+  background: var(--t-surface); border: 1px solid var(--t-line);
+  border-radius: 16px; padding: 18px 20px;
+}
+
+/* —— 拖拽区 —— */
+.tool-drop {
+  border: 2px dashed var(--t-line-strong); border-radius: 16px; padding: 44px 24px;
+  text-align: center; cursor: pointer; background: #fff; transition: border-color .2s, background .2s;
+}
+.tool-drop:hover, .tool-drop.active { border-color: var(--t-accent); background: #f6f9ff; }
+.tool-drop .icon { font-size: 40px; margin-bottom: 12px; }
+.tool-drop .title { font-size: 16px; color: var(--t-text); margin-bottom: 6px; }
+.tool-drop .hint { font-size: 13px; color: var(--t-muted); }
+
+/* —— 说明条 —— */
+.tool-note { font-size: 13px; color: var(--t-muted); margin: 12px 0 0; line-height: 1.5; }
