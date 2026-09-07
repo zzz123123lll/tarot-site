@@ -19,7 +19,7 @@ function slugFromPath() {
   if (p.indexOf('tools/') === 0) p = p.slice(6);
   return p;
 }
-var __dbg = slugFromPath(); document.getElementById('toolRoot').innerHTML = '<p style=font-size:12px;color:#c00>DEBUG path=[' + location.pathname + '] href=[' + location.href + '] slug=[' + __dbg + ']</p>';
+mountTool(slugFromPath(), document.getElementById('toolRoot'), document.getElementById('toolTitle'));
 </script>
 </body>
 </html>
