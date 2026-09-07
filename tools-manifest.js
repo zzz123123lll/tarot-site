@@ -10,7 +10,7 @@ window.TOOLS = {
     { slug: 'tarot', name: '塔罗占卜', desc: '78 张韦特牌，一次有依据、不套话的解读。', section: 'divination', icon: 'tarot', url: '/tarot/', status: 'live', dark: true },
     { slug: 'img-compress', name: '图片压缩', desc: '批量瘦身，三档预设，没压更小就跳过。', section: 'image', icon: 'compress', url: '/img-compress/', status: 'live' },
     { slug: 'image-convert', name: '图片转换', desc: '缩放尺寸 + PNG/JPG/WebP 格式互转。', section: 'image', icon: 'convert', url: '/image-convert/', status: 'live' },
-    { slug: 'images-to-pdf', name: '图片合成 PDF', desc: '多张图片合成一个 PDF。', section: 'image', icon: 'pdf', url: '/images-to-pdf/', status: 'soon' },
+    { slug: 'images-to-pdf', name: '图片合成 PDF', desc: '多张图片合成一个 PDF。', section: 'image', icon: 'pdf', url: '/images-to-pdf/', status: 'live' },
     { slug: 'pdf-merge', name: 'PDF 合并', desc: '多个 PDF 合成一个。', section: 'pdf', icon: 'pdf', url: '/pdf-merge/', status: 'soon' },
     { slug: 'pdf-split', name: 'PDF 拆分/旋转', desc: '提取页面、拆分、旋转。', section: 'pdf', icon: 'pdf', url: '/pdf-split/', status: 'soon' },
     { slug: 'pdf-render', name: 'PDF 转图片', desc: 'PDF 转 JPG/PNG（可调 DPI）。', section: 'pdf', icon: 'pdf', url: '/pdf-render/', status: 'soon' },

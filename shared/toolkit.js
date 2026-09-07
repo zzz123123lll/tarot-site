@@ -13,6 +13,16 @@ export function downloadBlob(blob, name) {
   a.href = url; a.download = name; a.click();
   setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
 }
+export function loadScript(src) {
+  return new Promise(function (resolve, reject) {
+    if (document.querySelector('script[src="' + src + '"]')) { resolve(); return; }
+    var s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = function () { reject(new Error('load failed: ' + src)); };
+    document.head.appendChild(s);
+  });
+}
 export function injectCss(css) {
   const st = document.createElement('style');
   st.textContent = css;
@@ -55,7 +65,7 @@ const REGISTRY = {
   'date': { title: '日期计算', module: '/tools/date.mjs' }
 };
 
-const H = { esc, fmt, downloadBlob, injectCss, makeDropZone };
+const H = { esc, fmt, downloadBlob, injectCss, makeDropZone, loadScript };
 
 export async function mountTool(slug, root, titleEl) {
   const t = REGISTRY[slug];
