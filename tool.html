@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>工具盒</title>
-<link rel="stylesheet" href="/tool.css?v=2">
+<link rel="stylesheet" href="/tool.css?v=3">
 </head>
 <body>
 <nav class="tool-nav">
@@ -13,7 +13,7 @@
 </nav>
 <div class="tool-container" id="toolRoot"></div>
 <script type="module">
-import { mountTool } from '/shared/toolkit.js?v=1';
+import { mountTool } from '/shared/toolkit.js?v=2';
 var slug = new URLSearchParams(location.search).get('t') || '';
 mountTool(slug, document.getElementById('toolRoot'), document.getElementById('toolTitle'));
 </script>
