@@ -14,8 +14,12 @@
 <div class="tool-container" id="toolRoot"></div>
 <script type="module">
 import { mountTool } from '/shared/toolkit.js?v=2';
-var slug = new URLSearchParams(location.search).get('t') || '';
-mountTool(slug, document.getElementById('toolRoot'), document.getElementById('toolTitle'));
+function slugFromPath() {
+  var p = (location.pathname || '').replace(/^\/+|\/+$/g, '');
+  if (p.indexOf('tools/') === 0) p = p.slice(6);
+  return p;
+}
+mountTool(slugFromPath(), document.getElementById('toolRoot'), document.getElementById('toolTitle'));
 </script>
 </body>
 </html>
