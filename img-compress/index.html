@@ -6,43 +6,38 @@
 <title>图片压缩 · 工具盒</title>
 <link rel="stylesheet" href="/tool.css?v=1">
 <style>
-/* 工具专属样式（苹果浅色） */
-.format-tabs { display:flex; gap:8px; margin-bottom:20px; }
-.fmt-tab { padding:7px 14px; border-radius:980px; font-size:13px; color:#6e6e73; background:#f5f5f7; cursor:pointer; transition:all .15s; }
-.fmt-tab.active { background:#0071e3; color:#fff; }
-.settings { display:flex; gap:24px; align-items:center; margin:0 0 20px; flex-wrap:wrap; }
-.setting { display:flex; align-items:center; gap:10px; }
-.setting label { font-size:13px; color:#6e6e73; white-space:nowrap; }
-.setting input[type=range] { width:140px; accent-color:#0071e3; }
-.setting .val { font-size:13px; color:#1d1d1f; min-width:44px; }
+/* 工具专属样式（苹果浅色，按 LocalFileToolkit 的预设+跳过设计） */
+.preset-tabs { display:flex; gap:0; background:#f5f5f7; border-radius:12px; padding:3px; margin-bottom:6px; }
+.preset-tab { flex:1; padding:9px 0; border:none; border-radius:9px; background:transparent; color:#6e6e73; font-size:14px; font-weight:500; font-family:inherit; cursor:pointer; transition:all .15s; }
+.preset-tab.active { background:#fff; color:#1d1d1f; box-shadow:0 1px 3px rgba(0,0,0,0.12); }
+.preset-hint { font-size:12px; color:#86868b; margin:0 0 22px; }
 .progress-bar { display:none; height:6px; background:#f5f5f7; border-radius:999px; margin:16px 0 0; overflow:hidden; }
 .progress-bar .fill { height:100%; background:#0071e3; border-radius:999px; transition:width .2s; }
 .batch-actions { display:none; gap:10px; margin:16px 0 0; }
 .results { margin-top:20px; }
-.result-card { display:flex; align-items:center; gap:12px; background:#fff; border:1px solid rgba(0,0,0,0.08); border-radius:14px; padding:12px 16px; margin-bottom:10px; transition:border-color .15s; }
-.result-card:hover { border-color:rgba(0,0,0,0.16); }
+.result-card { display:flex; align-items:center; gap:12px; background:#fff; border:1px solid rgba(0,0,0,0.08); border-radius:14px; padding:12px 16px; margin-bottom:10px; }
 .result-card .preview { width:48px; height:48px; border-radius:8px; object-fit:cover; background:#f5f5f7; cursor:pointer; }
 .result-card .info { flex:1; min-width:0; }
 .result-card .name { font-size:13px; color:#1d1d1f; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .result-card .sizes { font-size:12px; color:#6e6e73; margin-top:2px; }
 .result-card .sizes .old { text-decoration:line-through; }
-.result-card .sizes .saved { color:#1d9e4e; font-weight:600; }
-.comp-badge { font-size:11px; padding:2px 7px; border-radius:999px; margin-left:8px; }
-.comp-badge.good { color:#1d9e4e; background:rgba(29,158,78,0.1); }
-.comp-badge.meh { color:#b25000; background:rgba(178,80,0,0.1); }
-.comp-badge.bad { color:#d70015; background:rgba(215,0,21,0.1); }
+.result-card .sizes .new { color:#1d9e4e; font-weight:600; }
+.saved-badge { font-size:11px; color:#1d9e4e; background:rgba(29,158,78,0.1); border-radius:999px; padding:2px 7px; margin-left:8px; }
+.status-tag { font-size:11px; color:#86868b; background:#f5f5f7; border-radius:999px; padding:3px 9px; white-space:nowrap; }
+.result-card.result-fail .name { color:#d70015; }
+.result-card.result-fail .status-tag { color:#d70015; background:rgba(215,0,21,0.08); }
 .remove-btn { background:none; border:none; color:#86868b; cursor:pointer; font-size:16px; padding:4px 8px; border-radius:6px; }
 .remove-btn:hover { color:#d70015; background:rgba(215,0,21,0.08); }
-.download-btn { background:#0071e3; color:#fff; border:none; border-radius:980px; padding:8px 14px; font-size:12px; cursor:pointer; }
+.download-btn { background:#0071e3; color:#fff; border:none; border-radius:980px; padding:8px 14px; font-size:12px; cursor:pointer; white-space:nowrap; }
 .download-btn:hover { background:#0077ed; }
 .summary { margin-top:20px; background:#f5f5f7; border-radius:14px; padding:16px 18px; }
 .summary .total { font-size:14px; color:#1d1d1f; }
 .summary .note { font-size:12px; color:#6e6e73; margin-top:4px; }
+.tool-drop .icon svg { width:40px; height:40px; color:#0071e3; }
 .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:100; }
 .modal.show { display:flex; }
 .modal img { max-width:90%; max-height:90%; border-radius:12px; }
 .modal .close { position:absolute; top:20px; right:24px; color:#fff; font-size:32px; cursor:pointer; }
-.tool-drop .icon svg { width:40px; height:40px; color:#0071e3; }
 </style>
 </head>
 <body>
@@ -53,31 +48,25 @@
 
   <div class="tool-container">
     <h1 class="tool-h1">图片压缩</h1>
-    <p class="tool-sub">纯浏览器本地压缩，不上传、不联网、不限数量</p>
+    <p class="tool-sub">批量瘦身，纯本地处理，不上传、不联网。压了没变小就跳过。</p>
 
-    <div class="format-tabs">
-      <div class="fmt-tab active" data-fmt="auto">自动</div>
-      <div class="fmt-tab" data-fmt="image/jpeg">JPEG</div>
-      <div class="fmt-tab" data-fmt="image/png">PNG</div>
-      <div class="fmt-tab" data-fmt="image/webp">WebP</div>
+    <div class="preset-tabs" id="presetTabs">
+      <button class="preset-tab" data-preset="small">小文件</button>
+      <button class="preset-tab active" data-preset="balanced">均衡</button>
+      <button class="preset-tab" data-preset="high">高质量</button>
     </div>
-
-    <div class="settings">
-      <div class="setting"><label>质量</label><input type="range" id="quality" min="10" max="100" value="75"><span class="val" id="qualVal">75%</span></div>
-      <div class="setting"><label>最大宽度</label><input type="range" id="maxW" min="200" max="4000" value="1920" step="100"><span class="val" id="maxWVal">1920px</span></div>
-    </div>
+    <p class="preset-hint">小文件 · 体积最小　均衡 · 推荐　高质量 · 最接近原图</p>
 
     <div class="tool-drop" id="dropZone">
       <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="M3 17l5-5 3.5 3.5L16 11l5 5"/></svg></div>
       <div class="title">点击选择图片，或拖拽到此处</div>
-      <div class="hint">支持 JPG、PNG、WebP、BMP、GIF</div>
+      <div class="hint">支持 JPG、PNG、WebP、BMP、GIF（批量）</div>
     </div>
     <input type="file" id="fileInput" multiple accept="image/*" style="display:none">
     <div class="progress-bar" id="progress"><div class="fill" style="width:0%"></div></div>
 
     <div class="batch-actions" id="batchActions">
       <button class="tool-btn" onclick="downloadAll()">全部下载</button>
-      <button class="tool-btn tool-btn--ghost" onclick="recompress()">重新压缩</button>
       <button class="tool-btn tool-btn--ghost" onclick="clearAll()">清除</button>
     </div>
 
@@ -90,188 +79,132 @@
     <img id="modalImg" src="" alt="">
   </div>
 
-  <script>
+<script>
+var PRESETS = { small:{label:'小文件',q:0.70}, balanced:{label:'均衡',q:0.82}, high:{label:'高质量',q:0.92} };
+var preset = 'balanced';
+var originals = [];
+var items = [];
 
-const STORAGE_KEY = 'img-compress-settings';
-let targetFormat = 'auto';
-let processedFiles = [];
-let totalOrig = 0, totalComp = 0;
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmt(bytes){ if(bytes>=1e6) return (bytes/1e6).toFixed(1)+' MB'; if(bytes>=1e3) return (bytes/1e3).toFixed(0)+' KB'; return bytes+' B'; }
 
-// Load saved settings
-function loadSettings() {
-  try {
-    const s = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (s) {
-      if (s.quality) document.getElementById('quality').value = s.quality;
-      if (s.maxW) document.getElementById('maxW').value = s.maxW;
-      if (s.fmt) { targetFormat = s.fmt; updateFmtTabs(); }
-    }
-  } catch(e) {}
-  document.getElementById('qualVal').textContent = document.getElementById('quality').value + '%';
-  document.getElementById('maxWVal').textContent = document.getElementById('maxW').value + 'px';
-}
-function saveSettings() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({
-    quality: document.getElementById('quality').value,
-    maxW: document.getElementById('maxW').value,
-    fmt: targetFormat
-  }));
-}
-
-document.getElementById('quality').addEventListener('input', () => {
-  document.getElementById('qualVal').textContent = document.getElementById('quality').value + '%';
-  saveSettings();
-});
-document.getElementById('maxW').addEventListener('input', () => {
-  document.getElementById('maxWVal').textContent = document.getElementById('maxW').value + 'px';
-  saveSettings();
+document.getElementById('presetTabs').addEventListener('click', function(e){
+  var t = e.target.closest('.preset-tab'); if(!t) return;
+  preset = t.dataset.preset;
+  document.querySelectorAll('.preset-tab').forEach(function(x){ x.classList.toggle('active', x===t); });
+  if (originals.length) processAll();
 });
 
-document.querySelectorAll('.fmt-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    targetFormat = tab.dataset.fmt;
-    updateFmtTabs();
-    saveSettings();
-  });
-});
+var dropZone = document.getElementById('dropZone');
+dropZone.addEventListener('click', function(){ document.getElementById('fileInput').click(); });
+dropZone.addEventListener('dragover', function(e){ e.preventDefault(); dropZone.classList.add('active'); });
+dropZone.addEventListener('dragleave', function(){ dropZone.classList.remove('active'); });
+dropZone.addEventListener('drop', function(e){ e.preventDefault(); dropZone.classList.remove('active'); addFiles(e.dataTransfer.files); });
+document.getElementById('fileInput').addEventListener('change', function(e){ addFiles(e.target.files); e.target.value=''; });
 
-function updateFmtTabs() {
-  document.querySelectorAll('.fmt-tab').forEach(t => t.classList.toggle('active', t.dataset.fmt === targetFormat));
+function addFiles(files){
+  for (var i=0;i<files.length;i++){ if (files[i].type.indexOf('image/')===0) originals.push(files[i]); }
+  processAll();
 }
 
-const dropZone = document.getElementById('dropZone');
-dropZone.addEventListener('click', () => document.getElementById('fileInput').click());
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('active'); });
-dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('active'); });
-dropZone.addEventListener('drop', e => {
-  e.preventDefault(); dropZone.classList.remove('active');
-  handleFiles(e.dataTransfer.files);
-});
-document.getElementById('fileInput').addEventListener('change', e => handleFiles(e.target.files));
-
-async function handleFiles(files) {
-  const quality = document.getElementById('quality').value / 100;
-  const maxW = parseInt(document.getElementById('maxW').value);
-  const progress = document.getElementById('progress');
+function processAll(){
+  var progress = document.getElementById('progress');
   progress.style.display = 'block';
-  let done = 0;
-
-  for (const file of files) {
-    if (!file.type.startsWith('image/')) continue;
-    const origSize = file.size;
-    totalOrig += origSize;
-
-    const img = await createImageBitmap(file);
-    let w = img.width, h = img.height;
-    if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
-
-    const canvas = document.createElement('canvas');
-    canvas.width = w; canvas.height = h;
-    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-    img.close();
-
-    let mime = file.type;
-    if (targetFormat !== 'auto') mime = targetFormat;
-    if (mime === 'image/bmp' || mime === 'image/gif') mime = 'image/png';
-
-    const blob = await new Promise(r => canvas.toBlob(r, mime, quality));
-    const compSize = blob.size;
-    totalComp += compSize;
-    const url = URL.createObjectURL(blob);
-    processedFiles.push({
-      name: file.name, origSize, compSize, url, blob,
-      saved: origSize > 0 ? ((1 - compSize / origSize) * 100).toFixed(0) : 0
+  items = [];
+  render();
+  var done = 0;
+  var total = originals.length;
+  (function next(){
+    if (done >= total) {
+      progress.style.display = 'none';
+      document.getElementById('progress').querySelector('.fill').style.width = '0%';
+      render();
+      return;
+    }
+    var file = originals[done];
+    compressOne(file, function(){
+      done++;
+      document.getElementById('progress').querySelector('.fill').style.width = (done/total*100) + '%';
+      setTimeout(next, 0);
     });
-
-    done++;
-    progress.querySelector('.fill').style.width = (done / files.length * 100) + '%';
-  }
-  progress.style.display = 'none';
-  progress.querySelector('.fill').style.width = '0%';
-  renderResults();
+  })();
 }
 
-function renderResults() {
-  const div = document.getElementById('results');
-  div.innerHTML = processedFiles.map((f, i) => {
-    const badge = f.saved > 30 ? '<span class="comp-badge good">-' + f.saved + '%</span>'
-      : f.saved > 10 ? '<span class="comp-badge meh">-' + f.saved + '%</span>'
-      : '<span class="comp-badge bad">-' + f.saved + '%</span>';
-    return `<div class="result-card">
-      <img class="preview" src="${f.url}" alt="" onclick="previewImage('${f.url}')">
-      <div class="info">
-        <div class="name">${f.name}${badge}</div>
-        <div class="sizes"><span class="old">${formatSize(f.origSize)}</span> → <span class="saved">${formatSize(f.compSize)}</span></div>
-      </div>
-      <button class="remove-btn" onclick="removeOne(${i})" title="移除">&times;</button>
-      <button class="download-btn" onclick="downloadOne(${i})">下载</button>
-    </div>`;
-  }).join('');
-  div.style.display = 'block';
-  document.getElementById('batchActions').style.display = processedFiles.length > 0 ? 'flex' : 'none';
+function compressOne(file, cb){
+  var origSize = file.size;
+  var mime = file.type;
+  if (['image/jpeg','image/png','image/webp'].indexOf(mime) < 0) mime = 'image/png';
+  createImageBitmap(file).then(function(img){
+    var canvas = document.createElement('canvas');
+    canvas.width = img.width; canvas.height = img.height;
+    canvas.getContext('2d').drawImage(img, 0, 0);
+    img.close();
+    canvas.toBlob(function(blob){
+      if (!blob) { items.push({name:file.name, origSize:origSize, status:'fail'}); cb(); return; }
+      if (blob.size >= origSize) {
+        items.push({name:file.name, origSize:origSize, outSize:blob.size, status:'skip'});
+      } else {
+        items.push({name:file.name, origSize:origSize, outSize:blob.size, url:URL.createObjectURL(blob), blob:blob, status:'ok', saved:origSize-blob.size});
+      }
+      cb();
+    }, mime, PRESETS[preset].q);
+  }).catch(function(){ items.push({name:file.name, origSize:origSize, status:'fail'}); cb(); });
+}
 
-  const summary = document.getElementById('summary');
-  if (processedFiles.length > 0) {
-    const saved = totalOrig > 0 ? ((1 - totalComp / totalOrig) * 100).toFixed(0) : 0;
+function render(){
+  var div = document.getElementById('results');
+  var html = '';
+  for (var i=0;i<items.length;i++){
+    var f = items[i];
+    if (f.status === 'ok') {
+      var pct = f.origSize>0 ? Math.round(f.saved/f.origSize*100) : 0;
+      html += '<div class="result-card">'
+        + '<img class="preview" src="' + f.url + '" alt="" onclick="previewImage(' + i + ')">'
+        + '<div class="info"><div class="name">' + esc(f.name) + '<span class="saved-badge">-' + pct + '%</span></div>'
+        + '<div class="sizes"><span class="old">' + fmt(f.origSize) + '</span> → <span class="new">' + fmt(f.outSize) + '</span></div></div>'
+        + '<button class="remove-btn" onclick="removeOne(' + i + ')" title="移除">×</button>'
+        + '<button class="download-btn" onclick="downloadOne(' + i + ')">下载</button>'
+        + '</div>';
+    } else if (f.status === 'skip') {
+      html += '<div class="result-card">'
+        + '<div class="info"><div class="name">' + esc(f.name) + '</div>'
+        + '<div class="sizes">未缩小，已保留原图（' + fmt(f.origSize) + '）</div></div>'
+        + '<span class="status-tag">未缩小</span>'
+        + '<button class="remove-btn" onclick="removeOne(' + i + ')" title="移除">×</button>'
+        + '</div>';
+    } else {
+      html += '<div class="result-card result-fail">'
+        + '<div class="info"><div class="name">' + esc(f.name) + '</div>'
+        + '<div class="sizes">处理失败</div></div>'
+        + '<span class="status-tag">失败</span>'
+        + '<button class="remove-btn" onclick="removeOne(' + i + ')" title="移除">×</button>'
+        + '</div>';
+    }
+  }
+  div.innerHTML = html;
+  div.style.display = items.length ? 'block' : 'none';
+
+  var ok = items.filter(function(f){return f.status==='ok';});
+  var skip = items.filter(function(f){return f.status==='skip';});
+  var fail = items.filter(function(f){return f.status==='fail';});
+  var savedTotal = 0; ok.forEach(function(f){ savedTotal += f.saved; });
+  document.getElementById('batchActions').style.display = ok.length ? 'flex' : 'none';
+  var summary = document.getElementById('summary');
+  if (items.length) {
     summary.style.display = 'block';
-    summary.innerHTML = `<div class="total">总计节省 <strong>${formatSize(totalOrig - totalComp)}</strong>（-${saved}%）</div>
-      <div class="note">${formatSize(totalOrig)} → ${formatSize(totalComp)} · 处理 ${processedFiles.length} 张 · 全程本地运算</div>`;
+    summary.innerHTML = '<div class="total">成功 ' + ok.length + ' 张 · 跳过 ' + skip.length + ' 张 · 失败 ' + fail.length + ' 张'
+      + (savedTotal>0 ? ' · 共节省 <strong>' + fmt(savedTotal) + '</strong>' : '') + '</div>'
+      + '<div class="note">全程本地运算，图片不会离开你的电脑。</div>';
+  } else {
+    summary.style.display = 'none';
   }
 }
 
-function removeOne(i) {
-  const f = processedFiles[i];
-  totalOrig -= f.origSize;
-  totalComp -= f.compSize;
-  URL.revokeObjectURL(f.url);
-  processedFiles.splice(i, 1);
-  if (processedFiles.length === 0) clearAll();
-  else renderResults();
-}
-
-function recompress() {
-  const origLength = processedFiles.length;
-  processedFiles.forEach(f => URL.revokeObjectURL(f.url));
-  processedFiles = [];
-  totalOrig = 0;
-  totalComp = 0;
-  document.getElementById('results').style.display = 'none';
-  document.getElementById('fileInput').click();
-}
-
-function downloadOne(i) {
-  const f = processedFiles[i];
-  const a = document.createElement('a');
-  a.href = f.url;
-  a.download = f.name.replace(/(\.[^.]+)$/, '_compressed$1');
-  a.click();
-}
-
-function downloadAll() {
-  processedFiles.forEach((f, i) => setTimeout(() => downloadOne(i), i * 200));
-}
-
-function clearAll() {
-  processedFiles.forEach(f => URL.revokeObjectURL(f.url));
-  processedFiles = [];
-  totalOrig = totalComp = 0;
-  document.getElementById('results').style.display = 'none';
-  document.getElementById('batchActions').style.display = 'none';
-  document.getElementById('summary').style.display = 'none';
-}
-
-function previewImage(url) {
-  document.getElementById('modalImg').src = url;
-  document.getElementById('modal').classList.add('show');
-}
-
-function formatSize(bytes) {
-  if (bytes >= 1e6) return (bytes/1e6).toFixed(1)+' MB';
-  if (bytes >= 1e3) return (bytes/1e3).toFixed(0)+' KB';
-  return bytes + ' B';
-}
-
-loadSettings();
+function previewImage(i){ var f=items[i]; if(f && f.url){ document.getElementById('modalImg').src = f.url; document.getElementById('modal').classList.add('show'); } }
+function removeOne(i){ var f=items[i]; if(f && f.url) URL.revokeObjectURL(f.url); originals.splice(i,1); items.splice(i,1); render(); }
+function downloadOne(i){ var f=items[i]; if(!f || !f.url) return; var a=document.createElement('a'); a.href=f.url; a.download=f.name.replace(/(\.[^.]+)$/,'_compressed$1'); a.click(); }
+function downloadAll(){ var ok=items.map(function(f,i){return {f:f,i:i};}).filter(function(x){return x.f.status==='ok';}); ok.forEach(function(x,j){ setTimeout(function(){ downloadOne(x.i); }, j*200); }); }
+function clearAll(){ items.forEach(function(f){ if(f.url) URL.revokeObjectURL(f.url); }); originals=[]; items=[]; render(); }
 </script>
 </body>
 </html>
