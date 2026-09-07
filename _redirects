@@ -1,0 +1,8 @@
+/img-compress/  /tool.html?t=img-compress  200
+/image-convert/  /tool.html?t=image-convert  200
+/images-to-pdf/  /tool.html?t=images-to-pdf  200
+/pdf-merge/  /tool.html?t=pdf-merge  200
+/pdf-split/  /tool.html?t=pdf-split  200
+/pdf-render/  /tool.html?t=pdf-render  200
+/pdf-compress/  /tool.html?t=pdf-compress  200
+/tools/*  /tool.html?t=:splat  200

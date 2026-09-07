@@ -63,6 +63,10 @@ body.page-home .app-name { font-size:13px; color:#6e6e73; }
 body.page-home .app-badge { font-size:11px; color:#86868b; background:#f5f5f7; border-radius:999px; padding:2px 9px; }
 body.page-home .app-badge--dl { color:#0071e3; background:rgba(0,113,227,0.08); }
 body.page-home .footnote { margin-top:44px; font-size:13.5px; color:#86868b; }
+body.page-home .section-more { opacity:0.85; }
+body.page-home .more-list { display:flex; flex-wrap:wrap; gap:10px; }
+body.page-home .more-item { display:inline-flex; align-items:center; gap:8px; font-size:13px; color:#6e6e73; text-decoration:none; padding:8px 14px; background:#f5f5f7; border-radius:999px; }
+body.page-home a.more-item:hover { color:#0071e3; }
 
 /* ===== 页脚：居中、小灰字 ===== */
 body.page-home .home-foot { flex-shrink:0; margin-top:auto; padding:20px 24px 44px; text-align:center; color:#86868b; font-size:13px; }
