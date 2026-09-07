@@ -62,6 +62,14 @@
     }
   });
 
+  root.addEventListener('mousemove', function (e) {
+    var app = e.target && e.target.closest ? e.target.closest('a.app') : null;
+    if (!app) return;
+    var rect = app.getBoundingClientRect();
+    app.style.setProperty('--mouse-x', (e.clientX - rect.left) + 'px');
+    app.style.setProperty('--mouse-y', (e.clientY - rect.top) + 'px');
+  });
+
   var kicker = document.getElementById('kicker');
   if (kicker) kicker.textContent = '✦ ' + data.tools.length + ' 个工具 · 全部本地运行';
 
