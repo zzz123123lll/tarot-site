@@ -24,7 +24,7 @@ body { -webkit-font-smoothing:antialiased; }
 
 /* ===== 首页根：苹果浅色 ===== */
 body.page-home {
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  font-family:"Geist",-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
   color:#1d1d1f; letter-spacing:-0.01em;
   background:
     radial-gradient(55% 44% at 16% -10%, rgba(0,113,227,0.16), transparent 62%),

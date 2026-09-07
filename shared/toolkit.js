@@ -64,6 +64,21 @@ export function injectCss(css) {
   st.textContent = css;
   document.head.appendChild(st);
 }
+// 给带 data-tippy-content 的元素挂提示（懒加载 tippy；重复调用安全）
+export function initTips(scope) {
+  var root = scope || document;
+  var els = root.querySelectorAll('[data-tippy-content]');
+  if (!els.length) return;
+  function apply() {
+    if (!window.tippy) return;
+    window.tippy(Array.prototype.filter.call(els, function (el) { return !el._tippy; }), {
+      theme: 'tool', arrow: true, placement: 'top',
+      delay: [250, 0], offset: [0, 8], animation: 'shift-toward', duration: [140, 90]
+    });
+  }
+  if (window.tippy) { apply(); return; }
+  loadScript('/vendor/tippy.umd.min.js?v=1').then(apply, function () {});
+}
 // 让一个容器变成"点击选文件 + 拖拽"的投放区
 export function makeDropZone(el, onFiles, accept) {
   el.addEventListener('click', function () {
@@ -102,7 +117,7 @@ const REGISTRY = {
   'date': { title: '日期 & 时间戳', module: '/tools/date.mjs' }
 };
 
-const H = { esc, fmt, downloadBlob, injectCss, makeDropZone, loadScript, copyText };
+const H = { esc, fmt, downloadBlob, injectCss, makeDropZone, loadScript, copyText, initTips };
 
 export async function mountTool(slug, root, titleEl) {
   const t = REGISTRY[slug];

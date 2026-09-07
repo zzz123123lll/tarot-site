@@ -85,7 +85,7 @@ export function mount(root, H) {
           + '<img class="preview" src="' + URL.createObjectURL(f.blob) + '" alt="" onclick="void 0">'
           + '<div class="info"><div class="name">' + H.esc(f.name) + '<span class="saved-badge">-' + pct + '%</span></div>'
           + '<div class="sizes"><span class="old">' + H.fmt(f.origSize) + '</span> → <span class="new">' + H.fmt(f.outSize) + '</span></div></div>'
-          + '<button class="remove-btn" data-i="' + i + '">×</button>'
+          + '<button class="remove-btn" data-i="' + i + '" data-tippy-content="移除">×</button>'
           + '<button class="download-btn" data-i="' + i + '">下载</button></div>';
       } else if (f.status === 'skip') {
         html += '<div class="result-card"><div class="info"><div class="name">' + H.esc(f.name) + '</div>'
@@ -105,6 +105,7 @@ export function mount(root, H) {
     res.querySelectorAll('.remove-btn').forEach(function (b) {
       b.addEventListener('click', function () { removeOne(parseInt(b.dataset.i, 10)); });
     });
+    H.initTips(root);
 
     var ok = items.filter(function (f) { return f.status === 'ok'; });
     var skip = items.filter(function (f) { return f.status === 'skip'; });
