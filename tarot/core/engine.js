@@ -10,10 +10,11 @@
     require('./data/tarot-deck.js'),
     require('./elements.js'),
     require('./spreads.js'),
-    require('./questions.js')
+    require('./questions.js'),
+    require('./data/card-imagery.js')
   ); }
-  else { root.TarotEngine = factory(root.TarotDataDeck, root.TarotElements, root.TarotSpreads, root.TarotQuestions); }
-})(typeof self !== 'undefined' ? self : this, function (DECK, Elements, Spreads, Questions) {
+  else { root.TarotEngine = factory(root.TarotDataDeck, root.TarotElements, root.TarotSpreads, root.TarotQuestions, root.TarotCardImagery); }
+})(typeof self !== 'undefined' ? self : this, function (DECK, Elements, Spreads, Questions, IMAGERY) {
   const { cardElement, relation, describeElement, ELEMENTS } = Elements;
   const { getSpread } = Spreads;
   const { detectIntent, getIntent } = Questions;
@@ -84,6 +85,7 @@
       element: el, elementLabel: elementLabel(el),
       keywords: kw || [],
       meaning: text || '',
+      img: (IMAGERY && IMAGERY[card.en]) || '',
       depth: (function () {
         if (card.arcana === 'minor') {
           if (card.rank && COURT[card.rank]) return [COURT[card.rank]];
@@ -107,21 +109,26 @@
 
     // 1) Arcana ratio
     const majorRatio = majorCount / total;
-    if (majorCount) parts.arcana.push(
-      majorRatio >= 0.5
-        ? '本次共取出' + majorCount + '张/共' + total + '张为大阿尔卡纳，说明这是人生层面的重大课题，而非琐碎小事。'
-        : '大阿尔卡纳占' + majorCount + '张，整体偏向现实层面的事件与过程。'
-    );
+    if (majorCount) {
+      if (majorRatio >= 0.5) {
+        parts.arcana.push(majorCount === total
+          ? (total === 1 ? '这一张是大阿尔卡纳——这件事不是鸡毛蒜皮，而是人生层面的一道大题。' : '这几张都是大阿尔卡纳——这件事不是鸡毛蒜皮，而是人生层面的一道大题。')
+          : '其中' + majorCount + '张是大阿尔卡纳，这件事的分量，不止于日常琐事。');
+      } else {
+        parts.arcana.push('这几张偏重现实层面的事件与过程，是眼前要落地处理的事。');
+      }
+    }
 
     // 2) Dominant elements
     if (dominantElements.length) {
       const top = dominantElements[0];
       const elInfo = describeElement(top.element);
-      parts.elements.push('主导元素为「' + (elInfo ? elInfo.label : top.element) + '」：' + (elInfo ? elInfo.domain : '') + '。');
+      const domain = (elInfo && elInfo.domain ? elInfo.domain : '').replace(/·/g, '、');
+      parts.elements.push('贯穿这几张牌的，是一股「' + (elInfo ? elInfo.label : top.element) + '」的能量，它关乎' + domain + '。');
       if (dominantElements.length > 1) {
         const second = dominantElements[1];
         const s2 = describeElement(second.element);
-        parts.elements.push('它又受到「' + (s2 ? s2.label : second.element) + '」的补充。');
+        parts.elements.push('旁边还有「' + (s2 ? s2.label : second.element) + '」的力量在托底。');
       }
     }
 
@@ -158,18 +165,28 @@
     const story = [];
     for (const c of cards) {
       const essence = (c.keywords && c.keywords.length) ? c.keywords[0] : c.card.name;
-      story.push('「' + c.position.label + '」的【' + c.card.name + (c.reversed ? '·逆位' : '') + '】带来「' + essence + '」');
+      story.push('「' + c.card.name + (c.reversed ? '（逆）' : '') + '」的' + essence);
     }
     const narrative = (story.length > 1)
-      ? '这三张牌连起来，是一条路：' + story.join(' → ') + '。'
+      ? '把这几张牌连起来，就是从' + story.join('，到') + '——一条连续的路，不是孤立的几张牌。'
       : '此刻的核心，是' + story[0] + '。';
 
     // 一句话 takeaway：从动向 + 主导元素 + 逆位提炼
     let takeaway = '';
     const topEl = dominantElements.length ? dominantElements[0].element : null;
-    const move = cards.map(function (c) { return (c.keywords && c.keywords.length) ? c.keywords[0] : c.card.name; }).join('、');
-    takeaway = '把这段牌读成一个动向：' + move + '。' + (topEl ? ('而贯穿它的，是「' + (describeElement(topEl).label) + '」的能量。') : '');
-    if (reversedCount) takeaway += ' 其中逆位的部分，是在提醒你：别急着硬来，先落地。';
+    const moves = cards.map(function (c) { return (c.keywords && c.keywords.length) ? c.keywords[0] : c.card.name; });
+    if (cards.length === 1) {
+      takeaway = '把这张牌读成一句话：你正站在一个「' + moves[0] + '」的起点上' + (topEl ? ('，而它带着「' + describeElement(topEl).label + '」的底色') : '') + '。';
+    } else {
+      let seq = '';
+      for (let k = 0; k < moves.length; k++) {
+        if (k === 0) seq += '「' + moves[k] + '」';
+        else if (k === moves.length - 1) seq += '，最后落到「' + moves[k] + '」';
+        else seq += '，接着「' + moves[k] + '」';
+      }
+      takeaway = '把这几张牌读成一条线：先' + seq + '——这就是事情正在走的那个方向。';
+    }
+    if (reversedCount) takeaway += ' 逆位的部分，是在提醒你：别急着硬来，先落地。';
 
     return {
       arcana: parts.arcana, elements: parts.elements, interplay: parts.interplay,

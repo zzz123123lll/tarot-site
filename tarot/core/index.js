@@ -8,10 +8,11 @@
     require('./spreads.js'),
     require('./questions.js'),
     require('./engine.js'),
-    require('./prose.js')
+    require('./prose.js'),
+    require('./data/card-imagery.js')
   ); }
-  else { root.TarotCore = factory(root.TarotDataDeck, root.TarotElements, root.TarotSpreads, root.TarotQuestions, root.TarotEngine, root.TarotProse); }
-})(typeof self !== 'undefined' ? self : this, function (DECK, Elements, Spreads, Questions, Engine, Prose) {
+  else { root.TarotCore = factory(root.TarotDataDeck, root.TarotElements, root.TarotSpreads, root.TarotQuestions, root.TarotEngine, root.TarotProse, root.TarotCardImagery); }
+})(typeof self !== 'undefined' ? self : this, function (DECK, Elements, Spreads, Questions, Engine, Prose, IMAGERY) {
   return {
     VERSION: '0.1.0-core',
     DECK,
@@ -21,6 +22,7 @@
     interpret: Engine.interpret,
     assembleProse: Prose.assembleProse,
     buildLLMPrompt: Prose.buildLLMPrompt,
-    synthesize: Prose.synthesize
+    synthesize: Prose.synthesize,
+    IMAGERY
   };
 });
