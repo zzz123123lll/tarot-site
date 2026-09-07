@@ -72,10 +72,11 @@ const REGISTRY = {
   'regex': { title: '正则测试', module: '/tools/regex.mjs' },
   'color': { title: '颜色工具', module: '/tools/color.mjs' },
   'qr': { title: '二维码生成', module: '/tools/qr.mjs' },
+  'jwt': { title: 'JWT 解码', module: '/tools/jwt.mjs' },
+  'hash': { title: 'Hash 摘要', module: '/tools/hash.mjs' },
+  'url': { title: 'URL 编解码', module: '/tools/url.mjs' },
   'uuid': { title: 'UUID / 密码', module: '/tools/uuid.mjs' },
-  'unit': { title: '单位换算', module: '/tools/unit.mjs' },
-  'bmi': { title: 'BMI 计算器', module: '/tools/bmi.mjs' },
-  'date': { title: '日期计算', module: '/tools/date.mjs' }
+  'date': { title: '日期 & 时间戳', module: '/tools/date.mjs' }
 };
 
 const H = { esc, fmt, downloadBlob, injectCss, makeDropZone, loadScript, copyText };

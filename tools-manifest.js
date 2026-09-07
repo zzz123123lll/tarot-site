@@ -20,9 +20,10 @@ window.TOOLS = {
     { slug: 'regex', name: '正则测试', desc: '正则表达式实时匹配。', section: 'utility', icon: 'code', url: '/tools/regex/', status: 'live' },
     { slug: 'color', name: '颜色工具', desc: 'RGB / HEX / HSL 互转。', section: 'utility', icon: 'color', url: '/tools/color/', status: 'live' },
     { slug: 'qr', name: '二维码生成', desc: '文字/链接生成二维码。', section: 'utility', icon: 'qr', url: '/tools/qr/', status: 'live' },
+    { slug: 'jwt', name: 'JWT 解码', desc: '解码 JWT、检查过期。', section: 'utility', icon: 'code', url: '/tools/jwt/', status: 'live' },
+    { slug: 'hash', name: 'Hash 摘要', desc: 'SHA / MD5，文本与文件。', section: 'utility', icon: 'code', url: '/tools/hash/', status: 'live' },
+    { slug: 'url', name: 'URL 编解码', desc: '编解码、query 解析。', section: 'utility', icon: 'code', url: '/tools/url/', status: 'live' },
     { slug: 'uuid', name: 'UUID / 密码', desc: '生成 UUID 和随机密码。', section: 'utility', icon: 'code', url: '/tools/uuid/', status: 'live' },
-    { slug: 'unit', name: '单位换算', desc: '长度、重量、温度、面积。', section: 'utility', icon: 'calc', url: '/tools/unit/', status: 'live' },
-    { slug: 'bmi', name: 'BMI 计算器', desc: '身体质量指数计算。', section: 'utility', icon: 'calc', url: '/tools/bmi/', status: 'live' },
-    { slug: 'date', name: '日期计算', desc: '日期差、加减天数、年龄。', section: 'utility', icon: 'calc', url: '/tools/date/', status: 'live' },
+    { slug: 'date', name: '日期 & 时间戳', desc: '日期差、加减、时间戳互转。', section: 'utility', icon: 'calc', url: '/tools/date/', status: 'live' },
   ]
 };

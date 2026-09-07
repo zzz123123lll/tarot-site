@@ -11,6 +11,7 @@
 /tools/color/  /tool  200
 /tools/qr/  /tool  200
 /tools/uuid/  /tool  200
-/tools/unit/  /tool  200
-/tools/bmi/  /tool  200
 /tools/date/  /tool  200
+/tools/jwt/  /tool  200
+/tools/hash/  /tool  200
+/tools/url/  /tool  200
