@@ -49,6 +49,27 @@ export function celebrate(el) {
   if (window.confetti) { fire(); return; }
   loadScript('/vendor/canvas-confetti.min.js?v=1').then(fire, function () {});
 }
+// 多个文件打成一个 zip 下载(懒加载 JSZip,自动处理重名)
+export function downloadZip(files, zipName) {
+  if (!files || !files.length) return;
+  loadScript('/vendor/jszip.min.js?v=1').then(function () {
+    if (!window.JSZip) return;
+    var zip = new window.JSZip();
+    var seen = {};
+    files.forEach(function (f) {
+      var base = f.name || 'file';
+      var n = seen[base] || 0;
+      seen[base] = n + 1;
+      var dot = base.lastIndexOf('.');
+      var stem = dot > 0 ? base.slice(0, dot) : base;
+      var ext = dot > 0 ? base.slice(dot) : '';
+      zip.file(n ? stem + '(' + (n + 1) + ')' + ext : base, f.blob);
+    });
+    zip.generateAsync({ type: 'blob' }).then(function (b) {
+      downloadBlob(b, zipName || 'download.zip');
+    }).catch(function () {});
+  }, function () {});
+}
 export function loadScript(src) {
   return new Promise(function (resolve, reject) {
     if (document.querySelector('script[src="' + src + '"]')) { resolve(); return; }
@@ -117,7 +138,7 @@ const REGISTRY = {
   'date': { title: '日期 & 时间戳', module: '/tools/date.mjs' }
 };
 
-const H = { esc, fmt, downloadBlob, injectCss, makeDropZone, loadScript, copyText, initTips };
+const H = { esc, fmt, downloadBlob, downloadZip, injectCss, makeDropZone, loadScript, copyText, initTips };
 
 export async function mountTool(slug, root, titleEl) {
   const t = REGISTRY[slug];

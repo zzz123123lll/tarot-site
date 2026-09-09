@@ -16,7 +16,7 @@ export function mount(root, H) {
   root.querySelector('#dpi').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; dpi = parseInt(b.dataset.d, 10); root.querySelectorAll('#dpi button').forEach(function (x) { x.classList.toggle('active', x === b); }); });
   root.querySelector('#fmt').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; fmt = b.dataset.f; root.querySelectorAll('#fmt button').forEach(function (x) { x.classList.toggle('active', x === b); }); });
   root.querySelector('#dlAll').addEventListener('click', function () {
-    blobs.forEach(function (b, i) { setTimeout(function () { H.downloadBlob(b.blob, b.name); }, i * 250); });
+    H.downloadZip(blobs, 'PDF转图.zip');
   });
 
   H.makeDropZone(root.querySelector('#dz'), async function (files) {
@@ -33,6 +33,9 @@ export function mount(root, H) {
       if (doc.numPages > 200) { note.textContent = '页数过多（' + doc.numPages + ' 页），请拆分成多个文件。'; note.className = 'note err'; note.style.display = 'block'; return; }
       var pg = root.querySelector('#pg'), fill = pg.querySelector('.fill');
       pg.style.display = 'block'; fill.style.width = '0%';
+      var dl = root.querySelector('#dlAll');
+      if (dl) dl.disabled = true;
+      note.textContent = '正在转出 第 1/' + doc.numPages + ' 页…'; note.className = 'note'; note.style.display = 'block';
       blobs = [];
       var ext = fmt === 'image/jpeg' ? '.jpg' : '.png';
       for (var p = 1; p <= doc.numPages; p++) {
@@ -49,8 +52,10 @@ export function mount(root, H) {
         var blob = await new Promise(function (r) { c.toBlob(r, fmt, 0.92); });
         blobs.push({ blob: blob, name: 'page-' + p + ext });
         fill.style.width = (p / doc.numPages * 100) + '%';
+        note.textContent = '正在转出 第 ' + p + '/' + doc.numPages + ' 页…';
       }
       pg.style.display = 'none';
+      if (dl) dl.disabled = false;
       root.querySelector('#gen').style.display = 'block';
       note.textContent = '已转出 ' + doc.numPages + ' 页，点「全部下载」。'; note.className = 'note ok'; note.style.display = 'block';
     } catch (e) {

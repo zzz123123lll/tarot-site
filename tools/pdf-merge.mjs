@@ -46,6 +46,10 @@ export function mount(root, H) {
     note.className = 'note'; note.style.display = 'none';
     try { await H.loadScript('/vendor/pdf-lib.min.js?v=1'); } catch (e) { note.textContent = 'PDF 库加载失败。'; note.className = 'note err'; note.style.display = 'block'; return; }
     var PDFDoc = window.PDFLib.PDFDocument;
+    var btn = root.querySelector('#go');
+    btn.disabled = true;
+    var oldText = btn.textContent;
+    btn.textContent = '合并中…';
     try {
       var merged = await PDFDoc.create();
       for (var i = 0; i < files.length; i++) {
@@ -60,5 +64,7 @@ export function mount(root, H) {
     } catch (e) {
       note.textContent = '合并失败：' + (e && e.message ? e.message : e); note.className = 'note err'; note.style.display = 'block';
     }
+    btn.disabled = false;
+    btn.textContent = oldText;
   }
 }

@@ -42,8 +42,12 @@ export function mount(root, H) {
 
   async function generate() {
     var note = root.querySelector('#note');
+    var btn = root.querySelector('#go');
     note.style.display = 'none';
     if (!file) return;
+    btn.disabled = true;
+    var oldText = btn.textContent;
+    btn.textContent = '处理中…';
     try { await H.loadScript('/vendor/pdf-lib.min.js?v=1'); } catch (e) { note.textContent = 'PDF 库加载失败。'; note.className = 'note err'; note.style.display = 'block'; return; }
     var PDFDoc = window.PDFLib.PDFDocument;
     try {
@@ -51,16 +55,17 @@ export function mount(root, H) {
       var idx = parseRange(root.querySelector('#range').value, src.getPageCount());
       if (!idx.length) { note.textContent = '没有匹配的页面。'; note.className = 'note err'; note.style.display = 'block'; return; }
       if (mode === 'each') {
+        var parts = [];
         for (var k = 0; k < idx.length; k++) {
           var one = await PDFDoc.create();
           var pages = await one.copyPages(src, [idx[k]]);
           pages.forEach(function (p) { one.addPage(p); });
           if (rot) one.getPages().forEach(function (p) { p.setRotation(degrees(rot)); });
           var o = await one.save();
-          H.downloadBlob(new Blob([o], { type: 'application/pdf' }), 'page-' + (idx[k] + 1) + '.pdf');
-          await new Promise(function (r) { setTimeout(r, 150); });
+          parts.push({ name: 'page-' + (idx[k] + 1) + '.pdf', blob: new Blob([o], { type: 'application/pdf' }) });
         }
-        note.textContent = '已生成 ' + idx.length + ' 个单页 PDF。'; note.className = 'note ok'; note.style.display = 'block';
+        H.downloadZip(parts, '拆分页面.zip');
+        note.textContent = '已生成 ' + idx.length + ' 个单页 PDF,已打包下载。'; note.className = 'note ok'; note.style.display = 'block';
       } else {
         var out = await PDFDoc.create();
         var cpages = await out.copyPages(src, idx);
@@ -73,6 +78,8 @@ export function mount(root, H) {
     } catch (e) {
       note.textContent = '处理失败：' + (e && e.message ? e.message : e); note.className = 'note err'; note.style.display = 'block';
     }
+    btn.disabled = false;
+    btn.textContent = oldText;
   }
 
   function degrees(d) {

@@ -29,6 +29,7 @@ export function mount(root, H) {
       if (doc.numPages > 100) { note.textContent = '页数过多，请拆分。'; note.className = 'note err'; note.style.display = 'block'; return; }
       var pg = root.querySelector('#pg'), fill = pg.querySelector('.fill');
       pg.style.display = 'block'; fill.style.width = '0%';
+      note.textContent = '正在压缩,请稍候…'; note.className = 'note'; note.style.display = 'block';
       var out = await PDFDoc.create();
       for (var p = 1; p <= doc.numPages; p++) {
         var page = await doc.getPage(p);

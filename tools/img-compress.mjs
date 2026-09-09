@@ -129,7 +129,11 @@ export function mount(root, H) {
     H.downloadBlob(f.blob, f.name.replace(/(\.[^.]+)$/, '_compressed$1'));
   }
   function downloadAll() {
-    items.forEach(function (f, i) { if (f.status === 'ok') setTimeout(function () { downloadOne(i); }, i * 200); });
+    var files = [];
+    items.forEach(function (f) {
+      if (f.status === 'ok' && f.blob) files.push({ name: f.name.replace(/(\.[^.]+)$/, '_compressed$1'), blob: f.blob });
+    });
+    H.downloadZip(files, '图片压缩结果.zip');
   }
   function removeOne(i) { originals.splice(i, 1); items.splice(i, 1); render(); }
   function clearAll() { originals = []; items = []; render(); }

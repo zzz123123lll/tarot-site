@@ -110,5 +110,9 @@ export function mount(root, H) {
   }
 
   function downloadOne(i) { var f = items[i]; if (f && f.blob) H.downloadBlob(f.blob, f.outName); }
-  function downloadAll() { items.forEach(function (f, i) { if (f.status === 'ok') setTimeout(function () { downloadOne(i); }, i * 200); }); }
+  function downloadAll() {
+    var files = [];
+    items.forEach(function (f) { if (f.status === 'ok' && f.blob) files.push({ name: f.outName, blob: f.blob }); });
+    H.downloadZip(files, '转换结果.zip');
+  }
 }
