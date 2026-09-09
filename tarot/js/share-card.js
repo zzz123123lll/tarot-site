@@ -97,7 +97,21 @@
     x.fillStyle = GOLD_DIM; x.font = '26px ' + SERIF_EN;
     spaced(x, 'RIDER-WAITE · 有依据的解读', W / 2, 172, 6);
     x.fillStyle = GOLD; x.font = '64px ' + SERIF_ZH;
-    spaced(x, '✦ 星辉塔罗', W / 2, 250, 8);
+    var wm = '星辉塔罗';
+    var wmW = 0;
+    for (var wi = 0; wi < wm.length; wi++) wmW += x.measureText(wm[wi]).width;
+    wmW += 8 * (wm.length - 1);
+    var wmX = W / 2 - wmW / 2 - 46;
+    // 四角星(路径绘制,不依赖字体是否有 ✦ 字形)
+    x.save();
+    x.translate(wmX - 22, 250 - 32);
+    x.beginPath();
+    x.moveTo(0, -15); x.lineTo(4.5, -4.5); x.lineTo(15, 0); x.lineTo(4.5, 4.5);
+    x.lineTo(0, 15); x.lineTo(-4.5, 4.5); x.lineTo(-15, 0); x.lineTo(-4.5, -4.5);
+    x.closePath();
+    x.fill();
+    x.restore();
+    spaced(x, wm, W / 2, 250, 8);
     x.strokeStyle = 'rgba(228,189,107,0.28)';
     x.beginPath(); x.moveTo(330, 306); x.lineTo(750, 306); x.stroke();
 
@@ -207,7 +221,7 @@
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
   }
 
-  window.ShareCard = { open: open };
+  window.ShareCard = { open: open, build: build };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wireClose);
   else wireClose();
 })();
