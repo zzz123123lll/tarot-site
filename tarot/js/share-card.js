@@ -184,10 +184,13 @@
     if (!modal || !img) return;
     if (!reading || !reading.cards || !reading.cards.length) return;
     modal.classList.remove('hidden');
+    var hint = document.getElementById('shareHint');
+    if (hint) hint.textContent = '正在生成…';
     ensureQr(function (qrLib) {
       var c = build(reading, summary, qrLib);
       var url = c.toDataURL('image/png');
       img.src = url;
+      if (hint) hint.textContent = '长按图片保存到相册,分享到朋友圈或小红书';
       if (dl) { dl.href = url; dl.download = '星辉塔罗-' + reading.cards[0].card.name + '.png'; }
     });
   }

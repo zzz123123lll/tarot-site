@@ -15,7 +15,7 @@ $f3 = New-Object System.Drawing.Font("Microsoft YaHei", 26)
 $sf = New-Object System.Drawing.StringFormat
 $sf.Alignment = [System.Drawing.StringAlignment]::Center
 $g.DrawString("工具盒", $f1, [System.Drawing.Brushes]::White, (New-Object System.Drawing.RectangleF(0, 150, $w, 150)), $sf)
-$g.DrawString("把好用的工具，收进一个盒子里", $f2, (New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(225,255,255,255))), (New-Object System.Drawing.RectangleF(0, 320, $w, 60)), $sf)
+$g.DrawString("不上传 · 不注册 · 文件只留在你的浏览器里", $f2, (New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(225,255,255,255))), (New-Object System.Drawing.RectangleF(0, 320, $w, 60)), $sf)
 $g.DrawString("图片 · PDF · 开发小工具 · 塔罗占卜", $f3, (New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(180,255,255,255))), (New-Object System.Drawing.RectangleF(0, 400, $w, 50)), $sf)
 $out = Join-Path (Get-Location).Path "og.png"
 $bmp.Save($out, [System.Drawing.Imaging.ImageFormat]::Png)
