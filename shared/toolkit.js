@@ -127,7 +127,7 @@ export async function mountTool(slug, root, titleEl) {
     return;
   }
   if (titleEl) titleEl.textContent = t.title;
-  document.title = t.title + ' · 工具盒';
+  // 页面 <title> 由各工具的静态 HTML 提供(SEO),这里不再覆盖
   try {
     const mod = await import(t.module + '?v=1');
     if (mod && mod.mount) mod.mount(root, H);

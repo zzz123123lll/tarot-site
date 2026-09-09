@@ -1,17 +1,2 @@
-/img-compress/  /tool  200
-/image-convert/  /tool  200
-/images-to-pdf/  /tool  200
-/pdf-merge/  /tool  200
-/pdf-split/  /tool  200
-/pdf-render/  /tool  200
-/pdf-compress/  /tool  200
-/tools/json/  /tool  200
-/tools/base64/  /tool  200
-/tools/regex/  /tool  200
-/tools/color/  /tool  200
-/tools/qr/  /tool  200
-/tools/uuid/  /tool  200
-/tools/date/  /tool  200
-/tools/jwt/  /tool  200
-/tools/hash/  /tool  200
-/tools/url/  /tool  200
+# 各工具均为真实静态页(每个 URL 一个 index.html),无需重写。
+# 404 由 Cloudflare Pages 自动使用 404.html。
