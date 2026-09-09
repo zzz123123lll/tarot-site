@@ -463,6 +463,8 @@ function renderReading(reading, options = {}) {
   if (window.Journal && window.Journal.add) { window.Journal.add(reading); }
   var _copy = document.getElementById('copyBtn');
   if (_copy) _copy.disabled = false;
+  var _share = document.getElementById('shareBtn');
+  if (_share) _share.disabled = false;
   panel.classList.remove('hidden');
   title.textContent = `${reading.spread.icon} ${reading.spread.name} · 解读`;
   meta.innerHTML = `<span>${formatTime(reading.time)}</span><span>${reading.cards.length} 张牌</span><span>${reading.cards.filter(c => c.reversed).length} 张逆位</span>`;
@@ -745,6 +747,12 @@ document.getElementById('startRitualBtn').addEventListener('click', startRitual)
   });
   document.getElementById('copyBtn').disabled = true;
 document.getElementById('copyBtn').addEventListener('click', copyCurrentReading);
+  const shareBtn = document.getElementById('shareBtn');
+  shareBtn.addEventListener('click', () => {
+    if (!currentReading) return;
+    const summary = (window.TarotReader && window.TarotReader.lastSummary) || '';
+    if (window.ShareCard) window.ShareCard.open(currentReading, summary);
+  });
   document.getElementById('modalClose').addEventListener('click', closeCardModal);
   document.getElementById('cardModal').addEventListener('click', (e) => {
     if (e.target.id === 'cardModal') closeCardModal();

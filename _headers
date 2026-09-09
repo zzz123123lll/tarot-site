@@ -4,6 +4,9 @@
 /tarot/js/*
   Cache-Control: public, max-age=0, must-revalidate
 
+/tarot/css/*
+  Cache-Control: public, max-age=0, must-revalidate
+
 /tarot/core/*
   Cache-Control: public, max-age=0, must-revalidate
 /home.js
