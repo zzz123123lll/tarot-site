@@ -1,6 +1,6 @@
 // tools/images-to-pdf.mjs — 多张图片合成一个 PDF（pdf-lib）
 export function mount(root, H) {
-  H.injectCss(".opt-row{display:flex;align-items:center;gap:14px;margin-bottom:20px;flex-wrap:wrap}.opt-row label{font-size:13px;color:#6e6e73;white-space:nowrap}.seg{display:inline-flex;background:#f5f5f7;border-radius:10px;padding:3px}.seg button{flex:1;padding:7px 14px;border:none;border-radius:8px;background:transparent;color:#6e6e73;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer}.seg button.active{background:#fff;color:#1d1d1f;box-shadow:0 1px 3px rgba(0,0,0,.12)}.file-list{margin-top:16px}.file-row{display:flex;align-items:center;gap:10px;font-size:13px;color:#1d1d1f;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.06)}.file-row .n{color:#86868b;font-size:12px;min-width:18px}.file-row .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.file-row .rm{background:none;border:none;color:#86868b;cursor:pointer;font-size:15px}.file-row .rm:hover{color:#d70015}.gen-bar{display:none;margin-top:18px}.note-ok{font-size:13px;color:#1d9e4e;margin-top:12px;display:none}.tool-drop .icon svg{width:40px;height:40px;color:#0071e3}");
+  H.injectCss(".opt-row{display:flex;align-items:center;gap:14px;margin-bottom:20px;flex-wrap:wrap}.opt-row label{font-size:13px;color:#6e6e73;white-space:nowrap}.seg{display:inline-flex;background:#f5f5f7;border-radius:10px;padding:3px}.seg button{flex:1;padding:7px 14px;border:none;border-radius:8px;background:transparent;color:#6e6e73;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer}.seg button.active{background:#fff;color:#1d1d1f;box-shadow:0 1px 3px rgba(0,0,0,.12)}.file-list{margin-top:16px}.file-row{display:flex;align-items:center;gap:10px;font-size:13px;color:#1d1d1f;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.06)}.file-row .n{color:#86868b;font-size:12px;min-width:18px}.file-row .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.file-row .rm{background:none;border:none;color:#86868b;cursor:pointer;font-size:15px}.file-row .mv{background:none;border:none;color:#86868b;cursor:pointer;font-size:13px;padding:2px 6px;border-radius:4px}.file-row .mv:hover{color:#1d1d1f;background:#f5f5f7}.file-row .rm:hover{color:#d70015}.gen-bar{display:none;margin-top:18px}.note-ok{font-size:13px;color:#1d9e4e;margin-top:12px;display:none}.tool-drop .icon svg{width:40px;height:40px;color:#0071e3}");
 
   var icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"/><path d="M14 3v4h4"/><path d="M9 13h6M9 17h4"/></svg>';
 
@@ -33,28 +33,38 @@ export function mount(root, H) {
     var list = root.querySelector('#list');
     var html = '';
     files.forEach(function (f, i) {
-      html += '<div class="file-row"><span class="n">' + (i + 1) + '</span><span class="nm">' + H.esc(f.name) + '</span><button class="rm" data-i="' + i + '">×</button></div>';
+      html += '<div class="file-row"><span class="n">' + (i + 1) + '</span><span class="nm">' + H.esc(f.name) + '</span>'
+        + '<button class="mv" data-i="' + i + '" data-d="-1" data-tippy-content="上移">↑</button>'
+        + '<button class="mv" data-i="' + i + '" data-d="1" data-tippy-content="下移">↓</button>'
+        + '<button class="rm" data-i="' + i + '" data-tippy-content="移除">×</button></div>';
     });
     list.innerHTML = html;
     list.querySelectorAll('.rm').forEach(function (b) {
       b.addEventListener('click', function () { files.splice(parseInt(b.dataset.i, 10), 1); renderList(); });
     });
+    list.querySelectorAll('.mv').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var i = parseInt(b.dataset.i, 10), d = parseInt(b.dataset.d, 10), j = i + d;
+        if (j < 0 || j >= files.length) return;
+        var t = files[i]; files[i] = files[j]; files[j] = t; renderList();
+      });
+    });
     root.querySelector('#gen').style.display = files.length ? 'block' : 'none';
+    H.initTips(root);
   }
 
   async function generate() {
     if (!files.length) return;
+    var btn = root.querySelector('#go');
+    var ok = root.querySelector('#oknote');
+    ok.style.display = 'none';
+    btn.disabled = true;
+    var oldText = btn.textContent;
+    btn.textContent = '生成中…';
     try {
       await H.loadScript('/vendor/pdf-lib.min.js?v=1');
-    } catch (e) {
-      root.querySelector('#oknote').textContent = 'PDF 库加载失败，请检查网络。';
-      root.querySelector('#oknote').style.display = 'block';
-      return;
-    }
-    var PDFDoc = window.PDFLib.PDFDocument;
-    var btn = root.querySelector('#go');
-    btn.disabled = true;
-    var pdfDoc = await PDFDoc.create();
+      var PDFDoc = window.PDFLib.PDFDocument;
+      var pdfDoc = await PDFDoc.create();
     for (var i = 0; i < files.length; i++) {
       var file = files[i];
       var mime = file.type;
@@ -84,9 +94,17 @@ export function mount(root, H) {
       page.drawImage(data, { x: (pw - dw) / 2, y: (ph - dh) / 2, width: dw, height: dh });
     }
     var out = await pdfDoc.save();
-    var blob = new Blob([out], { type: 'application/pdf' });
-    H.downloadBlob(blob, 'images.pdf');
-    root.querySelector('#oknote').style.display = 'block';
+      var blob = new Blob([out], { type: 'application/pdf' });
+      H.downloadBlob(blob, 'images.pdf');
+      ok.textContent = 'PDF 已生成，开始下载。';
+      ok.style.color = '';
+      ok.style.display = 'block';
+    } catch (e) {
+      ok.textContent = '生成失败：' + (e && e.message ? e.message : e) + '（图片可能已损坏）';
+      ok.style.color = '#d70015';
+      ok.style.display = 'block';
+    }
     btn.disabled = false;
+    btn.textContent = oldText;
   }
 }

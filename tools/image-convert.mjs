@@ -84,6 +84,7 @@ export function mount(root, H) {
     items.forEach(function (f, i) {
       if (f.status === 'ok') {
         html += '<div class="result-card">'
+          + '<img class="preview" src="' + URL.createObjectURL(f.blob) + '" alt="">'
           + '<div class="info"><div class="name">' + H.esc(f.outName) + '</div>'
           + '<div class="meta">' + f.w + '×' + f.h + ' · ' + H.fmt(f.size) + '</div></div>'
           + '<button class="download-btn" data-i="' + i + '">下载</button></div>';
