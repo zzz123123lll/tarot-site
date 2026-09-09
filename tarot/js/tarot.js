@@ -125,6 +125,8 @@ function hashString(str) {
   return Math.abs(hash);
 }
 
+let lastDaily = null; // 今日牌缓存,供分享图使用
+
 function getDailyCard() {
   const key = getDateKey(new Date());
   const h = hashString(key);
@@ -143,6 +145,7 @@ function renderDailyCard() {
     : `${card.suitName}牌 · ${card.element}元素`;
 
   document.getElementById('dailyBtn').textContent = '🔄 重新查看今日牌';
+  lastDaily = { card: card, reversed: reversed };
   box.classList.remove('hidden');
   box.innerHTML = `
     <div class="daily-card-flip suit-${card.suit || 'major'} ${reversed ? 'is-reversed' : ''}" data-id="${card.id}">
@@ -166,6 +169,7 @@ function renderDailyCard() {
       <p class="daily-keywords">关键词：${keywords.map(escapeHtml).join(' · ')}</p>
       <p class="daily-meaning">${escapeHtml(meaning)}</p>
       <p class="daily-date">${getDateKey(new Date())} · 每日一牌</p>
+      <button class="btn-share btn-share--daily" id="dailyShareBtn" type="button">✦ 分享今日牌</button>
     </div>
   `;
   const __artPath = getCardArt(card);
@@ -179,6 +183,15 @@ function renderDailyCard() {
   const mini = box.querySelector('.daily-card-flip');
   mini.classList.add('is-flipped');   // 直接翻过来：默认显示牌面
   mini.addEventListener('click', () => openCardModal(card));
+  const _dsb = box.querySelector('#dailyShareBtn');
+  if (_dsb) _dsb.addEventListener('click', () => {
+    if (!window.ShareCard || !lastDaily) return;
+    window.ShareCard.open({
+      cards: [{ card: lastDaily.card, reversed: lastDaily.reversed, position: { label: '今日之牌' } }],
+      spread: { name: '每日一牌' },
+      time: Date.now()
+    }, meaning);
+  });
 }
 
 /* ---------- 抽牌 ---------- */

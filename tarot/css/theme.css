@@ -67,6 +67,8 @@ p { margin:0 0 var(--s4); font-family: var(--font-serif); color: var(--text-soft
 .btn-share { font-family:var(--font-ui); font-size: var(--tsm); font-weight:600; letter-spacing:0.01em; border-radius: var(--r-sm); padding: var(--s3) var(--s6); cursor:pointer; transition: background .15s, border-color .15s, color .15s; background: transparent; color: var(--accent); border:1px solid rgba(228,189,107,0.5); }
 .btn-share:hover { border-color: var(--accent); background: rgba(228,189,107,0.08); color: var(--accent); }
 .btn-share:disabled { opacity:0.45; cursor:not-allowed; pointer-events:none; }
+.btn-share--daily { margin-top: var(--s4); }
+.btn-share--daily:hover { transform: translateY(-1px); }
 /* —— 解读分享图弹窗 —— */
 .share-modal { position:fixed; inset:0; z-index:120; display:flex; align-items:center; justify-content:center; padding:24px; background:rgba(8,9,16,0.82); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
 .share-modal.hidden { display:none; }
