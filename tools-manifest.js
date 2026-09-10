@@ -1,10 +1,10 @@
 // tools-manifest.js — 工具盒单一真相源。status: live/soon/download。section: divination/image/pdf/utility/more
 window.TOOLS = {
   sections: [
-    { id: 'divination', name: '占卜', icon: 'tarot', desc: '一张牌，照见此刻。' },
-    { id: 'utility', name: '开发工具', icon: 'code', desc: '给写代码的人。' },
-    { id: 'image', name: '图片工具', icon: 'image', desc: '压缩、转换、合成。' },
-    { id: 'pdf', name: 'PDF 工具', icon: 'file-text', desc: '合并、拆分、转图、压缩。' }
+    { id: 'divination', name: '占卜', icon: 'tarot', desc: '78 张韦特牌，随时可以抽一张。' },
+    { id: 'image', name: '图片工具', icon: 'image', desc: '把图片变小、换格式、合成 PDF。' },
+    { id: 'pdf', name: 'PDF 工具', icon: 'file-text', desc: '合并、拆分、转图片、压缩。' },
+    { id: 'utility', name: '小工具', icon: 'code', desc: '文字、链接、颜色、日期这些小事。' }
   ],
   tools: [
     { slug: 'tarot', name: '塔罗占卜', desc: '78 张韦特牌，一次有依据、不套话的解读。', section: 'divination', icon: 'tarot', url: '/tarot/', status: 'live', dark: true },

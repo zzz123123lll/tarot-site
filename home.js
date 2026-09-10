@@ -47,32 +47,61 @@
 
   function icon(key) { return ICONS[key] || ICONS.code; }
 
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  var secName = {};
+  data.sections.forEach(function (s) { secName[s.id] = s.name; });
+
+  function card(t, order, showSec) {
+    var iconCls = t.dark ? 'app-icon app-icon--dark' : 'app-icon app-icon--light app-icon--sec-' + t.section;
+    return '<a class="app" href="' + t.url + '" style="animation-delay:' + (order * 40) + 'ms">'
+      + '<span class="' + iconCls + '">' + icon(t.icon) + '</span>'
+      + '<span class="app-name">' + esc(t.name) + '</span>'
+      + '<span class="app-desc">' + esc(t.desc) + '</span>'
+      + (showSec ? '<span class="app-sec">' + esc(secName[t.section] || '') + '</span>' : '')
+      + '</a>';
+  }
+
   function render(q) {
     var ql = (q || '').trim().toLowerCase();
-    var tools = data.tools.filter(function (t) {
-      return !ql || (t.name + ' ' + t.desc).toLowerCase().indexOf(ql) !== -1;
-    });
     var html = '';
     var order = 0;
+
+    if (ql) {
+      // 搜索:名称命中优先,其次说明命中,再其次分区名命中;结果不分区、按相关度排
+      var scored = data.tools.map(function (t) {
+        var score = 0;
+        if (t.name.toLowerCase().indexOf(ql) !== -1) score += 4;
+        if (String(t.desc || '').toLowerCase().indexOf(ql) !== -1) score += 2;
+        if (String(secName[t.section] || '').toLowerCase().indexOf(ql) !== -1) score += 1;
+        return { t: t, score: score };
+      }).filter(function (x) { return x.score > 0; });
+      scored.sort(function (a, b) { return b.score - a.score; });
+      var list = scored.map(function (x) { return x.t; });
+      if (list.length) {
+        html += '<section class="section-block section-block--search">'
+          + '<div class="section-head"><div><h2 class="section-title">搜索结果</h2>'
+          + '<p class="section-desc">' + list.length + ' 个工具匹配「' + esc(q) + '」</p></div></div>'
+          + '<div class="apps-grid">';
+        list.forEach(function (t) { html += card(t, order, true); order++; });
+        html += '</div></section>';
+      }
+      root.innerHTML = html || '<p class="footnote">没找到「' + esc(q) + '」相关的工具。可以试试「压缩」「PDF」「二维码」这类更短的词,或者直接看下面的分区。</p>';
+      return;
+    }
+
     data.sections.forEach(function (sec) {
-      var list = tools.filter(function (t) { return t.section === sec.id; });
+      var list = data.tools.filter(function (t) { return t.section === sec.id; });
       if (!list.length) return;
       html += '<section class="section-block section-block--' + sec.id + '">'
       + '<div class="section-head"><span class="section-ic">' + (ICONS[sec.icon] || '') + '</span>'
       + '<div><h2 class="section-title">' + sec.name + '</h2><p class="section-desc">' + (sec.desc || '') + '</p></div></div>'
       + '<div class="apps-grid">';
-      list.forEach(function (t) {
-        var iconCls = t.dark ? 'app-icon app-icon--dark' : 'app-icon app-icon--light app-icon--sec-' + t.section;
-        html += '<a class="app" href="' + t.url + '" style="animation-delay:' + (order * 40) + 'ms">'
-          + '<span class="' + iconCls + '">' + icon(t.icon) + '</span>'
-          + '<span class="app-name">' + t.name + '</span>'
-          + '<span class="app-desc">' + t.desc + '</span>'
-          + '</a>';
-        order++;
-      });
+      list.forEach(function (t) { html += card(t, order, false); order++; });
       html += '</div></section>';
     });
-    root.innerHTML = html || '<p class="footnote">没找到匹配的工具。</p>';
+    root.innerHTML = html;
   }
 
   function isTyping() {
