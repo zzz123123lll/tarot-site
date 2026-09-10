@@ -57,7 +57,9 @@ export function mount(root, H) {
         note.textContent = '已压缩：' + H.fmt(origBytes.byteLength) + ' → ' + H.fmt(outBytes.length) + '（-' + pct + '%）'; note.className = 'note ok'; note.style.display = 'block';
       }
     } catch (e) {
-      note.textContent = '压缩失败：' + (e && e.message ? e.message : e); note.className = 'note err'; note.style.display = 'block';
+      var pg2 = root.querySelector('#pg');
+      if (pg2) pg2.style.display = 'none';
+      note.textContent = '压缩失败：' + H.friendlyError(e); note.className = 'note err'; note.style.display = 'block';
     }
   }, 'application/pdf');
 }

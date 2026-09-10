@@ -48,12 +48,12 @@ export function mount(root, H) {
     btn.disabled = true;
     var oldText = btn.textContent;
     btn.textContent = '处理中…';
-    try { await H.loadScript('/vendor/pdf-lib.min.js?v=1'); } catch (e) { note.textContent = 'PDF 库加载失败。'; note.className = 'note err'; note.style.display = 'block'; return; }
-    var PDFDoc = window.PDFLib.PDFDocument;
     try {
+      try { await H.loadScript('/vendor/pdf-lib.min.js?v=1'); } catch (e) { note.textContent = 'PDF 库加载失败，请检查网络后重试。'; note.className = 'note err'; note.style.display = 'block'; return; }
+      var PDFDoc = window.PDFLib.PDFDocument;
       var src = await PDFDoc.load(await file.arrayBuffer(), { ignoreEncryption: true });
       var idx = parseRange(root.querySelector('#range').value, src.getPageCount());
-      if (!idx.length) { note.textContent = '没有匹配的页面。'; note.className = 'note err'; note.style.display = 'block'; return; }
+      if (!idx.length) { note.textContent = '没有匹配的页面。页面范围可以写成 1-3,5 这样的形式，留空表示全部。'; note.className = 'note err'; note.style.display = 'block'; return; }
       if (mode === 'each') {
         var parts = [];
         for (var k = 0; k < idx.length; k++) {
@@ -76,10 +76,11 @@ export function mount(root, H) {
         note.textContent = '已处理 ' + idx.length + ' 页。'; note.className = 'note ok'; note.style.display = 'block';
       }
     } catch (e) {
-      note.textContent = '处理失败：' + (e && e.message ? e.message : e); note.className = 'note err'; note.style.display = 'block';
+      note.textContent = '处理失败：' + H.friendlyError(e); note.className = 'note err'; note.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = oldText;
     }
-    btn.disabled = false;
-    btn.textContent = oldText;
   }
 
   function degrees(d) {

@@ -100,7 +100,7 @@ export function mount(root, H) {
       ok.style.color = '';
       ok.style.display = 'block';
     } catch (e) {
-      ok.textContent = '生成失败：' + (e && e.message ? e.message : e) + '（图片可能已损坏）';
+      ok.textContent = '生成失败：' + H.friendlyError(e, '图片可能已损坏，或格式不受支持。');
       ok.style.color = '#d70015';
       ok.style.display = 'block';
     }

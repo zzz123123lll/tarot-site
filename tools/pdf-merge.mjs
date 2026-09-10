@@ -62,7 +62,7 @@ export function mount(root, H) {
       H.downloadBlob(new Blob([out], { type: 'application/pdf' }), 'merged.pdf');
       note.textContent = '已合并 ' + files.length + ' 个 PDF，共 ' + merged.getPageCount() + ' 页。'; note.className = 'note ok'; note.style.display = 'block';
     } catch (e) {
-      note.textContent = '合并失败：' + (e && e.message ? e.message : e); note.className = 'note err'; note.style.display = 'block';
+      note.textContent = '合并失败：' + H.friendlyError(e); note.className = 'note err'; note.style.display = 'block';
     }
     btn.disabled = false;
     btn.textContent = oldText;

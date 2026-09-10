@@ -91,3 +91,6 @@ body {
 .tippy-box[data-theme~='tool'][data-placement^='bottom'] > .tippy-arrow::before { border-bottom-color:#1d1d1f; }
 .tippy-box[data-theme~='tool'][data-placement^='left'] > .tippy-arrow::before { border-left-color:#1d1d1f; }
 .tippy-box[data-theme~='tool'][data-placement^='right'] > .tippy-arrow::before { border-right-color:#1d1d1f; }
+/* —— 拖入文件格式不支持时的提示 —— */
+.tool-warn { margin: 10px 0 0; font-size: 13px; line-height: 1.5; color: #a1500a; background: rgba(200,106,30,0.08); border: 1px solid rgba(200,106,30,0.22); border-radius: 10px; padding: 9px 12px; }
+.tool-warn:empty { display: none; }

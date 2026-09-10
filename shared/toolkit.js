@@ -52,8 +52,14 @@ export function celebrate(el) {
 // 多个文件打成一个 zip 下载(懒加载 JSZip,自动处理重名)
 export function downloadZip(files, zipName) {
   if (!files || !files.length) return;
+  // 打包库不可用时的兜底:退回逐个下载,至少让用户能拿到文件
+  function fallbackDownloads() {
+    files.forEach(function (f, i) {
+      setTimeout(function () { downloadBlob(f.blob, f.name); }, i * 200);
+    });
+  }
   loadScript('/vendor/jszip.min.js?v=1').then(function () {
-    if (!window.JSZip) return;
+    if (!window.JSZip) { fallbackDownloads(); return; }
     var zip = new window.JSZip();
     var seen = {};
     files.forEach(function (f) {
@@ -67,8 +73,8 @@ export function downloadZip(files, zipName) {
     });
     zip.generateAsync({ type: 'blob' }).then(function (b) {
       downloadBlob(b, zipName || 'download.zip');
-    }).catch(function () {});
-  }, function () {});
+    }).catch(fallbackDownloads);
+  }, fallbackDownloads);
 }
 export function loadScript(src) {
   return new Promise(function (resolve, reject) {
@@ -109,6 +115,42 @@ export function initTips(scope) {
     .then(function () { return loadScript('/vendor/tippy-bundle.umd.min.js?v=1'); })
     .then(apply, fallback);
 }
+// 把库抛出的英文错误翻译成用户能懂的话(原始信息不进 UI)
+export function friendlyError(e, fallback) {
+  var raw = String((e && e.message) || e || '');
+  if (/Pages|InvalidPDF|PDF structure|not a PDF|XRef|trailer/i.test(raw)) return '这个文件读不出来：可能已损坏、有密码保护，或者不是标准 PDF。';
+  if (/PNG|JPEG|image|decode|bitmap/i.test(raw)) return '这张图片读不出来：可能已损坏，或者是浏览器不支持的格式。';
+  if (/atob|base64|InvalidCharacterError/i.test(raw)) return '内容不是有效的 Base64，请检查是否复制完整。';
+  if (/JSON|Unexpected token/i.test(raw)) return 'JSON 格式有误，请检查括号、引号与逗号。';
+  if (/digest|WebCrypto|crypto/i.test(raw)) return '当前浏览器不支持该加密算法，请换用 Chrome 或 Edge 打开。';
+  return fallback || '处理失败，请换一个文件再试。';
+}
+// 在投放区下方显示一条提示(拖错文件类型时用,不再是静默失败)
+export function warnBelow(el, msg) {
+  if (!el || !el.parentNode) return;
+  var warn = el.parentNode.querySelector('.tool-warn');
+  if (!warn) {
+    warn = document.createElement('p');
+    warn.className = 'tool-warn';
+    el.parentNode.insertBefore(warn, el.nextSibling);
+  }
+  warn.textContent = msg;
+}
+export function clearWarn(el) {
+  if (!el || !el.parentNode) return;
+  var warn = el.parentNode.querySelector('.tool-warn');
+  if (warn) warn.textContent = '';
+}
+function matchesAccept(file, accept) {
+  if (!accept) return true;
+  return accept.split(',').some(function (a) {
+    a = a.trim();
+    if (!a) return false;
+    if (a.slice(-2) === '/*') return String(file.type || '').indexOf(a.slice(0, a.indexOf('/') + 1)) === 0;
+    if (a.charAt(0) === '.') return file.name.toLowerCase().slice(-a.length) === a.toLowerCase();
+    return file.type === a;
+  });
+}
 // 让一个容器变成"点击选文件 + 拖拽"的投放区
 export function makeDropZone(el, onFiles, accept) {
   el.addEventListener('click', function () {
@@ -123,7 +165,19 @@ export function makeDropZone(el, onFiles, accept) {
   el.addEventListener('dragleave', function () { el.classList.remove('active'); });
   el.addEventListener('drop', function (e) {
     e.preventDefault(); el.classList.remove('active');
-    if (e.dataTransfer && e.dataTransfer.files) onFiles(Array.from(e.dataTransfer.files));
+    if (!e.dataTransfer || !e.dataTransfer.files || !e.dataTransfer.files.length) return;
+    var all = Array.from(e.dataTransfer.files);
+    var okFiles = all.filter(function (f) { return matchesAccept(f, accept); });
+    if (!okFiles.length) {
+      warnBelow(el, '这个格式不支持' + (accept ? '，请拖入 ' + accept.replace('image/*', '图片（JPG / PNG / WebP / BMP / GIF）').replace('application/pdf', 'PDF 文件') + '。' : '。'));
+      return;
+    }
+    if (okFiles.length < all.length) {
+      warnBelow(el, '已忽略 ' + (all.length - okFiles.length) + ' 个不支持的文件，只处理了 ' + okFiles.length + ' 个。');
+    } else {
+      clearWarn(el);
+    }
+    onFiles(okFiles);
   });
 }
 
@@ -147,7 +201,7 @@ const REGISTRY = {
   'date': { title: '日期 & 时间戳', module: '/tools/date.mjs' }
 };
 
-const H = { esc, fmt, downloadBlob, downloadZip, injectCss, makeDropZone, loadScript, copyText, initTips };
+const H = { esc, fmt, downloadBlob, downloadZip, injectCss, makeDropZone, loadScript, copyText, initTips, friendlyError, warnBelow, clearWarn };
 
 export async function mountTool(slug, root, titleEl) {
   const t = REGISTRY[slug];

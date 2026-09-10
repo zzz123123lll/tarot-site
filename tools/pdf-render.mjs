@@ -59,7 +59,11 @@ export function mount(root, H) {
       root.querySelector('#gen').style.display = 'block';
       note.textContent = '已转出 ' + doc.numPages + ' 页，点「全部下载」。'; note.className = 'note ok'; note.style.display = 'block';
     } catch (e) {
-      note.textContent = '转换失败：' + (e && e.message ? e.message : e); note.className = 'note err'; note.style.display = 'block';
+      var pg2 = root.querySelector('#pg');
+      if (pg2) pg2.style.display = 'none';
+      var dl2 = root.querySelector('#dlAll');
+      if (dl2) dl2.disabled = false;
+      note.textContent = '转换失败：' + H.friendlyError(e); note.className = 'note err'; note.style.display = 'block';
     }
   }, 'application/pdf');
 }

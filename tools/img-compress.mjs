@@ -75,14 +75,18 @@ export function mount(root, H) {
     }).catch(function () { items.push({ name: file.name, origSize: origSize, status: 'fail' }); cb(); });
   }
 
+  var _urls = [];
+  function releaseUrls() { _urls.forEach(function (u) { URL.revokeObjectURL(u); }); _urls = []; }
+  function urlFor(blob) { var u = URL.createObjectURL(blob); _urls.push(u); return u; }
   function render() {
     var res = root.querySelector('#res');
+    releaseUrls();
     var html = '';
     items.forEach(function (f, i) {
       if (f.status === 'ok') {
         var pct = f.origSize > 0 ? Math.round(f.saved / f.origSize * 100) : 0;
         html += '<div class="result-card">'
-          + '<img class="preview" src="' + URL.createObjectURL(f.blob) + '" alt="" onclick="void 0">'
+          + '<img class="preview" src="' + urlFor(f.blob) + '" alt="" onclick="void 0">'
           + '<div class="info"><div class="name">' + H.esc(f.name) + '<span class="saved-badge">-' + pct + '%</span></div>'
           + '<div class="sizes"><span class="old">' + H.fmt(f.origSize) + '</span> → <span class="new">' + H.fmt(f.outSize) + '</span></div></div>'
           + '<button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button>'

@@ -78,13 +78,17 @@ export function mount(root, H) {
     }).catch(function () { items.push({ name: file.name, status: 'fail' }); cb(); });
   }
 
+  var _urls = [];
+  function releaseUrls() { _urls.forEach(function (u) { URL.revokeObjectURL(u); }); _urls = []; }
+  function urlFor(blob) { var u = URL.createObjectURL(blob); _urls.push(u); return u; }
   function render() {
     var res = root.querySelector('#res');
+    releaseUrls();
     var html = '';
     items.forEach(function (f, i) {
       if (f.status === 'ok') {
         html += '<div class="result-card">'
-          + '<img class="preview" src="' + URL.createObjectURL(f.blob) + '" alt="">'
+          + '<img class="preview" src="' + urlFor(f.blob) + '" alt="">'
           + '<div class="info"><div class="name">' + H.esc(f.outName) + '</div>'
           + '<div class="meta">' + f.w + '×' + f.h + ' · ' + H.fmt(f.size) + '</div></div>'
           + '<button class="download-btn" data-i="' + i + '">下载</button></div>';
