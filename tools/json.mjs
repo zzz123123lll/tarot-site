@@ -20,11 +20,14 @@ export function mount(root, H) {
   function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function posFromError(msg) {
     var s = String(msg);
-    var i = s.indexOf('position');
-    if (i < 0) return '';
-    // 原始报文形如 "… at position 10 (line 1 column 11)":先去掉空格再取前导数字
-    var m = s.slice(i + 8).trim().match(/^\d+/);
-    return m ? '（位置 ' + m[0] + '）' : '';
+    // 原始报文两种形态:
+    //   "… at position 8 (line 1 column 9)"  -> 用 position
+    //   "… (line 1 column 9)"                 -> 用行列
+    var m = s.match(/position\s+(\d+)/);
+    if (m) return '（位置 ' + m[1] + '）';
+    var lc = s.match(/line\s+(\d+)\s+column\s+(\d+)/);
+    if (lc) return '（第 ' + lc[1] + ' 行第 ' + lc[2] + ' 列）';
+    return '';
   }
 
   root.querySelector('#mt').addEventListener('click', function (e) {
