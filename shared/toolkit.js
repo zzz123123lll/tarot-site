@@ -118,7 +118,7 @@ export function initTips(scope) {
 // 把库抛出的英文错误翻译成用户能懂的话(原始信息不进 UI)
 export function friendlyError(e, fallback) {
   var raw = String((e && e.message) || e || '');
-  if (/Pages|InvalidPDF|PDF structure|not a PDF|XRef|trailer/i.test(raw)) return '这个文件读不出来：可能已损坏、有密码保护，或者不是标准 PDF。';
+  if (/Pages|InvalidPDF|PDF structure|not a PDF|No PDF header|Failed to parse PDF|XRef|trailer/i.test(raw)) return '这个文件读不出来：可能已损坏、有密码保护，或者不是标准 PDF。';
   if (/PNG|JPEG|image|decode|bitmap/i.test(raw)) return '这张图片读不出来：可能已损坏，或者是浏览器不支持的格式。';
   if (/atob|base64|InvalidCharacterError/i.test(raw)) return '内容不是有效的 Base64，请检查是否复制完整。';
   if (/JSON|Unexpected token/i.test(raw)) return 'JSON 格式有误，请检查括号、引号与逗号。';

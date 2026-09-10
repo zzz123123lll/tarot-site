@@ -19,14 +19,14 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="工具盒">
 <link rel="stylesheet" href="/fonts.css?v=1">
-<link rel="stylesheet" href="/tool.css?v=7">
+<link rel="stylesheet" href="/tool.css?v=8">
 </head>
 <body>
 <nav class="tool-nav">
   <a href="/">&#8592; 工具盒</a>
   <span class="tool-nav-title" id="toolTitle"></span>
 </nav>
-<div class="tool-container" id="toolRoot"></div>
+<div class="tool-container" id="toolRoot"><div class="tool-static"><h1 class="tool-h1">图片合成 PDF</h1><p class="tool-sub">把多张图片按顺序合成一个 PDF，可以选 A4 纵向、横向或适应图片原始尺寸。</p><p class="tool-static-note">这个工具在你的浏览器里本地运行，文件不会上传到任何服务器；加载完成后下方即可直接使用。</p></div></div>
 <script type="module">
 import { mountTool } from '/shared/toolkit.js?v=10';
 function slugFromPath() {
@@ -41,5 +41,6 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=2'); });
 }
 </script>
+  <footer class="tool-foot"><p class="tool-foot-line">图片工具 · 全部工具本地运行，文件不上传</p><nav class="tool-foot-links" aria-label="同分区工具"><a href="/img-compress/">图片压缩</a><a href="/image-convert/">图片转换</a><a href="/">全部工具</a></nav></footer>
 </body>
 </html>

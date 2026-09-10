@@ -94,6 +94,14 @@ body {
 /* —— 拖入文件格式不支持时的提示 —— */
 .tool-warn { margin: 10px 0 0; font-size: 13px; line-height: 1.5; color: #a1500a; background: rgba(200,106,30,0.08); border: 1px solid rgba(200,106,30,0.22); border-radius: 10px; padding: 9px 12px; }
 .tool-warn:empty { display: none; }
+/* —— 工具页静态正文:JS 加载前可见,搜索引擎与关掉 JS 的用户也能读到 —— */
+.tool-static-note { margin: 10px 0 0; font-size: 13px; line-height: 1.65; color: #6e6e73; max-width: 62ch; }
+/* —— 工具页页脚与同分区内链 —— */
+.tool-foot { max-width: 720px; margin: 56px auto 0; padding: 22px 24px 56px; border-top: 1px solid var(--t-line); }
+.tool-foot-line { margin: 0 0 10px; font-size: 13px; color: #6e6e73; }
+.tool-foot-links { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; }
+.tool-foot-links a { color: var(--t-accent); text-decoration: none; }
+.tool-foot-links a:hover { text-decoration: underline; }
 /* —— 公共控件:分段选择器(所有工具共用,原先各模块重复注入 5 份) —— */
 .mode-tabs { display:inline-flex; background:#f5f5f7; border-radius:10px; padding:3px; margin-bottom:16px; }
 .mode-tabs button { flex:1; padding:7px 16px; border:none; border-radius:8px; background:transparent; color:#6e6e73; font-size:13px; font-weight:500; font-family:inherit; cursor:pointer; transition:background .15s, color .15s; }
