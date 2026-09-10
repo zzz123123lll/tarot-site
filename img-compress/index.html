@@ -6,10 +6,10 @@
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231d1d1f'/%3E%3Cpath d='M50 16L59 41L84 50L59 59L50 84L41 59L16 50L41 41Z' fill='%23e6c784'/%3E%3C/svg%3E">
 <title>图片压缩 - 在线批量瘦身图片 · 工具盒</title>
-<meta name="description" content="图片压缩：批量把 JPG / PNG / WebP 变小，三档预设，可一次处理多张；压完没变小就保留原图。免费、不上传。">
+<meta name="description" content="图片压缩：批量把 JPG / PNG / WebP 变小，三档预设；也可以直接压到指定大小（如 500KB 以内），适合报名、报销、投稿的上传大小限制。免费、不用上传，在浏览器里本地处理。">
 <link rel="canonical" href="https://gongjuhe.top/img-compress/">
 <meta property="og:title" content="图片压缩 - 在线批量瘦身图片 · 工具盒">
-<meta property="og:description" content="图片压缩：批量把 JPG / PNG / WebP 变小，三档预设，可一次处理多张；压完没变小就保留原图。免费、不上传。">
+<meta property="og:description" content="图片压缩：批量把 JPG / PNG / WebP 变小，也可以直接压到指定大小（如 500KB 以内）。免费、不上传。">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://gongjuhe.top/og.png">
 <meta property="og:url" content="https://gongjuhe.top/img-compress/">
@@ -27,9 +27,9 @@
   <a class="tool-nav-brand" href="/"><span class="nav-mark"><svg class="nav-star" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.4l2.55 7.05L21.6 12l-7.05 2.55L12 21.6l-2.55-7.05L2.4 12l7.05-2.55z" fill="currentColor"/></svg></span>工具盒</a>
   <span class="tool-nav-title" id="toolTitle"></span>
 </nav>
-<div class="tool-container" id="toolRoot"><div class="tool-static"><h1 class="tool-h1">图片压缩</h1><p class="tool-sub">批量把图片变小。支持 JPG、PNG、WebP、BMP、GIF，可批量；压完没变小就保留原图。</p><p class="tool-static-note">这个工具在你的浏览器里本地运行，文件不会上传到任何服务器；加载完成后下方即可直接使用。</p></div></div>
+<div class="tool-container" id="toolRoot"><div class="tool-static"><h1 class="tool-h1">图片压缩</h1><p class="tool-sub">批量把图片变小，也可以直接压到指定大小（比如报名要求 500KB 以内）。支持 JPG、PNG、WebP、BMP、GIF；压完没变小就保留原图。</p><p class="tool-static-note">这个工具在你的浏览器里本地运行，文件不会上传到任何服务器；加载完成后下方即可直接使用。</p></div></div>
 <script type="module">
-import { mountTool } from '/shared/toolkit.js?v=12';
+import { mountTool } from '/shared/toolkit.js?v=13';
 function slugFromPath() {
   var p = (location.pathname || '').replace(/^\/+|\/+$/g, '');
   if (p.indexOf('tools/') === 0) p = p.slice(6);
@@ -39,7 +39,7 @@ mountTool(slugFromPath(), document.getElementById('toolRoot'), document.getEleme
 </script>
 <script>
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
-  window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=2'); });
+  window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=3'); });
 }
 </script>
   <footer class="tool-foot"><p class="tool-foot-line">图片工具 · 全部工具本地运行，文件不上传</p><nav class="tool-foot-links" aria-label="同分区工具"><a href="/image-convert/">图片转换</a><a href="/images-to-pdf/">图片合成 PDF</a><a href="/">全部工具</a></nav></footer>

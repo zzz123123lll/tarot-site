@@ -29,7 +29,7 @@
 </nav>
 <div class="tool-container" id="toolRoot"><div class="tool-static"><h1 class="tool-h1">图片转换</h1><p class="tool-sub">缩放尺寸、在 PNG / JPG / WebP 之间互转，也可以在转换时统一改宽度。</p><p class="tool-static-note">这个工具在你的浏览器里本地运行，文件不会上传到任何服务器；加载完成后下方即可直接使用。</p></div></div>
 <script type="module">
-import { mountTool } from '/shared/toolkit.js?v=12';
+import { mountTool } from '/shared/toolkit.js?v=13';
 function slugFromPath() {
   var p = (location.pathname || '').replace(/^\/+|\/+$/g, '');
   if (p.indexOf('tools/') === 0) p = p.slice(6);
@@ -39,7 +39,7 @@ mountTool(slugFromPath(), document.getElementById('toolRoot'), document.getEleme
 </script>
 <script>
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
-  window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=2'); });
+  window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=3'); });
 }
 </script>
   <footer class="tool-foot"><p class="tool-foot-line">图片工具 · 全部工具本地运行，文件不上传</p><nav class="tool-foot-links" aria-label="同分区工具"><a href="/img-compress/">图片压缩</a><a href="/images-to-pdf/">图片合成 PDF</a><a href="/">全部工具</a></nav></footer>

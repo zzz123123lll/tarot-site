@@ -195,7 +195,7 @@ export function makeDropZone(el, onFiles, accept) {
 }
 
 const REGISTRY = {
-  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs' },
+  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 2 },
   'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs' },
   'images-to-pdf': { title: '图片合成 PDF', module: '/tools/images-to-pdf.mjs' },
   'pdf-merge': { title: 'PDF 合并', module: '/tools/pdf-merge.mjs' },
@@ -244,7 +244,7 @@ export async function mountTool(slug, root, titleEl) {
   if (titleEl) titleEl.textContent = t.title;
   // 页面 <title> 由各工具的静态 HTML 提供(SEO),这里不再覆盖
   try {
-    const mod = await import(t.module + '?v=1');
+    const mod = await import(t.module + '?v=' + (t.v || 1));
     if (mod && mod.mount) { mod.mount(root, H); enhanceA11y(root); }
   } catch (e) {
     root.innerHTML = '<p class="tool-sub">工具加载失败。</p>';
