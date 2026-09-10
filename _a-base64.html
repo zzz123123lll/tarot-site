@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>Base64 编解码 - 文本在线互转 · 工具盒</title>
+<meta name="description" content="文本与 Base64 互转。免费在线，纯本地运行，数据不出你的浏览器。">
+<link rel="canonical" href="https://gongjuhe.top/tools/base64/">
+<meta property="og:title" content="Base64 编解码 - 文本在线互转 · 工具盒">
+<meta property="og:description" content="文本与 Base64 互转。免费在线，纯本地运行，数据不出你的浏览器。">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://gongjuhe.top/og.png">
+<meta property="og:url" content="https://gongjuhe.top/tools/base64/">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="工具盒">
+<link rel="stylesheet" href="/fonts.css?v=1">
+<link rel="stylesheet" href="/tool.css?v=5">
+<style>.mode-tabs{display:inline-flex;background:#f5f5f7;border-radius:10px;padding:3px;margin-bottom:16px}.mode-tabs button{flex:1;padding:7px 16px;border:none;border-radius:8px;background:transparent;color:#6e6e73;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer}.mode-tabs button.active{background:#fff;color:#1d1d1f;box-shadow:0 1px 3px rgba(0,0,0,.12)}.err-box{display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(215,0,21,.06);color:#d70015;font-size:13px}</style></head>
+<body>
+<nav class="tool-nav">
+  <a href="/">← 工具盒</a>
+  <span class="tool-nav-title" id="toolTitle">Base64 编解码</span>
+</nav>
+<div class="tool-container" id="toolRoot"><h1 class="tool-h1">Base64 编解码</h1><p class="tool-sub">文本、文件、base64url。全部本地。</p><span class="mode-tabs" id="mt"><button data-m="text" class="active">文本</button><button data-m="file">文件</button></span><div id="textPane"><div class="tool-field"><label>输入</label><textarea id="in" class="tool-textarea" placeholder="输入文本或 Base64…"></textarea></div><div class="tool-row" style="margin-bottom:12px"><button class="tool-btn" id="enc">编码 →</button><button class="tool-btn" id="dec">← 解码</button><label style="font-size:13px;color:#6e6e73;margin-left:8px"><input type="checkbox" id="url" style="margin-right:4px">base64url</label><button class="tool-btn tool-btn--ghost" id="cp">复制</button></div><p class="err-box" id="terr"></p><div class="tool-output mono" id="out" style="white-space:pre-wrap"></div></div><div id="filePane" style="display:none"><div class="tool-drop" id="dz"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"></path><path d="M14 3v4h4"></path></svg></div><div class="title">点击选择文件，转成 Base64</div><div class="hint">最大 100MB，文本样式输出</div></div><div class="tool-field" style="margin-top:16px"><label>或粘贴 Base64，转回文件下载</label><textarea id="fin" class="tool-textarea" placeholder="粘贴 Base64…" style="min-height:90px"></textarea></div><div class="tool-row" style="margin-top:12px"><button class="tool-btn" id="fb2file">转回文件并下载</button><button class="tool-btn tool-btn--ghost" id="fcp">复制 Base64</button></div><p class="err-box" id="ferr"></p><div class="tool-output mono" id="fout" style="white-space:pre-wrap;word-break:break-all;display:none;max-height:200px;overflow:auto"></div></div></div>
+<script type="module">
+import { mountTool } from '/shared/toolkit.js?v=6';
+function slugFromPath() {
+  var p = (location.pathname || '').replace(/^\/+|\/+$/g, '');
+  if (p.indexOf('tools/') === 0) p = p.slice(6);
+  return p;
+}
+mountTool(slugFromPath(), document.getElementById('toolRoot'), document.getElementById('toolTitle'));
+</script>
+<script>
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js'); });
+}
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;1847d61d7a2546638d7d17d57dc4276e&quot;,&quot;r&quot;:1,&quot;spa&quot;:2}" crossorigin="anonymous"></script>
+
+
+</body></html>

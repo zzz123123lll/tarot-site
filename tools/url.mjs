@@ -2,12 +2,13 @@
 export function mount(root, H) {
   root.innerHTML =
     '<h1 class="tool-h1">URL 编解码</h1>' +
-    '<p class="tool-sub">encode/decodeURIComponent、query 参数解析。全部本地。</p>' +
+    '<p class="tool-sub">URL 编码 / 解码、query 参数解析。全部本地，不上传。</p>' +
     '<div class="tool-field"><label>输入</label><textarea id="in" class="tool-textarea mono" placeholder="输入 URL、query 或文本…" style="min-height:90px"></textarea></div>' +
     '<div class="tool-row" style="margin-bottom:12px">' +
-      '<button class="tool-btn" id="enc">encodeURIComponent</button><button class="tool-btn" id="dec">decodeURIComponent</button>' +
+      '<button class="tool-btn" id="enc">编码</button><button class="tool-btn" id="dec">解码</button>' +
       '<button class="tool-btn tool-btn--ghost" id="qp">解析 query</button><button class="tool-btn tool-btn--ghost" id="cp">复制</button>' +
     '</div>' +
+    '<p class="tool-note">编码会把空格变成 %20、中文变成 %E4%B8%AD 这样的形式；解码是它的反向操作。整条 URL 也可以用「解析 query」拆出参数。</p>' +
     '<p class="err-box" id="err" style="display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(215,0,21,.06);color:#d70015;font-size:13px"></p>' +
     '<div class="tool-output mono" id="out" style="white-space:pre-wrap;word-break:break-all"></div>';
 

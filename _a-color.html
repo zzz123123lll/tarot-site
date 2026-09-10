@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>颜色工具 - RGB/HEX/HSL 互转 · 工具盒</title>
+<meta name="description" content="RGB / HEX / HSL 互转。免费在线，纯本地运行，数据不出你的浏览器。">
+<link rel="canonical" href="https://gongjuhe.top/tools/color/">
+<meta property="og:title" content="颜色工具 - RGB/HEX/HSL 互转 · 工具盒">
+<meta property="og:description" content="RGB / HEX / HSL 互转。免费在线，纯本地运行，数据不出你的浏览器。">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://gongjuhe.top/og.png">
+<meta property="og:url" content="https://gongjuhe.top/tools/color/">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="工具盒">
+<link rel="stylesheet" href="/fonts.css?v=1">
+<link rel="stylesheet" href="/tool.css?v=5">
+<style>.crow{display:flex;align-items:center;gap:8px;margin-bottom:12px}.crow label{font-size:13px;color:#6e6e73;min-width:34px}.cinput{width:64px}.swatch{width:100%;height:64px;border-radius:10px;border:1px solid rgba(0,0,0,.12);margin:8px 0 16px}.wcag-ok{color:#1d9e4e}.wcag-bad{color:#d70015}</style></head>
+<body>
+<nav class="tool-nav">
+  <a href="/">← 工具盒</a>
+  <span class="tool-nav-title" id="toolTitle">颜色工具</span>
+</nav>
+<div class="tool-container" id="toolRoot"><h1 class="tool-h1">颜色工具</h1><p class="tool-sub">HEX / RGB / HSL 双向互转，对比度检查。全部本地。</p><div class="crow"><label>拾色</label><input type="color" id="pick" value="#0071e3"></div><div class="crow"><label>HEX</label><input type="text" class="tool-input cinput" id="hex" value="#0071e3" style="flex:1"></div><div class="crow"><label>RGB</label><input type="number" class="tool-input cinput" id="r" min="0" max="255"><input type="number" class="tool-input cinput" id="g" min="0" max="255"><input type="number" class="tool-input cinput" id="b" min="0" max="255"></div><div class="crow"><label>HSL</label><input type="number" class="tool-input cinput" id="h" min="0" max="360"><input type="number" class="tool-input cinput" id="s" min="0" max="100"><input type="number" class="tool-input cinput" id="l" min="0" max="100"></div><div class="swatch" id="sw" style="background: rgb(0, 113, 227);"></div><div class="tool-row" style="margin-bottom:16px"><button class="tool-btn tool-btn--ghost" id="cp">复制 HEX</button></div><div class="tool-field"><label>对比度检查（第二个颜色）</label><div class="crow"><input type="text" class="tool-input cinput" id="hex2" value="#ffffff" style="flex:1"><span id="wcag" style="font-size:13px">对比度 <strong>4.70</strong> <span class="wcag-ok">AA ✓</span></span></div></div></div>
+<script type="module">
+import { mountTool } from '/shared/toolkit.js?v=6';
+function slugFromPath() {
+  var p = (location.pathname || '').replace(/^\/+|\/+$/g, '');
+  if (p.indexOf('tools/') === 0) p = p.slice(6);
+  return p;
+}
+mountTool(slugFromPath(), document.getElementById('toolRoot'), document.getElementById('toolTitle'));
+</script>
+<script>
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js'); });
+}
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;1847d61d7a2546638d7d17d57dc4276e&quot;,&quot;r&quot;:1,&quot;spa&quot;:2}" crossorigin="anonymous"></script>
+
+
+</body></html>
