@@ -6,7 +6,7 @@ export function mount(root, H) {
 
   root.innerHTML =
     '<h1 class="tool-h1">图片压缩</h1>' +
-    '<p class="tool-sub">批量瘦身，纯本地处理，不上传、不联网。压了没变小就跳过。</p>' +
+    '<p class="tool-sub">批量瘦身，纯本地处理，文件不上传。压了没变小就跳过。</p>' +
     '<div class="preset-tabs" id="pt"><button class="preset-tab" data-p="small">小文件</button><button class="preset-tab active" data-p="balanced">均衡</button><button class="preset-tab" data-p="high">高质量</button></div>' +
     '<p class="preset-hint">小文件 · 体积最小　均衡 · 推荐　高质量 · 最接近原图</p>' +
     '<div class="tool-drop" id="dz"><div class="icon">' + icon + '</div><div class="title">点击选择图片，或拖拽到此处</div><div class="hint">支持 JPG、PNG、WebP、BMP、GIF（批量）</div></div>' +

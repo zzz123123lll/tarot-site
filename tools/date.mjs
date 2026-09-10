@@ -36,7 +36,7 @@ export function mount(root, H) {
 
   root.querySelector('#ts2d').addEventListener('click', function () {
     var v = root.querySelector('#ts').value.trim(); var out = root.querySelector('#tsout');
-    if (!/^\\d+$/.test(v)) { out.textContent = '请输入数字时间戳'; return; }
+    if (!/^\d+$/.test(v)) { out.textContent = '请输入数字时间戳（例如 1700000000）。'; return; }
     var n = parseInt(v, 10);
     if (v.length > 10) n = n; else n = n * 1000;
     var d = new Date(n);

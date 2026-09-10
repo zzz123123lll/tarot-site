@@ -20,8 +20,12 @@ export function mount(root, H) {
   async function compute(bytes) {
     err.style.display = 'none';
     if (algo === 'MD5') {
-      try { await H.loadScript('/vendor/js-md5.min.js?v=1'); } catch (e) { err.textContent = 'MD5 库加载失败'; err.style.display = 'block'; return; }
-      out.textContent = window.md5(bytes);
+      try { await H.loadScript('/vendor/spark-md5.min.js?v=1'); } catch (e) { err.textContent = 'MD5 库加载失败，请检查网络后重试。'; err.style.display = 'block'; return; }
+      // 必须按原始字节计算:内建 md5 库对二进制输入会给出错误结果(已实测),此处用 spark-md5
+      var ab = (bytes && bytes.byteOffset !== undefined)
+        ? bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength)
+        : bytes;
+      out.textContent = window.SparkMD5.ArrayBuffer.hash(ab);
       return;
     }
     if (!window.crypto || !crypto.subtle) { err.textContent = '当前环境不支持 WebCrypto（需要 HTTPS 或 localhost）。'; err.style.display = 'block'; return; }
@@ -31,13 +35,15 @@ export function mount(root, H) {
   root.querySelector('#go').addEventListener('click', function () {
     var v = root.querySelector('#txt').value;
     if (!v) { out.textContent = ''; return; }
-    compute(new TextEncoder().encode(v)).then(function () { root.querySelector('#cp').disabled = false; });
+    compute(new TextEncoder().encode(v)).then(function () { root.querySelector('#cp').disabled = false; })
+      .catch(function (e) { err.textContent = '计算失败：' + (e && e.message ? e.message : e); err.style.display = 'block'; });
   });
   root.querySelector('#cp').addEventListener('click', function () { if (out.textContent) H.copyText(out.textContent, this); });
   H.makeDropZone(root.querySelector('#dz'), async function (fs) {
     var f = fs[0];
-    if (f.size > 500 * 1024 * 1024) { err.textContent = '文件超过 500MB。'; err.style.display = 'block'; return; }
+    if (f.size > 500 * 1024 * 1024) { err.textContent = '文件超过 500MB，请改用更小的文件，或先用「PDF 压缩 / 图片压缩」把它变小。'; err.style.display = 'block'; return; }
     var bytes = await f.arrayBuffer();
-    compute(bytes).then(function () { root.querySelector('#cp').disabled = false; });
+    compute(bytes).then(function () { root.querySelector('#cp').disabled = false; })
+      .catch(function (e) { err.textContent = '计算失败：' + (e && e.message ? e.message : e); err.style.display = 'block'; });
   });
 }

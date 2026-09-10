@@ -2,6 +2,7 @@
   "name": "工具盒",
   "short_name": "工具盒",
   "description": "把好用的工具收进一个盒子里：图片、PDF、开发小工具与塔罗占卜，全部本地运行。",
+  "id": "/",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
