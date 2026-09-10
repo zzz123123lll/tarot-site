@@ -1,12 +1,13 @@
-/* fonts.css — 自托管 Geist / Geist Mono（Vercel, OFL 许可）
-   可变字体，按需合成字重；中文回退系统字体。 */
+/* fonts.css — 自托管 Geist / Geist Mono(Vercel, OFL 许可)
+   仅保留拉丁字母、数字、常用标点与符号的子集(体积约为完整版 45%),中文回退系统字体。
+   子集生成:pyftsubset --unicodes=U+0000-00FF,U+2000-206F,U+2190-2199,U+2200-22FF,U+25A0-25CF,U+2713,U+2726,U+2736 --flavor=woff2 */
 @font-face {
   font-family: "Geist";
-  src: url("/vendor/fonts/Geist-Variable.woff2") format("woff2-variations");
+  src: url("/vendor/fonts/Geist-sub.woff2") format("woff2-variations");
   font-weight: 100 900; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: "Geist Mono";
-  src: url("/vendor/fonts/GeistMono-Variable.woff2") format("woff2-variations");
+  src: url("/vendor/fonts/GeistMono-sub.woff2") format("woff2-variations");
   font-weight: 100 900; font-style: normal; font-display: swap;
 }

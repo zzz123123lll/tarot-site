@@ -70,7 +70,7 @@ p { margin:0 0 var(--s4); font-family: var(--font-serif); color: var(--text-soft
 .btn-share--daily { margin-top: var(--s4); }
 .btn-share--daily:hover { transform: translateY(-1px); }
 /* 面板与卡片的边界:site.css 会把 --line 覆盖为 rgba(255,255,255,0.08),这里用显式值保证层级可读 */
-.panel, .tarot-card .card-front, .daily-card-back, .daily-card-front { border-color: rgba(185,154,99,0.26); }
+.panel, .tarot-card .card-front, .daily-card-back, .daily-card-front { border-color: rgba(185,154,99,0.46); }
 /* 行内小图标(替代 emoji,与首页图标同源) */
 .ico { width: 1em; height: 1em; vertical-align: -0.12em; margin-right: 6px; flex: none; }
 /* —— 解读分享图弹窗 —— */
