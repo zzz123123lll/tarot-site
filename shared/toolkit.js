@@ -132,6 +132,9 @@ export function warnBelow(el, msg) {
   if (!warn) {
     warn = document.createElement('p');
     warn.className = 'tool-warn';
+    // 动态插入的提示必须自带播报属性,否则读屏用户收不到
+    warn.setAttribute('aria-live', 'polite');
+    warn.setAttribute('role', 'status');
     el.parentNode.insertBefore(warn, el.nextSibling);
   }
   warn.textContent = msg;

@@ -7,17 +7,17 @@
 :root {
   --bg:        #0c0c16;   /* 深空 */
   --bg-2:      #0a0a12;
-  --surface:   #191627;
-  --surface-2: #221e33;
+  --surface:   #14121e;
+  --surface-2: #1b1827;
   --text:      #e8e6f2;
   --text-soft: #c4c1d8;
-  --muted:     #9a95b0;
+  --muted:     #8b86a3;
   --accent:    #c9a86b;   /* 暖金 */
   --accent-2:  #e0c184;
   --accent-ink:#14100a;
   --violet:    #8a7fc4;   /* 天穹紫晶（次点缀） */
-  --line:      rgba(201,168,107,0.22);
-  --line-strong: rgba(201,168,107,0.46);
+  --line:      rgba(201,168,107,0.16);
+  --line-strong: rgba(201,168,107,0.38);
   --warn:      #c98a5a;
 
   --font-display: "Cormorant Garamond", "Playfair Display", "Songti SC", Georgia, serif;
@@ -69,6 +69,8 @@ p { margin:0 0 var(--s4); font-family: var(--font-serif); color: var(--text-soft
 .btn-share:disabled { opacity:0.45; cursor:not-allowed; pointer-events:none; }
 .btn-share--daily { margin-top: var(--s4); }
 .btn-share--daily:hover { transform: translateY(-1px); }
+/* 面板与卡片的边界:site.css 会把 --line 覆盖为 rgba(255,255,255,0.08),这里用显式值保证层级可读 */
+.panel, .tarot-card .card-front, .daily-card-back, .daily-card-front { border-color: rgba(185,154,99,0.26); }
 /* 行内小图标(替代 emoji,与首页图标同源) */
 .ico { width: 1em; height: 1em; vertical-align: -0.12em; margin-right: 6px; flex: none; }
 /* —— 解读分享图弹窗 —— */
@@ -295,9 +297,9 @@ p { margin:0 0 var(--s4); font-family: var(--font-serif); color: var(--text-soft
    ============================================================ */
 :root {
   --bg:#161210; --bg-2:#0d0b09;
-  --surface:#1e1914; --surface-2:#272019;
+  --surface:#332c24; --surface-2:#3b342b;
   --text:#efe6d3; --text-soft:#cabda5; --muted:#98897a;
-  --line:rgba(185,154,99,0.18); --line-strong:rgba(185,154,99,0.40);
+  --line:rgba(185,154,99,0.28); --line-strong:rgba(185,154,99,0.52);
   --accent:#b99a63; --accent-2:#d6b673; --accent-ink:#171308;
   --warn:#b04a3a;
 }
