@@ -104,7 +104,10 @@ export function initTips(scope) {
     });
   }
   if (window.tippy) { apply(); return; }
-  loadScript('/vendor/tippy-bundle.umd.min.js?v=1').then(apply, fallback);
+  // tippy 6.x 的 UMD 包(包括官方 bundle 版)都要求全局 Popper,必须先加载 Popper 本体
+  loadScript('/vendor/popper.min.js?v=1')
+    .then(function () { return loadScript('/vendor/tippy-bundle.umd.min.js?v=1'); })
+    .then(apply, fallback);
 }
 // 让一个容器变成"点击选文件 + 拖拽"的投放区
 export function makeDropZone(el, onFiles, accept) {

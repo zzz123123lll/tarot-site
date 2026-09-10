@@ -6,10 +6,10 @@
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231d1d1f'/%3E%3Cpath d='M50 16L59 41L84 50L59 59L50 84L41 59L16 50L41 41Z' fill='%23e6c784'/%3E%3C/svg%3E">
 <title>Base64 编解码 - 文本在线互转 · 工具盒</title>
-<meta name="description" content="文本与 Base64 互转。免费在线，纯本地运行，数据不出你的浏览器。">
+<meta name="description" content="文本与 Base64 互转。免费在线，文件不上传，处理全在你自己的浏览器里。">
 <link rel="canonical" href="https://gongjuhe.top/tools/base64/">
 <meta property="og:title" content="Base64 编解码 - 文本在线互转 · 工具盒">
-<meta property="og:description" content="文本与 Base64 互转。免费在线，纯本地运行，数据不出你的浏览器。">
+<meta property="og:description" content="文本与 Base64 互转。免费在线，文件不上传，处理全在你自己的浏览器里。">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://gongjuhe.top/og.png">
 <meta property="og:url" content="https://gongjuhe.top/tools/base64/">
@@ -28,7 +28,7 @@
 </nav>
 <div class="tool-container" id="toolRoot"></div>
 <script type="module">
-import { mountTool } from '/shared/toolkit.js?v=7';
+import { mountTool } from '/shared/toolkit.js?v=8';
 function slugFromPath() {
   var p = (location.pathname || '').replace(/^\/+|\/+$/g, '');
   if (p.indexOf('tools/') === 0) p = p.slice(6);
