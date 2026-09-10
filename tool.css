@@ -28,6 +28,10 @@ body {
   color: var(--t-accent); text-decoration: none; font-size: 15px; font-weight: 500;
 }
 .tool-nav a:hover { text-decoration: underline; }
+/* —— 品牌入口:与首页一致,整块可点、点它回首页(此前只是一个 "← 工具盒" 文字链,品牌标记在工具页消失) —— */
+.tool-nav .tool-nav-brand { color: var(--t-text); font-weight: 650; padding: 8px 0; margin: -8px 0; }
+.tool-nav .tool-nav-brand:hover { text-decoration: none; color: var(--t-accent); }
+.tool-nav .nav-mark { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 6px; background: linear-gradient(160deg,#7c85f0,#5e6ad2); color: #fff; font-size: 12px; flex: none; }
 .tool-nav .tool-nav-title { font-size: 15px; font-weight: 600; color: var(--t-text); }
 
 /* —— 容器 / 标题 —— */
