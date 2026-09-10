@@ -100,7 +100,7 @@ body {
 .tool-foot { max-width: 720px; margin: 56px auto 0; padding: 22px 24px 56px; border-top: 1px solid var(--t-line); }
 .tool-foot-line { margin: 0 0 10px; font-size: 13px; color: #6e6e73; }
 .tool-foot-links { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; }
-.tool-foot-links a { color: var(--t-accent); text-decoration: none; }
+.tool-foot-links a { color: var(--t-accent); text-decoration: none; display: inline-flex; align-items: center; min-height: 24px; padding: 3px 0; }
 .tool-foot-links a:hover { text-decoration: underline; }
 /* —— 公共控件:分段选择器(所有工具共用,原先各模块重复注入 5 份) —— */
 .mode-tabs { display:inline-flex; background:#f5f5f7; border-radius:10px; padding:3px; margin-bottom:16px; }
