@@ -84,6 +84,19 @@ function askWorker(buf, width, height, mime, mode, param) {
 
 function blobOf(buf, mime) { return buf ? new Blob([buf], { type: mime }) : null; }
 
+// PNG 特例:真编码器(squoosh-png)与浏览器内建画布编码各出一份,取更小的那份。
+// 原因:独立验收实测 squoosh-png 在部分图上的输出比浏览器内建 PNG 编码大近一倍,取小者才对用户有利。
+async function pngCandidates(img, mime, mode, param) {
+  var out = [];
+  try {
+    var r = await askWorker(img.data.data.buffer, img.width, img.height, mime, mode, param);
+    if (r.buf) out.push({ blob: blobOf(r.buf, mime), real: true });
+  } catch (e) { /* Worker 不可用就只比画布 */ }
+  var cb = await canvasEncode(img.canvas, mime, undefined);
+  if (cb) out.push({ blob: cb, real: false });
+  return out;
+}
+
 // ---------- 画布二分兜底(连 wasm 都不可用时) ----------
 async function canvasTarget(img, mime, targetBytes, origSize) {
   var c = img.canvas;
@@ -120,6 +133,14 @@ export async function encodeToTarget(file, mime, targetBytes) {
   var img = await toImageData(file, mime === 'image/jpeg');
   var param = { targetBytes: targetBytes, origSize: origSize };
 
+  if (kind === 'png') {
+    var cands = await pngCandidates(img, mime, 'target', param);
+    var best = null;
+    cands.forEach(function (c) { if (c.blob && c.blob.size < origSize && (!best || c.blob.size < best.blob.size)) best = c; });
+    if (!best) return { blob: null, met: false, reason: 'png-lossless' };
+    return { blob: best.blob, met: best.blob.size <= targetBytes, real: best.real, reason: best.blob.size <= targetBytes ? 'ok' : 'png-lossless' };
+  }
+
   // 1) Worker 里的真编码器
   try {
     var r = await askWorker(img.data.data.buffer, img.width, img.height, mime, 'target', param);
@@ -138,6 +159,12 @@ export async function encodeToTarget(file, mime, targetBytes) {
 
 export async function encodeWithQuality(file, mime, qualityPercent) {
   var img = await toImageData(file, mime === 'image/jpeg');
+  if (pickKind(mime) === 'png') {
+    var cands = await pngCandidates(img, mime, 'quality', qualityPercent);
+    var best = null;
+    cands.forEach(function (c) { if (c.blob && (!best || c.blob.size < best.blob.size)) best = c; });
+    return best ? { blob: best.blob, real: best.real } : { blob: null, real: false };
+  }
   try {
     var r = await askWorker(img.data.data.buffer, img.width, img.height, mime, 'quality', qualityPercent);
     if (r.buf) return { blob: blobOf(r.buf, mime), real: true };

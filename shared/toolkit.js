@@ -195,7 +195,7 @@ export function makeDropZone(el, onFiles, accept) {
 }
 
 const REGISTRY = {
-  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 2 },
+  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 3 },
   'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs' },
   'images-to-pdf': { title: '图片合成 PDF', module: '/tools/images-to-pdf.mjs' },
   'pdf-merge': { title: 'PDF 合并', module: '/tools/pdf-merge.mjs' },
@@ -219,7 +219,7 @@ const H = { esc, fmt, downloadBlob, downloadZip, injectCss, makeDropZone, loadSc
 // 通用无障碍增强:动态状态区可被读屏播报;标签与输入框建立关联
 export function enhanceA11y(root) {
   if (!root || !root.querySelectorAll) return;
-  Array.prototype.forEach.call(root.querySelectorAll('.note, .err-box, .err-text, .tool-warn, .note-ok'), function (el) {
+  Array.prototype.forEach.call(root.querySelectorAll('.note, .err-box, .err-text, .tool-warn, .note-ok, .summary, .progress-note'), function (el) {
     if (!el.getAttribute('aria-live')) el.setAttribute('aria-live', 'polite');
     if (!el.getAttribute('role')) el.setAttribute('role', 'status');
   });

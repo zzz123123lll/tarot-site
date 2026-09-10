@@ -6,7 +6,7 @@ export function mount(root, H) {
 
   root.innerHTML =
     '<h1 class="tool-h1">图片压缩</h1>' +
-    '<p class="tool-sub">批量瘦身，纯本地处理，文件不上传。使用真实编码器（mozjpeg / libwebp），不是简单重画。</p>' +
+    '<p class="tool-sub">批量瘦身，纯本地处理，文件不上传。使用真实编码器（mozjpeg / libwebp / PNG 无损重压），不是简单重画。</p>' +
     '<div class="mode-tabs" id="md"><button data-m="quality" class="active">画质优先</button><button data-m="target">压到指定大小</button></div>' +
     '<div id="tbox" style="display:none">' +
       '<div class="tool-row" style="margin-bottom:6px"><label style="font-size:13px;color:#6e6e73">目标大小</label>' +
@@ -16,12 +16,12 @@ export function mount(root, H) {
     '</div>' +
     '<div class="preset-tabs" id="pt"><button class="preset-tab" data-p="small">小文件</button><button class="preset-tab active" data-p="balanced">均衡</button><button class="preset-tab" data-p="high">高质量</button></div>' +
     '<p class="preset-hint" id="pth">小文件 · 体积最小　均衡 · 推荐　高质量 · 最接近原图</p>' +
-    '<div class="tool-drop" id="dz"><div class="icon">' + icon + '</div><div class="title">点击选择图片，或拖拽到此处</div><div class="hint">支持 JPG、PNG、WebP、BMP、GIF（可批量）。iPhone 的 HEIC 格式浏览器读不了，请先导出成 JPG。</div></div>' +
-    '<div class="progress-bar" id="pg"><div class="fill" style="width:0%"></div></div>' +
-    '<p class="progress-note" id="pgt" style="display:none"></p>' +
+    '<div class="tool-drop" id="dz"><div class="icon">' + icon + '</div><div class="title">点击选择图片，或拖拽到此处</div><div class="hint">支持 JPG、PNG、WebP、BMP、GIF（可批量）。GIF 动图只压缩第一帧，动画不会保留；BMP / GIF 会输出成 PNG。iPhone 的 HEIC 格式浏览器读不了，请先导出成 JPG。</div></div>' +
+    '<div class="progress-bar" id="pg" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="fill" style="width:0%"></div></div>' +
+    '<p class="progress-note" id="pgt" role="status" aria-live="polite" style="display:none"></p>' +
     '<div class="batch-actions" id="ba"><button class="tool-btn" id="dlAll">全部下载</button><button class="tool-btn tool-btn--ghost" id="clr">清除</button></div>' +
     '<div class="results" id="res"></div>' +
-    '<div class="summary" id="sum" style="display:none"></div>' +
+    '<div class="summary" id="sum" role="status" aria-live="polite" style="display:none"></div>' +
     '<div class="modal" id="m"><span class="close">&times;</span><img id="mi" alt=""></div>';
 
   var PRESETS = { small: 70, balanced: 82, high: 92 };
@@ -34,7 +34,7 @@ export function mount(root, H) {
 
   // 真实编码器按需加载(首次压缩时才拉取 wasm)
   var _enc = null;
-  function ensureEnc() { if (!_enc) _enc = import('/shared/encoders.js?v=1'); return _enc; }
+  function ensureEnc() { if (!_enc) _enc = import('/shared/encoders.js?v=2'); return _enc; }
 
   root.querySelector('#md').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
@@ -65,9 +65,48 @@ export function mount(root, H) {
   root.querySelector('#dlAll').addEventListener('click', downloadAll);
   root.querySelector('#clr').addEventListener('click', clearAll);
 
-  function addFiles(files) {
-    files.forEach(function (f) { if (f.type.indexOf('image/') === 0) originals.push(f); });
+  async function addFiles(files) {
+    var added = [];
+    files.forEach(function (f) { if (f.type.indexOf('image/') === 0) { originals.push(f); added.push(f); } });
+    // 动图必须先认出来,不能悄悄只输出第一帧
+    for (var i = 0; i < added.length; i++) {
+      var f = added[i];
+      if (f.type === 'image/gif' && !f.__frames) f.__frames = (await gifFrames(f)) || 1;
+    }
     processAll();
+  }
+
+  // 动图帧数:优先用浏览器的 ImageDecoder,不支持时就退回扫 GIF 字节里的 NETSCAPE2.0 循环扩展
+  function gifFrames(file) {
+    return new Promise(function (resolve) {
+      if (file.type !== 'image/gif') { resolve(1); return; }
+      if (typeof ImageDecoder !== 'undefined') {
+        try {
+          var dec = new ImageDecoder({ data: file.stream(), type: 'image/gif' });
+          dec.tracks.ready.then(function () {
+            var track = dec.tracks.selectedTrack;
+            var n = track ? track.frameCount : 1;
+            try { if (dec.close) dec.close(); } catch (e) {}
+            resolve(n > 1 ? n : 1);
+          }).catch(function () { resolve(scanGif(file)); });
+          return;
+        } catch (e) { /* 退回字节扫描 */ }
+      }
+      resolve(scanGif(file));
+    });
+  }
+  function scanGif(file) {
+    return file.slice(0, 262144).arrayBuffer().then(function (buf) {
+      var b = new Uint8Array(buf);
+      for (var i = 0; i + 14 <= b.length; i++) {
+        if (b[i] === 0x21 && b[i + 1] === 0xFF && b[i + 2] === 0x0B) {
+          var s = '';
+          for (var j = 0; j < 11; j++) s += String.fromCharCode(b[i + 3 + j]);
+          if (s === 'NETSCAPE2.0') return 2;
+        }
+      }
+      return 1;
+    }).catch(function () { return 1; });
   }
 
   function processAll() {
@@ -80,7 +119,7 @@ export function mount(root, H) {
     root.querySelector('#ba').style.display = 'none';
     var total = originals.length;
     var pg = root.querySelector('#pg'), fill = pg.querySelector('.fill'), note = root.querySelector('#pgt');
-    pg.style.display = 'block'; fill.style.width = '0%';
+    pg.style.display = 'block'; fill.style.width = '0%'; pg.setAttribute('aria-valuenow', '0');
     if (!total) { pg.style.display = 'none'; note.style.display = 'none'; return; }
     note.style.display = 'block';
     note.textContent = '正在处理：第 1 / ' + total + ' 张…';
@@ -94,6 +133,7 @@ export function mount(root, H) {
         if (myRun !== runSeq) return;
         done++;
         fill.style.width = (done / total * 100) + '%';
+        pg.setAttribute('aria-valuenow', String(Math.round(done / total * 100)));
         setTimeout(next, 0);
       });
     })();
@@ -103,7 +143,12 @@ export function mount(root, H) {
     var origSize = file.size;
     var mime = file.type;
     if (['image/jpeg', 'image/png', 'image/webp'].indexOf(mime) < 0) mime = 'image/png';
-    function push(item) { if (myRun === runSeq) items.push(item); cb(); }
+    var extra = {
+      animated: (file.__frames || 1) > 1,
+      frames: file.__frames || 1,
+      retyped: ['image/jpeg', 'image/png', 'image/webp'].indexOf(file.type) < 0
+    };
+    function push(item) { if (myRun === runSeq) items.push(Object.assign(item, extra)); cb(); }
     try {
       var E = await ensureEnc();
       if (mode === 'target') {
@@ -143,6 +188,10 @@ export function mount(root, H) {
     releaseUrls();
     var html = '';
     items.forEach(function (f, i) {
+      // 行为披露:动图会丢动画、非常规格式会改输出类型,必须写在卡片上,不能静默
+      var extraNote = '';
+      if (f.animated) extraNote += '<div class="sizes" style="color:#a1500a">这是动图（' + f.frames + ' 帧），压缩只保留第一帧，动画不会保留。</div>';
+      else if (f.retyped && f.status === 'ok') extraNote += '<div class="sizes" style="color:#6e6e73">原格式不能直接压缩，已输出为 PNG。</div>';
       if (f.status === 'ok') {
         var pct = f.origSize > 0 ? Math.round(f.saved / f.origSize * 100) : 0;
         var badge = f.target
@@ -158,12 +207,12 @@ export function mount(root, H) {
           + '<img class="preview" src="' + urlFor(f.blob) + '" alt="" onclick="void 0">'
           + '<div class="info"><div class="name">' + H.esc(f.name) + badge + '</div>'
           + '<div class="sizes"><span class="old">' + H.fmt(f.origSize) + '</span> → <span class="new">' + H.fmt(f.outSize) + '</span>'
-          + (f.target ? '（目标 ' + H.fmt(f.target) + '）' : '') + '</div>' + note + '</div>'
+          + (f.target ? '（目标 ' + H.fmt(f.target) + '）' : '') + '</div>' + note + extraNote + '</div>'
           + '<button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button>'
           + '<button class="download-btn" data-i="' + i + '">下载</button></div>';
       } else if (f.status === 'met') {
         html += '<div class="result-card"><div class="info"><div class="name">' + H.esc(f.name) + '<span class="saved-badge saved-badge--ok">已达标</span></div>'
-          + '<div class="sizes">原图 ' + H.fmt(f.origSize) + ' 已经在目标 ' + H.fmt(f.target) + ' 以内，不需要压缩，也不会生成新文件。</div></div>'
+          + '<div class="sizes">原图 ' + H.fmt(f.origSize) + ' 已经在目标 ' + H.fmt(f.target) + ' 以内，不需要压缩，也不会生成新文件。</div>' + extraNote + '</div>'
           + '<span class="status-tag">无需处理</span><button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';
       } else if (f.status === 'nowin') {
         var why = f.reason === 'png-lossless'
@@ -172,15 +221,15 @@ export function mount(root, H) {
           ? '已经试到最低画质，还是不会比原图更小，所以没有生成新文件。建议改用 JPG / WebP，或者先把尺寸改小。'
           : '这个格式在当前浏览器里没法编码，没有生成新文件。建议改用 JPG / PNG / WebP。';
         html += '<div class="result-card"><div class="info"><div class="name">' + H.esc(f.name) + '<span class="saved-badge saved-badge--bad">未达标</span></div>'
-          + '<div class="sizes" style="color:#a1500a">' + why + '（原图 ' + H.fmt(f.origSize) + '，目标 ' + H.fmt(f.target) + '，已保留原图）</div></div>'
+          + '<div class="sizes" style="color:#a1500a">' + why + '（原图 ' + H.fmt(f.origSize) + '，目标 ' + H.fmt(f.target) + '，已保留原图）</div>' + extraNote + '</div>'
           + '<span class="status-tag">未达标</span><button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';
       } else if (f.status === 'skip') {
         html += '<div class="result-card"><div class="info"><div class="name">' + H.esc(f.name) + '</div>'
-          + '<div class="sizes">已是最小，无需压缩（原图 ' + H.fmt(f.origSize) + '）。没有新文件可下载，你的原图没有被改动。</div></div>'
+          + '<div class="sizes">已是最小，无需压缩（原图 ' + H.fmt(f.origSize) + '）。没有新文件可下载，你的原图没有被改动。</div>' + extraNote + '</div>'
           + '<span class="status-tag">未缩小</span><button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';
       } else {
         html += '<div class="result-card result-fail"><div class="info"><div class="name">' + H.esc(f.name) + '</div>'
-          + '<div class="sizes">读不了这个文件：可能是 iPhone 的 HEIC 格式（请先转成 JPG），或者文件已损坏。</div></div><span class="status-tag">失败</span>'
+          + '<div class="sizes">读不了这个文件：可能是 iPhone 的 HEIC 格式（请先转成 JPG），或者文件已损坏。</div>' + extraNote + '</div><span class="status-tag">失败</span>'
           + '<button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';
       }
     });
@@ -204,27 +253,39 @@ export function mount(root, H) {
     var sum = root.querySelector('#sum');
     if (items.length) {
       sum.style.display = 'block';
-      sum.innerHTML = '<div class="total">成功 ' + ok.length + ' 张'
-        + (met.length ? ' · 已达标无需处理 ' + met.length + ' 张' : '')
-        + (nowin.length ? ' · 压不到目标 ' + nowin.length + ' 张' : '')
-        + (skip.length ? ' · 跳过 ' + skip.length + ' 张' : '')
-        + (fail.length ? ' · 失败 ' + fail.length + ' 张' : '')
-        + (savedTotal > 0 ? ' · 共节省 <strong>' + H.fmt(savedTotal) + '</strong>' : '') + '</div>'
+      var okMet = ok.filter(function (f) { return f.met !== false; });
+      var okUnmet = ok.filter(function (f) { return f.met === false; });
+      var parts = [];
+      if (mode === 'target') {
+        if (okMet.length) parts.push('达标 ' + okMet.length + ' 张');
+        if (okUnmet.length + nowin.length) parts.push('未达标 ' + (okUnmet.length + nowin.length) + ' 张');
+        if (met.length) parts.push('无需处理 ' + met.length + ' 张');
+      } else {
+        if (ok.length) parts.push('成功 ' + ok.length + ' 张');
+        if (skip.length) parts.push('跳过 ' + skip.length + ' 张');
+      }
+      if (fail.length) parts.push('失败 ' + fail.length + ' 张');
+      if (savedTotal > 0) parts.push('共节省 <strong>' + H.fmt(savedTotal) + '</strong>');
+      sum.innerHTML = '<div class="total">' + (parts.join(' · ') || '没有可处理的项目') + '</div>'
         + '<div class="note">全程本地运算，图片不会离开你的电脑。</div>';
     } else {
       sum.style.display = 'none';
     }
   }
 
+  function outName(name, blob) {
+    var ext = blob && blob.type === 'image/jpeg' ? '.jpg' : blob && blob.type === 'image/webp' ? '.webp' : '.png';
+    return name.replace(/\.[^.]+$/, '') + '_compressed' + ext;
+  }
   function downloadOne(i) {
     var f = items[i];
     if (!f || !f.blob) return;
-    H.downloadBlob(f.blob, f.name.replace(/(\.[^.]+)$/, '_compressed$1'));
+    H.downloadBlob(f.blob, outName(f.name, f.blob));
   }
   function downloadAll() {
     var files = [];
     items.forEach(function (f) {
-      if (f.status === 'ok' && f.blob) files.push({ name: f.name.replace(/(\.[^.]+)$/, '_compressed$1'), blob: f.blob });
+      if (f.status === 'ok' && f.blob) files.push({ name: outName(f.name, f.blob), blob: f.blob });
     });
     H.downloadZip(files, '图片压缩结果.zip');
   }

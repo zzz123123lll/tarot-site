@@ -2,8 +2,8 @@
 // 策略:HTML 网络优先(改动即时生效),断网时回退到已访问过的页面,最后回退首页外壳;
 // shared/* 用"缓存优先 + 后台刷新",vendor/* 与 icons/* 缓存优先(内容不会变);
 // 安装时预缓存首页外壳,保证断网也能打开一个可用页面。
-const CACHE = 'gongjuhe-v3';
-const SHELL = ['/', '/site.css', '/fonts.css', '/home.js', '/tools-manifest.js', '/icons/icon-192.png', '/vendor/fonts/Geist-Variable.woff2'];
+const CACHE = 'gongjuhe-v4';
+const SHELL = ['/', '/site.css', '/fonts.css', '/home.js', '/tools-manifest.js', '/icons/icon-192.png', '/vendor/fonts/Geist-sub.woff2'];
 const CACHEABLE = ['/vendor/', '/icons/'];
 const SHARED = ['/shared/'];
 self.addEventListener('install', function (e) {
