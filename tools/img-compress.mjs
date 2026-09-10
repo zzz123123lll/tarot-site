@@ -85,16 +85,16 @@ export function mount(root, H) {
           + '<img class="preview" src="' + URL.createObjectURL(f.blob) + '" alt="" onclick="void 0">'
           + '<div class="info"><div class="name">' + H.esc(f.name) + '<span class="saved-badge">-' + pct + '%</span></div>'
           + '<div class="sizes"><span class="old">' + H.fmt(f.origSize) + '</span> → <span class="new">' + H.fmt(f.outSize) + '</span></div></div>'
-          + '<button class="remove-btn" data-i="' + i + '" data-tippy-content="移除">×</button>'
+          + '<button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button>'
           + '<button class="download-btn" data-i="' + i + '">下载</button></div>';
       } else if (f.status === 'skip') {
         html += '<div class="result-card"><div class="info"><div class="name">' + H.esc(f.name) + '</div>'
           + '<div class="sizes">未缩小，已保留原图（' + H.fmt(f.origSize) + '）</div></div>'
-          + '<span class="status-tag">未缩小</span><button class="remove-btn" data-i="' + i + '">×</button></div>';
+          + '<span class="status-tag">未缩小</span><button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';
       } else {
         html += '<div class="result-card result-fail"><div class="info"><div class="name">' + H.esc(f.name) + '</div>'
           + '<div class="sizes">处理失败</div></div><span class="status-tag">失败</span>'
-          + '<button class="remove-btn" data-i="' + i + '">×</button></div>';
+          + '<button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';
       }
     });
     res.innerHTML = html;

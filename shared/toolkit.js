@@ -90,15 +90,21 @@ export function initTips(scope) {
   var root = scope || document;
   var els = root.querySelectorAll('[data-tippy-content]');
   if (!els.length) return;
+  function fallback() {
+    // 兜底:库不可用时退化为系统原生 title 提示,不让按钮变成无解释的符号
+    Array.prototype.forEach.call(els, function (el) {
+      if (!el.getAttribute('title')) el.setAttribute('title', el.getAttribute('data-tippy-content'));
+    });
+  }
   function apply() {
-    if (!window.tippy) return;
+    if (!window.tippy) { fallback(); return; }
     window.tippy(Array.prototype.filter.call(els, function (el) { return !el._tippy; }), {
       theme: 'tool', arrow: true, placement: 'top',
       delay: [250, 0], offset: [0, 8], animation: 'shift-toward', duration: [140, 90]
     });
   }
   if (window.tippy) { apply(); return; }
-  loadScript('/vendor/tippy.umd.min.js?v=1').then(apply, function () {});
+  loadScript('/vendor/tippy-bundle.umd.min.js?v=1').then(apply, fallback);
 }
 // 让一个容器变成"点击选文件 + 拖拽"的投放区
 export function makeDropZone(el, onFiles, accept) {

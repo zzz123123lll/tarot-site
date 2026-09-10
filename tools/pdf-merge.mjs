@@ -22,9 +22,9 @@ export function mount(root, H) {
     var html = '';
     files.forEach(function (f, i) {
       html += '<div class="file-row"><span class="n">' + (i + 1) + '</span><span class="nm">' + H.esc(f.name) + '</span>'
-        + '<button class="mv" data-i="' + i + '" data-d="-1" data-tippy-content="上移">↑</button>'
-        + '<button class="mv" data-i="' + i + '" data-d="1" data-tippy-content="下移">↓</button>'
-        + '<button class="rm" data-i="' + i + '" data-tippy-content="移除">×</button></div>';
+        + '<button class="mv" data-i="' + i + '" data-d="-1" data-tippy-content="上移" aria-label="上移">↑</button>'
+        + '<button class="mv" data-i="' + i + '" data-d="1" data-tippy-content="下移" aria-label="下移">↓</button>'
+        + '<button class="rm" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';
     });
     list.innerHTML = html;
     list.querySelectorAll('.rm').forEach(function (b) {
