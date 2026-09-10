@@ -213,6 +213,24 @@ const REGISTRY = {
 
 const H = { esc, fmt, downloadBlob, downloadZip, injectCss, makeDropZone, loadScript, copyText, initTips, friendlyError, warnBelow, clearWarn };
 
+// 通用无障碍增强:动态状态区可被读屏播报;标签与输入框建立关联
+export function enhanceA11y(root) {
+  if (!root || !root.querySelectorAll) return;
+  Array.prototype.forEach.call(root.querySelectorAll('.note, .err-box, .err-text, .tool-warn, .note-ok'), function (el) {
+    if (!el.getAttribute('aria-live')) el.setAttribute('aria-live', 'polite');
+    if (!el.getAttribute('role')) el.setAttribute('role', 'status');
+  });
+  var seq = 0;
+  Array.prototype.forEach.call(root.querySelectorAll('label'), function (lb) {
+    if (lb.getAttribute('for') || lb.querySelector('input, textarea, select')) return;
+    var field = lb.closest('.tool-field, .tool-row, .crow, .opt-row') || lb.parentNode;
+    var ctl = field ? field.querySelector('input, textarea, select') : null;
+    if (!ctl) return;
+    if (!ctl.id) ctl.id = 'f-' + (++seq) + '-' + Math.random().toString(36).slice(2, 6);
+    lb.setAttribute('for', ctl.id);
+  });
+}
+
 export async function mountTool(slug, root, titleEl) {
   const t = REGISTRY[slug];
   if (!t) {
@@ -224,7 +242,7 @@ export async function mountTool(slug, root, titleEl) {
   // 页面 <title> 由各工具的静态 HTML 提供(SEO),这里不再覆盖
   try {
     const mod = await import(t.module + '?v=1');
-    if (mod && mod.mount) mod.mount(root, H);
+    if (mod && mod.mount) { mod.mount(root, H); enhanceA11y(root); }
   } catch (e) {
     root.innerHTML = '<p class="tool-sub">工具加载失败。</p>';
     console.error('[toolbox]', slug, e);

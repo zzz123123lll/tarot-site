@@ -19,7 +19,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="工具盒">
 <link rel="stylesheet" href="/fonts.css?v=1">
-<link rel="stylesheet" href="/tool.css?v=10">
+<link rel="stylesheet" href="/tool.css?v=11">
 </head>
 <body>
 <nav class="tool-nav">
@@ -28,7 +28,7 @@
 </nav>
 <div class="tool-container" id="toolRoot"><div class="tool-static"><h1 class="tool-h1">图片转换</h1><p class="tool-sub">缩放尺寸、在 PNG / JPG / WebP 之间互转，也可以在转换时统一改宽度。</p><p class="tool-static-note">这个工具在你的浏览器里本地运行，文件不会上传到任何服务器；加载完成后下方即可直接使用。</p></div></div>
 <script type="module">
-import { mountTool } from '/shared/toolkit.js?v=10';
+import { mountTool } from '/shared/toolkit.js?v=11';
 function slugFromPath() {
   var p = (location.pathname || '').replace(/^\/+|\/+$/g, '');
   if (p.indexOf('tools/') === 0) p = p.slice(6);

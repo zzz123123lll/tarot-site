@@ -3,7 +3,7 @@
    - 塔罗页 = 深色鎏金（保持原样，勿动）
    - 首页专属样式全部 body.page-home 作用域；塔罗页共用导航的深色版为默认。 */
 :root {
-  --bg:#08090a; --text:#f7f8f8; --muted:#6e737a;
+  --bg:#08090a; --text:#f7f8f8; --muted:#9aa0a6;
   --line:rgba(255,255,255,0.08);
 }
 * { box-sizing:border-box; }

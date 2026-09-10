@@ -7,17 +7,17 @@
 :root {
   --bg:        #0c0c16;   /* 深空 */
   --bg-2:      #0a0a12;
-  --surface:   #14121e;
-  --surface-2: #1b1827;
+  --surface:   #191627;
+  --surface-2: #221e33;
   --text:      #e8e6f2;
   --text-soft: #c4c1d8;
-  --muted:     #8b86a3;
+  --muted:     #9a95b0;
   --accent:    #c9a86b;   /* 暖金 */
   --accent-2:  #e0c184;
   --accent-ink:#14100a;
   --violet:    #8a7fc4;   /* 天穹紫晶（次点缀） */
-  --line:      rgba(201,168,107,0.16);
-  --line-strong: rgba(201,168,107,0.38);
+  --line:      rgba(201,168,107,0.22);
+  --line-strong: rgba(201,168,107,0.46);
   --warn:      #c98a5a;
 
   --font-display: "Cormorant Garamond", "Playfair Display", "Songti SC", Georgia, serif;
@@ -69,6 +69,8 @@ p { margin:0 0 var(--s4); font-family: var(--font-serif); color: var(--text-soft
 .btn-share:disabled { opacity:0.45; cursor:not-allowed; pointer-events:none; }
 .btn-share--daily { margin-top: var(--s4); }
 .btn-share--daily:hover { transform: translateY(-1px); }
+/* 行内小图标(替代 emoji,与首页图标同源) */
+.ico { width: 1em; height: 1em; vertical-align: -0.12em; margin-right: 6px; flex: none; }
 /* —— 解读分享图弹窗 —— */
 .share-modal { position:fixed; inset:0; z-index:120; display:flex; align-items:center; justify-content:center; padding:24px; background:rgba(8,9,16,0.82); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
 .share-modal.hidden { display:none; }
