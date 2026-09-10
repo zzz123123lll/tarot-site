@@ -153,6 +153,16 @@ function matchesAccept(file, accept) {
 }
 // 让一个容器变成"点击选文件 + 拖拽"的投放区
 export function makeDropZone(el, onFiles, accept) {
+  // 键盘可达:让只用键盘的人也能选择文件
+  el.setAttribute('tabindex', '0');
+  el.setAttribute('role', 'button');
+  if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', '选择文件：按回车或空格打开文件选择框，也可以把文件拖到这里');
+  el.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+      e.preventDefault();
+      el.click();
+    }
+  });
   el.addEventListener('click', function () {
     const input = document.createElement('input');
     input.type = 'file';

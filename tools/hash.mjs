@@ -3,7 +3,7 @@ export function mount(root, H) {
   root.innerHTML =
     '<h1 class="tool-h1">Hash 摘要</h1>' +
     '<p class="tool-sub">SHA-1/256/512 与 MD5，支持文件和文本。全部本地。</p>' +
-    '<div class="tool-row" style="margin-bottom:16px"><span id="algo" style="display:inline-flex;background:#f5f5f7;border-radius:10px;padding:3px"><button data-a="SHA-256" class="active">SHA-256</button><button data-a="SHA-1">SHA-1</button><button data-a="SHA-512">SHA-512</button><button data-a="MD5">MD5</button></span></div>' +
+    '<div class="tool-row" style="margin-bottom:16px"><span id="algo" class="mode-tabs" role="group" aria-label="哈希算法"><button data-a="SHA-256" class="active" aria-pressed="true">SHA-256</button><button data-a="SHA-1" aria-pressed="false">SHA-1</button><button data-a="SHA-512" aria-pressed="false">SHA-512</button><button data-a="MD5" aria-pressed="false">MD5</button></span></div>' +
     '<div class="tool-field"><label>文本</label><textarea id="txt" class="tool-textarea mono" placeholder="输入要哈希的文本…"></textarea></div>' +
     '<div class="tool-row" style="margin-bottom:12px"><button class="tool-btn" id="go">计算</button><button class="tool-btn tool-btn--ghost" id="cp" disabled>复制</button></div>' +
     '<div class="tool-output mono" id="out" style="min-height:30px;word-break:break-all"></div>' +
@@ -14,7 +14,10 @@ export function mount(root, H) {
   root.querySelector('#algo').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
     algo = b.dataset.a;
-    root.querySelectorAll('#algo button').forEach(function (x) { x.classList.toggle('active', x === b); });
+    root.querySelectorAll('#algo button').forEach(function (x) {
+      x.classList.toggle('active', x === b);
+      x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
+    });
   });
   function toHex(buf) { var bytes = new Uint8Array(buf), s = ''; for (var i = 0; i < bytes.length; i++) s += ('0' + bytes[i].toString(16)).slice(-2); return s; }
   async function compute(bytes) {

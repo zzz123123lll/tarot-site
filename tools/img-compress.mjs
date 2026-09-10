@@ -9,7 +9,7 @@ export function mount(root, H) {
     '<p class="tool-sub">批量瘦身，纯本地处理，文件不上传。压了没变小就跳过。</p>' +
     '<div class="preset-tabs" id="pt"><button class="preset-tab" data-p="small">小文件</button><button class="preset-tab active" data-p="balanced">均衡</button><button class="preset-tab" data-p="high">高质量</button></div>' +
     '<p class="preset-hint">小文件 · 体积最小　均衡 · 推荐　高质量 · 最接近原图</p>' +
-    '<div class="tool-drop" id="dz"><div class="icon">' + icon + '</div><div class="title">点击选择图片，或拖拽到此处</div><div class="hint">支持 JPG、PNG、WebP、BMP、GIF（批量）</div></div>' +
+    '<div class="tool-drop" id="dz"><div class="icon">' + icon + '</div><div class="title">点击选择图片，或拖拽到此处</div><div class="hint">支持 JPG、PNG、WebP、BMP、GIF（可批量）。iPhone 的 HEIC 格式浏览器读不了，请先导出成 JPG。</div></div>' +
     '<div class="progress-bar" id="pg"><div class="fill" style="width:0%"></div></div>' +
     '<div class="batch-actions" id="ba"><button class="tool-btn" id="dlAll">全部下载</button><button class="tool-btn tool-btn--ghost" id="clr">清除</button></div>' +
     '<div class="results" id="res"></div>' +
@@ -93,11 +93,11 @@ export function mount(root, H) {
           + '<button class="download-btn" data-i="' + i + '">下载</button></div>';
       } else if (f.status === 'skip') {
         html += '<div class="result-card"><div class="info"><div class="name">' + H.esc(f.name) + '</div>'
-          + '<div class="sizes">未缩小，已保留原图（' + H.fmt(f.origSize) + '）</div></div>'
+          + '<div class="sizes">已是最小，无需压缩（原图 ' + H.fmt(f.origSize) + '）。没有新文件可下载，你的原图没有被改动。</div></div>'
           + '<span class="status-tag">未缩小</span><button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';
       } else {
         html += '<div class="result-card result-fail"><div class="info"><div class="name">' + H.esc(f.name) + '</div>'
-          + '<div class="sizes">处理失败</div></div><span class="status-tag">失败</span>'
+          + '<div class="sizes">读不了这个文件：可能是 iPhone 的 HEIC 格式（请先转成 JPG），或者文件已损坏。</div></div><span class="status-tag">失败</span>'
           + '<button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';
       }
     });
