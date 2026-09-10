@@ -1,6 +1,8 @@
 /* fonts.css — 自托管 Geist / Geist Mono(Vercel, OFL 许可)
-   仅保留拉丁字母、数字、常用标点与符号的子集(体积约为完整版 45%),中文回退系统字体。
-   子集生成:pyftsubset --unicodes=U+0000-00FF,U+2000-206F,U+2190-2199,U+2200-22FF,U+25A0-25CF,U+2713,U+2726,U+2736 --flavor=woff2 */
+   子集范围:仅拉丁字母、数字、常用标点与符号(体积约为完整版 45%),中文回退系统字体。
+   说明:Geist 字体本身不含 ✦(U+2726)、✶(U+2736)、✓(U+2713) 等符号字形(原字体仅 645 个字形),
+   因此品牌星形等装饰符号一律以 SVG 绘制,不依赖字体;子集命令:
+   pyftsubset --unicodes=U+0000-00FF,U+2000-206F,U+2190-2199,U+2200-22FF,U+25A0-25CF --flavor=woff2 */
 @font-face {
   font-family: "Geist";
   src: url("/vendor/fonts/Geist-sub.woff2") format("woff2-variations");
