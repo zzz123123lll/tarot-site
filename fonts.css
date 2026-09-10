@@ -1,8 +1,15 @@
 /* fonts.css — 自托管 Geist / Geist Mono(Vercel, OFL 许可)
-   子集范围:仅拉丁字母、数字、常用标点与符号(体积约为完整版 45%),中文回退系统字体。
-   说明:Geist 字体本身不含 ✦(U+2726)、✶(U+2736)、✓(U+2713) 等符号字形(原字体仅 645 个字形),
-   因此品牌星形等装饰符号一律以 SVG 绘制,不依赖字体;子集命令:
-   pyftsubset --unicodes=U+0000-00FF,U+2000-206F,U+2190-2199,U+2200-22FF,U+25A0-25CF --flavor=woff2 */
+   子集范围:仅拉丁字母、数字、常用标点与符号(约为完整版 45%),中文回退系统字体。
+
+   关于符号字形的准确说明(2026-09 实测):
+   - Geist / Geist Mono 不含 ✦(U+2726)、✶(U+2736)、✓(U+2713) 等符号字形
+     (原字体 cmap 码位为 645 / 648,这三个均缺失),因此任何子集都取不到它们;
+   - 品牌方块标记(.nav-mark)与首页 kicker 的星形已改为内联 SVG,不依赖字体;
+   - 正文与按钮文案中仍以文本形式出现的 ✦ 等装饰符号(主要在塔罗页),依赖操作系统符号字体
+     回退渲染(Windows 为 Segoe UI Symbol),缺失该字体时可能显示为方框;若要彻底摆脱字体依赖,
+     应把这些符号一并改为 SVG。
+
+   子集命令:pyftsubset --unicodes=U+0000-00FF,U+2000-206F,U+2190-2199,U+2200-22FF,U+25A0-25CF --flavor=woff2 */
 @font-face {
   font-family: "Geist";
   src: url("/vendor/fonts/Geist-sub.woff2") format("woff2-variations");

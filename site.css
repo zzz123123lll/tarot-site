@@ -38,6 +38,8 @@ body.page-home .nav-brand { color:#1d1d1f; }
 body.page-home .nav-mark { background:#1d1d1f; color:#fff; }
 /* 品牌星形用 SVG 绘制(不依赖字体,跨系统形状一致) */
 .nav-mark .nav-star { width:12px; height:12px; display:block; }
+/* 文字旁的小星形(SVG,不依赖字体) */
+.star-i { width:10px; height:10px; display:inline-block; vertical-align:-1px; flex:none; }
 
 body.page-home .home { flex:1 0 auto; width:100%; }
 

@@ -132,7 +132,7 @@
   });
 
   var kicker = document.getElementById('kicker');
-  if (kicker) kicker.textContent = '✦ ' + data.tools.length + ' 个工具 · 全部本地运行';
+  if (kicker) kicker.innerHTML = '<svg class="star-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.4l2.55 7.05L21.6 12l-7.05 2.55L12 21.6l-2.55-7.05L2.4 12l7.05-2.55z" fill="currentColor"/></svg> ' + data.tools.length + ' 个工具 · 全部本地运行';
 
   render('');
 })();
