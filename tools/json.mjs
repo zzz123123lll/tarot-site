@@ -22,8 +22,9 @@ export function mount(root, H) {
     var s = String(msg);
     var i = s.indexOf('position');
     if (i < 0) return '';
-    var rest = s.slice(i + 8).replace(/[^0-9].*$/, '');
-    return rest ? '（位置 ' + rest + '）' : '';
+    // 原始报文形如 "… at position 10 (line 1 column 11)":先去掉空格再取前导数字
+    var m = s.slice(i + 8).trim().match(/^\d+/);
+    return m ? '（位置 ' + m[0] + '）' : '';
   }
 
   root.querySelector('#mt').addEventListener('click', function (e) {

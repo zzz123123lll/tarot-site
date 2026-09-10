@@ -43,11 +43,12 @@ body {
 /* —— 按钮 —— */
 .tool-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  padding: 10px 20px; border-radius: 980px; border: none;
+  /* 实心与描边按钮都带 1px 边框,保证同一行里高度一致(此前 40px vs 42px 参差) */
+  padding: 10px 20px; border-radius: 980px; border: 1px solid var(--t-accent); min-height: 42px;
   background: var(--t-accent); color: #fff; font-size: 15px; font-weight: 500;
-  font-family: inherit; cursor: pointer; transition: background .16s, transform .16s;
+  font-family: inherit; cursor: pointer; transition: background .16s, border-color .16s, transform .16s;
 }
-.tool-btn:hover { background: #0077ed; transform: translateY(-1px); }
+.tool-btn:hover { background: #0077ed; border-color: #0077ed; transform: translateY(-1px); }
 .tool-btn--ghost { background: transparent; color: var(--t-accent); border: 1px solid var(--t-line-strong); }
 .tool-btn--ghost:hover { background: rgba(0,113,227,0.06); transform: none; }
 .tool-btn:disabled { opacity: 0.4; cursor: not-allowed; }
