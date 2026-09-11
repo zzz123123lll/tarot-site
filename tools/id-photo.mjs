@@ -76,6 +76,15 @@ export function mount(root, H) {
 
   function P(id) { for (var i = 0; i < PRESETS.length; i++) if (PRESETS[i].id === id) return PRESETS[i]; return PRESETS[0]; }
 
+  // 规格区文案(预设原文 + 来源 + 底色口径),三处口径要一致
+  function specHtml(p) {
+    var bg = p.id === 'custom'
+      ? '<br>底色:按对方要求自己确认 —— 我们不会替你换底色,也不会猜。'
+      : '<br>底色的要求是「' + H.esc(p.bgName) + '」——我们不会替你换底色(浏览器里抠图容易留下毛边),只会在下方提醒你的照片看起来是什么颜色。';
+    return '<b>' + H.esc(p.name) + '</b>:' + H.esc(p.spec) + (p.src ? '<br>来源:' + H.esc(p.src) : '') + bg;
+  }
+  function refreshSpec() { root.querySelector('#spec').innerHTML = specHtml(P(state.preset)); }
+
   function renderPresets() {
     ps.innerHTML = PRESETS.map(function (p) {
       return '<button class="idp-preset' + (p.id === state.preset ? ' active' : '') + '" data-p="' + p.id + '">'
@@ -95,9 +104,7 @@ export function mount(root, H) {
     root.querySelector('#kbs').innerHTML = p.kb.map(function (k) {
       return '<button class="tool-btn tool-btn--ghost" data-kb="' + k + '" style="min-height:32px;padding:4px 10px;font-size:12.5px">≤' + k + ' KB</button>';
     }).join('') + (p.kb.length ? '' : '<span class="idp-hint">这一项官方没给统一上限,按对方页面填。</span>');
-    root.querySelector('#spec').innerHTML = '<b>' + H.esc(p.name) + '</b>:' + H.esc(p.spec)
-      + (p.src ? '<br>来源:' + H.esc(p.src) : '')
-      + '<br>底色的要求是「' + H.esc(p.bgName) + '」——我们不会替你换底色(浏览器里抠图容易留下毛边),只会在下方提醒你的照片看起来是什么颜色。';
+    refreshSpec();
     draw();
   }
 
@@ -112,8 +119,18 @@ export function mount(root, H) {
     state.kb = parseInt(b.dataset.kb, 10);
     root.querySelector('#kb').value = state.kb;
   });
-  ['#w', '#h', '#dpi', '#kb'].forEach(function (sel) {
-    root.querySelector(sel).addEventListener('input', function () { state.preset = 'custom'; renderPresets(); draw(); });
+  // 体积上限是"同一用途里按对方页面改的数字",改它不该把用途也换掉;
+  // 改像素或 DPI 才说明已经不是那个用途了,这时切到"自定义",并把规格区、结果区口径一起刷新。
+  root.querySelector('#kb').addEventListener('input', function () {
+    state.kb = Math.max(0, parseInt(root.querySelector('#kb').value, 10) || 0);
+    refreshSpec();
+  });
+  ['#w', '#h', '#dpi'].forEach(function (sel) {
+    root.querySelector(sel).addEventListener('input', function () {
+      if (state.preset !== 'custom') { state.preset = 'custom'; renderPresets(); }
+      refreshSpec();
+      draw();
+    });
   });
   ['#zoom', '#ox', '#oy'].forEach(function (sel) {
     root.querySelector(sel).addEventListener('input', function () {
@@ -124,7 +141,7 @@ export function mount(root, H) {
     });
   });
 
-  H.makeDropZone(dz, addFiles, 'image/*');
+  H.makeDropZone(dz, addFiles, 'image/*', { multiple: false }); // 证件照一次只做一张
   root.querySelector('#go').addEventListener('click', generate);
   root.querySelector('#clr').addEventListener('click', function () {
     state.img = null; state.file = null; state.out = null;
@@ -135,6 +152,8 @@ export function mount(root, H) {
   async function addFiles(files) {
     var f = files[0];
     if (!f) return;
+    if (files.length > 1) H.warnBelow(dz, '一次只做一张证件照,已经用第一张:' + f.name + '(其余的没有处理)');
+    else H.clearWarn(dz);
     try {
       var bmp = await createImageBitmap(f, { imageOrientation: 'from-image' });
       state.img = bmp; state.file = f; state.zoom = 1; state.offX = 0; state.offY = 0;
@@ -209,9 +228,11 @@ export function mount(root, H) {
     return { n: n, whiteRatio: white / n, blueRatio: blue / n, r: Math.round(sr / n), g: Math.round(sg / n), b: Math.round(sb / n) };
   }
 
-  function judgeBg(s, want) {
+  function judgeBg(s, preset) {
     if (!s) return { ok: null, text: '取不到底色样本。' };
+    var want = preset.bg;
     var mean = '(取样 RGB ' + s.r + ',' + s.g + ',' + s.b + ',边缘 ' + Math.round(s.whiteRatio * 100) + '% 接近白、' + Math.round(s.blueRatio * 100) + '% 接近蓝)';
+    if (preset.id === 'custom') return { ok: null, text: '自定用途,底色请按对方公告自己确认' + mean };
     if (want === '#64c5ff') return { ok: s.whiteRatio > 0.5 || s.blueRatio > 0.5, text: '底色可用(浅蓝/白/浅灰要求)' + mean };
     if (want === '#ffffff') {
       if (s.whiteRatio >= 0.85) return { ok: true, text: '看起来是白底' + mean };
@@ -269,7 +290,7 @@ export function mount(root, H) {
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
       ctx.drawImage(state.img, r.x, r.y, r.dw, r.dh);
-      var bg = judgeBg(borderStats(c), preset.bg);
+      var bg = judgeBg(borderStats(c), preset);
 
       var seed = await new Promise(function (res) { c.toBlob(function (b) { res(b); }, 'image/jpeg', 0.98); });
       var seedFile = new File([seed], 'seed.jpg', { type: 'image/jpeg' });
@@ -306,7 +327,9 @@ export function mount(root, H) {
               ? (sizeOk ? '体积达标' + (reason === 'already' ? '(原片本来就在上限内,没有重压)' : '') : '体积仍超过上限:这已是这张图能给出的最小体积,建议换一张细节更少的照片,或按对方要求放宽上限')
               : '没生成出文件') + '</div>' +
             '<div class="' + (okW && okH ? 'idp-ok' : 'idp-bad') + '">像素核对:' + (back ? back.width + '×' + back.height : '读不回来') + (okW && okH ? '(与要求一致)' : '(与要求不一致,请把这个情况告诉我们)') + '</div>' +
-            '<div class="' + (bg.ok === null ? '' : bg.ok ? 'idp-ok' : 'idp-bad') + '">底色:' + H.esc(bg.text) + ';该用途要求「' + H.esc(preset.bgName) + '」' + (bg.ok === false ? ' —— 我们不会替你换底色,请换一张底色合规的照片' : '') + '</div>' +
+            '<div class="' + (bg.ok === null ? '' : bg.ok ? 'idp-ok' : 'idp-bad') + '">底色:' + H.esc(bg.text)
+              + (preset.id === 'custom' ? '' : ';该用途要求「' + H.esc(preset.bgName) + '」')
+              + (bg.ok === false ? ' —— 我们不会替你换底色,请换一张底色合规的照片' : '') + '</div>' +
             '<div class="idp-hint" style="margin-top:6px">' + H.esc(proof) + (loads > 0 ? ' · 压缩程序已就绪' : '') + ' · <a href="/verify/">怎么自己验证</a></div>' +
             '<div class="idp-row" style="margin-top:10px"><button class="tool-btn" id="dl">下载照片</button></div>' +
           '</div>' +

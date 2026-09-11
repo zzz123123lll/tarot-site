@@ -246,11 +246,12 @@ export function netLine(since) {
 }
 
 // 让一个容器变成"点击选文件 + 拖拽"的投放区
-export function makeDropZone(el, onFiles, accept) {
+export function makeDropZone(el, onFiles, accept, opts) {
+  var multiple = !opts || opts.multiple !== false;
   // 键盘可达:让只用键盘的人也能选择文件
   el.setAttribute('tabindex', '0');
   el.setAttribute('role', 'button');
-  if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', '选择文件：按回车或空格打开文件选择框，也可以把文件拖到这里');
+  if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', '选择文件：按回车或空格打开文件选择框，也可以把文件拖到这里' + (multiple ? '' : '（一次一张）'));
   el.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
       e.preventDefault();
@@ -261,7 +262,7 @@ export function makeDropZone(el, onFiles, accept) {
     const input = document.createElement('input');
     input.type = 'file';
     if (accept) input.accept = accept;
-    input.multiple = true;
+    input.multiple = multiple;
     input.onchange = function () { if (input.files && input.files.length) onFiles(Array.from(input.files)); };
     input.click();
   });
@@ -287,7 +288,7 @@ export function makeDropZone(el, onFiles, accept) {
 
 const REGISTRY = {
   'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 6 },
-  'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 2 },
+  'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 3 },
   'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs' },
   'images-to-pdf': { title: '图片合成 PDF', module: '/tools/images-to-pdf.mjs' },
   'pdf-merge': { title: 'PDF 合并', module: '/tools/pdf-merge.mjs' },
