@@ -34,7 +34,7 @@ body {
 /* —— 品牌入口:与首页一致,整块可点、点它回首页(此前只是一个 "← 工具盒" 文字链,品牌标记在工具页消失) —— */
 .tool-nav .tool-nav-brand { color: var(--t-text); font-weight: 600; padding: 11px 0; margin: -11px 0; }
 .tool-nav .tool-nav-brand:hover { text-decoration: none; color: var(--t-accent); }
-.tool-nav .nav-mark { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 6px; background: #1d1d1f; color: #fff; font-size: var(--t-fs-caption); flex: none; }
+.tool-nav .nav-mark { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: var(--r-1); background: #1d1d1f; color: #fff; font-size: var(--t-fs-caption); flex: none; }
 .tool-nav .nav-mark .nav-star { width:12px; height:12px; display:block; }
 .tool-nav .tool-nav-title { font-size: var(--t-fs-small); line-height: var(--lh-small); font-weight: 600; color: var(--t-text); }
 
@@ -47,7 +47,7 @@ body {
 .tool-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   /* 实心与描边按钮都带 1px 边框,保证同一行里高度一致(此前 40px vs 42px 参差) */
-  padding: 10px 22px; border-radius: 980px; border: 1px solid var(--t-accent); min-height: 44px;
+  padding: 10px 22px; border-radius: var(--r-pill); border: 1px solid var(--t-accent); min-height: 44px;
   background: var(--t-accent); color: #fff; font-size: var(--t-fs-small); font-weight: 500;
   font-family: inherit; letter-spacing: inherit; cursor: pointer; transition: background .16s, border-color .16s, transform .16s;
 }
@@ -59,7 +59,7 @@ body {
 /* —— 输入 / 选择 —— */
 .tool-input, .tool-select {
   /* 表单控件在 UA 样式表里是 letter-spacing:normal,不写 inherit 就会和页面文字不一致 */
-  font: inherit; letter-spacing: inherit; font-size: 14px; color: var(--t-text);
+  font: inherit; letter-spacing: inherit; font-size: var(--fs-small); color: var(--t-text);
   background: #fff; border: 1px solid var(--t-line-strong); border-radius: var(--r-sm);
   padding: 11px 12px; min-height: 44px; outline: none; transition: border-color .15s, box-shadow .15s;
 }
@@ -91,18 +91,18 @@ body {
 .tool-textarea:focus { border-color: var(--t-accent); box-shadow:0 0 0 3px rgba(0,113,227,0.15); }
 .tool-row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
 .tool-output { font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: var(--t-fs-small); line-height: var(--lh-small); background:#f5f5f7; border-radius:var(--r-sm); padding:14px; min-height:60px; white-space:pre-wrap; word-break:break-all; color:var(--t-text); margin-top:6px; }
-.swatch { width:100%; height:64px; border-radius:10px; border:1px solid var(--t-line-strong); margin:10px 0; }
+.swatch { width:100%; height:64px; border-radius: var(--r-3); border:1px solid var(--t-line-strong); margin:10px 0; }
 .mono { font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .err-text { color:#d70015; font-size: var(--t-fs-small); margin-top:8px; display:none; }
 /* —— Tippy 提示（苹果式深色小气泡）—— */
-.tippy-box[data-theme~='tool'] { background:#1d1d1f; color:#fff; font-size:12px; font-weight:500; border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.16); }
+.tippy-box[data-theme~='tool'] { background:#1d1d1f; color:#fff; font-size:12px; font-weight:500; border-radius: var(--r-2); box-shadow:0 6px 20px rgba(0,0,0,0.16); }
 .tippy-box[data-theme~='tool'] .tippy-content { padding:4px 9px; line-height: var(--lh-caption); }
 .tippy-box[data-theme~='tool'][data-placement^='top'] > .tippy-arrow::before { border-top-color:#1d1d1f; }
 .tippy-box[data-theme~='tool'][data-placement^='bottom'] > .tippy-arrow::before { border-bottom-color:#1d1d1f; }
 .tippy-box[data-theme~='tool'][data-placement^='left'] > .tippy-arrow::before { border-left-color:#1d1d1f; }
 .tippy-box[data-theme~='tool'][data-placement^='right'] > .tippy-arrow::before { border-right-color:#1d1d1f; }
 /* —— 拖入文件格式不支持时的提示 —— */
-.tool-warn { margin: 10px 0 0; font-size: var(--t-fs-small); line-height: var(--lh-small); color: #a1500a; background: rgba(200,106,30,0.08); border: 1px solid rgba(200,106,30,0.22); border-radius: 10px; padding: 9px 12px; }
+.tool-warn { margin: 10px 0 0; font-size: var(--t-fs-small); line-height: var(--lh-small); color: #a1500a; background: rgba(200,106,30,0.08); border: 1px solid rgba(200,106,30,0.22); border-radius: var(--r-3); padding: 9px 12px; }
 .tool-warn:empty { display: none; }
 /* —— 分段控件不要拉满整行:控件拉太宽会显得空,也让人看不出是一组选项 —— */
 .tool-container .preset-tabs { max-width: 480px; }
@@ -113,7 +113,7 @@ body {
 .tool-container input, .tool-container button, .tool-container select, .tool-container textarea { font-family: inherit; letter-spacing: 0; font-size: var(--t-fs-small); line-height: var(--lh-small); }
 /* 模块自带的紧凑控件(正则预设、PDF 分段、取色器、复选框)也要够大 —— 评审实测这些是 27~31px */
 .tool-container .cheat, .tool-container .seg button { min-height: 44px; }
-.tool-container input[type=color] { width: 44px; height: 44px; min-height: 44px; padding: 2px; border-radius: 8px; border: 1px solid var(--t-line-strong); }
+.tool-container input[type=color] { width: 44px; height: 44px; min-height: 44px; padding: 2px; border-radius: var(--r-2); border: 1px solid var(--t-line-strong); }
 .tool-container input[type=checkbox] { width: 24px; height: 24px; }
 .tool-container label:has(input[type=checkbox]) { min-height: 44px; display: inline-flex; align-items: center; }
 .tool-container .mode-tabs { max-width: 100%; }
@@ -126,12 +126,12 @@ body {
 .tool-foot-links a { color: var(--t-accent); text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; padding: 10px 0; }
 .tool-foot-links a:hover { text-decoration: underline; }
 /* —— 公共控件:分段选择器(所有工具共用,原先各模块重复注入 5 份) —— */
-.mode-tabs { display:inline-flex; background:#f5f5f7; border-radius:10px; padding:3px; margin-bottom:16px; }
-.mode-tabs button { flex:0 0 auto; white-space:nowrap; padding:7px 16px; border:none; border-radius:8px; background:transparent; color:#6e6e73; font-size:14px; letter-spacing:0; font-weight:500; font-family:inherit; cursor:pointer; min-height:44px; transition:background .15s, color .15s; }
+.mode-tabs { display:inline-flex; background:#f5f5f7; border-radius: var(--r-3); padding:3px; margin-bottom:16px; }
+.mode-tabs button { flex:0 0 auto; white-space:nowrap; padding:7px 16px; border:none; border-radius: var(--r-2); background:transparent; color:#6e6e73; font-size: var(--fs-small); letter-spacing:0; font-weight:500; font-family:inherit; cursor:pointer; min-height:44px; transition:background .15s, color .15s; }
 .mode-tabs button.active { background:#fff; color:#1d1d1f; box-shadow:0 1px 3px rgba(0,0,0,.12); }
 /* 焦点环由 base.css 统一提供 */
 /* —— 公共控件:错误提示条 —— */
-.err-box { display:none; margin:10px 0 0; padding:10px 14px; border-radius:12px; background:rgba(215,0,21,.06); color:#d70015; font-size: var(--t-fs-small); }
+.err-box { display:none; margin:10px 0 0; padding:10px 14px; border-radius: var(--r-4); background:rgba(215,0,21,.06); color:#d70015; font-size: var(--t-fs-small); }
 /* —— 公共控件:拖拽区图标尺寸(原先只在部分模块注入,导致个别页面图标被撑到 668px) —— */
 .tool-drop .icon svg { width:40px; height:40px; color:var(--t-accent); }
 /* —— 对比度修正:小字灰原先 3.62:1(不达 AA),统一提到 5.07:1 —— */
@@ -152,7 +152,7 @@ body {
 .file-row .nm { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .file-row .mv, .file-row .rm, .result-card .remove-btn {
   display: inline-flex; align-items: center; justify-content: center;
-  min-width: 44px; min-height: 44px; background: none; border: none; border-radius: 6px;
+  min-width: 44px; min-height: 44px; background: none; border: none; border-radius: var(--r-1);
   color: var(--t-muted); cursor: pointer; font-size: var(--t-fs-small); line-height: 1; font-family: inherit;
 }
 .file-row .mv:hover, .result-card .remove-btn:hover { background: var(--t-surface); color: var(--t-text); }
@@ -166,7 +166,7 @@ body {
 .batch-actions { display: none; gap: 10px; margin: 16px 0 0; }
 .results { margin-top: 20px; }
 .result-card { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid var(--t-line); border-radius: var(--t-r); padding: 12px 16px; margin-bottom: 10px; }
-.result-card .preview { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; background: var(--t-surface); }
+.result-card .preview { width: 48px; height: 48px; border-radius: var(--r-2); object-fit: cover; background: var(--t-surface); }
 .result-card .info { flex: 1; min-width: 0; }
 .result-card .name { font-size: var(--t-fs-small); line-height: var(--lh-small); color: var(--t-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .result-card .meta, .result-card .sizes { font-size: var(--t-fs-small); line-height: var(--lh-small); color: var(--t-muted); margin-top: 2px; }
@@ -177,7 +177,7 @@ body {
 .result-card.result-fail .status-tag { color: var(--c-err); background: rgba(215,0,21,.08); }
 .saved-badge { display: inline-block; font-size: var(--t-fs-caption); line-height: var(--lh-caption); border-radius: 999px; padding: 2px 8px; margin-left: 8px; color: var(--c-ok); background: rgba(20,122,58,.10); }
 .saved-badge--bad { color: var(--c-warn); background: rgba(200,106,30,.12); }
-.download-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 64px; background: var(--t-accent); color: #fff; border: none; border-radius: 980px; padding: 8px 18px; font-size: var(--t-fs-small); line-height: var(--lh-small); font-family: inherit; cursor: pointer; white-space: nowrap; }
+.download-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 64px; background: var(--t-accent); color: #fff; border: none; border-radius: var(--r-pill); padding: 8px 18px; font-size: var(--t-fs-small); line-height: var(--lh-small); font-family: inherit; cursor: pointer; white-space: nowrap; }
 .download-btn:hover { background: #0077ed; }
 .summary { margin-top: 20px; background: var(--t-surface); border-radius: var(--t-r); padding: 16px 18px; }
 .summary .total, .summary .note { font-size: var(--t-fs-small); line-height: var(--lh-small); }

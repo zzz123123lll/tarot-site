@@ -288,7 +288,7 @@ export function makeDropZone(el, onFiles, accept, opts) {
 
 const REGISTRY = {
   'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 13 },
-  'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 10 },
+  'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 11 },
   'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs', v: 5 },
   'images-to-pdf': { title: '图片合成 PDF', module: '/tools/images-to-pdf.mjs', v: 5 },
   'invoice-nup': { title: '发票拼版', module: '/tools/invoice-nup.mjs', v: 7 },

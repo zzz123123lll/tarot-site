@@ -17,6 +17,7 @@ export function mount(root, H) {
     + '.idp-row label{font-size:14px;color:#6e6e73;min-width:64px}'
     + '.idp-num{width:78px}'
     + '.idp-hint{font-size:14px;color:#6e6e73;line-height:1.43}'
+    + '.idp-error{color:var(--c-err);background:rgba(215,0,21,.06);border:1px solid rgba(215,0,21,.18);border-radius:var(--r-4);padding:12px 14px;font-size:var(--fs-small);line-height:var(--lh-small);margin:0}'
     + '.idp-out{margin-top:18px}'
     + '.idp-card{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:14px 16px;margin-top:12px}'
     + '.idp-card img{width:96px;border-radius:6px;border:1px solid rgba(0,0,0,.08)}'
@@ -365,7 +366,8 @@ export function mount(root, H) {
       var msg = (e && String(e.message) === 'encoder-load-failed')
         ? '压缩程序没加载成功(不是你的照片的问题):可能是网络把脚本拦掉了,或者你是离线打开、浏览器里还没缓存过它。联网后刷新一次页面再试;你的照片始终没有被上传。'
         : '生成失败:' + H.esc(H.friendlyError ? H.friendlyError(e, '请换一张图再试') : '请换一张图再试');
-      out.innerHTML = '<p class="idp-hint">' + H.esc(msg) + '</p>';
+      var isErr = (e && String(e.message) === 'encoder-load-failed');
+      out.innerHTML = '<p class="' + (isErr ? 'idp-error' : 'idp-hint') + '" role="status">' + H.esc(msg) + '</p>';
     }
     root.querySelector('#go').disabled = false;
   }

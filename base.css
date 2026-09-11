@@ -5,7 +5,10 @@
    凡是"每个页面都要"的东西(重置、焦点环、语义色、圆角、字号/行高/间距阶梯)一律放这里,
    site.css 与 tool.css 只保留各自页面级的东西,并且它们的令牌一律从这里取别名 —— base.css 是唯一真源。 */
 
-:root {
+/* 用 :where(:root) 把特异性降到 0:这是"默认层",页面自己的 :root(塔罗 theme.css 等)
+   永远能覆盖它,而且与加载顺序无关。用普通 :root 就会因为 base.css 后加载而把塔罗的
+   圆角刻度(6/10/14px)压成 12/18px —— 同一种"谁后加载谁说了算"的病,只是方向反了。 */
+:where(:root) {
   /* —— 字号阶梯(对标 Apple:56/48/32/17/14/12,相邻步长 >=1.15) —— */
   --fs-h1: 40px; --fs-h2: 28px; --fs-h3: 21px;
   --fs-body: 17px; --fs-small: 14px; --fs-caption: 12px;
@@ -15,8 +18,14 @@
   --ls-h1: 0; --ls-h2: 0; --ls-h3: 0; --ls-body: 0; --ls-small: 0; --ls-caption: 0;
   /* —— 间距 —— */
   --sp-1: 8px; --sp-2: 12px; --sp-3: 16px; --sp-4: 24px; --sp-5: 32px; --sp-6: 48px; --sp-7: 72px; --sp-8: 96px;
-  /* —— 圆角 —— */
-  --r-sm: 12px; --r-md: 18px;
+  /* —— 圆角阶梯(组件不要再写死 px,否则改令牌影响不到它们) —— */
+  --r-1: 6px;   /* 结果行里的小按钮 */
+  --r-2: 8px;   /* 缩略图 / 模式按钮 / 取色器 / 提示气泡 */
+  --r-3: 10px;  /* 分段容器 / 色块 */
+  --r-4: 12px;  /* 输入框 / 卡片内小面 */
+  --r-sm: var(--r-4);
+  --r-md: 18px; /* 卡片 / 拖拽区 */
+  --r-pill: 980px;
   /* —— 颜色:语义色里的成功绿必须自己就过 AA(#1d9e4e 白底 3.47,不用) —— */
   --c-text: #1d1d1f;
   --c-muted: #6e6e73;
@@ -32,7 +41,8 @@
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 html, body { margin: 0; padding: 0; }
-body {
+/* 同样降到零特异性:首页/工具页没人覆盖就拿这套默认值,塔罗页自己定义 body 时以它为准 */
+:where(body) {
   font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: 0;
   -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
 }
