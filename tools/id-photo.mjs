@@ -308,7 +308,12 @@ export function mount(root, H) {
 
       var seed = await new Promise(function (res) { c.toBlob(function (b) { res(b); }, 'image/jpeg', 0.98); });
       var seedFile = new File([seed], 'seed.jpg', { type: 'image/jpeg' });
-      var enc = await import('/shared/encoders.js?v=4');
+      var enc;
+      try { enc = await import('/shared/encoders.js?v=5'); }
+      catch (err) {
+        // 编码器加载失败要和"照片有问题"分开说,否则是在冤枉用户的照片
+        throw new Error('encoder-load-failed');
+      }
       // 关键:encodeToTarget 在"原片本来就小于上限"时会返回 blob:null(它不为没必要的事重压),
       // 但用户要的是"一个能交上去的文件",所以这里必须退回用当前画布导出的那片,
       // 并如实报告它到底达标没有 —— 绝不因为"没压缩"就报告失败。
@@ -357,7 +362,10 @@ export function mount(root, H) {
       if (back && back.close) back.close();
     } catch (e) {
       out.setAttribute('aria-busy', 'false');
-      out.innerHTML = '<p class="idp-hint">生成失败:' + H.esc(H.friendlyError ? H.friendlyError(e, '请换一张图再试') : '请换一张图再试') + '</p>';
+      var msg = (e && String(e.message) === 'encoder-load-failed')
+        ? '压缩程序没加载成功(不是你的照片的问题):可能是网络把脚本拦掉了,或者你是离线打开、浏览器里还没缓存过它。联网后刷新一次页面再试;你的照片始终没有被上传。'
+        : '生成失败:' + H.esc(H.friendlyError ? H.friendlyError(e, '请换一张图再试') : '请换一张图再试');
+      out.innerHTML = '<p class="idp-hint">' + H.esc(msg) + '</p>';
     }
     root.querySelector('#go').disabled = false;
   }

@@ -10,6 +10,13 @@ var _encBytes = 0;
 export function encoderLoads() { return _encLoads; }
 export function encoderBytes() { return _encBytes; }
 
+// ---------- 调试开关:只能由 URL 参数触发,用来验证"编码器加载失败"这条分支 ----------
+// 真实用户几乎遇不到(编码器被 Service Worker 缓存),但这条分支必须可被自动化验证:
+// 在页面上加 ?simfail=encoder 时,这个模块会拒绝加载,工具应当提示"压缩程序没加载成功(不是文件的问题)"。
+if (typeof location !== 'undefined' && /(?:^|[?&])simfail=encoder(?:&|$)/.test(location.search)) {
+  throw new Error('simulated encoder load failure (?simfail=encoder)');
+}
+
 // ---------- 画布像素 ----------
 export async function toImageData(file, flatten) {
   var bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });

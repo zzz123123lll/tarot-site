@@ -1,26 +1,20 @@
 /* tool.css — 工具盒 · 浅色工具页外壳（苹果浅色，与首页一致）。
    塔罗是深色特例，用 site.css + theme.css，不用这个。
    层级：令牌层（:root 变量）+ 组件层（导航/容器/按钮/输入/卡片/拖拽区）。 */
+/* 令牌:字号/行高/间距/圆角/语义色一律从 base.css 取别名 —— base.css 是唯一真源,
+   工具页与首页不会再各拿一份值。以后改字号只改 base.css。 */
 :root {
-  --t-bg: #fff; --t-text: #1d1d1f; --t-muted: #6e6e73; --t-accent: #0071e3;
-  /* 语义色:成功绿必须自己就过 AA(#1d9e4e 白底 3.47 不达标,#147a3a 是 5.42) */
-  --c-ok: #147a3a; --c-warn: #a1500a; --c-err: #d70015;
-  --t-line: rgba(0,0,0,0.08); --t-line-strong: rgba(0,0,0,0.14);
-  --t-surface: #f5f5f7;
-  /* 与首页同一套梯度(取值见《设计规格-参考Apple.md》,来自 apple.com 线上 CSS) */
-  --t-fs-h1: 40px; --t-fs-h2: 28px; --t-fs-body: 17px; --t-fs-small: 14px; --t-fs-caption: 12px;
-  --lh-h1: 1.15; --lh-h2: 1.19; --lh-body: 1.47; --lh-small: 1.43; --lh-caption: 1.333;
-  /* 中文页面不做负字距(会削汉字侧边);并且每处设了 font-size 的规则都显式写 letter-spacing,避免被 body 继承成绝对 px */
+  --t-bg: #fff; --t-text: var(--c-text); --t-muted: var(--c-muted); --t-accent: var(--c-accent);
+  --t-line: var(--c-hairline); --t-line-strong: rgba(0,0,0,0.14);
+  --t-surface: var(--c-band);
+  --t-fs-h1: var(--fs-h1); --t-fs-h2: var(--fs-h2); --t-fs-body: var(--fs-body); --t-fs-small: var(--fs-small); --t-fs-caption: var(--fs-caption);
   --t-ls-h1: 0; --t-ls-body: 0;
-  --t-nav-h: 44px; --t-r: 18px; --r-sm: 12px; /* 工具页不加载 site.css,这里的圆角变量必须自带,否则 var() 落空 → 输入框变方角 */
+  --t-nav-h: 44px; --t-r: var(--r-md);
   --t-font: "Geist", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
 }
-* { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; }
 body {
   font-family: var(--t-font); color: var(--t-text); background: var(--t-bg);
-  font-size: var(--t-fs-body); line-height: var(--lh-body);
-  -webkit-font-smoothing: antialiased; letter-spacing: 0; min-height: 100vh;
+  min-height: 100vh; /* 字号/行高/字距/抗锯齿来自 base.css 的 body 规则 */
 }
 
 /* —— 导航（浅色，解决"浅色页挂深色导航"）—— */
@@ -135,7 +129,7 @@ body {
 .mode-tabs { display:inline-flex; background:#f5f5f7; border-radius:10px; padding:3px; margin-bottom:16px; }
 .mode-tabs button { flex:0 0 auto; white-space:nowrap; padding:7px 16px; border:none; border-radius:8px; background:transparent; color:#6e6e73; font-size:14px; letter-spacing:0; font-weight:500; font-family:inherit; cursor:pointer; min-height:44px; transition:background .15s, color .15s; }
 .mode-tabs button.active { background:#fff; color:#1d1d1f; box-shadow:0 1px 3px rgba(0,0,0,.12); }
-.mode-tabs button:focus-visible { outline:2px solid var(--t-accent); outline-offset:2px; }
+/* 焦点环由 base.css 统一提供 */
 /* —— 公共控件:错误提示条 —— */
 .err-box { display:none; margin:10px 0 0; padding:10px 14px; border-radius:12px; background:rgba(215,0,21,.06); color:#d70015; font-size: var(--t-fs-small); }
 /* —— 公共控件:拖拽区图标尺寸(原先只在部分模块注入,导致个别页面图标被撑到 668px) —— */

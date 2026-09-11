@@ -3,28 +3,14 @@
    - 首页 = 浅色、大字号、克制的色带节奏；塔罗页 = 深色鎏金（保持原样）。
    - 首页专属样式全部 body.page-home 作用域；.site-nav 默认样式仍是塔罗页用的深色版。 */
 
+/* 字号/行高/字距/间距/圆角/语义色令牌全部来自 base.css(唯一真源);
+   这里只放 site.css 自己的页面级变量。深色那组是塔罗页用的默认值。 */
 :root {
-  /* 字号梯度(对标 Apple:56/48/32/17/14/12,中等字号尽量不用) */
-  --fs-h1:40px; --fs-h2:28px; --fs-h3:21px;
-  --fs-body:17px; --fs-small:14px; --fs-caption:12px;
-  /* 行高 */
-  --lh-h1:1.15; --lh-h2:1.19; --lh-body:1.47; --lh-small:1.43;
-  /* 字距:Apple 对拉丁文是"字号越大字距越负",但正文全是中文时负字距会削汉字侧边、笔画发挤;
-     所以这里统一为 0,并且**每一档都显式声明**(不依赖 body 继承——浏览器会把 em 算成绝对 px 再继承,是个坑)。 */
-  --ls-h1:0; --ls-h2:0; --ls-body:0; --ls-small:0; --ls-caption:0;
-  /* 间距 */
-  --sp-1:8px; --sp-2:12px; --sp-3:16px; --sp-4:24px; --sp-5:32px; --sp-6:48px; --sp-7:72px; --sp-8:96px;
-  /* 圆角与颜色 */
-  --nav-h:44px;
-  /* 语义色与圆角令牌见 base.css(全站加载) */
-  /* 默认(深色)变量:塔罗页用 */
-  --bg:#08090a; --text:#f7f8f8; --muted:#9aa0a6;
-  --line:rgba(255,255,255,0.08);
+  --nav-h: 44px;
+  --bg: #08090a; --text: #f7f8f8; --muted: #9aa0a6;
+  --line: rgba(255,255,255,0.08);
 }
-/* 盒模型 / 焦点环 / 减少动效 的全局规则统一在 base.css */
-@media (prefers-reduced-motion: reduce) {
-  body.page-home .hero-title, body.page-home .hero-sub, body.page-home .search-wrap, body.page-home .app { animation:none; }
-}
+/* 减少动效时的逐元素关闭由 base.css 统一处理,这里不再重复 */
 
 /* ===== 导航默认 = 深色版（塔罗页用）===== */
 .site-nav { display:flex; align-items:center; justify-content:space-between; gap:var(--sp-4); height:var(--nav-h); padding:0 32px; position:sticky; top:0; z-index:50; background:rgba(8,9,10,0.72); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom:1px solid var(--line); }

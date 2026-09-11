@@ -1,11 +1,23 @@
-/* base.css — 全站公共底座(首页 / 工具页 / 塔罗 / verify 都加载)
+/* base.css — 全站公共底座(首页 / 工具页 / 塔罗 / verify / 404 都加载)
    存在的理由:site.css 与 tool.css 是两套并行的样式表,而"全局规则只写在其中一份"已经连踩两次坑:
      1) --r-sm 只在 site.css 声明 → 工具页不加载 site.css → 输入框圆角全变 0;
-     2) :focus-visible 只在 site.css → 工具页焦点环回落到浏览器默认,与首页不一致。
-   凡是"每个页面都要"的东西一律放这里,两边都不用再各自声明。 */
+     2) :focus-visible 只在 site.css → 工具页焦点环回落到浏览器默认。
+   凡是"每个页面都要"的东西(重置、焦点环、语义色、圆角、字号/行高/间距阶梯)一律放这里,
+   site.css 与 tool.css 只保留各自页面级的东西,并且它们的令牌一律从这里取别名 —— base.css 是唯一真源。 */
 
-/* —— 语义色(成功绿 #1d9e4e 白底只有 3.47:1,不用) —— */
 :root {
+  /* —— 字号阶梯(对标 Apple:56/48/32/17/14/12,相邻步长 >=1.15) —— */
+  --fs-h1: 40px; --fs-h2: 28px; --fs-h3: 21px;
+  --fs-body: 17px; --fs-small: 14px; --fs-caption: 12px;
+  /* —— 行高:每一档都显式,不写 normal —— */
+  --lh-h1: 1.15; --lh-h2: 1.19; --lh-h3: 1.19; --lh-body: 1.47; --lh-small: 1.43; --lh-caption: 1.333;
+  /* —— 字距:中文页面一律 0(负字距会削汉字侧边;Apple 的拉丁负字距不适用于我们) —— */
+  --ls-h1: 0; --ls-h2: 0; --ls-h3: 0; --ls-body: 0; --ls-small: 0; --ls-caption: 0;
+  /* —— 间距 —— */
+  --sp-1: 8px; --sp-2: 12px; --sp-3: 16px; --sp-4: 24px; --sp-5: 32px; --sp-6: 48px; --sp-7: 72px; --sp-8: 96px;
+  /* —— 圆角 —— */
+  --r-sm: 12px; --r-md: 18px;
+  /* —— 颜色:语义色里的成功绿必须自己就过 AA(#1d9e4e 白底 3.47,不用) —— */
   --c-text: #1d1d1f;
   --c-muted: #6e6e73;
   --c-band: #f5f5f7;
@@ -14,26 +26,26 @@
   --c-ok: #147a3a;
   --c-warn: #a1500a;
   --c-err: #d70015;
-  /* 圆角:两套样式表共用同一组,不再各写各的 */
-  --r-sm: 12px;
-  --r-md: 18px;
   --hairline: 1px solid var(--c-hairline);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 html, body { margin: 0; padding: 0; }
-body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body {
+  font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: 0;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
 img, svg, video { max-width: 100%; }
 
-/* 键盘焦点环:全站同一种,不随平台/主题变化 */
+/* 键盘焦点环:全站同一种。
+   注意:这里**不能**设 border-radius —— 那会把被聚焦元素自己的圆角改掉
+   (塔罗的金色主按钮、输入框、404 链接一聚焦就变方角)。Chrome 94+ 的 outline 会自动跟随元素圆角。 */
 :focus-visible {
   outline: 2px solid var(--c-accent);
   outline-offset: 2px;
-  border-radius: 4px;
 }
 
-/* 尊重"减少动态效果" */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
