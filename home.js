@@ -55,14 +55,16 @@
   var secName = {};
   data.sections.forEach(function (s) { secName[s.id] = s.name; });
 
+  // 产品卡(对标 Apple 的 tile 逻辑:名字大、一句人话、整卡可点;图标只做标识)
   function card(t, order, showSec) {
-    var iconCls = t.dark ? 'app-icon app-icon--dark' : 'app-icon app-icon--light app-icon--sec-' + t.section;
-    return '<a class="app" href="' + t.url + '" style="animation-delay:' + (order * 40) + 'ms">'
+    var iconCls = t.dark ? 'app-icon app-icon--dark' : 'app-icon app-icon--light';
+    return '<a class="app" href="' + t.url + '" style="animation-delay:' + (order * 30) + 'ms">'
       + '<span class="' + iconCls + '">' + icon(t.icon) + '</span>'
-      + '<span class="app-name">' + esc(t.name) + '</span>'
+      + '<span class="app-body">'
+      + '<span class="app-name">' + esc(t.name) + (t.status === 'download' ? '<span class="app-badge app-badge--dl">下载</span>' : '') + '</span>'
       + '<span class="app-desc">' + esc(t.desc) + '</span>'
       + (showSec ? '<span class="app-sec">' + esc(secName[t.section] || '') + '</span>' : '')
-      + '</a>';
+      + '</span></a>';
   }
 
   function render(q) {
@@ -82,12 +84,12 @@
       scored.sort(function (a, b) { return b.score - a.score; });
       var list = scored.map(function (x) { return x.t; });
       if (list.length) {
-        html += '<section class="section-block section-block--search">'
-          + '<div class="section-head"><div><h2 class="section-title">搜索结果</h2>'
-          + '<p class="section-desc">' + list.length + ' 个工具匹配「' + esc(q) + '」</p></div></div>'
+        html += '<section class="section-block section-block--search"><div class="section-inner">'
+          + '<div class="section-head"><h2 class="section-title">搜索结果</h2>'
+          + '<p class="section-desc">' + list.length + ' 个工具匹配「' + esc(q) + '」</p></div>'
           + '<div class="apps-grid">';
         list.forEach(function (t) { html += card(t, order, true); order++; });
-        html += '</div></section>';
+        html += '</div></div></section>';
       }
       root.innerHTML = html || '<p class="footnote">没找到「' + esc(q) + '」相关的工具。可以试试「压缩」「PDF」「二维码」这类更短的词,或者直接看下面的分区。</p>';
       return;
@@ -96,12 +98,11 @@
     data.sections.forEach(function (sec) {
       var list = data.tools.filter(function (t) { return t.section === sec.id; });
       if (!list.length) return;
-      html += '<section class="section-block section-block--' + sec.id + '">'
-      + '<div class="section-head"><span class="section-ic">' + (ICONS[sec.icon] || '') + '</span>'
-      + '<div><h2 class="section-title">' + sec.name + '</h2><p class="section-desc">' + (sec.desc || '') + '</p></div></div>'
+      html += '<section class="section-block section-block--' + sec.id + '"><div class="section-inner">'
+      + '<div class="section-head"><h2 class="section-title">' + sec.name + '</h2><p class="section-desc">' + (sec.desc || '') + '</p></div>'
       + '<div class="apps-grid">';
       list.forEach(function (t) { html += card(t, order, false); order++; });
-      html += '</div></section>';
+      html += '</div></div></section>';
     });
     root.innerHTML = html;
   }
@@ -123,14 +124,6 @@
     if (e.key === '/' && search && document.activeElement !== search && !isTyping()) {
       e.preventDefault(); search.focus();
     }
-  });
-
-  root.addEventListener('mousemove', function (e) {
-    var app = e.target && e.target.closest ? e.target.closest('a.app') : null;
-    if (!app) return;
-    var rect = app.getBoundingClientRect();
-    app.style.setProperty('--mouse-x', (e.clientX - rect.left) + 'px');
-    app.style.setProperty('--mouse-y', (e.clientY - rect.top) + 'px');
   });
 
   var kicker = document.getElementById('kicker');
