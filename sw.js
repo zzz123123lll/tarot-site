@@ -11,7 +11,7 @@
 //      断网时用户看到的是"工具打不开",而不是一个可用的降级页面;
 //   3) 工具页要能离线**处理文件**,除 HTML 与工具模块外还需要 /shared/encoders.js、
 //      encoder-worker.js、encoder-core.js 与 /vendor/encoders/* —— 这些在"第一次成功处理"时才进缓存。
-const CACHE = 'gongjuhe-v8';
+const CACHE = 'gongjuhe-v9';
 const SHELL = ['/', '/base.css', '/site.css', '/fonts.css', '/home.js', '/tools-manifest.js', '/icons/icon-192.png', '/vendor/fonts/Geist-sub.woff2'];
 const CACHEABLE = ['/vendor/', '/icons/', '/tool.css', '/base.css', '/fonts.css', '/site.css', '/home.js', '/tools-manifest.js'];
 const SHARED = ['/shared/', '/tools/'];
@@ -59,15 +59,26 @@ self.addEventListener('fetch', function (e) {
   if (url.origin !== self.location.origin) return;
 
   if (req.mode === 'navigate') {
+    // 关键:导航响应必须用一个"普通的同源 GET 请求"当缓存键。
+    // 直接 c.put(navigationRequest) 会被浏览器拒绝(而我们以前用 .catch 把错误吞了),
+    // 结果缓存里从来没有工具页的 HTML —— 断网时只能回退到首页,用户看到的是"工具打不开"。
+    var navKey = new Request(url.origin + url.pathname, { method: 'GET' });
     e.respondWith(
       fetch(req).then(function (res) {
-        // 按访问过的网址缓存,断网时这个工具页可以直接再打开
-        var copy = res.clone();
-        caches.open(CACHE).then(function (c) { c.put(req, copy).catch(function () {}); });
+        if (res && res.ok) {
+          var copy = res.clone();
+          caches.open(CACHE).then(function (c) { c.put(navKey, copy).catch(function () {}); });
+        }
         return res;
       }).catch(function () {
         return caches.open(CACHE).then(function (c) {
-          return fromCache(c, req).then(function (hit) { return hit || c.match('/'); });
+          return c.match(navKey).then(function (hit) {
+            if (hit) return hit;
+            // 再退一步:忽略查询串按路径匹配,最后回退首页外壳
+            return c.match(navKey, { ignoreSearch: true }).then(function (hit2) {
+              return hit2 || c.match('/');
+            });
+          });
         });
       })
     );
