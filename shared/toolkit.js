@@ -291,6 +291,7 @@ const REGISTRY = {
   'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 3 },
   'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs' },
   'images-to-pdf': { title: '图片合成 PDF', module: '/tools/images-to-pdf.mjs' },
+  'invoice-nup': { title: '发票拼版', module: '/tools/invoice-nup.mjs' },
   'pdf-merge': { title: 'PDF 合并', module: '/tools/pdf-merge.mjs' },
   'pdf-split': { title: 'PDF 拆分/旋转', module: '/tools/pdf-split.mjs' },
   'pdf-render': { title: 'PDF 转图片', module: '/tools/pdf-render.mjs' },

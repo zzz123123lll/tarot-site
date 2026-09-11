@@ -12,6 +12,7 @@ window.TOOLS = {
     { slug: 'id-photo', name: '证件照', desc: '按官方要求输出精确像素、DPI 与体积上限。', section: 'image', icon: 'user', url: '/id-photo/', status: 'live' },
     { slug: 'image-convert', name: '图片转换', desc: '缩放尺寸 + PNG/JPG/WebP 格式互转。', section: 'image', icon: 'arrow-left-right', url: '/image-convert/', status: 'live' },
     { slug: 'images-to-pdf', name: '图片合成 PDF', desc: '多张图片合成一个 PDF。', section: 'image', icon: 'images', url: '/images-to-pdf/', status: 'live' },
+    { slug: 'invoice-nup', name: '发票拼版', desc: '多张发票按原比例排到 A4,输出一份 PDF。', section: 'pdf', icon: 'receipt', url: '/invoice-nup/', status: 'live' },
     { slug: 'pdf-merge', name: 'PDF 合并', desc: '多个 PDF 合成一个。', section: 'pdf', icon: 'merge', url: '/pdf-merge/', status: 'live' },
     { slug: 'pdf-split', name: 'PDF 拆分/旋转', desc: '提取页面、拆分、旋转。', section: 'pdf', icon: 'scissors', url: '/pdf-split/', status: 'live' },
     { slug: 'pdf-render', name: 'PDF 转图片', desc: 'PDF 转 JPG/PNG（可调 DPI）。', section: 'pdf', icon: 'file-image', url: '/pdf-render/', status: 'live' },
