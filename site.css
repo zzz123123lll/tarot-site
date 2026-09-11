@@ -20,99 +20,131 @@
 .nav-mark .nav-star { width:12px; height:12px; display:block; }
 .star-i { width:10px; height:10px; display:inline-block; vertical-align:-1px; flex:none; }
 
-/* ===== 首页根：苹果浅色 ===== */
+/* ===== 首页:苹果式产品页节奏 ===== */
+/* 说明:首页分三段——① 大字号 hero(产品截图从底边溢出) ② 三件事的图文交替行
+   ③ 带底色的全部工具目录(四组卡片)。所有用色/字号/圆角都取自 base.css 令牌,不新造值。 */
 body.page-home {
   font-family:"Geist",-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
-  color:var(--c-text); letter-spacing:0;
-  background:#fff;
+  color:var(--c-text); letter-spacing:0; background:#fff;
   min-height:100vh; display:flex; flex-direction:column;
+  --home-max:1080px;
 }
-body.page-home .site-nav { background:rgba(250,250,252,0.8); backdrop-filter:saturate(180%) blur(20px); -webkit-backdrop-filter:saturate(180%) blur(20px); border-bottom:1px solid var(--c-hairline); }
+body.page-home .site-nav { background:rgba(251,251,253,0.82); backdrop-filter:saturate(180%) blur(20px); -webkit-backdrop-filter:saturate(180%) blur(20px); border-bottom:1px solid var(--c-hairline); }
 body.page-home .nav-brand { color:var(--c-text); }
 body.page-home .nav-mark { background:#1d1d1f; color:#fff; }
+body.page-home .nav-links { display:flex; align-items:center; gap:22px; }
+body.page-home .nav-links a { display:inline-flex; align-items:center; min-height:44px; font-size:var(--fs-small); color:var(--c-text); opacity:.8; text-decoration:none; }
+body.page-home .nav-links a:hover { opacity:1; color:var(--c-accent); }
 body.page-home .home { flex:1 0 auto; width:100%; }
 
-/* ===== Hero：一屏一个主张 ===== */
-body.page-home .hero { text-align:start; max-width:980px; margin:0 auto; padding:64px var(--sp-4) var(--sp-5); }
-body.page-home .hero-kicker { display:inline-flex; align-items:center; gap:7px; font-size:var(--fs-caption); letter-spacing:0; font-weight:500; color:var(--c-accent); background:rgba(0,113,227,0.07); border:1px solid rgba(0,113,227,0.16); border-radius:999px; padding:5px 14px; margin:0 0 var(--sp-4); }
-body.page-home .hero-title { font-size:var(--fs-h1); font-weight:600; letter-spacing:0; line-height:var(--lh-h1); margin:0 0 var(--sp-1); color:var(--c-text); }
-body.page-home .hero-sub { font-size:var(--fs-h3); line-height:var(--lh-h2); letter-spacing:0; color:var(--c-muted); margin:0; max-width:800px; }
-/* 动效只保留一次淡入(Apple 不做流光扫字);尊重 prefers-reduced-motion */
-body.page-home .hero-title { animation:heroIn .6s cubic-bezier(.2,.6,.2,1) both; }
-body.page-home .hero-sub { animation:heroIn .6s .08s cubic-bezier(.2,.6,.2,1) both; }
-body.page-home .search-wrap { animation:heroIn .6s .14s cubic-bezier(.2,.6,.2,1) both; }
-@keyframes heroIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
-
-/* ===== 搜索框 / 两个动作 ===== */
-body.page-home .search-wrap { position:relative; max-width:592px; margin:var(--sp-4) 0 0; padding:0; }
-body.page-home .search-icon { position:absolute; left:40px; top:50%; transform:translateY(-50%); color:#86868b; pointer-events:none; line-height:0; }
+/* ① hero */
+body.page-home .hero { background:#fbfbfd; border-bottom:1px solid var(--c-hairline); padding:88px 0 0; overflow:hidden; }
+body.page-home .hero-inner { max-width:var(--home-max); margin:0 auto; padding:0 var(--sp-5); }
+body.page-home .hero-kicker { display:inline-flex; align-items:center; gap:7px; font-size:var(--fs-caption); font-weight:500; color:var(--c-accent); background:rgba(0,113,227,0.07); border:1px solid rgba(0,113,227,0.16); border-radius:999px; padding:5px 14px; margin:0 0 var(--sp-3); }
+body.page-home .hero-title { font-size:clamp(40px,5.4vw,72px); font-weight:600; letter-spacing:0; line-height:1.06; margin:0 0 var(--sp-3); color:var(--c-text); max-width:20ch; }
+body.page-home .hero-sub { font-size:var(--fs-h3); line-height:1.4; letter-spacing:0; color:var(--c-muted); margin:0; max-width:640px; }
+body.page-home .search-wrap { position:relative; max-width:592px; margin:var(--sp-4) 0 0; }
+body.page-home .search-icon { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:#86868b; pointer-events:none; line-height:0; }
 body.page-home .search-icon svg { width:16px; height:16px; display:block; }
-body.page-home .search { width:100%; height:48px; padding:0 18px 0 42px; border-radius:var(--r-sm); border:1px solid var(--c-hairline); background:var(--c-band); font-size:var(--fs-body); letter-spacing:0; font-family:inherit; color:var(--c-text); outline:none; -webkit-appearance:none; }
-body.page-home .search:focus { background:#fff; border-color:var(--c-accent); box-shadow:0 0 0 3px rgba(0,113,227,0.15); }
+body.page-home .search { width:100%; height:48px; padding:0 18px 0 44px; border-radius:var(--r-sm); border:1px solid var(--c-hairline); background:#fff; font-size:var(--fs-body); letter-spacing:0; font-family:inherit; color:var(--c-text); outline:none; -webkit-appearance:none; }
+body.page-home .search:focus { border-color:var(--c-accent); box-shadow:0 0 0 3px rgba(0,113,227,0.15); }
 body.page-home .hero-actions { margin:var(--sp-2) 0 0; display:flex; gap:var(--sp-4); justify-content:flex-start; flex-wrap:wrap; font-size:var(--fs-body); letter-spacing:0; }
 body.page-home .hero-actions a { display:inline-flex; align-items:center; min-height:44px; color:var(--c-accent); text-decoration:none; }
 body.page-home .hero-actions a:hover { text-decoration:underline; }
+body.page-home .hero-shot { margin-top:56px; }
 
-/* ===== 工具目录：全宽色带 + 产品卡 ===== */
-body.page-home #apps { width:100%; }
-body.page-home .section-block { background:#fff; padding:var(--sp-7) 0; }
-/* 交替由脚本按"实际渲染出来的分区顺序"打标记,不再用 nth-of-type(搜索块会打乱奇偶,导致相邻同色) */
-body.page-home .section-block--band { background:var(--c-band); }
-body.page-home .section-inner { max-width:980px; margin:0 auto; padding:0 var(--sp-4); }
-body.page-home .section-head { display:block; margin:0 0 var(--sp-5); }
-body.page-home .section-head h2, body.page-home .section-title { font-size:var(--fs-h2); line-height:var(--lh-h2); letter-spacing:0; font-weight:600; color:var(--c-text); margin:0 0 6px; }
-body.page-home .section-desc { font-size:var(--fs-body); line-height:var(--lh-body); letter-spacing:0; color:var(--c-muted); margin:0; max-width:640px; }
-body.page-home .section-ic { display:none; }
-body.page-home .apps-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:var(--sp-3); }
-/* 超宽屏才排三列:卡片窄了以后名字和一句话会被挤成多行,反而更难读 */
-@media (min-width:1441px) { body.page-home .apps-grid { grid-template-columns:repeat(3, minmax(0,1fr)); } }
-body.page-home .app {
-  display:flex; align-items:flex-start; gap:var(--sp-3);
-  background:#fff; border:1px solid var(--c-hairline); border-radius:var(--r-md);
-  padding:20px; text-decoration:none; color:var(--c-text);
-  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-  animation:appIn .45s ease both;
-}
-@keyframes appIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
-body.page-home a.app:hover { transform:translateY(-2px); border-color:rgba(0,0,0,0.16); box-shadow:0 10px 24px rgba(0,0,0,0.07); }
-body.page-home .app-icon { flex:none; width:48px; height:48px; border-radius:var(--r-sm); overflow:hidden; display:flex; align-items:center; justify-content:center; background:var(--c-band); color:#1d1d1f; transition:background .18s ease, color .18s ease; }
-body.page-home .app-icon svg { width:28px; height:28px; display:block; }
+/* 产品截图外框:统一圆角 + 一根发丝线 + 柔和投影 */
+body.page-home .shot { background:#fff; border:1px solid var(--c-hairline); border-radius:18px; overflow:hidden; box-shadow:0 30px 60px -30px rgba(0,0,0,0.28), 0 6px 18px -10px rgba(0,0,0,0.10); }
+body.page-home .shot img { display:block; width:100%; height:auto; }
+body.page-home .shot-hero { border-radius:18px 18px 0 0; border-bottom:none; }
+/* 这张截图最有说服力的是下半部分(结果卡 + 「本次处理:上传 0 个文件」),所以窗口对上
+t其底部,而不是从顶部开始 */
+body.page-home .shot-hero img { height:470px; object-fit:cover; object-position:center bottom; }
+
+/* ② 三件事:图文交替 */
+body.page-home .feature { background:#fff; padding:88px 0 var(--sp-5); }
+body.page-home .feature-inner { max-width:var(--home-max); margin:0 auto; padding:0 var(--sp-5); }
+body.page-home .feature-head { max-width:720px; margin:0 0 var(--sp-2); }
+body.page-home .feature-h2 { font-size:clamp(28px,3vw,40px); line-height:1.1; font-weight:600; letter-spacing:0; margin:0 0 10px; }
+body.page-home .feature-lead { font-size:var(--fs-h3); line-height:1.4; color:var(--c-muted); margin:0; }
+body.page-home .feature-row { display:grid; grid-template-columns:5fr 7fr; gap:56px; align-items:center; padding:56px 0; }
+body.page-home .feature-row + .feature-row { border-top:1px solid var(--c-hairline); }
+body.page-home .feature-row + .feature-row .feature-text { order:2; }
+body.page-home .feature-row + .feature-row .feature-media { order:1; }
+body.page-home .feature-title { font-size:28px; line-height:1.19; font-weight:600; letter-spacing:0; margin:0 0 10px; }
+body.page-home .feature-copy { font-size:var(--fs-h3); line-height:1.45; color:var(--c-muted); margin:0; }
+body.page-home .feature-list { list-style:none; padding:0; margin:var(--sp-3) 0 0; }
+body.page-home .feature-list li { position:relative; padding-left:18px; font-size:var(--fs-body); line-height:1.5; color:var(--c-text); margin:0 0 10px; }
+body.page-home .feature-list li::before { content:""; position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--c-accent); }
+body.page-home .feature-link { display:inline-flex; align-items:center; gap:6px; min-height:44px; margin-top:6px; font-size:var(--fs-body); color:var(--c-accent); text-decoration:none; }
+body.page-home .feature-link:hover { text-decoration:underline; }
+body.page-home .feature-shot { height:340px; }
+body.page-home .feature-shot img { height:100%; object-fit:cover; object-position:top center; }
+
+/* ③ 全部工具目录 */
+body.page-home .catalog { background:var(--c-band); border-top:1px solid var(--c-hairline); padding:88px 0 96px; }
+body.page-home .catalog-inner { max-width:var(--home-max); margin:0 auto; padding:0 var(--sp-5); }
+body.page-home .catalog-head { margin:0 0 var(--sp-5); }
+body.page-home .catalog-h2 { font-size:clamp(28px,3vw,40px); line-height:1.1; font-weight:600; letter-spacing:0; margin:0 0 10px; }
+body.page-home .catalog-lead { font-size:var(--fs-h3); line-height:1.4; color:var(--c-muted); margin:0; }
+body.page-home .group + .group { margin-top:56px; }
+body.page-home .group-head { margin:0 0 16px; }
+body.page-home .group-title { font-size:var(--fs-h3); line-height:1.3; font-weight:600; letter-spacing:0; margin:0 0 4px; }
+body.page-home .group-desc { font-size:var(--fs-small); line-height:1.45; color:var(--c-muted); margin:0; }
+body.page-home .apps-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+body.page-home .app { display:flex; align-items:flex-start; gap:14px; background:#fff; border:1px solid var(--c-hairline); border-radius:16px; padding:20px; min-height:104px; text-decoration:none; color:inherit; transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+body.page-home a.app:hover { transform:translateY(-2px); border-color:rgba(0,0,0,0.14); box-shadow:0 14px 30px -14px rgba(0,0,0,0.20); }
+body.page-home .app-icon { flex:none; width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; background:var(--c-band); color:#1d1d1f; transition:background .18s ease, color .18s ease; }
+body.page-home .app-icon svg { width:24px; height:24px; display:block; }
 body.page-home a.app:hover .app-icon { background:rgba(0,113,227,0.08); color:var(--c-accent); }
-body.page-home .app-icon--soon { opacity:.5; }
-body.page-home .app-icon::after { content:none; }
 body.page-home .app-body { min-width:0; flex:1; }
-body.page-home .app-name { display:block; font-size:var(--fs-h3); line-height:var(--lh-h2); font-weight:600; letter-spacing:0; color:var(--c-text); margin:0 0 4px; }
-body.page-home .app-desc { display:block; font-size:var(--fs-body); line-height:var(--lh-body); letter-spacing:0; color:var(--c-muted); margin:0; }
+body.page-home .app-name { display:block; font-size:var(--fs-body); line-height:1.3; font-weight:600; letter-spacing:0; color:var(--c-text); margin:0 0 5px; }
+body.page-home .app-desc { display:block; font-size:var(--fs-small); line-height:1.5; letter-spacing:0; color:var(--c-muted); margin:0; }
 body.page-home .app-sec { display:inline-block; font-size:var(--fs-caption); letter-spacing:0; color:var(--c-muted); background:var(--c-band); border-radius:999px; padding:2px 8px; margin-top:8px; }
 body.page-home .app-badge { display:inline-block; font-size:var(--fs-caption); letter-spacing:0; color:var(--c-muted); background:var(--c-band); border-radius:999px; padding:2px 9px; margin-left:8px; }
 body.page-home .app-badge--dl { color:var(--c-accent); background:rgba(0,113,227,0.08); }
 body.page-home .footnote { margin-top:var(--sp-5); font-size:var(--fs-small); color:var(--c-muted); }
 
-/* 更多工具(胶囊列表) */
-body.page-home .section-more { opacity:1; }
-body.page-home .more-list { display:flex; flex-wrap:wrap; gap:var(--sp-2); }
-body.page-home .more-item { display:inline-flex; align-items:center; gap:8px; font-size:var(--fs-small); color:var(--c-text); text-decoration:none; padding:10px 16px; background:#fff; border:1px solid var(--c-hairline); border-radius:999px; }
-body.page-home a.more-item:hover { color:var(--c-accent); border-color:rgba(0,113,227,0.4); }
-
-/* ===== 页脚 ===== */
+/* 页脚 */
 body.page-home .home-foot { flex-shrink:0; margin-top:auto; padding:var(--sp-6) var(--sp-4) 52px; text-align:start; border-top:1px solid var(--c-hairline); background:#fff; }
-body.page-home .foot-inner { max-width:980px; margin:0 auto; padding:0 var(--sp-4); }
+body.page-home .foot-inner { max-width:var(--home-max); margin:0 auto; padding:0 var(--sp-4); }
 body.page-home .foot-brand { display:inline-flex; align-items:center; gap:9px; font-size:var(--fs-small); font-weight:600; color:var(--c-text); margin-bottom:10px; }
 body.page-home .foot-line { font-size:var(--fs-small); line-height:var(--lh-small); letter-spacing:0; color:var(--c-muted); margin:0 0 6px; }
 body.page-home .foot-note { font-size:var(--fs-small); letter-spacing:0; color:var(--c-muted); margin:0; }
-
-
 body.page-home .foot-note a { color:var(--c-accent); text-decoration:none; }
+
+/* 动效:克制,只做一次淡入;减少动效时由 base.css 统一关闭 */
+@keyframes heroIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+body.page-home .hero-title, body.page-home .hero-sub, body.page-home .search-wrap, body.page-home .hero-shot { animation:heroIn .55s cubic-bezier(.2,.6,.2,1) both; }
+body.page-home .hero-sub { animation-delay:.06s; }
+body.page-home .search-wrap { animation-delay:.12s; }
+body.page-home .hero-shot { animation-delay:.18s; }
+body.page-home a.app { animation:heroIn .4s cubic-bezier(.2,.6,.2,1) both; }
 
 /* ===== 断点(对标 Apple 的 735 / 1069)===== */
 @media (max-width:1069px) {
-  body.page-home .section-block { padding:var(--sp-6) 0; }
+  body.page-home .hero { padding:72px 0 0; }
+  body.page-home .hero-title { font-size:clamp(34px,6vw,48px); }
+  body.page-home .shot-hero img { height:360px; }
+  body.page-home .feature { padding:72px 0 var(--sp-4); }
+  body.page-home .feature-row { grid-template-columns:1fr; gap:28px; padding:44px 0; }
+  body.page-home .feature-row + .feature-row .feature-text { order:1; }
+  body.page-home .feature-row + .feature-row .feature-media { order:2; }
+  body.page-home .feature-shot { height:300px; }
+  body.page-home .catalog { padding:72px 0; }
+  body.page-home .apps-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
 @media (max-width:735px) {
   :root { --fs-h1:32px; --fs-h2:24px; --fs-h3:20px; }
-  body.page-home .hero { padding:64px var(--sp-3) var(--sp-5); }
-  body.page-home .hero-sub { font-size:var(--fs-body); }
+  body.page-home .hero { padding:56px 0 0; }
+  body.page-home .hero-inner { padding:0 var(--sp-4); }
+  body.page-home .hero-title { font-size:34px; }
+  body.page-home .hero-sub, body.page-home .feature-copy, body.page-home .feature-lead, body.page-home .catalog-lead { font-size:var(--fs-body); }
+  /* 手机上截图缩到 342px 宽,下半部分的小字已经读不出来;改看上半部分的投放区,
+     那里字号大、能一眼看懂这个工具在干什么 */
+  body.page-home .shot-hero img { height:240px; object-position:center top; }
+  body.page-home .feature-title { font-size:var(--fs-h2); }
   body.page-home .apps-grid { grid-template-columns:1fr; }
-  body.page-home .section-inner { padding:0 var(--sp-3); }
+  body.page-home .catalog-inner, body.page-home .feature-inner { padding:0 var(--sp-4); }
   .site-nav { padding:0 var(--sp-3); }
 }

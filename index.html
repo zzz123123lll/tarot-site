@@ -11,6 +11,9 @@
   <meta property="og:description" content="把好用的工具，收进一个盒子里。">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://gongjuhe.top/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
   <meta property="og:url" content="https://gongjuhe.top/">
   <meta property="og:site_name" content="工具盒">
   <link rel="canonical" href="https://gongjuhe.top/">
@@ -21,36 +24,102 @@
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="apple-touch-icon" href="/icons/icon-192.png">
   <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="工具盒">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="preload" href="/vendor/fonts/Geist-sub.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="fonts.css?v=4">
-<link rel="stylesheet" href="base.css?v=4">
-<link rel="stylesheet" href="site.css?v=33">
+  <link rel="stylesheet" href="fonts.css?v=4">
+  <link rel="stylesheet" href="base.css?v=4">
+  <link rel="stylesheet" href="site.css?v=34">
 </head>
 <body class="page-home">
   <nav class="site-nav">
     <a class="nav-brand" href="/"><span class="nav-mark"><svg class="nav-star" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.4l2.55 7.05L21.6 12l-7.05 2.55L12 21.6l-2.55-7.05L2.4 12l7.05-2.55z" fill="currentColor"/></svg></span>工具盒</a>
+    <div class="nav-links"><a href="#apps">全部工具</a><a href="/verify/">怎么验证不上传</a></div>
   </nav>
 
   <main class="home">
     <header class="hero">
-      <p class="hero-kicker" id="kicker"><svg class="star-i" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.4l2.55 7.05L21.6 12l-7.05 2.55L12 21.6l-2.55-7.05L2.4 12l7.05-2.55z" fill="currentColor"/></svg> 工具盒 &#183; 全部本地运行</p>
-      <h1 class="hero-title">工具盒——把文件改到能通过为止</h1>
-      <p class="hero-sub">图片、PDF 与小工具，不上传、不注册，打开就用——内容只留在你的浏览器里。</p>
-      <div class="search-wrap">
-        <span class="search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></span>
-        <input type="search" id="searchInput" class="search" placeholder="搜索工具…（按 /）" aria-label="搜索工具">
+      <div class="hero-inner">
+        <p class="hero-kicker" id="kicker"><svg class="star-i" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.4l2.55 7.05L21.6 12l-7.05 2.55L12 21.6l-2.55-7.05L2.4 12l7.05-2.55z" fill="currentColor"/></svg> 20 个工具 · 全部本地运行</p>
+        <h1 class="hero-title">把文件改到能通过为止</h1>
+        <p class="hero-sub">图片、PDF 与 10 个文本小工具。不上传、不注册、不限次数——文件始终只留在你的浏览器里。</p>
+        <div class="search-wrap">
+          <span class="search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></span>
+          <input type="search" id="searchInput" class="search" placeholder="搜索工具…（按 /）" aria-label="搜索工具">
+        </div>
+        <nav class="hero-actions" aria-label="主要入口">
+          <a href="#apps">看全部工具 <span class="arrow" aria-hidden="true">↓</span></a>
+          <a href="/verify/">文件到底有没有被上传 <span class="arrow" aria-hidden="true">↗</span></a>
+        </nav>
       </div>
-      <nav class="hero-actions" aria-label="主要入口">
-        <a href="#apps">看全部工具 <span class="arrow" aria-hidden="true">↓</span></a>
-        <a href="/verify/">文件到底有没有被上传 <span class="arrow" aria-hidden="true">↗</span></a>
-      </nav>
+      <div class="hero-inner hero-shot">
+        <div class="shot shot-hero"><img src="/assets/shots/img-compress.webp" width="1200" height="1064" alt="图片压缩工具的真实界面:拖入一张 2.6MB 的图片后压到 2.1MB,并当场显示「本次处理:上传 0 个文件」" loading="eager"></div>
+      </div>
     </header>
 
+    <section class="feature" aria-labelledby="feature-head">
+      <div class="feature-inner">
+        <div class="feature-head">
+          <h2 class="feature-h2" id="feature-head">最常被卡住的三件事</h2>
+          <p class="feature-lead">报名的证件照、报销的发票、还有一堆零碎的格式转换。这三件事我们先做到"能自证"。</p>
+        </div>
 
-    <div id="apps"><section class="section-block section-block--divination"><div class="section-inner"><div class="section-head"><h2 class="section-title">占卜</h2><p class="section-desc">78 张韦特牌，随时可以抽一张。</p></div><div class="apps-grid"><a class="app" href="/tarot/"><span class="app-body"><span class="app-name">塔罗占卜</span><span class="app-desc">78 张韦特牌，一次有依据、不套话的解读。</span></span></a></div></div></section><section class="section-block section-block--image section-block--band"><div class="section-inner"><div class="section-head"><h2 class="section-title">图片工具</h2><p class="section-desc">把图片变小、换格式、合成 PDF。</p></div><div class="apps-grid"><a class="app" href="/img-compress/"><span class="app-body"><span class="app-name">图片压缩</span><span class="app-desc">批量变小，也可以压到指定大小（如 500KB 以内）。</span></span></a><a class="app" href="/id-photo/"><span class="app-body"><span class="app-name">证件照</span><span class="app-desc">按官方要求输出精确像素、DPI 与体积上限。</span></span></a><a class="app" href="/image-convert/"><span class="app-body"><span class="app-name">图片转换</span><span class="app-desc">缩放尺寸 + PNG/JPG/WebP 格式互转。</span></span></a><a class="app" href="/images-to-pdf/"><span class="app-body"><span class="app-name">图片合成 PDF</span><span class="app-desc">多张图片合成一个 PDF。</span></span></a></div></div></section><section class="section-block section-block--pdf"><div class="section-inner"><div class="section-head"><h2 class="section-title">PDF 工具</h2><p class="section-desc">合并、拆分、转图片、压缩。</p></div><div class="apps-grid"><a class="app" href="/invoice-nup/"><span class="app-body"><span class="app-name">发票拼版</span><span class="app-desc">多张发票按原比例排到 A4,输出一份 PDF。</span></span></a><a class="app" href="/pdf-merge/"><span class="app-body"><span class="app-name">PDF 合并</span><span class="app-desc">多个 PDF 合成一个。</span></span></a><a class="app" href="/pdf-split/"><span class="app-body"><span class="app-name">PDF 拆分/旋转</span><span class="app-desc">提取页面、拆分、旋转。</span></span></a><a class="app" href="/pdf-render/"><span class="app-body"><span class="app-name">PDF 转图片</span><span class="app-desc">PDF 转 JPG/PNG（可调 DPI）。</span></span></a><a class="app" href="/pdf-compress/"><span class="app-body"><span class="app-name">PDF 压缩</span><span class="app-desc">扫描件/图片型 PDF 瘦身。</span></span></a></div></div></section><section class="section-block section-block--utility section-block--band"><div class="section-inner"><div class="section-head"><h2 class="section-title">小工具</h2><p class="section-desc">文字、链接、颜色、日期这些小事。</p></div><div class="apps-grid"><a class="app" href="/tools/json/"><span class="app-body"><span class="app-name">JSON 格式化</span><span class="app-desc">美化、校验、压缩 JSON。</span></span></a><a class="app" href="/tools/base64/"><span class="app-body"><span class="app-name">Base64 编解码</span><span class="app-desc">文本与 Base64 互转。</span></span></a><a class="app" href="/tools/regex/"><span class="app-body"><span class="app-name">正则测试</span><span class="app-desc">正则表达式实时匹配。</span></span></a><a class="app" href="/tools/color/"><span class="app-body"><span class="app-name">颜色工具</span><span class="app-desc">RGB / HEX / HSL 互转。</span></span></a><a class="app" href="/tools/qr/"><span class="app-body"><span class="app-name">二维码生成</span><span class="app-desc">文字/链接生成二维码。</span></span></a><a class="app" href="/tools/jwt/"><span class="app-body"><span class="app-name">JWT 解码</span><span class="app-desc">解码 JWT、检查过期。</span></span></a><a class="app" href="/tools/hash/"><span class="app-body"><span class="app-name">Hash 摘要</span><span class="app-desc">SHA / MD5，文本与文件。</span></span></a><a class="app" href="/tools/url/"><span class="app-body"><span class="app-name">URL 编解码</span><span class="app-desc">编解码、query 解析。</span></span></a><a class="app" href="/tools/uuid/"><span class="app-body"><span class="app-name">UUID / 密码</span><span class="app-desc">生成 UUID 和随机密码。</span></span></a><a class="app" href="/tools/date/"><span class="app-body"><span class="app-name">日期 &amp; 时间戳</span><span class="app-desc">日期差、加减、时间戳互转。</span></span></a></div></div></section></div>
+        <div class="feature-row">
+          <div class="feature-text">
+            <h3 class="feature-title">证件照:按对方要的规格输出</h3>
+            <p class="feature-copy">不是"裁成正方形"就完事,而是把像素、DPI、体积上限都按官方要求写进文件。</p>
+            <ul class="feature-list">
+              <li>五种官方预设:考试 295×413、制卡 358×441(350 dpi)、护照 420×560、学历 480×640</li>
+              <li>像素、DPI、体积上限都能单独改,DPI 会真实写进文件的密度字段,可自己读回来核对</li>
+              <li>原片不够大时会提醒"这张会被放大";底色不合规会明说——但我们不替你换底色</li>
+            </ul>
+            <a class="feature-link" href="/id-photo/">打开证件照 <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="feature-media"><div class="shot feature-shot"><img src="/assets/shots/id-photo.webp" width="1200" height="1344" alt="证件照工具:左侧是官方预设与照片预览,右侧是像素、DPI、体积上限与缩放位置控制" loading="lazy"></div></div>
+        </div>
+
+        <div class="feature-row">
+          <div class="feature-text">
+            <h3 class="feature-title">发票拼版:把票据排到一张 A4 上</h3>
+            <p class="feature-copy">图片和 PDF 混着投,按原比例居中排在 A4——不裁剪、不变形、不压到看不清。</p>
+            <ul class="feature-list">
+              <li>每页 1 / 2 / 4 张,页边距 0 / 5 / 10 mm,输出一份可打印的 PDF</li>
+              <li>带 EXIF 旋转的手机照片会先摆正;PDF 按约 150 DPI 渲染,小字看得清</li>
+              <li>首屏就写清"对方要原版 PDF/OFD 时别用拼版,交原件",并把原话出处标出来</li>
+            </ul>
+            <a class="feature-link" href="/invoice-nup/">打开发票拼版 <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="feature-media"><div class="shot feature-shot"><img src="/assets/shots/invoice-nup.webp" width="1200" height="1026" alt="发票拼版工具:两张发票排在 A4 上、输出信息与「本次处理:上传 0 个文件」" loading="lazy"></div></div>
+        </div>
+
+        <div class="feature-row">
+          <div class="feature-text">
+            <h3 class="feature-title">10 个文本小工具:打开就算,断网也能用</h3>
+            <p class="feature-copy">JSON、Base64、正则、颜色、二维码、JWT、Hash、URL、UUID、日期时间戳。</p>
+            <ul class="feature-list">
+              <li>访问过一次工具盒之后(约 430KB 存在本机),这 10 个工具断网也能打开使用</li>
+              <li>哈希、编码、二维码都在本机算,不需要联网,也不上传任何内容</li>
+              <li>不用注册、没有次数限制、不加水印</li>
+            </ul>
+            <a class="feature-link" href="/tools/json/">打开小工具 <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="feature-media"><div class="shot feature-shot"><img src="/assets/shots/json.webp" width="1000" height="772" alt="JSON 格式化工具:左侧输入原始 JSON,右侧输出带缩进的美化结果" loading="lazy"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="catalog" aria-labelledby="catalog-head">
+      <div class="catalog-inner">
+        <div class="catalog-head">
+          <h2 class="catalog-h2" id="catalog-head">全部 20 个工具</h2>
+          <p class="catalog-lead">按用途分成四组。每个工具都写着它能做什么、不能做什么。</p>
+        </div>
+        <div id="apps">
+<div class="group group--divination"><div class="group-head"><h3 class="group-title">占卜</h3><p class="group-desc">78 张韦特牌，随时可以抽一张。</p></div><div class="apps-grid"><a class="app" href="/tarot/"><span class="app-body"><span class="app-name">塔罗占卜</span><span class="app-desc">78 张韦特牌，一次有依据、不套话的解读。</span></span></a></div></div><div class="group group--image"><div class="group-head"><h3 class="group-title">图片工具</h3><p class="group-desc">把图片变小、换格式、合成 PDF。</p></div><div class="apps-grid"><a class="app" href="/img-compress/"><span class="app-body"><span class="app-name">图片压缩</span><span class="app-desc">批量变小，也可以压到指定大小（如 500KB 以内）。</span></span></a><a class="app" href="/id-photo/"><span class="app-body"><span class="app-name">证件照</span><span class="app-desc">按官方要求输出精确像素、DPI 与体积上限。</span></span></a><a class="app" href="/image-convert/"><span class="app-body"><span class="app-name">图片转换</span><span class="app-desc">缩放尺寸 + PNG/JPG/WebP 格式互转。</span></span></a><a class="app" href="/images-to-pdf/"><span class="app-body"><span class="app-name">图片合成 PDF</span><span class="app-desc">多张图片合成一个 PDF。</span></span></a></div></div><div class="group group--pdf"><div class="group-head"><h3 class="group-title">PDF 工具</h3><p class="group-desc">合并、拆分、转图片、压缩。</p></div><div class="apps-grid"><a class="app" href="/invoice-nup/"><span class="app-body"><span class="app-name">发票拼版</span><span class="app-desc">多张发票按原比例排到 A4,输出一份 PDF。</span></span></a><a class="app" href="/pdf-merge/"><span class="app-body"><span class="app-name">PDF 合并</span><span class="app-desc">多个 PDF 合成一个。</span></span></a><a class="app" href="/pdf-split/"><span class="app-body"><span class="app-name">PDF 拆分/旋转</span><span class="app-desc">提取页面、拆分、旋转。</span></span></a><a class="app" href="/pdf-render/"><span class="app-body"><span class="app-name">PDF 转图片</span><span class="app-desc">PDF 转 JPG/PNG（可调 DPI）。</span></span></a><a class="app" href="/pdf-compress/"><span class="app-body"><span class="app-name">PDF 压缩</span><span class="app-desc">扫描件/图片型 PDF 瘦身。</span></span></a></div></div><div class="group group--utility"><div class="group-head"><h3 class="group-title">小工具</h3><p class="group-desc">文字、链接、颜色、日期这些小事。</p></div><div class="apps-grid"><a class="app" href="/tools/json/"><span class="app-body"><span class="app-name">JSON 格式化</span><span class="app-desc">美化、校验、压缩 JSON。</span></span></a><a class="app" href="/tools/base64/"><span class="app-body"><span class="app-name">Base64 编解码</span><span class="app-desc">文本与 Base64 互转。</span></span></a><a class="app" href="/tools/regex/"><span class="app-body"><span class="app-name">正则测试</span><span class="app-desc">正则表达式实时匹配。</span></span></a><a class="app" href="/tools/color/"><span class="app-body"><span class="app-name">颜色工具</span><span class="app-desc">RGB / HEX / HSL 互转。</span></span></a><a class="app" href="/tools/qr/"><span class="app-body"><span class="app-name">二维码生成</span><span class="app-desc">文字/链接生成二维码。</span></span></a><a class="app" href="/tools/jwt/"><span class="app-body"><span class="app-name">JWT 解码</span><span class="app-desc">解码 JWT、检查过期。</span></span></a><a class="app" href="/tools/hash/"><span class="app-body"><span class="app-name">Hash 摘要</span><span class="app-desc">SHA / MD5，文本与文件。</span></span></a><a class="app" href="/tools/url/"><span class="app-body"><span class="app-name">URL 编解码</span><span class="app-desc">编解码、query 解析。</span></span></a><a class="app" href="/tools/uuid/"><span class="app-body"><span class="app-name">UUID / 密码</span><span class="app-desc">生成 UUID 和随机密码。</span></span></a><a class="app" href="/tools/date/"><span class="app-body"><span class="app-name">日期 &amp; 时间戳</span><span class="app-desc">日期差、加减、时间戳互转。</span></span></a></div></div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer class="home-foot">
@@ -62,10 +131,10 @@
   </footer>
 
   <script src="tools-manifest.js?v=5"></script>
-  <script src="home.js?v=15"></script>
+  <script src="home.js?v=16"></script>
   <script>
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
-    window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=17'); });
+    window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=18'); });
   }
   </script>
 </body>

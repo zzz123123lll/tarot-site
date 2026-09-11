@@ -79,28 +79,27 @@
       scored.sort(function (a, b) { return b.score - a.score; });
       var list = scored.map(function (x) { return x.t; });
       if (list.length) {
-        html += '<section class="section-block section-block--search section-block--band"><div class="section-inner">'
-          + '<div class="section-head"><h2 class="section-title">搜索结果</h2>'
-          + '<p class="section-desc">' + list.length + ' 个工具匹配「' + esc(q) + '」</p></div>'
+        html += '<div class="group group--search">'
+          + '<div class="group-head"><h3 class="group-title">搜索结果</h3>'
+          + '<p class="group-desc">' + list.length + ' 个工具匹配「' + esc(q) + '」</p></div>'
           + '<div class="apps-grid">';
         list.forEach(function (t) { html += card(t, order, true); order++; });
-        html += '</div></div></section>';
+        html += '</div></div>';
       }
       root.innerHTML = html || '<p class="footnote">没找到「' + esc(q) + '」相关的工具。可以试试「压缩」「PDF」「二维码」这类更短的词,或者直接看下面的分区。</p>';
       return;
     }
 
-    var bandIndex = 0;
+    // 分区渲染成"组":首页的分区标题(全部 20 个工具)与带底色的目录区在 HTML 里,
+    // 这里只负责按分区吐出组,保证"静态预渲染"与"运行时渲染"是同一份结构。
     data.sections.forEach(function (sec) {
       var list = data.tools.filter(function (t) { return t.section === sec.id; });
       if (!list.length) return;
-      var band = (bandIndex % 2 === 1) ? ' section-block--band' : '';
-      bandIndex++;
-      html += '<section class="section-block section-block--' + sec.id + band + '"><div class="section-inner">'
-      + '<div class="section-head"><h2 class="section-title">' + sec.name + '</h2><p class="section-desc">' + (sec.desc || '') + '</p></div>'
-      + '<div class="apps-grid">';
+      html += '<div class="group group--' + sec.id + '">'
+        + '<div class="group-head"><h3 class="group-title">' + esc(sec.name) + '</h3><p class="group-desc">' + esc(sec.desc || '') + '</p></div>'
+        + '<div class="apps-grid">';
       list.forEach(function (t) { html += card(t, order, false); order++; });
-      html += '</div></div></section>';
+      html += '</div></div>';
     });
     root.innerHTML = html;
   }
