@@ -11,7 +11,7 @@
 //      断网时用户看到的是"工具打不开",而不是一个可用的降级页面;
 //   3) 工具页要能离线**处理文件**,除 HTML 与工具模块外还需要 /shared/encoders.js、
 //      encoder-worker.js、encoder-core.js 与 /vendor/encoders/* —— 这些在"第一次成功处理"时才进缓存。
-const CACHE = 'gongjuhe-v14';
+const CACHE = 'gongjuhe-v15';
 // /offline.html 是"断网打开一个确实没缓存过的地址"时的兜底说明页
 const OFFLINE_PAGE = '/offline.html';
 // 首次访问就把**所有工具页的 HTML** 预缓存(20 页,合计约 60KB)。
@@ -42,7 +42,7 @@ const VENDOR_SMALL = [
   '/vendor/fonts/GeistMono-sub.woff2', '/vendor/fonts/Geist-sub.woff2'
 ];
 const SHARED_FILES = ['/shared/toolkit.js', '/shared/encoders.js', '/shared/encoder-core.js', '/shared/encoder-worker.js'];
-const SHELL = ['/', OFFLINE_PAGE, '/verify/'].concat(TOOL_PAGES, MODULES, SHARED_FILES, VENDOR_SMALL, ['/base.css', '/site.css', '/fonts.css', '/home.js', '/tools-manifest.js', '/icons/icon-192.png']);
+const SHELL = ['/', OFFLINE_PAGE, '/verify/'].concat(TOOL_PAGES, MODULES, SHARED_FILES, VENDOR_SMALL, ['/base.css', '/site.css', '/fonts.css', '/home.js', '/tools-manifest.js', '/manifest.webmanifest', '/icons/icon-192.png']);
 const CACHEABLE = ['/vendor/', '/icons/', '/tool.css', '/base.css', '/fonts.css', '/site.css', '/home.js', '/tools-manifest.js'];
 const SHARED = ['/shared/', '/tools/'];
 
