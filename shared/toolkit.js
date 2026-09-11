@@ -335,6 +335,11 @@ function warmOffline(urls) {
   try {
     if (!('serviceWorker' in navigator)) return;
     var list = urls.slice();
+    // 关键:把"当前这个页面自己的 HTML"也交给 SW 存下来。
+    // 首次访问时 SW 往往还没接管,导航请求不经过它 → 页面 HTML 从没进过缓存,
+    // 断网重开时只能回退到首页(用户看到的是"工具打不开")。
+    // 用 origin+pathname 作为键,与 sw.js 里导航缓存的 navKey 完全一致。
+    list.push(location.origin + location.pathname);
     Array.prototype.forEach.call(document.querySelectorAll('link[rel="stylesheet"]'), function (l) {
       if (l.href && l.href.indexOf(location.origin) === 0) list.push(l.href);
     });
