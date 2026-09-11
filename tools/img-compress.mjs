@@ -31,6 +31,12 @@ export function mount(root, H) {
   var originals = [];
   var items = [];
   var runSeq = 0; // 每一轮处理一个序号,用户中途再拖文件时旧一轮的结果直接丢弃
+  var appliedTarget = null; // 上一次真正用过的目标体积,用于判断输入框改动后是否需要重算
+  var nextId = 1;
+
+  function currentTarget() {
+    return Math.max(1024, (parseInt(root.querySelector('#tval').value, 10) || 500) * unit);
+  }
 
   // 真实编码器按需加载(首次压缩时才拉取 wasm)
   var _enc = null;
@@ -44,13 +50,28 @@ export function mount(root, H) {
     root.querySelector('#tbox').style.display = isTarget ? 'block' : 'none';
     root.querySelector('#pt').style.display = isTarget ? 'none' : 'flex';
     root.querySelector('#pth').style.display = isTarget ? 'none' : 'block';
+    abortRun();
     if (originals.length) processAll();
   });
   root.querySelector('#tunit').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
     unit = parseInt(b.dataset.u, 10);
     root.querySelectorAll('#tunit button').forEach(function (x) { x.classList.toggle('active', x === b); });
+    abortRun();
     if (originals.length && mode === 'target') processAll();
+  });
+
+  // 改目标体积后自动重算:否则用户输完数字界面毫无反应,会以为这个功能坏了
+  var tvalTimer = null;
+  root.querySelector('#tval').addEventListener('input', function () {
+    if (mode !== 'target' || !originals.length) return;
+    if (tvalTimer) clearTimeout(tvalTimer);
+    tvalTimer = setTimeout(function () {
+      var raw = parseInt(root.querySelector('#tval').value, 10);
+      if (!raw || raw < 1) return; // 输入到一半(空或非法)先不动
+      if (currentTarget() === appliedTarget) return;
+      processAll();
+    }, 500);
   });
 
   var pt = root.querySelector('#pt');
@@ -58,6 +79,7 @@ export function mount(root, H) {
     var t = e.target.closest('.preset-tab'); if (!t) return;
     preset = t.dataset.p;
     pt.querySelectorAll('.preset-tab').forEach(function (x) { x.classList.toggle('active', x === t); });
+    abortRun();
     if (originals.length) processAll();
   });
 
@@ -67,7 +89,7 @@ export function mount(root, H) {
 
   async function addFiles(files) {
     var added = [];
-    files.forEach(function (f) { if (f.type.indexOf('image/') === 0) { originals.push(f); added.push(f); } });
+    files.forEach(function (f) { if (f.type.indexOf('image/') === 0) { f.__id = nextId++; originals.push(f); added.push(f); } });
     // 动图必须先认出来,不能悄悄只输出第一帧
     for (var i = 0; i < added.length; i++) {
       var f = added[i];
@@ -78,21 +100,25 @@ export function mount(root, H) {
 
   // 动图帧数:优先用浏览器的 ImageDecoder,不支持时就退回扫 GIF 字节里的 NETSCAPE2.0 循环扩展
   function gifFrames(file) {
+    if (file.type !== 'image/gif') return Promise.resolve(1);
     return new Promise(function (resolve) {
-      if (file.type !== 'image/gif') { resolve(1); return; }
-      if (typeof ImageDecoder !== 'undefined') {
-        try {
-          var dec = new ImageDecoder({ data: file.stream(), type: 'image/gif' });
-          dec.tracks.ready.then(function () {
-            var track = dec.tracks.selectedTrack;
-            var n = track ? track.frameCount : 1;
-            try { if (dec.close) dec.close(); } catch (e) {}
-            resolve(n > 1 ? n : 1);
-          }).catch(function () { resolve(scanGif(file)); });
-          return;
-        } catch (e) { /* 退回字节扫描 */ }
-      }
-      resolve(scanGif(file));
+      var settled = false;
+      function done(n) { if (!settled) { settled = true; resolve(n > 1 ? n : 1); } }
+      function byBytes() { scanGif(file).then(done, function () { done(1); }); }
+      // 任何一步不回来都不能卡住整批:4 秒后一律退回字节扫描
+      var timer = setTimeout(byBytes, 4000);
+      if (typeof ImageDecoder === 'undefined') { clearTimeout(timer); byBytes(); return; }
+      try {
+        var dec = new ImageDecoder({ data: file.stream(), type: 'image/gif' });
+        dec.tracks.ready.then(function () {
+          if (settled) { try { if (dec.close) dec.close(); } catch (e) {} return; }
+          clearTimeout(timer);
+          var track = dec.tracks.selectedTrack;
+          var n = track ? track.frameCount : 1;
+          try { if (dec.close) dec.close(); } catch (e) {}
+          done(n);
+        }).catch(function () { /* 交给超时后的字节扫描 */ });
+      } catch (e) { /* 交给超时后的字节扫描 */ }
     });
   }
   function scanGif(file) {
@@ -109,8 +135,20 @@ export function mount(root, H) {
     }).catch(function () { return 1; });
   }
 
+  // 打断在途的那一轮(用户中途改条件/删除/清除时用),让它的回调全部失效
+  function abortRun() {
+    var pg = root.querySelector('#pg');
+    var wasRunning = pg.style.display === 'block';
+    runSeq++;
+    pg.style.display = 'none';
+    pg.setAttribute('aria-valuenow', '0');
+    root.querySelector('#pgt').style.display = 'none';
+    return wasRunning;
+  }
+
   function processAll() {
     var myRun = ++runSeq;
+    if (mode === 'target') appliedTarget = currentTarget();
     items = [];
     // 清空上一轮的结果,避免处理途中残留的旧卡片被点到(旧卡片上的下载按钮会指向新列表)
     releaseUrls();
@@ -144,15 +182,19 @@ export function mount(root, H) {
     var mime = file.type;
     if (['image/jpeg', 'image/png', 'image/webp'].indexOf(mime) < 0) mime = 'image/png';
     var extra = {
+      id: file.__id,
       animated: (file.__frames || 1) > 1,
       frames: file.__frames || 1,
       retyped: ['image/jpeg', 'image/png', 'image/webp'].indexOf(file.type) < 0
     };
     function push(item) { if (myRun === runSeq) items.push(Object.assign(item, extra)); cb(); }
+    // 编码器加载失败要和"文件读不了"分开说,否则是在冤枉用户的文件
+    var E;
+    try { E = await ensureEnc(); }
+    catch (e) { push({ name: file.name, origSize: origSize, status: 'noenc' }); return; }
     try {
-      var E = await ensureEnc();
       if (mode === 'target') {
-        var target = Math.max(1024, (parseInt(root.querySelector('#tval').value, 10) || 500) * unit);
+        var target = currentTarget();
         var r = await E.encodeToTarget(file, mime, target);
         if (r.blob) {
           push({
@@ -227,6 +269,10 @@ export function mount(root, H) {
         html += '<div class="result-card"><div class="info"><div class="name">' + H.esc(f.name) + '</div>'
           + '<div class="sizes">已是最小，无需压缩（原图 ' + H.fmt(f.origSize) + '）。没有新文件可下载，你的原图没有被改动。</div>' + extraNote + '</div>'
           + '<span class="status-tag">未缩小</span><button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';
+      } else if (f.status === 'noenc') {
+        html += '<div class="result-card result-fail"><div class="info"><div class="name">' + H.esc(f.name) + '</div>'
+          + '<div class="sizes">压缩程序没加载成功（不是文件的问题）：可能是网络把脚本拦掉了，或者你是离线打开、浏览器里还没缓存过它。联网后刷新一次页面再试；你的文件始终没有被上传。</div>' + extraNote + '</div><span class="status-tag">未加载</span>'
+          + '<button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';
       } else {
         html += '<div class="result-card result-fail"><div class="info"><div class="name">' + H.esc(f.name) + '</div>'
           + '<div class="sizes">读不了这个文件：可能是 iPhone 的 HEIC 格式（请先转成 JPG），或者文件已损坏。</div>' + extraNote + '</div><span class="status-tag">失败</span>'
@@ -248,6 +294,7 @@ export function mount(root, H) {
     var fail = items.filter(function (f) { return f.status === 'fail'; });
     var met = items.filter(function (f) { return f.status === 'met'; });
     var nowin = items.filter(function (f) { return f.status === 'nowin'; });
+    var noenc = items.filter(function (f) { return f.status === 'noenc'; });
     var savedTotal = 0; ok.forEach(function (f) { savedTotal += f.saved; });
     root.querySelector('#ba').style.display = ok.length ? 'flex' : 'none';
     var sum = root.querySelector('#sum');
@@ -265,6 +312,7 @@ export function mount(root, H) {
         if (skip.length) parts.push('跳过 ' + skip.length + ' 张');
       }
       if (fail.length) parts.push('失败 ' + fail.length + ' 张');
+      if (noenc.length) parts.push('压缩程序未加载 ' + noenc.length + ' 张');
       if (savedTotal > 0) parts.push('共节省 <strong>' + H.fmt(savedTotal) + '</strong>');
       sum.innerHTML = '<div class="total">' + (parts.join(' · ') || '没有可处理的项目') + '</div>'
         + '<div class="note">全程本地运算，图片不会离开你的电脑。</div>';
@@ -289,6 +337,21 @@ export function mount(root, H) {
     });
     H.downloadZip(files, '图片压缩结果.zip');
   }
-  function removeOne(i) { originals.splice(i, 1); items.splice(i, 1); render(); }
-  function clearAll() { originals = []; items = []; render(); }
+  // 按 id 对应删除,避免"已完成条目"和"待处理文件"下标错位
+  function removeOne(i) {
+    var wasRunning = abortRun();
+    var it = items[i];
+    if (!it) return;
+    var id = it.id;
+    items.splice(i, 1);
+    for (var k = 0; k < originals.length; k++) {
+      if (originals[k].__id === id) { originals.splice(k, 1); break; }
+    }
+    if (wasRunning && originals.length) processAll(); else render();
+  }
+  function clearAll() {
+    abortRun();
+    originals = []; items = []; appliedTarget = null;
+    render();
+  }
 }
