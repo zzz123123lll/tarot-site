@@ -17,6 +17,24 @@ if (typeof location !== 'undefined' && /(?:^|[?&])simfail=encoder(?:&|$)/.test(l
   throw new Error('simulated encoder load failure (?simfail=encoder)');
 }
 
+// ---------- 把"编码器链路"自己也交给 Service Worker 缓存 ----------
+// 为什么需要:编码器有一部分是在 dedicated Worker 里取的,/vendor/encoders/*.wasm 与 core 在部分浏览器
+// 不会被页面级的 SW 拦截到(实测 Chromium 断网时缺 3 个条目 → 压缩时报"压缩程序没加载成功")。
+// 这里在第一次编码成功后,把本模块、core 与 worker 的 URL 主动交给 SW 存下来,之后断网也能压。
+var _warmed = false;
+function warmEncoderChain() {
+  if (_warmed) return;
+  _warmed = true;
+  try {
+    if (typeof navigator === 'undefined' || !navigator.serviceWorker) return;
+    var list = ['/shared/encoder-core.js?v=3', '/shared/encoder-worker.js?v=1'];
+    try { if (import.meta && import.meta.url) list.push(import.meta.url); } catch (e) {}
+    var send = function (sw) { try { if (sw) sw.postMessage({ type: 'warm', urls: list }); } catch (e) {} };
+    if (navigator.serviceWorker.controller) send(navigator.serviceWorker.controller);
+    navigator.serviceWorker.ready.then(function (reg) { send(reg.active || navigator.serviceWorker.controller); }).catch(function () {});
+  } catch (e) { /* 暖缓存失败不影响功能 */ }
+}
+
 // ---------- 画布像素 ----------
 export async function toImageData(file, flatten) {
   var bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
@@ -162,6 +180,7 @@ export async function encodeToTarget(file, mime, targetBytes) {
   // 1) Worker 里的真编码器
   try {
     var r = await askWorker(img.data.data.buffer, img.width, img.height, mime, 'target', param);
+    if (r.buf) warmEncoderChain();
     return { blob: blobOf(r.buf, mime), met: !!r.met, reason: r.reason, quality: r.quality };
   } catch (e) { /* 降级 */ }
 
@@ -186,7 +205,7 @@ export async function encodeWithQuality(file, mime, qualityPercent) {
   }
   try {
     var r = await askWorker(img.data.data.buffer, img.width, img.height, mime, 'quality', qualityPercent);
-    if (r.buf) return { blob: blobOf(r.buf, mime), real: true };
+    if (r.buf) { warmEncoderChain(); return { blob: blobOf(r.buf, mime), real: true }; }
   } catch (e) { /* 降级 */ }
   try {
     var rr = await encodeQuality(reExtract(img), img.width, img.height, mime, qualityPercent);
