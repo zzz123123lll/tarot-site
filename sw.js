@@ -11,9 +11,14 @@
 //      断网时用户看到的是"工具打不开",而不是一个可用的降级页面;
 //   3) 工具页要能离线**处理文件**,除 HTML 与工具模块外还需要 /shared/encoders.js、
 //      encoder-worker.js、encoder-core.js 与 /vendor/encoders/* —— 这些在"第一次成功处理"时才进缓存。
-const CACHE = 'gongjuhe-v16';
-// /offline.html 是"断网打开一个确实没缓存过的地址"时的兜底说明页(塔罗页也用这条路径)
-const OFFLINE_PAGE = '/offline.html';
+const CACHE = 'gongjuhe-v17';
+// 兜底说明页(断网打开一个确实没缓存过的地址时用,塔罗页也走这条路径)。
+// 注意必须写**最终地址** /offline:Cloudflare Pages 会把 /offline.html 用 308 跳到 /offline,
+// 而"带 redirect 标记的缓存响应"在导航时会被 Chromium 直接拒绝(ERR_FAILED)——
+// 线上实测:用 /offline.html 预缓存时,断网访问任何未缓存地址都会变成浏览器错误页(本地 http 测试看不出来)。
+const OFFLINE_PAGE = '/offline';
+// 本地开发没有 Cloudflare 的 clean-url,就用 .html 那份兜底(线上走的是 /offline)
+const OFFLINE_PAGE_ALT = '/offline.html';
 // 首次访问就把**所有工具页的 HTML** 预缓存(19 页,合计约 60KB)。
 // 为什么这么做:Chromium 不允许 Service Worker 用"另一个 URL 的缓存响应"顶替一次导航,
 // 所以"没访问过的工具页"没法靠兜底页顶替;直接把页面本体缓存下来最实在,
@@ -45,7 +50,7 @@ const VENDOR_SMALL = [
   '/vendor/fonts/GeistMono-sub.woff2', '/vendor/fonts/Geist-sub.woff2'
 ];
 const SHARED_FILES = ['/shared/toolkit.js', '/shared/encoders.js', '/shared/encoder-core.js', '/shared/encoder-worker.js'];
-const SHELL = ['/', OFFLINE_PAGE, '/verify/'].concat(TOOL_PAGES, MODULES, SHARED_FILES, VENDOR_SMALL, ['/base.css', '/site.css', '/tool.css', '/fonts.css', '/home.js', '/tools-manifest.js', '/manifest.webmanifest', '/icons/icon-192.png']);
+const SHELL = ['/', OFFLINE_PAGE, OFFLINE_PAGE_ALT, '/verify/'].concat(TOOL_PAGES, MODULES, SHARED_FILES, VENDOR_SMALL, ['/base.css', '/site.css', '/tool.css', '/fonts.css', '/home.js', '/tools-manifest.js', '/manifest.webmanifest', '/icons/icon-192.png']);
 const CACHEABLE = ['/vendor/', '/icons/', '/tool.css', '/base.css', '/fonts.css', '/site.css', '/home.js', '/tools-manifest.js'];
 const SHARED = ['/shared/', '/tools/'];
 
@@ -109,8 +114,16 @@ self.addEventListener('fetch', function (e) {
             if (hit) return hit;
             // 再退一步:忽略查询串按路径匹配,最后回退首页外壳
             return c.match(navKey, { ignoreSearch: true }).then(function (hit2) {
-              // 都没命中(这个页面从没访问过):给一页说得清的说明,不要静默换成首页
-              return hit2 || c.match(OFFLINE_PAGE) || c.match('/');
+              if (hit2) return hit2;
+              // 都没命中(这个页面从没访问过):给一页说得清的说明,不要静默换成首页。
+              // 用正文重新构造一个响应(而不是直接把缓存响应还给导航):这样它是"普通响应",不带
+              // 任何 redirect 标记、URL 也与请求无关,浏览器不会因为 URL 不一致而拒绝它。
+              return (c.match(OFFLINE_PAGE) || c.match(OFFLINE_PAGE_ALT)).then(function (off) {
+                if (!off) return c.match('/');
+                return off.text().then(function (html) {
+                  return new Response(html, { status: 200, headers: { 'content-type': 'text/html; charset=utf-8' } });
+                });
+              });
             });
           });
         });
