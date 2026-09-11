@@ -1,6 +1,6 @@
 // tools/img-compress.mjs — 图片批量瘦身（三档预设 + 没压更小就跳过）
 export function mount(root, H) {
-  H.injectCss(".preset-tabs{display:flex;gap:0;background:#f5f5f7;border-radius:12px;padding:3px;margin-bottom:6px}.preset-tab{flex:1;padding:9px 0;border:none;border-radius:9px;background:transparent;color:#6e6e73;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .15s}.preset-tab.active{background:#fff;color:#1d1d1f;box-shadow:0 1px 3px rgba(0,0,0,.12)}.preset-hint{font-size:14px;color:#86868b;margin:0 0 22px}.progress-bar{display:none;height:6px;background:#f5f5f7;border-radius:999px;margin:16px 0 0;overflow:hidden}.progress-bar .fill{height:100%;background:#0071e3;border-radius:999px;transition:width .2s}.progress-note{font-size:14px;color:#6e6e73;margin:8px 0 0}.result-card.result-fail .name{color:#d70015}.result-card.result-fail .tool-drop .icon svg{width:40px;height:40px;color:#0071e3}.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);align-items:center;justify-content:center;z-index:100}.modal.show{display:flex}.modal img{max-width:90%;max-height:90%;border-radius:12px}.modal .close{line-height:1;position:absolute;top:20px;right:24px;color:#fff;font-size:28px;cursor:pointer}");
+  H.injectCss(".preset-tabs{display:flex;gap:0;background:#f5f5f7;border-radius:12px;padding:3px;margin-bottom:6px}.preset-tab{flex:1;padding:9px 0;border:none;border-radius:9px;background:transparent;color:#6e6e73;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .15s}.preset-tab.active{background:#fff;color:#1d1d1f;box-shadow:0 1px 3px rgba(0,0,0,.12)}.preset-hint{font-size:14px;color:#86868b;margin:0 0 22px}.result-card.result-fail .name{color:#d70015}.result-card.result-fail .tool-drop .icon svg{width:40px;height:40px;color:#0071e3}.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);align-items:center;justify-content:center;z-index:100}.modal.show{display:flex}.modal img{max-width:90%;max-height:90%;border-radius:12px}.modal .close{line-height:1;position:absolute;top:20px;right:24px;color:#fff;font-size:28px;cursor:pointer}");
 
   var icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="M3 17l5-5 3.5 3.5L16 11l5 5"/></svg>';
 
@@ -182,7 +182,7 @@ export function mount(root, H) {
     (function next() {
       if (myRun !== runSeq) return; // 已被新一轮取代,安静退出
       if (done >= total) { pg.style.display = 'none'; note.style.display = 'none'; render(); return; }
-      note.textContent = '正在处理：第 ' + (done + 1) + ' / ' + total + ' 张 · ' + originals[done].name
+      note.textContent = '正在处理：第 ' + (done + 1) + ' / ' + total + ' 张（' + Math.round(done / total * 100) + '%）· ' + originals[done].name
         + (mode === 'target' ? '（大图压到很小体积需要多试几次，请稍等）' : '');
       compressOne(originals[done], myRun, function () {
         if (myRun !== runSeq) return;

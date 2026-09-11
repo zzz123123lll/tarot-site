@@ -4,9 +4,9 @@
 // 安装时预缓存首页外壳。目标是:访问过一次的工具页,断网后仍能真正处理文件。
 // 注意:工具页要能离线处理,除了 HTML 与工具模块,还要有 /shared/encoders.js、encoder-worker.js、
 // encoder-core.js 与 /vendor/encoders/* 的编码器 —— 这些在"第一次成功处理"时才会进缓存。
-const CACHE = 'gongjuhe-v6';
-const SHELL = ['/', '/site.css', '/fonts.css', '/home.js', '/tools-manifest.js', '/icons/icon-192.png', '/vendor/fonts/Geist-sub.woff2'];
-const CACHEABLE = ['/vendor/', '/icons/', '/tool.css', '/fonts.css', '/site.css', '/home.js', '/tools-manifest.js'];
+const CACHE = 'gongjuhe-v7';
+const SHELL = ['/', '/base.css', '/site.css', '/fonts.css', '/home.js', '/tools-manifest.js', '/icons/icon-192.png', '/vendor/fonts/Geist-sub.woff2'];
+const CACHEABLE = ['/vendor/', '/icons/', '/tool.css', '/base.css', '/fonts.css', '/site.css', '/home.js', '/tools-manifest.js'];
 const SHARED = ['/shared/', '/tools/'];
 self.addEventListener('install', function (e) {
   e.waitUntil(
