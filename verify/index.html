@@ -52,10 +52,10 @@
   <p class="quiet">第一次使用某个工具时,会下载一次压缩程序(JPEG 约 0.29 MB、WebP 约 0.32 MB、PNG 约 0.19 MB;换了浏览器或清了缓存会再下一次),所以第一次会稍微慢一点;之后浏览器会缓存它。下载它只是"把工具取到你的电脑上",不是把你的文件送出去。处理结束时我们会把它这次实际加载了多少字节直接显示给你。</p>
   <p class="quiet"><strong>离线是这样分层的(我们按体积做过取舍,不是一句"支持离线"了事):</strong></p>
   <ul class="quiet">
-    <li><strong>访问过一次工具盒</strong>:20 个工具页的页面 + 工具程序 + 小体积依赖(合计约 400KB,一次就够)都进浏览器。<strong>断网后 10 个文本类工具(JSON / Base64 / 正则 / 颜色 / 二维码 / JWT / Hash / URL / UUID / 日期)可以直接用</strong>;其余工具页也能打开。</li>
+    <li><strong>访问过一次工具盒</strong>:19 个工具页的页面 + 工具程序 + 小体积依赖(合计约 430KB,一次就够)都进浏览器。<strong>断网后 10 个文本类工具(JSON / Base64 / 正则 / 颜色 / 二维码 / JWT / Hash / URL / UUID / 日期)可以直接用</strong>;其余 9 个工具页也能打开并给出明确提示。</li>
     <li><strong>再用一次某个大工具</strong>:PDF 与图片压缩要用到 0.5–1.7MB 的程序库(pdf-lib、pdf.js、WebAssembly 压缩引擎),它们在你<strong>第一次用到那个工具时</strong>才进缓存。我们不把这 3MB 塞给每个只是来看一眼的人。</li>
     <li><strong>程序没就位时</strong>:工具会明确告诉你"程序没加载成功(不是你的文件有问题)",<strong>不会假装在处理</strong>。</li>
-    <li><strong>塔罗页</strong>是另一套页面,离线使用需要先在线访问过它一次。</li>
+    <li><strong>塔罗页不在上面这份预缓存里</strong>:它是另一套页面(自带 305KB 程序与字体),只缓存 HTML 会得到一个没样式、点不动的空壳,全量缓存又要让只想格式化 JSON 的人多下 305KB。所以它按老规则工作——<strong>先在线打开它一次,之后断网可用</strong>;没访问过时我们会给你一页说明,而不是给你一个坏掉的页面。</li>
   </ul>
 
   <h2>第二步:拔掉网线再试一次</h2>
@@ -89,7 +89,7 @@
 <footer class="tool-foot"><p class="tool-foot-line">全部工具本地运行 · 文件不上传</p><nav class="tool-foot-links" aria-label="相关页面"><a href="/">全部工具</a><a href="/img-compress/">图片压缩</a><a href="/pdf-merge/">PDF 合并</a></nav></footer>
 <script>
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
-  window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=15'); });
+  window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=16'); });
 }
 </script>
 </body>
