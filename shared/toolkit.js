@@ -325,6 +325,23 @@ export function enhanceA11y(root) {
   });
 }
 
+// 把"这一页真正用到的程序文件"交给 Service Worker 存好,这样访问过一次的工具页断网也能打开。
+// 细节:页面第一次加载时 SW 往往还没接管当前页面,navigator.serviceWorker.controller 为空,
+// 所以用 registration.active 而不是 controller。
+function warmOffline(urls) {
+  try {
+    if (!('serviceWorker' in navigator)) return;
+    var list = urls.slice();
+    Array.prototype.forEach.call(document.querySelectorAll('link[rel="stylesheet"]'), function (l) {
+      if (l.href && l.href.indexOf(location.origin) === 0) list.push(l.href);
+    });
+    try { if (import.meta && import.meta.url) list.push(import.meta.url); } catch (e) {}
+    var send = function (sw) { try { if (sw) sw.postMessage({ type: 'warm', urls: list }); } catch (e) {} };
+    if (navigator.serviceWorker.controller) send(navigator.serviceWorker.controller);
+    navigator.serviceWorker.ready.then(function (reg) { send(reg.active || navigator.serviceWorker.controller); }).catch(function () {});
+  } catch (e) { /* 离线增强失败不影响功能 */ }
+}
+
 export async function mountTool(slug, root, titleEl) {
   const t = REGISTRY[slug];
   if (!t) {
@@ -336,7 +353,11 @@ export async function mountTool(slug, root, titleEl) {
   // 页面 <title> 由各工具的静态 HTML 提供(SEO),这里不再覆盖
   try {
     const mod = await import(t.module + '?v=' + (t.v || 1));
-    if (mod && mod.mount) { mod.mount(root, H); enhanceA11y(root); }
+    if (mod && mod.mount) {
+      mod.mount(root, H);
+      enhanceA11y(root);
+      warmOffline([t.module + '?v=' + (t.v || 1)]);
+    }
   } catch (e) {
     root.innerHTML = '<p class="tool-sub">工具加载失败。</p>';
     console.error('[toolbox]', slug, e);
