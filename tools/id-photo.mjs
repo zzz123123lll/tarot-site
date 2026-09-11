@@ -67,7 +67,7 @@ export function mount(root, H) {
         '<div class="idp-row"><button class="tool-btn" id="go">生成合规照片</button><button class="tool-btn tool-btn--ghost" id="clr">清除</button></div>' +
       '</div>' +
     '</div>' +
-    '<div class="idp-out" id="out"></div>';
+    '<div class="idp-out" id="out" role="status" aria-live="polite"></div>';
 
   var ps = root.querySelector('#ps');
   var out = root.querySelector('#out');
@@ -256,6 +256,7 @@ export function mount(root, H) {
     var cap = Math.max(0, parseInt(root.querySelector('#kb').value, 10) || 0) * 1024;
     var preset = P(state.preset);
     root.querySelector('#go').disabled = true;
+    out.setAttribute('aria-busy', 'true');
     out.innerHTML = '<p class="idp-hint">正在按 ' + t.w + '×' + t.h + ' 输出…</p>';
     var netFrom = H.netMark ? H.netMark() : 0;
     try {
@@ -310,6 +311,7 @@ export function mount(root, H) {
             '<div class="idp-row" style="margin-top:10px"><button class="tool-btn" id="dl">下载照片</button></div>' +
           '</div>' +
         '</div>';
+      out.setAttribute('aria-busy', 'false');
       var dl = out.querySelector('#dl');
       if (dl) dl.addEventListener('click', function () {
         if (!state.out) return;
@@ -317,6 +319,7 @@ export function mount(root, H) {
       });
       if (back && back.close) back.close();
     } catch (e) {
+      out.setAttribute('aria-busy', 'false');
       out.innerHTML = '<p class="idp-hint">生成失败:' + H.esc(H.friendlyError ? H.friendlyError(e, '请换一张图再试') : '请换一张图再试') + '</p>';
     }
     root.querySelector('#go').disabled = false;
