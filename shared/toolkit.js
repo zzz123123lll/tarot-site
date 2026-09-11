@@ -154,6 +154,97 @@ function matchesAccept(file, accept) {
     return file.type === a;
   });
 }
+// ---------- 零上传自证:统计"可能夹带你的文件"的请求 ----------
+// 只统计,不改行为。统计对象:带请求体的请求(任何 fetch / XHR / sendBeacon)与跨域请求。
+// 说明:Worker 内部的资源加载主线程看不见(浏览器按上下文分开计时),那部分由编码器模块单独回报;
+// 这里只管"有没有什么东西被发出去",所以只关心带内容的请求。
+const netLog = [];
+
+function absUrl(u) {
+  try { return new URL(String(u), location.href).href; } catch (e) { return String(u); }
+}
+
+function netRecord(url, method, hasBody) {
+  var abs = absUrl(url);
+  netLog.push({
+    url: abs,
+    method: String(method || 'GET').toUpperCase(),
+    hasBody: !!hasBody,
+    cross: abs.indexOf(location.origin) !== 0,
+    host: (function () { try { return new URL(abs).host; } catch (e) { return ''; } })(),
+    t: Date.now()
+  });
+}
+
+function installNetAudit() {
+  if (typeof window === 'undefined' || window.__tbNetHooked) return;
+  window.__tbNetHooked = true;
+  var of = window.fetch;
+  if (of) {
+    window.fetch = function (input, init) {
+      try {
+        var url = (input && input.url) ? input.url : String(input);
+        var method = (init && init.method) || (input && input.method) || 'GET';
+        var hasBody = !!(init && init.body) || !!(input && input.body);
+        netRecord(url, method, hasBody);
+      } catch (e) { /* 统计失败不能影响功能 */ }
+      return of.apply(this, arguments);
+    };
+  }
+  if (typeof XMLHttpRequest !== 'undefined') {
+    var oo = XMLHttpRequest.prototype.open;
+    var os = XMLHttpRequest.prototype.send;
+    XMLHttpRequest.prototype.open = function (m, u) { this.__tbUrl = u; this.__tbMethod = m; return oo.apply(this, arguments); };
+    XMLHttpRequest.prototype.send = function (body) {
+      try { netRecord(this.__tbUrl, this.__tbMethod, body != null); } catch (e) {}
+      return os.apply(this, arguments);
+    };
+  }
+  if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+    var ob = navigator.sendBeacon.bind(navigator);
+    navigator.sendBeacon = function (u, d) {
+      try { netRecord(u, 'BEACON', d != null); } catch (e) {}
+      return ob(u, d);
+    };
+  }
+}
+
+installNetAudit();
+
+// 标记一个时间点(处理开始),之后用 netReport 取这段时间内的统计
+export function netMark() {
+  return netLog.length;
+}
+
+export function netReport(since) {
+  var from = typeof since === 'number' ? since : 0;
+  var seg = netLog.slice(from);
+  var withBody = seg.filter(function (r) { return r.hasBody; });
+  var cross = seg.filter(function (r) { return r.cross; });
+  var crossHosts = [];
+  cross.forEach(function (r) { if (r.host && crossHosts.indexOf(r.host) < 0) crossHosts.push(r.host); });
+  return {
+    total: seg.length,
+    withBody: withBody.length,
+    bodyUrls: withBody.map(function (r) { return r.url; }),
+    crossOrigin: cross.length,
+    crossHosts: crossHosts
+  };
+}
+
+// 给工具用的 HTML 片段:如实说明这一次处理有没有把东西发出去
+export function netLine(since) {
+  var s = netReport(since);
+  if (s.withBody > 0) {
+    return '处理期间检测到 ' + s.withBody + ' 条带内容的请求,请立刻停止使用并把这个情况告诉我们。';
+  }
+  var t = '本次处理:上传 0 个文件 · 没有向服务器发送任何内容';
+  if (s.crossOrigin > 0) {
+    t += ' · 跨域请求 ' + s.crossOrigin + ' 条(' + s.crossHosts.join('、') + '),不含你的文件';
+  }
+  return t;
+}
+
 // 让一个容器变成"点击选文件 + 拖拽"的投放区
 export function makeDropZone(el, onFiles, accept) {
   // 键盘可达:让只用键盘的人也能选择文件
@@ -195,7 +286,7 @@ export function makeDropZone(el, onFiles, accept) {
 }
 
 const REGISTRY = {
-  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 4 },
+  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 5 },
   'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs' },
   'images-to-pdf': { title: '图片合成 PDF', module: '/tools/images-to-pdf.mjs' },
   'pdf-merge': { title: 'PDF 合并', module: '/tools/pdf-merge.mjs' },
@@ -214,7 +305,7 @@ const REGISTRY = {
   'date': { title: '日期 & 时间戳', module: '/tools/date.mjs' }
 };
 
-const H = { esc, fmt, downloadBlob, downloadZip, injectCss, makeDropZone, loadScript, copyText, initTips, friendlyError, warnBelow, clearWarn };
+const H = { esc, fmt, downloadBlob, downloadZip, injectCss, makeDropZone, loadScript, copyText, initTips, friendlyError, warnBelow, clearWarn, netMark, netReport, netLine };
 
 // 通用无障碍增强:动态状态区可被读屏播报;标签与输入框建立关联
 export function enhanceA11y(root) {

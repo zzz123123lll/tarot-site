@@ -33,6 +33,9 @@ export function mount(root, H) {
   var runSeq = 0; // 每一轮处理一个序号,用户中途再拖文件时旧一轮的结果直接丢弃
   var appliedTarget = null; // 上一次真正用过的目标体积,用于判断输入框改动后是否需要重算
   var nextId = 1;
+  var netFrom = 0;   // 本轮处理开始时的网络统计位置
+  var loadsFrom = 0; // 本轮处理开始时已下载过的编码器个数
+  var encMod = null; // 已加载的编码器模块(用于读"下载了几个编码器")
 
   function currentTarget() {
     return Math.max(1024, (parseInt(root.querySelector('#tval').value, 10) || 500) * unit);
@@ -40,7 +43,16 @@ export function mount(root, H) {
 
   // 真实编码器按需加载(首次压缩时才拉取 wasm)
   var _enc = null;
-  function ensureEnc() { if (!_enc) _enc = import('/shared/encoders.js?v=2'); return _enc; }
+  function ensureEnc() {
+    if (!_enc) {
+      _enc = import('/shared/encoders.js?v=3');
+      _enc.then(function (m) { encMod = m; }, function () {});
+    }
+    return _enc;
+  }
+  function encLoadsNow() {
+    try { return encMod && encMod.encoderLoads ? encMod.encoderLoads() : 0; } catch (e) { return 0; }
+  }
 
   root.querySelector('#md').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
@@ -149,6 +161,8 @@ export function mount(root, H) {
   function processAll() {
     var myRun = ++runSeq;
     if (mode === 'target') appliedTarget = currentTarget();
+    netFrom = H.netMark ? H.netMark() : 0;
+    loadsFrom = encLoadsNow();
     items = [];
     // 清空上一轮的结果,避免处理途中残留的旧卡片被点到(旧卡片上的下载按钮会指向新列表)
     releaseUrls();
@@ -314,8 +328,11 @@ export function mount(root, H) {
       if (fail.length) parts.push('失败 ' + fail.length + ' 张');
       if (noenc.length) parts.push('压缩程序未加载 ' + noenc.length + ' 张');
       if (savedTotal > 0) parts.push('共节省 <strong>' + H.fmt(savedTotal) + '</strong>');
+      var loads = encLoadsNow() - loadsFrom;
+      var proof = (H.netLine ? H.netLine(netFrom) : '本次处理:上传 0 个文件');
+      if (loads > 0) proof += ' · 首次使用下载了压缩程序(' + loads + ' 个文件,之后从缓存读取)';
       sum.innerHTML = '<div class="total">' + (parts.join(' · ') || '没有可处理的项目') + '</div>'
-        + '<div class="note">全程本地运算，图片不会离开你的电脑。</div>';
+        + '<div class="note">' + H.esc(proof) + ' · <a href="/verify/">怎么自己验证</a></div>';
     } else {
       sum.style.display = 'none';
     }

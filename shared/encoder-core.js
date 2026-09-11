@@ -3,9 +3,13 @@
 // 约定:输入是 RGBA 像素缓冲,输出是编码后的 ArrayBuffer;拿不到真编码器时返回 reason:'no-codec',由调用方决定兜底方式。
 
 var _cache = {};
+var _loads = 0; // 真正发起过几次"取编码器文件"的请求(缓存命中不算),用于如实告诉用户首次使用下载了多少
+
+export function codecLoads() { return _loads; }
 
 function loadCodec(kind) {
   if (_cache[kind]) return _cache[kind];
+  _loads++;
   var path = kind === 'jpeg' ? '/vendor/encoders/jpeg/encode.js'
     : kind === 'webp' ? '/vendor/encoders/webp/encode-local.js'
     : '/vendor/encoders/png/encode.js';

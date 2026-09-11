@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231d1d1f'/%3E%3Cpath d='M50 16L59 41L84 50L59 59L50 84L41 59L16 50L41 41Z' fill='%23e6c784'/%3E%3C/svg%3E">
+<title>怎么验证文件没有上传 - 工具盒</title>
+<meta name="description" content="工具盒的工具全部在你的浏览器里运行。这里给出三步自证方法：按 F12 看有没有上传请求、断网再试一次，并说明你会看到的那一条跨域请求是什么。">
+<link rel="canonical" href="https://gongjuhe.top/verify/">
+<meta property="og:title" content="怎么验证文件没有上传 · 工具盒">
+<meta property="og:description" content="不用相信我们：三步自己验一遍——看网络请求、拔网线再试、以及那条跨域请求到底是什么。">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://gongjuhe.top/og.png">
+<meta property="og:url" content="https://gongjuhe.top/verify/">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="工具盒">
+<link rel="preload" href="/vendor/fonts/Geist-sub.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts.css?v=4">
+<link rel="stylesheet" href="/tool.css?v=13">
+<style>
+.verify h2{font-size:17px;font-weight:600;color:#1d1d1f;margin:34px 0 8px}
+.verify p,.verify li{font-size:14px;line-height:1.75;color:#1d1d1f}
+.verify p{margin:0 0 10px}
+.verify ol,.verify ul{margin:0 0 10px;padding-left:22px}
+.verify li{margin:4px 0}
+.verify .tool-card{margin:14px 0}
+.verify .kbd{font-size:12.5px;font-family:"Geist Mono",ui-monospace,Menlo,Consolas,monospace;background:#f5f5f7;border:1px solid rgba(0,0,0,.08);border-radius:6px;padding:1px 6px}
+.verify .quiet{font-size:13px;color:#6e6e73;line-height:1.7}
+</style>
+</head>
+<body>
+<nav class="tool-nav">
+  <a class="tool-nav-brand" href="/"><span class="nav-mark"><svg class="nav-star" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.4l2.55 7.05L21.6 12l-7.05 2.55L12 21.6l-2.55-7.05L2.4 12l7.05-2.55z" fill="currentColor"/></svg></span>工具盒</a>
+  <span class="tool-nav-title">怎么验证不上传</span>
+</nav>
+<main class="tool-container verify">
+  <h1 class="tool-h1">文件到底有没有被上传</h1>
+  <p class="tool-sub">不用相信我们说的话。下面这套方法你自己就能验一遍,三分钟。</p>
+
+  <h2>第一步:看它有没有把东西发出去</h2>
+  <ol>
+    <li>打开任意一个工具页,比如<a href="/img-compress/">图片压缩</a>。</li>
+    <li>按 <span class="kbd">F12</span> 打开开发者工具,切到 <strong>Network / 网络</strong> 面板,点一下左上角的清空按钮。</li>
+    <li>把文件拖进页面,正常处理完。</li>
+    <li>看那一列请求:你会看到我们自己的程序文件(编码器、样式、字体),<strong>看不到任何带着你文件内容的请求</strong>。</li>
+  </ol>
+  <p class="quiet">第一次使用某个工具时,会下载一次压缩程序(约 0.3～0.7 MB),所以第一次会稍微慢一点;之后浏览器会缓存它,断网也能用。下载它只是"把工具取到你的电脑上",不是把你的文件送出去。</p>
+
+  <h2>第二步:拔掉网线再试一次</h2>
+  <p>先用某个工具成功处理一次(让程序文件进入浏览器缓存),然后断开网络,重新打开同一个工具页,再处理一次。</p>
+  <p>如果它还能正常工作,就说明这件事从头到尾都不需要服务器参与。</p>
+
+  <h2>你会看到的那一条"跨域请求"是什么</h2>
+  <p>打开页面时,你可能会看到一条发往 <span class="kbd">static.cloudflareinsights.com</span> 的请求:那是 Cloudflare 边缘注入的访问统计脚本,用来记页面访问量,<strong>不接收你的文件,也和你的处理过程无关</strong>。</p>
+  <p class="quiet">我们在工具处理结束时还会<strong>当场统计一次</strong>:带内容的请求几条、跨域请求几条,并直接显示在结果下面。数字是当场实测的,不是写死的文案。若统计到任何带文件内容的请求,页面会立刻提示你停止使用并告诉我们。</p>
+
+  <h2>技术上的做法(可自行核对)</h2>
+  <ul>
+    <li>所有处理都在你的浏览器里完成:解码、缩放、编码(mozjpeg / libwebp / squoosh-png)、PDF 合成与拆分(pdf-lib)。</li>
+    <li>编码器是自托管的,不依赖任何第三方 CDN 或在线服务,版本与许可证都写在 <span class="kbd">/vendor/encoders/README.txt</span> 里。</li>
+    <li>页面的脚本本身可以逐个下载查看,没有混淆。</li>
+  </ul>
+
+  <h2>我们的承诺</h2>
+  <ul>
+    <li>不登录、不注册、不限次数、不加水印、不排队。</li>
+    <li>不把文件传到任何服务器,也不做"免费版降级"。</li>
+    <li>不做默认续费、不做会员墙;以后若有付费功能,只放在明确标注的地方。</li>
+  </ul>
+
+  <h2>如果你发现我们违背了</h2>
+  <p>请用上面第一步的方法取证(请求列表截图或 HAR 文件),连同你用的工具与时间发给我们。这属于产品事故,我们会当作最高优先级处理,并在页面上说明。</p>
+  <p class="quiet">顺带说明我们的边界:HEIC、OFD、Office 转 PDF、OCR 这些暂不支持——不是因为要上传,而是纯浏览器里做不好。做不好的事我们不假装能做。</p>
+</main>
+<footer class="tool-foot"><p class="tool-foot-line">全部工具本地运行 · 文件不上传</p><nav class="tool-foot-links" aria-label="相关页面"><a href="/">全部工具</a><a href="/img-compress/">图片压缩</a><a href="/pdf-merge/">PDF 合并</a></nav></footer>
+<script>
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=4'); });
+}
+</script>
+</body>
+</html>

@@ -2,7 +2,11 @@
 // 说明:真实编码器(mozjpeg / libwebp / squoosh-png)放在 Web Worker 里跑,大图压缩时页面不会卡住;
 // Worker 不可用时退回主线程同一份算法;连 wasm 都加载不了才用浏览器画布编码,并在结果里如实标注。
 // 目标体积模式绝不产出比原图更大的文件:压不动或反而更大时返回 blob:null,由界面如实说明。
-import { pickKind, encodeTarget, encodeQuality } from '/shared/encoder-core.js?v=1';
+import { pickKind, encodeTarget, encodeQuality, codecLoads } from '/shared/encoder-core.js?v=2';
+
+// 编码器真正下载过几次(主线程与 Worker 都算),用来如实告诉用户"首次使用下载了多少"
+var _encLoads = 0;
+export function encoderLoads() { return _encLoads; }
 
 // ---------- 画布像素 ----------
 export async function toImageData(file, flatten) {
@@ -71,7 +75,10 @@ function askWorker(buf, width, height, mime, mode, param) {
   return ensureWorker().then(function (w) {
     return new Promise(function (resolve, reject) {
       var id = ++_wid;
-      _pending[id] = function (m) { if (m.ok) resolve(m); else reject(new Error(m.reason || 'worker-fail')); };
+      _pending[id] = function (m) {
+        if (m.loads) _encLoads = Math.max(_encLoads, m.loads);
+        if (m.ok) resolve(m); else reject(new Error(m.reason || 'worker-fail'));
+      };
       try {
         w.postMessage({ id: id, buf: buf, width: width, height: height, mime: mime, mode: mode, param: param }, [buf]);
       } catch (e) {
@@ -92,6 +99,7 @@ async function pngCandidates(img, mime, mode, param) {
     var r = await askWorker(img.data.data.buffer, img.width, img.height, mime, mode, param);
     if (r.buf) out.push({ blob: blobOf(r.buf, mime), real: true });
   } catch (e) { /* Worker 不可用就只比画布 */ }
+  _encLoads = Math.max(_encLoads, codecLoads());
   var cb = await canvasEncode(img.canvas, mime, undefined);
   if (cb) out.push({ blob: cb, real: false });
   return out;
@@ -150,6 +158,7 @@ export async function encodeToTarget(file, mime, targetBytes) {
   // 2) 主线程跑同一份真编码器
   try {
     var rr = await encodeTarget(reExtract(img), img.width, img.height, mime, targetBytes, origSize);
+    _encLoads = Math.max(_encLoads, codecLoads());
     if (rr.reason !== 'no-codec') return { blob: blobOf(rr.buf, mime), met: !!rr.met, reason: rr.reason, quality: rr.quality };
   } catch (e) { /* 降级 */ }
 
@@ -171,6 +180,7 @@ export async function encodeWithQuality(file, mime, qualityPercent) {
   } catch (e) { /* 降级 */ }
   try {
     var rr = await encodeQuality(reExtract(img), img.width, img.height, mime, qualityPercent);
+    _encLoads = Math.max(_encLoads, codecLoads());
     if (rr.buf) return { blob: blobOf(rr.buf, mime), real: true };
   } catch (e) { /* 降级 */ }
   var b = await canvasEncode(img.canvas, mime, qualityPercent / 100);
