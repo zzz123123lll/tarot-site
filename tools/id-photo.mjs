@@ -16,11 +16,11 @@ export function mount(root, H) {
     + '.idp-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}'
     + '.idp-row label{font-size:14px;color:#6e6e73;min-width:64px}'
     + '.idp-num{width:78px}'
-    + '.idp-hint{font-size:14px;color:#6e6e73;line-height:1.6}'
+    + '.idp-hint{font-size:14px;color:#6e6e73;line-height:1.43}'
     + '.idp-out{margin-top:18px}'
     + '.idp-card{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:14px 16px;margin-top:12px}'
     + '.idp-card img{width:96px;border-radius:6px;border:1px solid rgba(0,0,0,.08)}'
-    + '.idp-kv{font-size:14px;color:#1d1d1f;line-height:1.7}'
+    + '.idp-kv{font-size:14px;color:#1d1d1f;line-height:1.47}'
     + '.idp-kv b{font-weight:600}'
     + '.idp-ok{color:#10743a}.idp-bad{color:#a1500a}'
   );
