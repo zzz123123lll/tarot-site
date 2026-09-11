@@ -38,7 +38,7 @@ export function mount(root, H) {
         var now = Math.floor(Date.now() / 1000);
         var left = payload.exp - now;
         if (left < 0) html += '<p class="tool-sub" style="margin-top:4px;color:#d70015">已过期 ' + Math.abs(left) + ' 秒</p>';
-        else html += '<p class="tool-sub" style="margin-top:4px;color:#1d9e4e">剩余 ' + left + ' 秒（' + new Date(payload.exp * 1000).toString() + ' 过期）</p>';
+        else html += '<p class="tool-sub" style="margin-top:4px;color:var(--c-ok)">剩余 ' + left + ' 秒（' + new Date(payload.exp * 1000).toString() + ' 过期）</p>';
       }
       html += '<p class="tool-sub" style="margin-top:10px">本页只做本地解码，不验证签名，也不上传任何数据。</p>';
       out.innerHTML = html;

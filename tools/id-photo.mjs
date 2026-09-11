@@ -64,7 +64,7 @@ export function mount(root, H) {
         '<div class="idp-row"><label>左右</label><input type="range" id="ox" min="-100" max="100" value="0" style="flex:1"></div>' +
         '<div class="idp-row"><label>上下</label><input type="range" id="oy" min="-100" max="100" value="0" style="flex:1"></div>' +
         '<p class="idp-hint" id="spec"></p>' +
-        '<div class="idp-row"><button class="tool-btn" id="go">生成合规照片</button><button class="tool-btn tool-btn--ghost" id="clr">清除</button></div>' +
+        '<div class="idp-row"><button class="tool-btn" id="go" disabled>生成合规照片</button><button class="tool-btn tool-btn--ghost" id="clr">清除</button></div>' +
       '</div>' +
     '</div>' +
     '<div class="idp-out" id="out" role="status" aria-live="polite"></div>';
@@ -144,7 +144,10 @@ export function mount(root, H) {
   H.makeDropZone(dz, addFiles, 'image/*', { multiple: false }); // 证件照一次只做一张
   root.querySelector('#go').addEventListener('click', generate);
   root.querySelector('#clr').addEventListener('click', function () {
-    state.img = null; state.file = null; state.out = null;
+    state.img = null; state.file = null; state.out = null; state.reading = false;
+    var go = root.querySelector('#go');
+    if (go) { go.disabled = true; go.textContent = '生成合规照片'; }
+    H.clearWarn(dz);
     root.querySelector('#stage').style.display = 'none';
     out.innerHTML = '';
   });
@@ -152,11 +155,19 @@ export function mount(root, H) {
   async function addFiles(files) {
     var f = files[0];
     if (!f) return;
+    var go = root.querySelector('#go');
+    // 读取照片要花时间(大图或手机照片更久)。这段时间按钮必须不能点,
+    // 否则用户拖入后立刻点会看到"先选一张照片",而画面上预览已经出来了 —— 自相矛盾的报错。
+    state.reading = true;
+    if (go) { go.disabled = true; go.textContent = '正在读取照片…'; }
     if (files.length > 1) H.warnBelow(dz, '一次只做一张证件照,已经用第一张:' + f.name + '(其余的没有处理)');
     else H.clearWarn(dz);
     try {
       var bmp = await createImageBitmap(f, { imageOrientation: 'from-image' });
       state.img = bmp; state.file = f; state.zoom = 1; state.offX = 0; state.offY = 0;
+      state.reading = false;
+      if (go) { go.disabled = false; go.textContent = '生成合规照片'; }
+      H.clearWarn(dz);
       root.querySelector('#zoom').value = 100;
       root.querySelector('#ox').value = 0;
       root.querySelector('#oy').value = 0;
@@ -164,6 +175,8 @@ export function mount(root, H) {
       out.innerHTML = '';
       draw();
     } catch (e) {
+      state.reading = false; state.img = null;
+      if (go) { go.disabled = true; go.textContent = '生成合规照片'; }
       H.warnBelow(dz, '这张图读不了:可能是 iPhone 的 HEIC,或者文件已损坏。请先转成 JPG 再试。');
     }
   }
@@ -271,7 +284,8 @@ export function mount(root, H) {
   }
 
   async function generate() {
-    if (!state.img) { H.warnBelow(dz, '先选一张照片。'); return; }
+    if (state.reading) { H.warnBelow(dz, '照片还在读取中,请稍等一下再点。'); return; }
+    if (!state.img) { H.warnBelow(dz, '还没有选择照片:先把照片拖进来(或点击选择)再生成。'); return; }
     var t = targetSize();
     var dpi = Math.max(72, Math.min(1200, parseInt(root.querySelector('#dpi').value, 10) || 300));
     var cap = Math.max(0, parseInt(root.querySelector('#kb').value, 10) || 0) * 1024;

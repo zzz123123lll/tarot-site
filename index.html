@@ -26,7 +26,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="preload" href="/vendor/fonts/Geist-sub.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="fonts.css?v=4">
-<link rel="stylesheet" href="site.css?v=30">
+<link rel="stylesheet" href="site.css?v=31">
 </head>
 <body class="page-home">
   <nav class="site-nav">
@@ -37,7 +37,7 @@
     <header class="hero">
       <p class="hero-kicker" id="kicker"><svg class="star-i" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.4l2.55 7.05L21.6 12l-7.05 2.55L12 21.6l-2.55-7.05L2.4 12l7.05-2.55z" fill="currentColor"/></svg> 工具盒 &#183; 全部本地运行</p>
       <h1 class="hero-title">工具盒</h1>
-      <p class="hero-sub">图片、PDF 与小工具，不上传、不注册，打开就用——内容只留在你的浏览器里。</p>
+      <p class="hero-sub">图片、PDF 与小工具——把文件改到能通过为止，不上传、不注册，打开就用。</p>
       <div class="search-wrap">
         <span class="search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></span>
         <input type="search" id="searchInput" class="search" placeholder="搜索工具…（按 /）" aria-label="搜索工具">
@@ -61,7 +61,7 @@
   </footer>
 
   <script src="tools-manifest.js?v=5"></script>
-  <script src="home.js?v=14"></script>
+  <script src="home.js?v=15"></script>
   <script>
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
     window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=6'); });

@@ -287,25 +287,25 @@ export function makeDropZone(el, onFiles, accept, opts) {
 }
 
 const REGISTRY = {
-  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 10 },
-  'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 7 },
-  'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs', v: 3 },
-  'images-to-pdf': { title: '图片合成 PDF', module: '/tools/images-to-pdf.mjs', v: 3 },
-  'invoice-nup': { title: '发票拼版', module: '/tools/invoice-nup.mjs', v: 5 },
-  'pdf-merge': { title: 'PDF 合并', module: '/tools/pdf-merge.mjs', v: 3 },
-  'pdf-split': { title: 'PDF 拆分/旋转', module: '/tools/pdf-split.mjs', v: 3 },
-  'pdf-render': { title: 'PDF 转图片', module: '/tools/pdf-render.mjs', v: 3 },
-  'pdf-compress': { title: 'PDF 压缩', module: '/tools/pdf-compress.mjs', v: 3 },
-  'json': { title: 'JSON 格式化', module: '/tools/json.mjs', v: 4 },
-  'base64': { title: 'Base64 编解码', module: '/tools/base64.mjs', v: 3 },
-  'regex': { title: '正则测试', module: '/tools/regex.mjs', v: 3 },
-  'color': { title: '颜色工具', module: '/tools/color.mjs', v: 4 },
-  'qr': { title: '二维码生成', module: '/tools/qr.mjs', v: 3 },
-  'jwt': { title: 'JWT 解码', module: '/tools/jwt.mjs', v: 3 },
-  'hash': { title: 'Hash 摘要', module: '/tools/hash.mjs', v: 3 },
-  'url': { title: 'URL 编解码', module: '/tools/url.mjs', v: 3 },
-  'uuid': { title: 'UUID / 密码', module: '/tools/uuid.mjs', v: 3 },
-  'date': { title: '日期 & 时间戳', module: '/tools/date.mjs', v: 3 }
+  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 11 },
+  'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 8 },
+  'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs', v: 4 },
+  'images-to-pdf': { title: '图片合成 PDF', module: '/tools/images-to-pdf.mjs', v: 4 },
+  'invoice-nup': { title: '发票拼版', module: '/tools/invoice-nup.mjs', v: 6 },
+  'pdf-merge': { title: 'PDF 合并', module: '/tools/pdf-merge.mjs', v: 4 },
+  'pdf-split': { title: 'PDF 拆分/旋转', module: '/tools/pdf-split.mjs', v: 4 },
+  'pdf-render': { title: 'PDF 转图片', module: '/tools/pdf-render.mjs', v: 4 },
+  'pdf-compress': { title: 'PDF 压缩', module: '/tools/pdf-compress.mjs', v: 4 },
+  'json': { title: 'JSON 格式化', module: '/tools/json.mjs', v: 5 },
+  'base64': { title: 'Base64 编解码', module: '/tools/base64.mjs', v: 4 },
+  'regex': { title: '正则测试', module: '/tools/regex.mjs', v: 4 },
+  'color': { title: '颜色工具', module: '/tools/color.mjs', v: 5 },
+  'qr': { title: '二维码生成', module: '/tools/qr.mjs', v: 4 },
+  'jwt': { title: 'JWT 解码', module: '/tools/jwt.mjs', v: 4 },
+  'hash': { title: 'Hash 摘要', module: '/tools/hash.mjs', v: 4 },
+  'url': { title: 'URL 编解码', module: '/tools/url.mjs', v: 4 },
+  'uuid': { title: 'UUID / 密码', module: '/tools/uuid.mjs', v: 4 },
+  'date': { title: '日期 & 时间戳', module: '/tools/date.mjs', v: 4 }
 };
 
 const H = { esc, fmt, downloadBlob, downloadZip, injectCss, makeDropZone, loadScript, copyText, initTips, friendlyError, warnBelow, clearWarn, netMark, netReport, netLine };
