@@ -286,7 +286,7 @@ export function makeDropZone(el, onFiles, accept) {
 }
 
 const REGISTRY = {
-  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 5 },
+  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 6 },
   'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs' },
   'images-to-pdf': { title: '图片合成 PDF', module: '/tools/images-to-pdf.mjs' },
   'pdf-merge': { title: 'PDF 合并', module: '/tools/pdf-merge.mjs' },

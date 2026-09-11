@@ -7,6 +7,18 @@ var _loads = 0; // 真正发起过几次"取编码器文件"的请求(缓存命�
 
 export function codecLoads() { return _loads; }
 
+// 本次真正加载的编码器文件字节数:资源计时的 encodedBodySize 与"是否命中缓存"无关,
+// 所以这个数字在任何情况下都成立(拿不到就返回 0,由界面退回一个区间说法)。
+export function codecBytes() {
+  try {
+    var sum = 0;
+    (performance.getEntriesByType('resource') || []).forEach(function (e) {
+      if (e && e.name && e.name.indexOf('/vendor/encoders/') >= 0) sum += (e.encodedBodySize || e.transferSize || 0);
+    });
+    return sum;
+  } catch (e) { return 0; }
+}
+
 function loadCodec(kind) {
   if (_cache[kind]) return _cache[kind];
   _loads++;

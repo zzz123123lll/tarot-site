@@ -45,13 +45,16 @@ export function mount(root, H) {
   var _enc = null;
   function ensureEnc() {
     if (!_enc) {
-      _enc = import('/shared/encoders.js?v=3');
+      _enc = import('/shared/encoders.js?v=4');
       _enc.then(function (m) { encMod = m; }, function () {});
     }
     return _enc;
   }
   function encLoadsNow() {
     try { return encMod && encMod.encoderLoads ? encMod.encoderLoads() : 0; } catch (e) { return 0; }
+  }
+  function encBytesNow() {
+    try { return encMod && encMod.encoderBytes ? encMod.encoderBytes() : 0; } catch (e) { return 0; }
   }
 
   root.querySelector('#md').addEventListener('click', function (e) {
@@ -331,7 +334,12 @@ export function mount(root, H) {
       var loads = encLoadsNow() - loadsFrom;
       var proof = (H.netLine ? H.netLine(netFrom) : '本次处理:上传 0 个文件');
       // 只说自己能确证的事:本次运行确实加载了压缩程序;浏览器缓存命中与否这里看不到,所以不称"首次"
-      if (loads > 0) proof += ' · 压缩程序已就绪(约 0.2～0.3 MB,浏览器会缓存它)';
+      if (loads > 0) {
+        var encBytes = encBytesNow();
+        proof += encBytes > 0
+          ? ' · 压缩程序已就绪(本次加载 ' + H.fmt(encBytes) + ',浏览器会缓存它)'
+          : ' · 压缩程序已就绪(约 0.2～0.35 MB,浏览器会缓存它)';
+      }
       sum.innerHTML = '<div class="total">' + (parts.join(' · ') || '没有可处理的项目') + '</div>'
         + '<div class="note">' + H.esc(proof) + ' · <a href="/verify/">怎么自己验证</a></div>';
     } else {
