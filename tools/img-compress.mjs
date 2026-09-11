@@ -330,7 +330,8 @@ export function mount(root, H) {
       if (savedTotal > 0) parts.push('共节省 <strong>' + H.fmt(savedTotal) + '</strong>');
       var loads = encLoadsNow() - loadsFrom;
       var proof = (H.netLine ? H.netLine(netFrom) : '本次处理:上传 0 个文件');
-      if (loads > 0) proof += ' · 首次使用下载了压缩程序(' + loads + ' 个文件,之后从缓存读取)';
+      // 只说自己能确证的事:本次运行确实加载了压缩程序;浏览器缓存命中与否这里看不到,所以不称"首次"
+      if (loads > 0) proof += ' · 压缩程序已就绪(约 0.2～0.3 MB,浏览器会缓存它)';
       sum.innerHTML = '<div class="total">' + (parts.join(' · ') || '没有可处理的项目') + '</div>'
         + '<div class="note">' + H.esc(proof) + ' · <a href="/verify/">怎么自己验证</a></div>';
     } else {

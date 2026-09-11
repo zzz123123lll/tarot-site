@@ -48,11 +48,12 @@
     <li>把文件拖进页面,正常处理完。</li>
     <li>看那一列请求:你会看到我们自己的程序文件(编码器、样式、字体),<strong>看不到任何带着你文件内容的请求</strong>。</li>
   </ol>
-  <p class="quiet">第一次使用某个工具时,会下载一次压缩程序(约 0.3～0.7 MB),所以第一次会稍微慢一点;之后浏览器会缓存它,断网也能用。下载它只是"把工具取到你的电脑上",不是把你的文件送出去。</p>
+  <p class="quiet">第一次使用某个工具时,会下载一次压缩程序(约 0.2～0.3 MB;换了浏览器或清了缓存会再下一次),所以第一次会稍微慢一点;之后浏览器会缓存它。下载它只是"把工具取到你的电脑上",不是把你的文件送出去。</p>
 
   <h2>第二步:拔掉网线再试一次</h2>
-  <p>先用某个工具成功处理一次(让程序文件进入浏览器缓存),然后断开网络,重新打开同一个工具页,再处理一次。</p>
+  <p>先用某个工具<strong>成功处理一次</strong>(这一步会把工具本身和压缩程序都放进浏览器缓存),然后断开网络,重新打开同一个工具页,再处理一次。</p>
   <p>如果它还能正常工作,就说明这件事从头到尾都不需要服务器参与。</p>
+  <p class="quiet">前提是"处理过一次"的那台设备和浏览器:换浏览器、用无痕模式或清了缓存,都需要先联网一次。</p>
 
   <h2>你会看到的那一条"跨域请求"是什么</h2>
   <p>打开页面时,你可能会看到一条发往 <span class="kbd">static.cloudflareinsights.com</span> 的请求:那是 Cloudflare 边缘注入的访问统计脚本,用来记页面访问量,<strong>不接收你的文件,也和你的处理过程无关</strong>。</p>
@@ -79,7 +80,7 @@
 <footer class="tool-foot"><p class="tool-foot-line">全部工具本地运行 · 文件不上传</p><nav class="tool-foot-links" aria-label="相关页面"><a href="/">全部工具</a><a href="/img-compress/">图片压缩</a><a href="/pdf-merge/">PDF 合并</a></nav></footer>
 <script>
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
-  window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=4'); });
+  window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=5'); });
 }
 </script>
 </body>
