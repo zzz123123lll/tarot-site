@@ -5,7 +5,7 @@ export function mount(root, H) {
     '<p class="tool-sub">解码 header/payload、检查过期。仅本地解析，不验证签名。</p>' +
     '<div class="tool-field"><label>JWT</label><textarea id="jwt" class="tool-textarea mono" placeholder="粘贴 JWT…" style="min-height:100px"></textarea></div>' +
     '<div class="tool-row" style="margin-bottom:12px"><button class="tool-btn" id="go">解码</button><button class="tool-btn tool-btn--ghost" id="cp" disabled>复制 payload</button></div>' +
-    '<p class="err-box" id="err" style="display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(215,0,21,.06);color:#d70015;font-size:13px"></p>' +
+    '<p class="err-box" id="err" style="display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(215,0,21,.06);color:#d70015;font-size:14px"></p>' +
     '<div id="out"></div>';
 
   function b64url(s) {

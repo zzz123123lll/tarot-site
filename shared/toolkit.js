@@ -287,25 +287,25 @@ export function makeDropZone(el, onFiles, accept, opts) {
 }
 
 const REGISTRY = {
-  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 6 },
-  'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 3 },
-  'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs' },
-  'images-to-pdf': { title: '图片合成 PDF', module: '/tools/images-to-pdf.mjs' },
-  'invoice-nup': { title: '发票拼版', module: '/tools/invoice-nup.mjs' },
-  'pdf-merge': { title: 'PDF 合并', module: '/tools/pdf-merge.mjs' },
-  'pdf-split': { title: 'PDF 拆分/旋转', module: '/tools/pdf-split.mjs' },
-  'pdf-render': { title: 'PDF 转图片', module: '/tools/pdf-render.mjs' },
-  'pdf-compress': { title: 'PDF 压缩', module: '/tools/pdf-compress.mjs' },
-  'json': { title: 'JSON 格式化', module: '/tools/json.mjs' },
-  'base64': { title: 'Base64 编解码', module: '/tools/base64.mjs' },
-  'regex': { title: '正则测试', module: '/tools/regex.mjs' },
-  'color': { title: '颜色工具', module: '/tools/color.mjs' },
-  'qr': { title: '二维码生成', module: '/tools/qr.mjs' },
-  'jwt': { title: 'JWT 解码', module: '/tools/jwt.mjs' },
-  'hash': { title: 'Hash 摘要', module: '/tools/hash.mjs' },
-  'url': { title: 'URL 编解码', module: '/tools/url.mjs' },
-  'uuid': { title: 'UUID / 密码', module: '/tools/uuid.mjs' },
-  'date': { title: '日期 & 时间戳', module: '/tools/date.mjs' }
+  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 8 },
+  'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 5 },
+  'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs', v: 3 },
+  'images-to-pdf': { title: '图片合成 PDF', module: '/tools/images-to-pdf.mjs', v: 3 },
+  'invoice-nup': { title: '发票拼版', module: '/tools/invoice-nup.mjs', v: 3 },
+  'pdf-merge': { title: 'PDF 合并', module: '/tools/pdf-merge.mjs', v: 3 },
+  'pdf-split': { title: 'PDF 拆分/旋转', module: '/tools/pdf-split.mjs', v: 3 },
+  'pdf-render': { title: 'PDF 转图片', module: '/tools/pdf-render.mjs', v: 3 },
+  'pdf-compress': { title: 'PDF 压缩', module: '/tools/pdf-compress.mjs', v: 3 },
+  'json': { title: 'JSON 格式化', module: '/tools/json.mjs', v: 3 },
+  'base64': { title: 'Base64 编解码', module: '/tools/base64.mjs', v: 3 },
+  'regex': { title: '正则测试', module: '/tools/regex.mjs', v: 3 },
+  'color': { title: '颜色工具', module: '/tools/color.mjs', v: 3 },
+  'qr': { title: '二维码生成', module: '/tools/qr.mjs', v: 3 },
+  'jwt': { title: 'JWT 解码', module: '/tools/jwt.mjs', v: 3 },
+  'hash': { title: 'Hash 摘要', module: '/tools/hash.mjs', v: 3 },
+  'url': { title: 'URL 编解码', module: '/tools/url.mjs', v: 3 },
+  'uuid': { title: 'UUID / 密码', module: '/tools/uuid.mjs', v: 3 },
+  'date': { title: '日期 & 时间戳', module: '/tools/date.mjs', v: 3 }
 };
 
 const H = { esc, fmt, downloadBlob, downloadZip, injectCss, makeDropZone, loadScript, copyText, initTips, friendlyError, warnBelow, clearWarn, netMark, netReport, netLine };

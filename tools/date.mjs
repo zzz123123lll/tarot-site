@@ -1,6 +1,6 @@
 // tools/date.mjs — 日期 & 时间戳（日历运算 + Unix 互转）
 export function mount(root, H) {
-  H.injectCss(".mode-tabs{display:inline-flex;background:#f5f5f7;border-radius:10px;padding:3px;margin-bottom:16px}.mode-tabs button{flex:1;padding:7px 16px;border:none;border-radius:8px;background:transparent;color:#6e6e73;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer}.mode-tabs button.active{background:#fff;color:#1d1d1f;box-shadow:0 1px 3px rgba(0,0,0,.12)}.crow{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}.crow label{font-size:13px;color:#6e6e73}");
+  H.injectCss(".crow{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}.crow label{font-size:14px;color:#6e6e73}");
   root.innerHTML =
     '<h1 class="tool-h1">日期 & 时间戳</h1>' +
     '<p class="tool-sub">日期差、加减天数、Unix 时间戳互转。全部本地。</p>' +
@@ -9,7 +9,7 @@ export function mount(root, H) {
       '<div class="tool-field"><label>起始日期</label><input type="date" class="tool-input" id="d1"></div>' +
       '<div class="tool-field"><label>结束日期</label><input type="date" class="tool-input" id="d2"></div>' +
       '<div class="tool-row" style="margin-bottom:12px"><button class="tool-btn" id="diff">算相差天数</button>' +
-      '<label style="font-size:13px;color:#6e6e73;margin-left:12px">加减</label><input type="number" class="tool-input" id="n" value="30" style="width:80px"><span style="color:#6e6e73;font-size:13px">天</span>' +
+      '<label style="font-size:14px;color:#6e6e73;margin-left:12px">加减</label><input type="number" class="tool-input" id="n" value="30" style="width:80px"><span style="color:#6e6e73;font-size:14px">天</span>' +
       '<button class="tool-btn tool-btn--ghost" id="add">加</button><button class="tool-btn tool-btn--ghost" id="sub">减</button></div>' +
       '<div class="tool-output" id="cout"></div>' +
     '</div>' +

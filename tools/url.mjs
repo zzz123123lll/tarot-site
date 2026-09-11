@@ -9,7 +9,7 @@ export function mount(root, H) {
       '<button class="tool-btn tool-btn--ghost" id="qp">解析 query</button><button class="tool-btn tool-btn--ghost" id="cp">复制</button>' +
     '</div>' +
     '<p class="tool-note">编码会把空格变成 %20、中文变成 %E4%B8%AD 这样的形式；解码是它的反向操作。整条 URL 也可以用「解析 query」拆出参数。</p>' +
-    '<p class="err-box" id="err" style="display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(215,0,21,.06);color:#d70015;font-size:13px"></p>' +
+    '<p class="err-box" id="err" style="display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(215,0,21,.06);color:#d70015;font-size:14px"></p>' +
     '<div class="tool-output mono" id="out" style="white-space:pre-wrap;word-break:break-all"></div>';
 
   var tin = root.querySelector('#in'), tout = root.querySelector('#out'), terr = root.querySelector('#err');

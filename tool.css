@@ -7,7 +7,8 @@
   --t-surface: #f5f5f7;
   /* 与首页同一套梯度(取值见《设计规格-参考Apple.md》,来自 apple.com 线上 CSS) */
   --t-fs-h1: 40px; --t-fs-h2: 28px; --t-fs-body: 17px; --t-fs-small: 14px; --t-fs-caption: 12px;
-  --t-ls-h1: -0.003em; --t-ls-body: -0.022em;
+  /* 中文页面不做负字距(会削汉字侧边);并且每处设了 font-size 的规则都显式写 letter-spacing,避免被 body 继承成绝对 px */
+  --t-ls-h1: 0; --t-ls-body: 0;
   --t-nav-h: 44px; --t-r: 18px;
   --t-font: "Geist", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
 }
@@ -15,7 +16,7 @@
 html, body { margin: 0; padding: 0; }
 body {
   font-family: var(--t-font); color: var(--t-text); background: var(--t-bg);
-  -webkit-font-smoothing: antialiased; letter-spacing: var(--t-ls-body); min-height: 100vh;
+  -webkit-font-smoothing: antialiased; letter-spacing: 0; min-height: 100vh;
 }
 
 /* —— 导航（浅色，解决"浅色页挂深色导航"）—— */
@@ -33,16 +34,16 @@ body {
 }
 .tool-nav a:hover { text-decoration: underline; }
 /* —— 品牌入口:与首页一致,整块可点、点它回首页(此前只是一个 "← 工具盒" 文字链,品牌标记在工具页消失) —— */
-.tool-nav .tool-nav-brand { color: var(--t-text); font-weight: 600; padding: 8px 0; margin: -8px 0; }
+.tool-nav .tool-nav-brand { color: var(--t-text); font-weight: 600; padding: 11px 0; margin: -11px 0; }
 .tool-nav .tool-nav-brand:hover { text-decoration: none; color: var(--t-accent); }
-.tool-nav .nav-mark { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 6px; background: #1d1d1f; color: #fff; font-size: 12px; flex: none; }
+.tool-nav .nav-mark { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 6px; background: #1d1d1f; color: #fff; font-size: var(--t-fs-caption); flex: none; }
 .tool-nav .nav-mark .nav-star { width:12px; height:12px; display:block; }
 .tool-nav .tool-nav-title { font-size: var(--t-fs-small); font-weight: 600; color: var(--t-text); }
 
 /* —— 容器 / 标题 —— */
-.tool-container { max-width: 860px; margin: 0 auto; padding: 72px 24px 96px; }
-.tool-h1 { font-size: var(--t-fs-h1); line-height: 1.1; font-weight: 600; letter-spacing: var(--t-ls-h1); margin: 0 0 10px; color: var(--t-text); }
-.tool-sub { font-size: var(--t-fs-body); line-height: 1.47; letter-spacing: var(--t-ls-body); color: var(--t-muted); margin: 0 0 32px; max-width: 720px; }
+.tool-container { max-width: 860px; margin: 0 auto; padding: 64px 24px 96px; }
+.tool-h1 { font-size: var(--t-fs-h1); line-height: 1.1; font-weight: 600; letter-spacing: 0; margin: 0 0 10px; color: var(--t-text); }
+.tool-sub { font-size: var(--t-fs-body); line-height: 1.47; letter-spacing: 0; color: var(--t-muted); margin: 0 0 32px; max-width: 720px; }
 
 /* —— 按钮 —— */
 .tool-btn {
@@ -50,7 +51,7 @@ body {
   /* 实心与描边按钮都带 1px 边框,保证同一行里高度一致(此前 40px vs 42px 参差) */
   padding: 10px 22px; border-radius: 980px; border: 1px solid var(--t-accent); min-height: 44px;
   background: var(--t-accent); color: #fff; font-size: var(--t-fs-small); font-weight: 500;
-  font-family: inherit; cursor: pointer; transition: background .16s, border-color .16s, transform .16s;
+  font-family: inherit; letter-spacing: inherit; cursor: pointer; transition: background .16s, border-color .16s, transform .16s;
 }
 .tool-btn:hover { background: #0077ed; border-color: #0077ed; transform: translateY(-1px); }
 .tool-btn--ghost { background: transparent; color: var(--t-accent); border: 1px solid var(--t-line-strong); }
@@ -59,12 +60,13 @@ body {
 
 /* —— 输入 / 选择 —— */
 .tool-input, .tool-select {
-  font-family: inherit; font-size: 14px; color: var(--t-text);
-  background: #fff; border: 1px solid var(--t-line-strong); border-radius: 10px;
-  padding: 9px 12px; outline: none; transition: border-color .15s, box-shadow .15s;
+  /* 表单控件在 UA 样式表里是 letter-spacing:normal,不写 inherit 就会和页面文字不一致 */
+  font: inherit; letter-spacing: inherit; font-size: 14px; color: var(--t-text);
+  background: #fff; border: 1px solid var(--t-line-strong); border-radius: var(--r-sm);
+  padding: 11px 12px; min-height: 44px; outline: none; transition: border-color .15s, box-shadow .15s;
 }
 .tool-input:focus, .tool-select:focus { border-color: var(--t-accent); box-shadow: 0 0 0 3px rgba(0,113,227,0.15); }
-.tool-input[type=range] { padding: 0; accent-color: var(--t-accent); border: none; }
+.tool-input[type=range] { padding: 0; min-height: 44px; height: 44px; accent-color: var(--t-accent); border: none; background: transparent; }
 
 /* —— 卡片 —— */
 .tool-card {
@@ -74,10 +76,10 @@ body {
 
 /* —— 拖拽区 —— */
 .tool-drop {
-  border: 2px dashed var(--t-line-strong); border-radius: var(--t-r); padding: 48px 24px;
-  text-align: center; cursor: pointer; background: #fff; transition: border-color .2s, background .2s;
+  border: 1px solid var(--t-line); border-radius: var(--t-r); padding: 48px 24px;
+  text-align: center; cursor: pointer; background: var(--t-surface); transition: border-color .2s, background .2s;
 }
-.tool-drop:hover, .tool-drop.active { border-color: var(--t-accent); background: #f6f9ff; }
+.tool-drop:hover, .tool-drop.active { border: 1.5px solid var(--t-accent); background: #f2f7ff; }
 .tool-drop .icon { font-size: 40px; margin-bottom: 12px; }
 .tool-drop .title { font-size: var(--t-fs-body); color: var(--t-text); margin-bottom: 6px; }
 .tool-drop .hint { font-size: var(--t-fs-small); color: var(--t-muted); line-height: 1.5; }
@@ -86,42 +88,45 @@ body {
 .tool-note { font-size: var(--t-fs-small); color: var(--t-muted); margin: 12px 0 0; line-height: 1.5; }
 /* —— 表单组件（小工具通用）—— */
 .tool-field { display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }
-.tool-field label { font-size:13px; color:var(--t-muted); }
-.tool-textarea { font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:13px; color:var(--t-text); background:#fff; border:1px solid var(--t-line-strong); border-radius:10px; padding:12px; width:100%; min-height:110px; resize:vertical; outline:none; }
+.tool-field label { font-size: var(--t-fs-small); letter-spacing:0; color:var(--t-muted); }
+.tool-textarea { font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: var(--t-fs-small); color:var(--t-text); background:#fff; border:1px solid var(--t-line-strong); border-radius:10px; padding:12px; width:100%; min-height:110px; resize:vertical; outline:none; }
 .tool-textarea:focus { border-color: var(--t-accent); box-shadow:0 0 0 3px rgba(0,113,227,0.15); }
 .tool-row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-.tool-output { font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:13px; background:#f5f5f7; border-radius:10px; padding:14px; min-height:60px; white-space:pre-wrap; word-break:break-all; color:var(--t-text); margin-top:6px; }
+.tool-output { font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: var(--t-fs-small); background:#f5f5f7; border-radius:10px; padding:14px; min-height:60px; white-space:pre-wrap; word-break:break-all; color:var(--t-text); margin-top:6px; }
 .swatch { width:100%; height:64px; border-radius:10px; border:1px solid var(--t-line-strong); margin:10px 0; }
 .mono { font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-.err-text { color:#d70015; font-size:13px; margin-top:8px; display:none; }
+.err-text { color:#d70015; font-size: var(--t-fs-small); margin-top:8px; display:none; }
 /* —— Tippy 提示（苹果式深色小气泡）—— */
-.tippy-box[data-theme~='tool'] { background:#1d1d1f; color:#fff; font-size:11.5px; font-weight:500; border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.16); }
+.tippy-box[data-theme~='tool'] { background:#1d1d1f; color:#fff; font-size:12px; font-weight:500; border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.16); }
 .tippy-box[data-theme~='tool'] .tippy-content { padding:4px 9px; line-height:1.3; }
 .tippy-box[data-theme~='tool'][data-placement^='top'] > .tippy-arrow::before { border-top-color:#1d1d1f; }
 .tippy-box[data-theme~='tool'][data-placement^='bottom'] > .tippy-arrow::before { border-bottom-color:#1d1d1f; }
 .tippy-box[data-theme~='tool'][data-placement^='left'] > .tippy-arrow::before { border-left-color:#1d1d1f; }
 .tippy-box[data-theme~='tool'][data-placement^='right'] > .tippy-arrow::before { border-right-color:#1d1d1f; }
 /* —— 拖入文件格式不支持时的提示 —— */
-.tool-warn { margin: 10px 0 0; font-size: 13px; line-height: 1.5; color: #a1500a; background: rgba(200,106,30,0.08); border: 1px solid rgba(200,106,30,0.22); border-radius: 10px; padding: 9px 12px; }
+.tool-warn { margin: 10px 0 0; font-size: var(--t-fs-small); line-height: 1.5; color: #a1500a; background: rgba(200,106,30,0.08); border: 1px solid rgba(200,106,30,0.22); border-radius: 10px; padding: 9px 12px; }
 .tool-warn:empty { display: none; }
 /* —— 分段控件不要拉满整行:控件拉太宽会显得空,也让人看不出是一组选项 —— */
 .tool-container .preset-tabs { max-width: 480px; }
+.tool-container .preset-tab { min-height: 44px; }
+/* 滑块也要够大,否则手指点不住(证件照模块直接用 input[type=range]) */
+.tool-container input[type=range] { min-height: 44px; height: 44px; }
 .tool-container .mode-tabs { max-width: 100%; }
 /* —— 工具页静态正文:JS 加载前可见,搜索引擎与关掉 JS 的用户也能读到 —— */
 .tool-static-note { margin: 10px 0 0; font-size: var(--t-fs-small); line-height: 1.65; color: #6e6e73; max-width: 62ch; }
 /* —— 工具页页脚与同分区内链 —— */
-.tool-foot { max-width: 980px; margin: 64px auto 0; padding: 24px 24px 56px; border-top: 1px solid var(--t-line); }
+.tool-foot { max-width: 860px; margin: 64px auto 0; padding: 24px 24px 56px; border-top: 1px solid var(--t-line); }
 .tool-foot-line { margin: 0 0 10px; font-size: var(--t-fs-small); color: #6e6e73; }
 .tool-foot-links { display: flex; flex-wrap: wrap; gap: 10px 24px; font-size: var(--t-fs-small); }
-.tool-foot-links a { color: var(--t-accent); text-decoration: none; display: inline-flex; align-items: center; min-height: 24px; padding: 3px 0; }
+.tool-foot-links a { color: var(--t-accent); text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; padding: 10px 0; }
 .tool-foot-links a:hover { text-decoration: underline; }
 /* —— 公共控件:分段选择器(所有工具共用,原先各模块重复注入 5 份) —— */
 .mode-tabs { display:inline-flex; background:#f5f5f7; border-radius:10px; padding:3px; margin-bottom:16px; }
-.mode-tabs button { flex:0 0 auto; white-space:nowrap; padding:7px 16px; border:none; border-radius:8px; background:transparent; color:#6e6e73; font-size:13px; font-weight:500; font-family:inherit; cursor:pointer; transition:background .15s, color .15s; }
+.mode-tabs button { flex:0 0 auto; white-space:nowrap; padding:7px 16px; border:none; border-radius:8px; background:transparent; color:#6e6e73; font-size:14px; letter-spacing:0; font-weight:500; font-family:inherit; cursor:pointer; min-height:44px; transition:background .15s, color .15s; }
 .mode-tabs button.active { background:#fff; color:#1d1d1f; box-shadow:0 1px 3px rgba(0,0,0,.12); }
 .mode-tabs button:focus-visible { outline:2px solid var(--t-accent); outline-offset:2px; }
 /* —— 公共控件:错误提示条 —— */
-.err-box { display:none; margin:10px 0 0; padding:10px 14px; border-radius:10px; background:rgba(215,0,21,.06); color:#d70015; font-size:13px; }
+.err-box { display:none; margin:10px 0 0; padding:10px 14px; border-radius:12px; background:rgba(215,0,21,.06); color:#d70015; font-size: var(--t-fs-small); }
 /* —— 公共控件:拖拽区图标尺寸(原先只在部分模块注入,导致个别页面图标被撑到 668px) —— */
 .tool-drop .icon svg { width:40px; height:40px; color:var(--t-accent); }
 /* —— 对比度修正:小字灰原先 3.62:1(不达 AA),统一提到 5.07:1 —— */

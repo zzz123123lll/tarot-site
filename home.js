@@ -5,19 +5,14 @@
   var G = '<stop offset="0" stop-color="#5cc98a"/><stop offset="0.55" stop-color="#2f9d62"/><stop offset="1" stop-color="#145a37"/>';
   var O = '<stop offset="0" stop-color="#eea45c"/><stop offset="0.55" stop-color="#cf7a2e"/><stop offset="1" stop-color="#8a4a16"/>';
   var P = '<stop offset="0" stop-color="#5aa2f7"/><stop offset="0.5" stop-color="#8e7bf0"/><stop offset="1" stop-color="#e885b2"/>';
+  // 单色线性图标:一个强调色 + 中性墨色就够。渐变彩色图标砖是"手机启动器"的语言,
+  // 评审实测我们原来有 7 个色相族、20 组渐变,和"近黑 + 单一蓝"的页面身份打架。
   function tile(key, stops, glyph) {
-    var id = 'lg-' + key;
-    return '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs>'
-      + '<linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1">' + stops + '</linearGradient>'
-      + '<radialGradient id="' + id + 'g" cx="0.28" cy="0.16" r="0.85"><stop offset="0" stop-color="#fff" stop-opacity="0.16"/><stop offset="0.5" stop-color="#fff" stop-opacity="0.04"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>'
-      + '<clipPath id="' + id + 'c"><rect x="0.5" y="0.5" width="23" height="23" rx="4.8"/></clipPath></defs>'
-      + '<g clip-path="url(#' + id + 'c)"><rect x="0.5" y="0.5" width="23" height="23" fill="url(#' + id + ')"/>'
-      + '<rect x="0.5" y="0.5" width="23" height="23" fill="url(#' + id + 'g)"/>'
-      + '<g fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" color="#fff">' + glyph + '</g></g>'
-      + '<rect x="0.5" y="0.5" width="23" height="23" rx="4.8" fill="none" stroke="#fff" stroke-opacity="0.14" stroke-width="0.5"/></svg>';
+    return '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+      + '<g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" color="currentColor">' + glyph + '</g></svg>';
   }
   var ICONS = {
-    tarot: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="hb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4d4a8c"/><stop offset="0.5" stop-color="#2a2e60"/><stop offset="1" stop-color="#14152f"/></linearGradient><radialGradient id="hg" cx="0.28" cy="0.16" r="0.85"><stop offset="0" stop-color="#fff" stop-opacity="0.16"/><stop offset="0.5" stop-color="#fff" stop-opacity="0.04"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><linearGradient id="hd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8df96"/><stop offset="0.55" stop-color="#e4bd6b"/><stop offset="1" stop-color="#bd8b45"/></linearGradient><clipPath id="hc"><rect x="0.5" y="0.5" width="23" height="23" rx="4.8"/></clipPath></defs><g clip-path="url(#hc)"><rect x="0.5" y="0.5" width="23" height="23" fill="url(#hb)"/><rect x="0.5" y="0.5" width="23" height="23" fill="url(#hg)"/><circle cx="2.6" cy="2.6" r="0.5" fill="#fff" opacity="0.85"/><circle cx="2.6" cy="21.4" r="0.4" fill="#fff" opacity="0.5"/><circle cx="21.4" cy="21.4" r="0.44" fill="#fff" opacity="0.5"/><circle cx="19.6" cy="8.2" r="0.4" fill="#fff" opacity="0.55"/><circle cx="19.6" cy="15.8" r="0.4" fill="#fff" opacity="0.55"/><g fill="none" stroke="url(#hd)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 5h4"/><path d="M20 3v4"/><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></g></g><rect x="0.5" y="0.5" width="23" height="23" rx="4.8" fill="none" stroke="#fff" stroke-opacity="0.12" stroke-width="0.5"/></svg>',
+    tarot: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.2 6.1 6.3 2.4-6.3 2.4L12 20.5l-2.2-6.1L3.5 12l6.3-2.4z"/></g></svg>',
     code: tile('code', U, '<path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/>'),
     image: tile('image', G, '<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>'),
     'file-text': tile('file-text', O, '<path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>'),
@@ -84,7 +79,7 @@
       scored.sort(function (a, b) { return b.score - a.score; });
       var list = scored.map(function (x) { return x.t; });
       if (list.length) {
-        html += '<section class="section-block section-block--search"><div class="section-inner">'
+        html += '<section class="section-block section-block--search section-block--band"><div class="section-inner">'
           + '<div class="section-head"><h2 class="section-title">搜索结果</h2>'
           + '<p class="section-desc">' + list.length + ' 个工具匹配「' + esc(q) + '」</p></div>'
           + '<div class="apps-grid">';
@@ -95,10 +90,13 @@
       return;
     }
 
+    var bandIndex = 0;
     data.sections.forEach(function (sec) {
       var list = data.tools.filter(function (t) { return t.section === sec.id; });
       if (!list.length) return;
-      html += '<section class="section-block section-block--' + sec.id + '"><div class="section-inner">'
+      var band = (bandIndex % 2 === 1) ? ' section-block--band' : '';
+      bandIndex++;
+      html += '<section class="section-block section-block--' + sec.id + band + '"><div class="section-inner">'
       + '<div class="section-head"><h2 class="section-title">' + sec.name + '</h2><p class="section-desc">' + (sec.desc || '') + '</p></div>'
       + '<div class="apps-grid">';
       list.forEach(function (t) { html += card(t, order, false); order++; });

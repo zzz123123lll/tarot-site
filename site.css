@@ -5,12 +5,13 @@
 
 :root {
   /* 字号梯度(对标 Apple:56/48/32/17/14/12,中等字号尽量不用) */
-  --fs-display:56px; --fs-h1:40px; --fs-h2:28px; --fs-h3:22px;
+  --fs-display:56px; --fs-h1:40px; --fs-h2:28px; --fs-h3:21px;
   --fs-body:17px; --fs-small:14px; --fs-caption:12px;
   /* 行高 */
   --lh-display:1.071; --lh-h1:1.1; --lh-h2:1.15; --lh-body:1.47; --lh-small:1.43;
-  /* 字距:标题越大越负(Apple 的规律) */
-  --ls-display:-0.005em; --ls-h1:-0.003em; --ls-h2:-0.002em; --ls-body:-0.022em; --ls-small:-0.016em;
+  /* 字距:Apple 对拉丁文是"字号越大字距越负",但正文全是中文时负字距会削汉字侧边、笔画发挤;
+     所以这里统一为 0,并且**每一档都显式声明**(不依赖 body 继承——浏览器会把 em 算成绝对 px 再继承,是个坑)。 */
+  --ls-display:0; --ls-h1:0; --ls-h2:0; --ls-body:0; --ls-small:0; --ls-caption:0;
   /* 间距 */
   --sp-1:8px; --sp-2:12px; --sp-3:16px; --sp-4:24px; --sp-5:32px; --sp-6:48px; --sp-7:72px; --sp-8:96px;
   /* 圆角与颜色 */
@@ -32,16 +33,16 @@ body { -webkit-font-smoothing:antialiased; }
 
 /* ===== 导航默认 = 深色版（塔罗页用）===== */
 .site-nav { display:flex; align-items:center; justify-content:space-between; gap:var(--sp-4); height:var(--nav-h); padding:0 32px; position:sticky; top:0; z-index:50; background:rgba(8,9,10,0.72); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom:1px solid var(--line); }
-.nav-brand { display:flex; align-items:center; gap:9px; font-size:var(--fs-small); font-weight:600; color:var(--text); text-decoration:none; }
+.nav-brand { display:inline-flex; align-items:center; gap:9px; min-height:44px; padding:11px 0; margin:-11px 0; font-size:var(--fs-small); letter-spacing:0; font-weight:600; color:var(--text); text-decoration:none; }
 .nav-mark { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:6px; background:linear-gradient(160deg,#7c85f0,#5e6ad2); color:#fff; font-size:12px; }
-.site-nav .site-nav-tag { color:var(--muted); font-size:var(--fs-caption); }
+.site-nav .site-nav-tag { color:var(--muted); font-size:var(--fs-caption); letter-spacing:0; }
 .nav-mark .nav-star { width:12px; height:12px; display:block; }
 .star-i { width:10px; height:10px; display:inline-block; vertical-align:-1px; flex:none; }
 
 /* ===== 首页根：苹果浅色 ===== */
 body.page-home {
   font-family:"Geist",-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
-  color:var(--c-text); letter-spacing:var(--ls-body);
+  color:var(--c-text); letter-spacing:0;
   background:#fff;
   min-height:100vh; display:flex; flex-direction:column;
 }
@@ -51,10 +52,10 @@ body.page-home .nav-mark { background:#1d1d1f; color:#fff; }
 body.page-home .home { flex:1 0 auto; width:100%; }
 
 /* ===== Hero：一屏一个主张 ===== */
-body.page-home .hero { text-align:center; padding:var(--sp-8) var(--sp-4) var(--sp-6); }
-body.page-home .hero-kicker { display:inline-flex; align-items:center; gap:7px; font-size:var(--fs-caption); font-weight:500; color:var(--c-accent); background:rgba(0,113,227,0.07); border:1px solid rgba(0,113,227,0.16); border-radius:999px; padding:5px 14px; margin:0 0 var(--sp-4); }
-body.page-home .hero-title { font-size:var(--fs-display); font-weight:600; letter-spacing:var(--ls-display); line-height:var(--lh-display); margin:0 0 var(--sp-3); color:var(--c-text); }
-body.page-home .hero-sub { font-size:21px; line-height:1.4; letter-spacing:var(--ls-body); color:var(--c-muted); margin:0 auto; max-width:860px; }
+body.page-home .hero { text-align:center; padding:64px var(--sp-4) var(--sp-5); }
+body.page-home .hero-kicker { display:inline-flex; align-items:center; gap:7px; font-size:var(--fs-caption); letter-spacing:0; font-weight:500; color:var(--c-accent); background:rgba(0,113,227,0.07); border:1px solid rgba(0,113,227,0.16); border-radius:999px; padding:5px 14px; margin:0 0 var(--sp-4); }
+body.page-home .hero-title { font-size:var(--fs-h1); font-weight:600; letter-spacing:0; line-height:1.1; margin:0 0 var(--sp-2); color:var(--c-text); }
+body.page-home .hero-sub { font-size:21px; line-height:1.4; letter-spacing:0; color:var(--c-muted); margin:0 auto; max-width:860px; }
 /* 动效只保留一次淡入(Apple 不做流光扫字);尊重 prefers-reduced-motion */
 body.page-home .hero-title { animation:heroIn .6s cubic-bezier(.2,.6,.2,1) both; }
 body.page-home .hero-sub { animation:heroIn .6s .08s cubic-bezier(.2,.6,.2,1) both; }
@@ -62,25 +63,24 @@ body.page-home .search-wrap { animation:heroIn .6s .14s cubic-bezier(.2,.6,.2,1)
 @keyframes heroIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
 
 /* ===== 搜索框 / 两个动作 ===== */
-body.page-home .search-wrap { position:relative; max-width:560px; margin:var(--sp-5) auto 0; padding:0 var(--sp-4); }
-body.page-home .search-icon { position:absolute; left:40px; top:50%; transform:translateY(-50%); color:#86868b; pointer-events:none; }
+body.page-home .search-wrap { position:relative; max-width:640px; margin:var(--sp-4) auto 0; padding:0 var(--sp-4); }
+body.page-home .search-icon { position:absolute; left:40px; top:50%; transform:translateY(-50%); color:#86868b; pointer-events:none; line-height:0; }
 body.page-home .search-icon svg { width:16px; height:16px; display:block; }
-body.page-home .search { width:100%; height:44px; padding:0 18px 0 42px; border-radius:var(--r-sm); border:1px solid var(--c-hairline); background:var(--c-band); font-size:var(--fs-body); font-family:inherit; color:var(--c-text); outline:none; -webkit-appearance:none; }
+body.page-home .search { width:100%; height:48px; padding:0 18px 0 42px; border-radius:var(--r-sm); border:1px solid var(--c-hairline); background:var(--c-band); font-size:var(--fs-body); letter-spacing:0; font-family:inherit; color:var(--c-text); outline:none; -webkit-appearance:none; }
 body.page-home .search:focus { background:#fff; border-color:var(--c-accent); box-shadow:0 0 0 3px rgba(0,113,227,0.15); }
-body.page-home .hero-actions { margin:var(--sp-4) auto 0; display:flex; gap:var(--sp-4); justify-content:center; flex-wrap:wrap; font-size:var(--fs-body); }
-body.page-home .hero-actions a { color:var(--c-accent); text-decoration:none; }
+body.page-home .hero-actions { margin:var(--sp-4) auto 0; display:flex; gap:var(--sp-4); justify-content:center; flex-wrap:wrap; font-size:var(--fs-body); letter-spacing:0; }
+body.page-home .hero-actions a { display:inline-flex; align-items:center; min-height:44px; color:var(--c-accent); text-decoration:none; }
 body.page-home .hero-actions a:hover { text-decoration:underline; }
-body.page-home .hero-actions .arrow { font-size:.85em; }
 
 /* ===== 工具目录：全宽色带 + 产品卡 ===== */
 body.page-home #apps { width:100%; }
 body.page-home .section-block { background:#fff; padding:var(--sp-7) 0; }
-body.page-home .section-block:nth-of-type(even) { background:var(--c-band); }
-body.page-home .section-block--search { background:var(--c-band); }
+/* 交替由脚本按"实际渲染出来的分区顺序"打标记,不再用 nth-of-type(搜索块会打乱奇偶,导致相邻同色) */
+body.page-home .section-block--band { background:var(--c-band); }
 body.page-home .section-inner { max-width:980px; margin:0 auto; padding:0 var(--sp-4); }
 body.page-home .section-head { display:block; margin:0 0 var(--sp-5); }
-body.page-home .section-head h2, body.page-home .section-title { font-size:var(--fs-h2); line-height:var(--lh-h2); letter-spacing:var(--ls-h2); font-weight:600; color:var(--c-text); margin:0 0 6px; }
-body.page-home .section-desc { font-size:var(--fs-body); line-height:var(--lh-body); color:var(--c-muted); margin:0; max-width:640px; }
+body.page-home .section-head h2, body.page-home .section-title { font-size:var(--fs-h2); line-height:var(--lh-h2); letter-spacing:0; font-weight:600; color:var(--c-text); margin:0 0 6px; }
+body.page-home .section-desc { font-size:var(--fs-body); line-height:var(--lh-body); letter-spacing:0; color:var(--c-muted); margin:0; max-width:640px; }
 body.page-home .section-ic { display:none; }
 body.page-home .apps-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:var(--sp-3); }
 /* 超宽屏才排三列:卡片窄了以后名字和一句话会被挤成多行,反而更难读 */
@@ -94,15 +94,16 @@ body.page-home .app {
 }
 @keyframes appIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
 body.page-home a.app:hover { transform:translateY(-2px); border-color:rgba(0,0,0,0.16); box-shadow:0 10px 24px rgba(0,0,0,0.07); }
-body.page-home .app-icon { flex:none; width:48px; height:48px; border-radius:var(--r-sm); overflow:hidden; display:flex; align-items:center; justify-content:center; }
-body.page-home .app-icon svg { width:100%; height:100%; display:block; }
+body.page-home .app-icon { flex:none; width:48px; height:48px; border-radius:var(--r-sm); overflow:hidden; display:flex; align-items:center; justify-content:center; background:var(--c-band); color:#1d1d1f; transition:background .18s ease, color .18s ease; }
+body.page-home .app-icon svg { width:28px; height:28px; display:block; }
+body.page-home a.app:hover .app-icon { background:rgba(0,113,227,0.08); color:var(--c-accent); }
 body.page-home .app-icon--soon { opacity:.5; }
 body.page-home .app-icon::after { content:none; }
 body.page-home .app-body { min-width:0; flex:1; }
-body.page-home .app-name { display:block; font-size:var(--fs-h3); line-height:1.25; font-weight:600; letter-spacing:var(--ls-h2); color:var(--c-text); margin:0 0 4px; }
-body.page-home .app-desc { display:block; font-size:var(--fs-body); line-height:var(--lh-body); letter-spacing:var(--ls-body); color:var(--c-muted); margin:0; }
-body.page-home .app-sec { display:inline-block; font-size:var(--fs-caption); color:var(--c-muted); background:var(--c-band); border-radius:999px; padding:2px 8px; margin-top:8px; }
-body.page-home .app-badge { display:inline-block; font-size:var(--fs-caption); color:#86868b; background:var(--c-band); border-radius:999px; padding:2px 9px; margin-left:8px; }
+body.page-home .app-name { display:block; font-size:var(--fs-h3); line-height:1.25; font-weight:600; letter-spacing:0; color:var(--c-text); margin:0 0 4px; }
+body.page-home .app-desc { display:block; font-size:var(--fs-body); line-height:var(--lh-body); letter-spacing:0; color:var(--c-muted); margin:0; }
+body.page-home .app-sec { display:inline-block; font-size:var(--fs-caption); letter-spacing:0; color:var(--c-muted); background:var(--c-band); border-radius:999px; padding:2px 8px; margin-top:8px; }
+body.page-home .app-badge { display:inline-block; font-size:var(--fs-caption); letter-spacing:0; color:#86868b; background:var(--c-band); border-radius:999px; padding:2px 9px; margin-left:8px; }
 body.page-home .app-badge--dl { color:var(--c-accent); background:rgba(0,113,227,0.08); }
 body.page-home .footnote { margin-top:var(--sp-5); font-size:var(--fs-small); color:var(--c-muted); }
 
@@ -116,8 +117,11 @@ body.page-home a.more-item:hover { color:var(--c-accent); border-color:rgba(0,11
 body.page-home .home-foot { flex-shrink:0; margin-top:auto; padding:var(--sp-6) var(--sp-4) 52px; text-align:center; border-top:1px solid var(--c-hairline); background:#fff; }
 body.page-home .foot-inner { max-width:720px; margin:0 auto; }
 body.page-home .foot-brand { display:inline-flex; align-items:center; gap:9px; font-size:var(--fs-small); font-weight:600; color:var(--c-text); margin-bottom:10px; }
-body.page-home .foot-line { font-size:var(--fs-small); line-height:var(--lh-small); color:var(--c-muted); margin:0 0 6px; }
-body.page-home .foot-note { font-size:var(--fs-small); color:var(--c-muted); margin:0; }
+body.page-home .foot-line { font-size:var(--fs-small); line-height:var(--lh-small); letter-spacing:0; color:var(--c-muted); margin:0 0 6px; }
+body.page-home .foot-note { font-size:var(--fs-small); letter-spacing:0; color:var(--c-muted); margin:0; }
+
+/* 内容轴统一:分区与页脚用同一个 980px 轴,否则分隔线会比正文宽出一截 */
+body.page-home .foot-inner { max-width:980px; }
 body.page-home .foot-note a { color:var(--c-accent); text-decoration:none; }
 
 /* ===== 断点(对标 Apple 的 735 / 1069)===== */

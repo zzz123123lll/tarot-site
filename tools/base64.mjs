@@ -1,6 +1,6 @@
 // tools/base64.mjs — Base64（文本 UTF-8 安全 / 文件 / base64url）
 export function mount(root, H) {
-  H.injectCss(".mode-tabs{display:inline-flex;background:#f5f5f7;border-radius:10px;padding:3px;margin-bottom:16px}.mode-tabs button{flex:1;padding:7px 16px;border:none;border-radius:8px;background:transparent;color:#6e6e73;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer}.mode-tabs button.active{background:#fff;color:#1d1d1f;box-shadow:0 1px 3px rgba(0,0,0,.12)}.err-box{display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(215,0,21,.06);color:#d70015;font-size:13px}");
+  H.injectCss(".err-box{display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(215,0,21,.06);color:#d70015;font-size:14px}");
 
   root.innerHTML =
     '<h1 class="tool-h1">Base64 编解码</h1>' +
@@ -10,7 +10,7 @@ export function mount(root, H) {
       '<div class="tool-field"><label>输入</label><textarea id="in" class="tool-textarea" placeholder="输入文本或 Base64…"></textarea></div>' +
       '<div class="tool-row" style="margin-bottom:12px">' +
         '<button class="tool-btn" id="enc">编码 →</button><button class="tool-btn" id="dec">← 解码</button>' +
-        '<label style="font-size:13px;color:#6e6e73;margin-left:8px"><input type="checkbox" id="url" style="margin-right:4px">base64url</label>' +
+        '<label style="font-size:14px;color:#6e6e73;margin-left:8px"><input type="checkbox" id="url" style="margin-right:4px">base64url</label>' +
         '<button class="tool-btn tool-btn--ghost" id="cp">复制</button>' +
       '</div>' +
       '<p class="err-box" id="terr"></p>' +

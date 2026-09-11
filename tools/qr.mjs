@@ -1,6 +1,6 @@
 // tools/qr.mjs — 二维码（自绘 canvas 支持颜色、容错级别）
 export function mount(root, H) {
-  H.injectCss(".mode-tabs{display:inline-flex;background:#f5f5f7;border-radius:10px;padding:3px;margin-bottom:16px}.mode-tabs button{flex:1;padding:7px 16px;border:none;border-radius:8px;background:transparent;color:#6e6e73;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer}.mode-tabs button.active{background:#fff;color:#1d1d1f;box-shadow:0 1px 3px rgba(0,0,0,.12)}.crow{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}.crow label{font-size:13px;color:#6e6e73}");
+  H.injectCss(".crow{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}.crow label{font-size:14px;color:#6e6e73}");
   root.innerHTML =
     '<h1 class="tool-h1">二维码生成</h1>' +
     '<p class="tool-sub">文字/链接生成二维码，可调颜色。全部本地。</p>' +

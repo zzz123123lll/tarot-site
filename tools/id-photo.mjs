@@ -6,21 +6,21 @@ export function mount(root, H) {
     '.idp-presets{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:0 0 18px}'
     + '.idp-preset{text-align:left;border:1px solid rgba(0,0,0,.12);background:#fff;border-radius:12px;padding:10px 12px;cursor:pointer;font-family:inherit}'
     + '.idp-preset.active{border-color:#0071e3;box-shadow:0 0 0 3px rgba(0,113,227,.12)}'
-    + '.idp-preset b{display:block;font-size:13.5px;color:#1d1d1f;font-weight:600}'
-    + '.idp-preset span{display:block;font-size:11.5px;color:#6e6e73;margin-top:3px;line-height:1.4}'
+    + '.idp-preset b{display:block;font-size:14px;color:#1d1d1f;font-weight:600}'
+    + '.idp-preset span{display:block;font-size:14px;color:#6e6e73;margin-top:3px;line-height:1.4}'
     + '.idp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}'
     + '@media (max-width:640px){.idp-grid{grid-template-columns:1fr}}'
     + '.idp-stage{background:#f5f5f7;border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:12px;text-align:center}'
     + '.idp-stage canvas{max-width:100%;height:auto;background:#fff;border-radius:6px;display:block;margin:0 auto}'
     + '.idp-fields{display:flex;flex-direction:column;gap:10px}'
     + '.idp-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}'
-    + '.idp-row label{font-size:12.5px;color:#6e6e73;min-width:64px}'
+    + '.idp-row label{font-size:14px;color:#6e6e73;min-width:64px}'
     + '.idp-num{width:78px}'
-    + '.idp-hint{font-size:12px;color:#6e6e73;line-height:1.6}'
+    + '.idp-hint{font-size:14px;color:#6e6e73;line-height:1.6}'
     + '.idp-out{margin-top:18px}'
     + '.idp-card{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:14px 16px;margin-top:12px}'
     + '.idp-card img{width:96px;border-radius:6px;border:1px solid rgba(0,0,0,.08)}'
-    + '.idp-kv{font-size:13px;color:#1d1d1f;line-height:1.7}'
+    + '.idp-kv{font-size:14px;color:#1d1d1f;line-height:1.7}'
     + '.idp-kv b{font-weight:600}'
     + '.idp-ok{color:#10743a}.idp-bad{color:#a1500a}'
   );
@@ -102,7 +102,7 @@ export function mount(root, H) {
     if (state.preset !== 'custom') state.kb = p.kbDefault;
     root.querySelector('#kb').value = state.kb || 0;
     root.querySelector('#kbs').innerHTML = p.kb.map(function (k) {
-      return '<button class="tool-btn tool-btn--ghost" data-kb="' + k + '" style="min-height:32px;padding:4px 10px;font-size:12.5px">≤' + k + ' KB</button>';
+      return '<button class="tool-btn tool-btn--ghost" data-kb="' + k + '" style="min-height:44px;padding:4px 10px;font-size:14px">≤' + k + ' KB</button>';
     }).join('') + (p.kb.length ? '' : '<span class="idp-hint">这一项官方没给统一上限,按对方页面填。</span>');
     refreshSpec();
     draw();

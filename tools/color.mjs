@@ -1,6 +1,6 @@
 // tools/color.mjs — 颜色工具（HEX/RGB/HSL 双向、拾色、WCAG 对比度）
 export function mount(root, H) {
-  H.injectCss(".crow{display:flex;align-items:center;gap:8px;margin-bottom:12px}.crow label{font-size:13px;color:#6e6e73;min-width:34px}.cinput{width:64px}.swatch{width:100%;height:64px;border-radius:10px;border:1px solid rgba(0,0,0,.12);margin:8px 0 16px}.wcag-ok{color:#1d9e4e}.wcag-bad{color:#d70015}");
+  H.injectCss(".crow{display:flex;align-items:center;gap:8px;margin-bottom:12px}.crow label{font-size:14px;color:#6e6e73;min-width:34px}.cinput{width:64px}.swatch{width:100%;height:64px;border-radius:10px;border:1px solid rgba(0,0,0,.12);margin:8px 0 16px}.wcag-ok{color:#1d9e4e}.wcag-bad{color:#d70015}");
 
   root.innerHTML =
     '<h1 class="tool-h1">颜色工具</h1>' +
@@ -11,7 +11,7 @@ export function mount(root, H) {
     '<div class="crow"><label>HSL</label><input type="number" class="tool-input cinput" id="h" min="0" max="360"><input type="number" class="tool-input cinput" id="s" min="0" max="100"><input type="number" class="tool-input cinput" id="l" min="0" max="100"></div>' +
     '<div class="swatch" id="sw"></div>' +
     '<div class="tool-row" style="margin-bottom:16px"><button class="tool-btn tool-btn--ghost" id="cp">复制 HEX</button></div>' +
-    '<div class="tool-field"><label>对比度检查（第二个颜色）</label><div class="crow"><input type="text" class="tool-input cinput" id="hex2" value="#ffffff" style="flex:1"><span id="wcag" style="font-size:13px"></span></div></div>';
+    '<div class="tool-field"><label>对比度检查（第二个颜色）</label><div class="crow"><input type="text" class="tool-input cinput" id="hex2" value="#ffffff" style="flex:1"><span id="wcag" style="font-size:14px"></span></div></div>';
 
   var el = {
     pick: root.querySelector('#pick'), hex: root.querySelector('#hex'),

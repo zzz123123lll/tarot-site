@@ -1,13 +1,13 @@
 // tools/regex.mjs — 正则测试（匹配高亮/替换预览，Worker 防 ReDoS）
 export function mount(root, H) {
-  H.injectCss(".mode-tabs{display:inline-flex;background:#f5f5f7;border-radius:10px;padding:3px;margin-bottom:16px}.mode-tabs button{flex:1;padding:7px 16px;border:none;border-radius:8px;background:transparent;color:#6e6e73;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer}.mode-tabs button.active{background:#fff;color:#1d1d1f;box-shadow:0 1px 3px rgba(0,0,0,.12)}.hl mark{background:rgba(0,113,227,.15);color:#1d1d1f;border-radius:2px;padding:0 1px}.cheat{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}.cheat button{font-size:12px;color:#6e6e73;background:#f5f5f7;border:1px solid rgba(0,0,0,.06);border-radius:999px;padding:4px 10px;cursor:pointer;font-family:inherit}.cheat button:hover{color:#0071e3}.err-box{display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(215,0,21,.06);color:#d70015;font-size:13px}");
+  H.injectCss(".hl mark{background:rgba(0,113,227,.15);color:#1d1d1f;border-radius:2px;padding:0 1px}.cheat{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}.cheat button{font-size:14px;color:#6e6e73;background:#f5f5f7;border:1px solid rgba(0,0,0,.06);border-radius:999px;padding:4px 10px;cursor:pointer;font-family:inherit}.cheat button:hover{color:#0071e3}.err-box{display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(215,0,21,.06);color:#d70015;font-size:14px}");
 
   root.innerHTML =
     '<h1 class="tool-h1">正则测试</h1>' +
     '<p class="tool-sub">匹配、替换、常用正则速查。全部本地。</p>' +
     '<div class="cheat" id="cheat"></div>' +
     '<div class="tool-field"><label>正则表达式</label><input type="text" class="tool-input" id="pat" placeholder="/表达式/标志，或直接写表达式"></div>' +
-    '<div class="tool-row" style="margin-bottom:16px"><label style="font-size:13px;color:#6e6e73">模式</label><span class="mode-tabs" id="mt"><button data-m="match" class="active">匹配</button><button data-m="replace">替换</button></span></div>' +
+    '<div class="tool-row" style="margin-bottom:16px"><label style="font-size:14px;color:#6e6e73">模式</label><span class="mode-tabs" id="mt"><button data-m="match" class="active">匹配</button><button data-m="replace">替换</button></span></div>' +
     '<div class="tool-field" id="repwrap" style="display:none"><label>替换为（$1 等可用）</label><input type="text" class="tool-input" id="rep" placeholder="替换内容"></div>' +
     '<div class="tool-field"><label>测试文本</label><textarea id="txt" class="tool-textarea" placeholder="输入测试文本…"></textarea></div>' +
     '<p class="err-box" id="err"></p>' +
