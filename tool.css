@@ -108,7 +108,7 @@ body {
 .tool-container .preset-tabs { max-width: 480px; }
 .tool-container .preset-tab { min-height: 44px; }
 /* 滑块也要够大,否则手指点不住(证件照模块直接用 input[type=range]) */
-.tool-container input[type=range] { min-height: 44px; height: 44px; }
+.tool-container input[type=range] { min-height: 44px; height: 44px; accent-color: var(--t-accent); }
 /* 没带类的原生控件(滑块/取色/复选框/文件框)也要进阶梯:UA 默认是 13.333px 且 line-height:normal */
 .tool-container input, .tool-container button, .tool-container select, .tool-container textarea { font-family: inherit; letter-spacing: 0; font-size: var(--t-fs-small); line-height: var(--lh-small); }
 /* 模块自带的紧凑控件(正则预设、PDF 分段、取色器、复选框)也要够大 —— 评审实测这些是 27~31px */
@@ -159,8 +159,8 @@ body {
 .file-row .rm:hover, .result-card .remove-btn:hover { color: var(--c-err); }
 
 /* —— 进度(共享组件;原先在 4 个模块里各 injectCss 一份,tool.css 里 0 处) —— */
-.progress-bar { display: none; height: 8px; background: #e8e8ed; border-radius: 999px; margin: 16px 0 0; overflow: hidden; }
-.progress-bar .fill { height: 100%; width: 0%; background: var(--t-accent); border-radius: 999px; transition: width .2s; }
+.progress-bar { display: none; height: 8px; background: #e8e8ed; border-radius: var(--r-pill); margin: 16px 0 0; overflow: hidden; }
+.progress-bar .fill { height: 100%; width: 0%; background: var(--t-accent); border-radius: var(--r-pill); transition: width .2s; }
 .progress-note { font-size: var(--t-fs-small); line-height: var(--lh-small); color: var(--t-muted); margin: 8px 0 0; }
 
 .batch-actions { display: none; gap: 10px; margin: 16px 0 0; }
@@ -173,9 +173,9 @@ body {
 .result-card .sizes .old { text-decoration: line-through; }
 .result-card .sizes .new { color: var(--c-ok); font-weight: 600; }
 .result-card.result-fail .name { color: var(--c-err); }
-.status-tag { font-size: var(--t-fs-caption); line-height: var(--lh-caption); color: var(--t-muted); background: var(--t-surface); border-radius: 999px; padding: 3px 9px; white-space: nowrap; }
+.status-tag { font-size: var(--t-fs-caption); line-height: var(--lh-caption); color: var(--t-muted); background: var(--t-surface); border-radius: var(--r-pill); padding: 3px 9px; white-space: nowrap; }
 .result-card.result-fail .status-tag { color: var(--c-err); background: rgba(215,0,21,.08); }
-.saved-badge { display: inline-block; font-size: var(--t-fs-caption); line-height: var(--lh-caption); border-radius: 999px; padding: 2px 8px; margin-left: 8px; color: var(--c-ok); background: rgba(20,122,58,.10); }
+.saved-badge { display: inline-block; font-size: var(--t-fs-caption); line-height: var(--lh-caption); border-radius: var(--r-pill); padding: 2px 8px; margin-left: 8px; color: var(--c-ok); background: rgba(20,122,58,.10); }
 .saved-badge--bad { color: var(--c-warn); background: rgba(200,106,30,.12); }
 .download-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 64px; background: var(--t-accent); color: #fff; border: none; border-radius: var(--r-pill); padding: 8px 18px; font-size: var(--t-fs-small); line-height: var(--lh-small); font-family: inherit; cursor: pointer; white-space: nowrap; }
 .download-btn:hover { background: #0077ed; }

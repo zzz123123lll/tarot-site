@@ -1,13 +1,28 @@
 // sw.js — 工具盒 Service Worker
-// 策略:HTML 网络优先(改动即时生效),断网时回退到已访问过的页面,最后回退首页外壳;
-// shared/* 与 tools/*(工具模块)用"缓存优先 + 后台刷新",vendor/*、icons/* 与页面样式缓存优先;
-// 安装时预缓存首页外壳。目标是:访问过一次的工具页,断网后仍能真正处理文件。
-// 注意:工具页要能离线处理,除了 HTML 与工具模块,还要有 /shared/encoders.js、encoder-worker.js、
-// encoder-core.js 与 /vendor/encoders/* 的编码器 —— 这些在"第一次成功处理"时才会进缓存。
-const CACHE = 'gongjuhe-v7';
+// 策略:
+//   - 导航:网络优先(改动即时生效),断网回退到"访问过的那个页面",最后回退首页外壳;
+//   - /shared/ 与 /tools/(程序与工具模块):缓存优先 + 后台刷新;
+//   - /vendor/、/icons/、页面样式与清单:缓存优先;
+//   - 其余同源 GET:网络优先,失败时回退缓存(例如 /manifest.webmanifest)。
+// 关键点(踩过坑):
+//   1) 缓存查找一律带 ignoreSearch —— 页面请求的是 /base.css?v=3 这类带版本号的 URL,
+//      而安装期预缓存用的是不带版本号的路径,不忽略查询串就等于预缓存白做、断网必挂;
+//   2) 每一个分支都必须有 catch 兜底,否则缓存未命中时 respondWith 会直接 reject,
+//      断网时用户看到的是"工具打不开",而不是一个可用的降级页面;
+//   3) 工具页要能离线**处理文件**,除 HTML 与工具模块外还需要 /shared/encoders.js、
+//      encoder-worker.js、encoder-core.js 与 /vendor/encoders/* —— 这些在"第一次成功处理"时才进缓存。
+const CACHE = 'gongjuhe-v8';
 const SHELL = ['/', '/base.css', '/site.css', '/fonts.css', '/home.js', '/tools-manifest.js', '/icons/icon-192.png', '/vendor/fonts/Geist-sub.woff2'];
 const CACHEABLE = ['/vendor/', '/icons/', '/tool.css', '/base.css', '/fonts.css', '/site.css', '/home.js', '/tools-manifest.js'];
 const SHARED = ['/shared/', '/tools/'];
+
+// 缓存查找:先精确匹配,再忽略查询串(把 /x.css?v=3 与预缓存的 /x.css 对上)
+function fromCache(c, req) {
+  return c.match(req).then(function (hit) {
+    return hit || c.match(req, { ignoreSearch: true });
+  });
+}
+
 self.addEventListener('install', function (e) {
   e.waitUntil(
     caches.open(CACHE).then(function (c) {
@@ -42,6 +57,7 @@ self.addEventListener('fetch', function (e) {
   if (req.method !== 'GET') return;
   var url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+
   if (req.mode === 'navigate') {
     e.respondWith(
       fetch(req).then(function (res) {
@@ -50,16 +66,19 @@ self.addEventListener('fetch', function (e) {
         caches.open(CACHE).then(function (c) { c.put(req, copy).catch(function () {}); });
         return res;
       }).catch(function () {
-        return caches.match(req).then(function (hit) { return hit || caches.match('/'); });
+        return caches.open(CACHE).then(function (c) {
+          return fromCache(c, req).then(function (hit) { return hit || c.match('/'); });
+        });
       })
     );
     return;
   }
+
   if (SHARED.some(function (p) { return url.pathname.indexOf(p) === 0; })) {
     // 先给缓存里的旧版本(秒开),同时在后台取新版本,下次访问就是新的
     e.respondWith(
       caches.open(CACHE).then(function (c) {
-        return c.match(req).then(function (hit) {
+        return fromCache(c, req).then(function (hit) {
           var fresh = fetch(req, { cache: 'reload' }).then(function (res) {
             if (res.ok) c.put(req, res.clone());
             return res;
@@ -70,16 +89,39 @@ self.addEventListener('fetch', function (e) {
     );
     return;
   }
+
   if (CACHEABLE.some(function (p) { return url.pathname.indexOf(p) === 0; })) {
     e.respondWith(
       caches.open(CACHE).then(function (c) {
-        return c.match(req).then(function (hit) {
-          return hit || fetch(req).then(function (res) {
+        return fromCache(c, req).then(function (hit) {
+          if (hit) return hit;
+          return fetch(req).then(function (res) {
             if (res.ok) c.put(req, res.clone());
             return res;
+          }).catch(function () {
+            // 断网且没缓存:不要 reject(那会让整页报错),交给浏览器按普通失败处理
+            return new Response('', { status: 504, statusText: 'offline' });
           });
         });
       })
     );
+    return;
   }
+
+  // 其余同源 GET(例如 /manifest.webmanifest):网络优先,失败回退缓存
+  e.respondWith(
+    fetch(req).then(function (res) {
+      if (res.ok) {
+        var copy = res.clone();
+        caches.open(CACHE).then(function (c) { c.put(req, copy).catch(function () {}); });
+      }
+      return res;
+    }).catch(function () {
+      return caches.open(CACHE).then(function (c) {
+        return fromCache(c, req).then(function (hit) {
+          return hit || new Response('', { status: 504, statusText: 'offline' });
+        });
+      });
+    })
+  );
 });

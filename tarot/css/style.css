@@ -204,6 +204,7 @@ textarea {
 select:focus,
 textarea:focus {
   outline: none;
+  /* 键盘焦点用 :focus-visible 补回金环(见下方 focus-visible 段) */
   border-color: var(--gold);
   box-shadow: 0 0 0 3px rgba(201, 164, 76, 0.15);
 }

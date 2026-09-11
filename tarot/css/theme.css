@@ -169,6 +169,8 @@ p { margin:0 0 var(--s4); font-family: var(--font-serif); color: var(--text-soft
 .site-footer { color:var(--muted); border-top:1px solid var(--line); padding-top: var(--s5); font-family:var(--font-ui); }
 .field select, .dictionary-search { background: var(--bg-2); border:1px solid var(--line-strong); color:var(--text); border-radius: var(--r-sm); padding: var(--s3) var(--s4); font-family: var(--font-ui); font-size: var(--tsm); }
 .field select:focus, .dictionary-search:focus, .field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(201,168,107,0.14); outline:none; }
+/* 上面那条把默认焦点环关掉了,键盘用户只剩 1px 边框变亮;这里按同档补回金色焦点环 */
+.field select:focus-visible, .dictionary-search:focus-visible, .field textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .field select { appearance:none; background-image: linear-gradient(45deg, transparent 49%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 51%); background-position: calc(100% - 18px) 55%, calc(100% - 13px) 55%; background-size: 5px 5px; background-repeat: no-repeat; }
 .field label, .field > span { display:block; color:var(--muted); font-size:var(--txs); letter-spacing:0.14em; text-transform:uppercase; margin-bottom: var(--s2); font-family:var(--font-ui); }
 .checkbox-field { display:flex; align-items:center; gap: var(--s2); }
