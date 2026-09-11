@@ -11,7 +11,7 @@
 //      断网时用户看到的是"工具打不开",而不是一个可用的降级页面;
 //   3) 工具页要能离线**处理文件**,除 HTML 与工具模块外还需要 /shared/encoders.js、
 //      encoder-worker.js、encoder-core.js 与 /vendor/encoders/* —— 这些在"第一次成功处理"时才进缓存。
-const CACHE = 'gongjuhe-v11';
+const CACHE = 'gongjuhe-v13';
 // /offline.html 是"断网打开一个确实没缓存过的地址"时的兜底说明页
 const OFFLINE_PAGE = '/offline.html';
 // 首次访问就把**所有工具页的 HTML** 预缓存(20 页,合计约 60KB)。
@@ -22,7 +22,27 @@ const OFFLINE_PAGE = '/offline.html';
 const TOOL_PAGES = [
   '/tarot/',   '/img-compress/',   '/id-photo/',   '/image-convert/',   '/images-to-pdf/',   '/invoice-nup/',   '/pdf-merge/',   '/pdf-split/',   '/pdf-render/',   '/pdf-compress/',   '/tools/json/',   '/tools/base64/',   '/tools/regex/',   '/tools/color/',   '/tools/qr/',   '/tools/jwt/',   '/tools/hash/',   '/tools/url/',   '/tools/uuid/',   '/tools/date/'
 ];
-const SHELL = ['/', OFFLINE_PAGE, '/verify/'].concat(TOOL_PAGES, ['/base.css', '/site.css', '/fonts.css', '/home.js', '/tools-manifest.js', '/icons/icon-192.png', '/vendor/fonts/Geist-sub.woff2']);
+// 19 个工具模块也一并预缓存(合计 134KB):只缓存页面的话,断网能"打开"工具页但工具本身
+// 不会挂载 —— 用户看到的是空壳,这属于假承诺。模块很小,直接全带上。
+// 台账必须与 shared/toolkit.js 的 REGISTRY 一致,一致性自检会核对。
+const MODULES = [
+  '/tools/img-compress.mjs', '/tools/id-photo.mjs', '/tools/image-convert.mjs', '/tools/images-to-pdf.mjs',
+  '/tools/invoice-nup.mjs', '/tools/pdf-merge.mjs', '/tools/pdf-split.mjs', '/tools/pdf-render.mjs',
+  '/tools/pdf-compress.mjs', '/tools/json.mjs', '/tools/base64.mjs', '/tools/regex.mjs',
+  '/tools/color.mjs', '/tools/qr.mjs', '/tools/jwt.mjs', '/tools/hash.mjs',
+  '/tools/url.mjs', '/tools/uuid.mjs', '/tools/date.mjs'
+];
+// 页面启动必用的程序文件(34KB)同样预缓存,否则断网时工具模块加载了、页面骨架却起不来。
+// 小体积运行时库(合计约 210KB):这些决定了"断网后这个工具能不能真的用"。
+// 大库(pdf-lib 512KB、pdf.js 1.7MB、压缩引擎 700KB)不进这份清单 —— 让每个访客都先下 3MB
+// 才是真正对不起用户;它们在你第一次用到对应工具时才会进缓存,之后离线可用。
+const VENDOR_SMALL = [
+  '/vendor/qrcode.min.js', '/vendor/spark-md5.min.js', '/vendor/jszip.min.js',
+  '/vendor/popper.min.js', '/vendor/tippy-bundle.umd.min.js', '/vendor/canvas-confetti.min.js',
+  '/vendor/fonts/GeistMono-sub.woff2', '/vendor/fonts/Geist-sub.woff2'
+];
+const SHARED_FILES = ['/shared/toolkit.js', '/shared/encoders.js', '/shared/encoder-core.js', '/shared/encoder-worker.js'];
+const SHELL = ['/', OFFLINE_PAGE, '/verify/'].concat(TOOL_PAGES, MODULES, SHARED_FILES, VENDOR_SMALL, ['/base.css', '/site.css', '/fonts.css', '/home.js', '/tools-manifest.js', '/icons/icon-192.png']);
 const CACHEABLE = ['/vendor/', '/icons/', '/tool.css', '/base.css', '/fonts.css', '/site.css', '/home.js', '/tools-manifest.js'];
 const SHARED = ['/shared/', '/tools/'];
 
