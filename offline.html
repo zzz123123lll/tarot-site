@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>这个工具还没被缓存 · 工具盒</title>
+<link rel="stylesheet" href="/base.css?v=4">
+<link rel="stylesheet" href="/fonts.css?v=1">
+<style>
+/* 离线兜底页:断网时打开一个"从没访问过"的页面会走到这里。
+   以前这个位置是"静默回退首页"——用户以为自己点开了工具,其实拿到的是首页,三引擎行为还不一致。
+   现在给一页说得清的说明:为什么打不开、怎么才能离线用、以及现在能打开哪些。 */
+body { font-family: "Geist", -apple-system, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif; color: var(--c-text); background: #fff; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+main { max-width: 620px; padding: var(--sp-6) var(--sp-4); }
+h1 { font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600; margin: 0 0 var(--sp-2); }
+p { font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-muted); margin: 0 0 var(--sp-3); }
+ul { padding-left: 1.2em; margin: 0 0 var(--sp-4); }
+li { font-size: var(--fs-small); line-height: var(--lh-small); margin: 0 0 6px; }
+code { font-family: "Geist Mono", ui-monospace, Menlo, Consolas, monospace; font-size: .92em; background: var(--c-band); border-radius: var(--r-1); padding: 1px 5px; }
+a.btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--sp-4); background: var(--c-accent); color: #fff; text-decoration: none; border-radius: var(--r-sm); font-size: var(--fs-small); }
+p.note { font-size: var(--fs-small); line-height: var(--lh-small); color: var(--c-muted); margin-top: var(--sp-4); }
+</style>
+</head>
+<body>
+<main>
+  <h1>这个页面还没被缓存过</h1>
+  <p>你现在处于断网状态,而这个工具页你之前没有打开过,所以浏览器里没有它的副本——我们不会假装能打开。</p>
+  <p><b>想离线也能用,这样操作:</b></p>
+  <ul>
+    <li>先联网打开这个工具页一次;</li>
+    <li><b>再成功处理一个文件</b>(这一步才会把压缩程序存进浏览器);</li>
+    <li>之后断网重新打开这个页面,工具仍然可用。</li>
+  </ul>
+  <p><a class="btn" href="/">回到首页(已缓存,断网也能开)</a></p>
+  <p class="note">这条说明只在断网 + 页面未缓存时出现。联网状态下你不会看到它。</p>
+</main>
+</body>
+</html>

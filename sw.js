@@ -11,8 +11,11 @@
 //      断网时用户看到的是"工具打不开",而不是一个可用的降级页面;
 //   3) 工具页要能离线**处理文件**,除 HTML 与工具模块外还需要 /shared/encoders.js、
 //      encoder-worker.js、encoder-core.js 与 /vendor/encoders/* —— 这些在"第一次成功处理"时才进缓存。
-const CACHE = 'gongjuhe-v9';
-const SHELL = ['/', '/base.css', '/site.css', '/fonts.css', '/home.js', '/tools-manifest.js', '/icons/icon-192.png', '/vendor/fonts/Geist-sub.woff2'];
+const CACHE = 'gongjuhe-v10';
+// /offline.html 是"断网打开一个没缓存过的页面"时的兜底说明页。
+// 以前这里回退首页:用户以为自己点开了工具、其实拿到的是首页(而且各浏览器行为还不一致)。
+const OFFLINE_PAGE = '/offline.html';
+const SHELL = ['/', OFFLINE_PAGE, '/base.css', '/site.css', '/fonts.css', '/home.js', '/tools-manifest.js', '/icons/icon-192.png', '/vendor/fonts/Geist-sub.woff2'];
 const CACHEABLE = ['/vendor/', '/icons/', '/tool.css', '/base.css', '/fonts.css', '/site.css', '/home.js', '/tools-manifest.js'];
 const SHARED = ['/shared/', '/tools/'];
 
@@ -76,7 +79,8 @@ self.addEventListener('fetch', function (e) {
             if (hit) return hit;
             // 再退一步:忽略查询串按路径匹配,最后回退首页外壳
             return c.match(navKey, { ignoreSearch: true }).then(function (hit2) {
-              return hit2 || c.match('/');
+              // 都没命中(这个页面从没访问过):给一页说得清的说明,不要静默换成首页
+              return hit2 || c.match(OFFLINE_PAGE) || c.match('/');
             });
           });
         });

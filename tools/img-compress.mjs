@@ -45,7 +45,7 @@ export function mount(root, H) {
   var _enc = null;
   function ensureEnc() {
     if (!_enc) {
-      _enc = import('/shared/encoders.js?v=6');
+      _enc = import('/shared/encoders.js?v=7');
       _enc.then(function (m) { encMod = m; }, function () {});
     }
     return _enc;

@@ -22,12 +22,21 @@ if (typeof location !== 'undefined' && /(?:^|[?&])simfail=encoder(?:&|$)/.test(l
 // 不会被页面级的 SW 拦截到(实测 Chromium 断网时缺 3 个条目 → 压缩时报"压缩程序没加载成功")。
 // 这里在第一次编码成功后,把本模块、core 与 worker 的 URL 主动交给 SW 存下来,之后断网也能压。
 var _warmed = false;
-function warmEncoderChain() {
+// 各编码器真正会去取的文件的完整清单(含 wasm)。Chromium 里这些有一部分由 Worker 取,
+// 页面级 SW 拦不到,断网时就只剩 canvas 兜底 —— 主动列出来交给 SW 存,三引擎行为才一致。
+var CODEC_FILES = {
+  jpeg: ['/vendor/encoders/jpeg/encode.js', '/vendor/encoders/jpeg/meta.js', '/vendor/encoders/jpeg/utils.js', '/vendor/encoders/jpeg/codec/enc/mozjpeg_enc.js', '/vendor/encoders/jpeg/codec/enc/mozjpeg_enc.wasm'],
+  webp: ['/vendor/encoders/webp/encode-local.js', '/vendor/encoders/webp/meta.js', '/vendor/encoders/webp/utils.js', '/vendor/encoders/webp/codec/enc/webp_enc.js', '/vendor/encoders/webp/codec/enc/webp_enc.wasm'],
+  png: ['/vendor/encoders/png/encode.js', '/vendor/encoders/png/meta.js', '/vendor/encoders/png/codec/pkg/squoosh_png.js', '/vendor/encoders/png/codec/pkg/squoosh_png_bg.wasm']
+};
+function warmEncoderChain(kind) {
   if (_warmed) return;
   _warmed = true;
   try {
     if (typeof navigator === 'undefined' || !navigator.serviceWorker) return;
     var list = ['/shared/encoder-core.js?v=3', '/shared/encoder-worker.js?v=1'];
+    var files = kind && CODEC_FILES[kind];
+    if (files) { for (var i = 0; i < files.length; i++) list.push(files[i]); }
     try { if (import.meta && import.meta.url) list.push(import.meta.url); } catch (e) {}
     var send = function (sw) { try { if (sw) sw.postMessage({ type: 'warm', urls: list }); } catch (e) {} };
     if (navigator.serviceWorker.controller) send(navigator.serviceWorker.controller);
@@ -180,7 +189,7 @@ export async function encodeToTarget(file, mime, targetBytes) {
   // 1) Worker 里的真编码器
   try {
     var r = await askWorker(img.data.data.buffer, img.width, img.height, mime, 'target', param);
-    if (r.buf) warmEncoderChain();
+    if (r.buf) warmEncoderChain(kind);
     return { blob: blobOf(r.buf, mime), met: !!r.met, reason: r.reason, quality: r.quality };
   } catch (e) { /* 降级 */ }
 
@@ -205,7 +214,7 @@ export async function encodeWithQuality(file, mime, qualityPercent) {
   }
   try {
     var r = await askWorker(img.data.data.buffer, img.width, img.height, mime, 'quality', qualityPercent);
-    if (r.buf) { warmEncoderChain(); return { blob: blobOf(r.buf, mime), real: true }; }
+    if (r.buf) { warmEncoderChain(pickKind(mime)); return { blob: blobOf(r.buf, mime), real: true }; }
   } catch (e) { /* 降级 */ }
   try {
     var rr = await encodeQuality(reExtract(img), img.width, img.height, mime, qualityPercent);
