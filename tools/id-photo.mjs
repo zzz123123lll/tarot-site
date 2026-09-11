@@ -350,6 +350,7 @@ export function mount(root, H) {
             '<div class="' + (bg.ok === null ? '' : bg.ok ? 'idp-ok' : 'idp-bad') + '">底色:' + H.esc(bg.text)
               + (preset.id === 'custom' ? '' : ';该用途要求「' + H.esc(preset.bgName) + '」')
               + (bg.ok === false ? ' —— 我们不会替你换底色,请换一张底色合规的照片' : '') + '</div>' +
+            (reason === 'canvas' ? '<div class="idp-bad">这次用的是浏览器内置编码，不是我们的真实编码器（压缩程序没加载成功，多半是断网且本机还没存过它）。照片本身没问题；联网后重开这个工具再处理一次，就能用上真实编码器。</div>' : '') +
             '<div class="idp-hint" style="margin-top:6px">' + H.esc(proof) + (loads > 0 ? ' · 压缩程序已就绪' : '') + ' · <a href="/verify/">怎么自己验证</a></div>' +
             '<div class="idp-row" style="margin-top:10px"><button class="tool-btn" id="dl">下载照片</button></div>' +
           '</div>' +

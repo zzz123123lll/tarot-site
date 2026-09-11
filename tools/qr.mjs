@@ -12,7 +12,7 @@ export function mount(root, H) {
   var canvas = null, txt = root.querySelector('#txt');
   root.querySelector('#go').addEventListener('click', async function () {
     var v = txt.value.trim(); if (!v) return;
-    try { await H.loadScript('/vendor/qrcode.min.js?v=1'); } catch (e) { root.querySelector('#qr').innerHTML = '二维码库加载失败'; return; }
+    try { await H.loadLib('/vendor/qrcode.min.js?v=1', '二维码程序'); } catch (e) { root.querySelector('#qr').textContent = e.message; return; }
     try {
       var qr = window.qrcode(0, root.querySelector('#ec').value);
       qr.addData(v); qr.make();

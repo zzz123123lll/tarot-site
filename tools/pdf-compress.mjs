@@ -19,10 +19,10 @@ export function mount(root, H) {
     var note = root.querySelector('#note'); note.style.display = 'none';
     try {
       if (!pdfjsLib) {
-        pdfjsLib = await import('/vendor/pdfjs/pdf.min.mjs?v=1');
+        pdfjsLib = await H.dynLib('/vendor/pdfjs/pdf.min.mjs?v=1', 'PDF 显示程序');
         pdfjsLib.GlobalWorkerOptions.workerSrc = '/vendor/pdfjs/pdf.worker.min.mjs?v=1';
       }
-      await H.loadScript('/vendor/pdf-lib.min.js?v=1');
+      await H.loadLib('/vendor/pdf-lib.min.js?v=1', 'PDF 生成程序');
       var PDFDoc = window.PDFLib.PDFDocument;
       var origBytes = await f.arrayBuffer();
       var doc = await pdfjsLib.getDocument({ data: origBytes, cMapUrl: '/vendor/pdfjs/cmaps/', cMapPacked: true, standardFontDataUrl: '/vendor/pdfjs/standard_fonts/' }).promise;
@@ -59,7 +59,7 @@ export function mount(root, H) {
     } catch (e) {
       var pg2 = root.querySelector('#pg');
       if (pg2) pg2.style.display = 'none';
-      note.textContent = '压缩失败：' + H.friendlyError(e); note.className = 'note err'; note.style.display = 'block';
+      note.textContent = H.isLibFail(e) ? H.friendlyError(e) : '压缩失败：' + H.friendlyError(e); note.className = 'note err'; note.style.display = 'block';
     }
   }, 'application/pdf');
 }

@@ -30,7 +30,7 @@
 </nav>
 <div class="tool-container" id="toolRoot"><div class="tool-static"><h1 class="tool-h1">发票拼版</h1><p class="tool-sub">把多张发票或扫描件按原比例排到 A4 上，每页 1 / 2 / 4 张，输出一份 PDF，不裁剪、不上传。</p><p class="tool-static-note">这个工具在你的浏览器里本地运行，发票不会上传到任何服务器；加载完成后下方即可直接使用。</p></div></div>
 <script type="module">
-import { mountTool } from '/shared/toolkit.js?v=18';
+import { mountTool } from '/shared/toolkit.js?v=19';
 function slugFromPath() {
   var p = (location.pathname || '').replace(/^\/+|\/+$/g, '');
   if (p.indexOf('tools/') === 0) p = p.slice(6);
@@ -40,7 +40,7 @@ mountTool(slugFromPath(), document.getElementById('toolRoot'), document.getEleme
 </script>
 <script>
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
-  window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=13'); });
+  window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=14'); });
 }
 </script>
   <footer class="tool-foot"><p class="tool-foot-line">PDF 工具 · 全部工具本地运行，文件不上传</p><nav class="tool-foot-links" aria-label="同分区工具"><a href="/pdf-merge/">PDF 合并</a><a href="/images-to-pdf/">图片合成 PDF</a><a href="/verify/">怎么验证不上传</a><a href="/">全部工具</a></nav></footer>

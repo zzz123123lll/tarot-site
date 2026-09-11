@@ -86,6 +86,27 @@ export function loadScript(src) {
     document.head.appendChild(s);
   });
 }
+// 大体积程序库(pdf-lib 512KB / pdf.js 1.7MB / 压缩引擎)在"断网且没缓存"时会加载失败。
+// 用这个包装器统一给出人话错误,而不是把英文的 load failed 交给 friendlyError 兜底成"换个文件试试"。
+function libFailError(label, cause) {
+  var err = new Error((label || '这个工具要用到的程序') + '没加载成功（不是你的文件的问题）：多半是断网、而这个程序还没存到你本机。联网后重新打开这个工具一次，之后断网也能用。');
+  err.code = 'libfail';
+  err.cause = cause;
+  return err;
+}
+export function loadLib(src, label) {
+  return loadScript(src).catch(function (e) { throw libFailError(label, e); });
+}
+// 动态 import 的大库(pdf.js / 压缩编码器)同理:不能用英文的 import 报错糊弄用户
+export function dynLib(url, label) {
+  return import(url).catch(function (e) { throw libFailError(label, e); });
+}
+// 判断一个错误是不是"程序没取到"。模块要把这种情况和"文件有问题"分开说。
+export function isLibFail(e) {
+  if (e && e.code === 'libfail') return true;
+  var raw = String((e && e.message) || e || '');
+  return /load failed|Failed to fetch|NetworkError|Importing a module script failed|error loading dynamically imported module|net::ERR|ERR_INTERNET|ERR_NAME_NOT_RESOLVED|ERR_NETWORK/i.test(raw);
+}
 export function injectCss(css) {
   const st = document.createElement('style');
   st.textContent = css;
@@ -118,6 +139,8 @@ export function initTips(scope) {
 // 把库抛出的英文错误翻译成用户能懂的话(原始信息不进 UI)
 export function friendlyError(e, fallback) {
   var raw = String((e && e.message) || e || '');
+  // 程序库没取到(断网且没缓存)必须和"文件有问题"分开说 —— 否则等于把我们的问题说成用户的问题。
+  if (isLibFail(e)) return libFailError(null, e).message;
   if (/Pages|InvalidPDF|PDF structure|not a PDF|No PDF header|Failed to parse PDF|XRef|trailer/i.test(raw)) return '这个文件读不出来：可能已损坏、有密码保护，或者不是标准 PDF。';
   if (/PNG|JPEG|image|decode|bitmap/i.test(raw)) return '这张图片读不出来：可能已损坏，或者是浏览器不支持的格式。';
   if (/atob|base64|InvalidCharacterError/i.test(raw)) return '内容不是有效的 Base64，请检查是否复制完整。';
@@ -287,28 +310,28 @@ export function makeDropZone(el, onFiles, accept, opts) {
 }
 
 const REGISTRY = {
-  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 15 },
-  'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 13 },
+  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 17 },
+  'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 14 },
   'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs', v: 5 },
-  'images-to-pdf': { title: '图片合成 PDF', module: '/tools/images-to-pdf.mjs', v: 5 },
-  'invoice-nup': { title: '发票拼版', module: '/tools/invoice-nup.mjs', v: 7 },
-  'pdf-merge': { title: 'PDF 合并', module: '/tools/pdf-merge.mjs', v: 5 },
-  'pdf-split': { title: 'PDF 拆分/旋转', module: '/tools/pdf-split.mjs', v: 5 },
-  'pdf-render': { title: 'PDF 转图片', module: '/tools/pdf-render.mjs', v: 5 },
-  'pdf-compress': { title: 'PDF 压缩', module: '/tools/pdf-compress.mjs', v: 5 },
+  'images-to-pdf': { title: '图片合成 PDF', module: '/tools/images-to-pdf.mjs', v: 6 },
+  'invoice-nup': { title: '发票拼版', module: '/tools/invoice-nup.mjs', v: 8 },
+  'pdf-merge': { title: 'PDF 合并', module: '/tools/pdf-merge.mjs', v: 6 },
+  'pdf-split': { title: 'PDF 拆分/旋转', module: '/tools/pdf-split.mjs', v: 6 },
+  'pdf-render': { title: 'PDF 转图片', module: '/tools/pdf-render.mjs', v: 6 },
+  'pdf-compress': { title: 'PDF 压缩', module: '/tools/pdf-compress.mjs', v: 6 },
   'json': { title: 'JSON 格式化', module: '/tools/json.mjs', v: 6 },
   'base64': { title: 'Base64 编解码', module: '/tools/base64.mjs', v: 5 },
   'regex': { title: '正则测试', module: '/tools/regex.mjs', v: 5 },
   'color': { title: '颜色工具', module: '/tools/color.mjs', v: 6 },
-  'qr': { title: '二维码生成', module: '/tools/qr.mjs', v: 5 },
+  'qr': { title: '二维码生成', module: '/tools/qr.mjs', v: 6 },
   'jwt': { title: 'JWT 解码', module: '/tools/jwt.mjs', v: 5 },
-  'hash': { title: 'Hash 摘要', module: '/tools/hash.mjs', v: 5 },
+  'hash': { title: 'Hash 摘要', module: '/tools/hash.mjs', v: 6 },
   'url': { title: 'URL 编解码', module: '/tools/url.mjs', v: 5 },
   'uuid': { title: 'UUID / 密码', module: '/tools/uuid.mjs', v: 5 },
   'date': { title: '日期 & 时间戳', module: '/tools/date.mjs', v: 5 }
 };
 
-const H = { esc, fmt, downloadBlob, downloadZip, injectCss, makeDropZone, loadScript, copyText, initTips, friendlyError, warnBelow, clearWarn, netMark, netReport, netLine };
+const H = { esc, fmt, downloadBlob, downloadZip, injectCss, makeDropZone, loadScript, loadLib, dynLib, isLibFail, copyText, initTips, friendlyError, warnBelow, clearWarn, netMark, netReport, netLine };
 
 // 通用无障碍增强:动态状态区可被读屏播报;标签与输入框建立关联
 export function enhanceA11y(root) {

@@ -62,7 +62,7 @@ export function mount(root, H) {
     var oldText = btn.textContent;
     btn.textContent = '生成中…';
     try {
-      await H.loadScript('/vendor/pdf-lib.min.js?v=1');
+      await H.loadLib('/vendor/pdf-lib.min.js?v=1', 'PDF 生成程序');
       var PDFDoc = window.PDFLib.PDFDocument;
       var pdfDoc = await PDFDoc.create();
     for (var i = 0; i < files.length; i++) {
@@ -100,7 +100,7 @@ export function mount(root, H) {
       ok.style.color = '';
       ok.style.display = 'block';
     } catch (e) {
-      ok.textContent = '生成失败：' + H.friendlyError(e, '图片可能已损坏，或格式不受支持。');
+      ok.textContent = H.isLibFail(e) ? H.friendlyError(e) : '生成失败：' + H.friendlyError(e, '图片可能已损坏，或格式不受支持。');
       ok.style.color = '#d70015';
       ok.style.display = 'block';
     }

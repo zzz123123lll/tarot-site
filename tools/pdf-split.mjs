@@ -49,7 +49,7 @@ export function mount(root, H) {
     var oldText = btn.textContent;
     btn.textContent = '处理中…';
     try {
-      try { await H.loadScript('/vendor/pdf-lib.min.js?v=1'); } catch (e) { note.textContent = 'PDF 库加载失败，请检查网络后重试。'; note.className = 'note err'; note.style.display = 'block'; return; }
+      try { await H.loadLib('/vendor/pdf-lib.min.js?v=1', 'PDF 处理程序'); } catch (e) { note.textContent = e.message; note.className = 'note err'; note.style.display = 'block'; return; }
       var PDFDoc = window.PDFLib.PDFDocument;
       var src = await PDFDoc.load(await file.arrayBuffer(), { ignoreEncryption: true });
       var idx = parseRange(root.querySelector('#range').value, src.getPageCount());

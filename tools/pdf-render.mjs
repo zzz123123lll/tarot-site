@@ -25,7 +25,7 @@ export function mount(root, H) {
     var note = root.querySelector('#note'); note.style.display = 'none';
     try {
       if (!pdfjsLib) {
-        pdfjsLib = await import('/vendor/pdfjs/pdf.min.mjs?v=1');
+        pdfjsLib = await H.dynLib('/vendor/pdfjs/pdf.min.mjs?v=1', 'PDF 显示程序');
         pdfjsLib.GlobalWorkerOptions.workerSrc = '/vendor/pdfjs/pdf.worker.min.mjs?v=1';
       }
       var bytes = await f.arrayBuffer();
@@ -63,7 +63,7 @@ export function mount(root, H) {
       if (pg2) pg2.style.display = 'none';
       var dl2 = root.querySelector('#dlAll');
       if (dl2) dl2.disabled = false;
-      note.textContent = '转换失败：' + H.friendlyError(e); note.className = 'note err'; note.style.display = 'block';
+      note.textContent = H.isLibFail(e) ? H.friendlyError(e) : '转换失败：' + H.friendlyError(e); note.className = 'note err'; note.style.display = 'block';
     }
   }, 'application/pdf');
 }

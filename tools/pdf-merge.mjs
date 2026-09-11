@@ -44,7 +44,7 @@ export function mount(root, H) {
   async function generate() {
     var note = root.querySelector('#note');
     note.className = 'note'; note.style.display = 'none';
-    try { await H.loadScript('/vendor/pdf-lib.min.js?v=1'); } catch (e) { note.textContent = 'PDF 库加载失败。'; note.className = 'note err'; note.style.display = 'block'; return; }
+    try { await H.loadLib('/vendor/pdf-lib.min.js?v=1', 'PDF 合并程序'); } catch (e) { note.textContent = e.message; note.className = 'note err'; note.style.display = 'block'; return; }
     var PDFDoc = window.PDFLib.PDFDocument;
     var btn = root.querySelector('#go');
     btn.disabled = true;

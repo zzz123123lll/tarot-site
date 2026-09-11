@@ -134,7 +134,7 @@ export function mount(root, H) {
   // 把每张发票变成可嵌入 PDF 的字节
   async function toPngBytes(src) {
     if (src.kind === 'pdf') {
-      var pdfjsLib = await import('/vendor/pdfjs/pdf.min.mjs?v=1');
+      var pdfjsLib = await H.dynLib('/vendor/pdfjs/pdf.min.mjs?v=1', 'PDF 显示程序');
       pdfjsLib.GlobalWorkerOptions.workerSrc = '/vendor/pdfjs/pdf.worker.min.mjs?v=1';
       var bytes = new Uint8Array(await src.file.arrayBuffer());
       var doc = await pdfjsLib.getDocument({ data: bytes, cMapUrl: '/vendor/pdfjs/cmaps/', cMapPacked: true, standardFontDataUrl: '/vendor/pdfjs/standard_fonts/' }).promise;
@@ -188,7 +188,7 @@ export function mount(root, H) {
     var netFrom = H.netMark ? H.netMark() : 0;
     out.innerHTML = '<div class="inv-hint" id="busy">正在读取 ' + state.sources.length + ' 个文件…</div>';
     try {
-      await H.loadScript('/vendor/pdf-lib.min.js?v=1');
+      await H.loadLib('/vendor/pdf-lib.min.js?v=1', 'PDF 生成程序');
       var PDFDoc = window.PDFLib.PDFDocument;
       var doc = await PDFDoc.create();
       var items = [];
@@ -238,7 +238,7 @@ export function mount(root, H) {
         if (state.out) H.downloadBlob(state.out, '发票拼版-A4-' + doc.getPageCount() + '页.pdf');
       });
     } catch (e) {
-      out.innerHTML = '<div class="inv-hint">生成失败:' + H.esc(H.friendlyError ? H.friendlyError(e, '文件可能已损坏或受密码保护') : '请换一批文件再试') + '</div>';
+      out.innerHTML = '<div class="inv-hint">' + H.esc(H.isLibFail(e) ? H.friendlyError(e) : '生成失败:' + (H.friendlyError ? H.friendlyError(e, '文件可能已损坏或受密码保护') : '请换一批文件再试')) + '</div>';
     }
     go.disabled = false;
   }

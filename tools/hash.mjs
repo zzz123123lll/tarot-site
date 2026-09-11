@@ -23,7 +23,7 @@ export function mount(root, H) {
   async function compute(bytes) {
     err.style.display = 'none';
     if (algo === 'MD5') {
-      try { await H.loadScript('/vendor/spark-md5.min.js?v=1'); } catch (e) { err.textContent = 'MD5 库加载失败，请检查网络后重试。'; err.style.display = 'block'; return; }
+      try { await H.loadLib('/vendor/spark-md5.min.js?v=1', 'MD5 程序'); } catch (e) { err.textContent = e.message; err.style.display = 'block'; return; }
       // 必须按原始字节计算:内建 md5 库对二进制输入会给出错误结果(已实测),此处用 spark-md5
       var ab = (bytes && bytes.byteOffset !== undefined)
         ? bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength)

@@ -217,7 +217,7 @@ export function mount(root, H) {
           push({
             name: file.name, origSize: origSize, outSize: r.blob.size, blob: r.blob,
             status: 'ok', saved: Math.max(0, origSize - r.blob.size),
-            met: !!r.met, target: target, reason: r.reason
+            met: !!r.met, target: target, reason: r.reason, real: !!r.real
           });
         } else if (r.met) {
           push({ name: file.name, origSize: origSize, status: 'met', target: target });
@@ -230,9 +230,9 @@ export function mount(root, H) {
       var blob = res.blob;
       if (!blob) { push({ name: file.name, origSize: origSize, status: 'fail' }); return; }
       if (blob.size >= origSize) {
-        push({ name: file.name, origSize: origSize, status: 'skip' });
+        push({ name: file.name, origSize: origSize, status: 'skip', real: !!res.real });
       } else {
-        push({ name: file.name, origSize: origSize, outSize: blob.size, blob: blob, status: 'ok', saved: origSize - blob.size });
+        push({ name: file.name, origSize: origSize, outSize: blob.size, blob: blob, status: 'ok', saved: origSize - blob.size, real: !!res.real });
       }
     } catch (e) {
       push({ name: file.name, origSize: origSize, status: 'fail' });
@@ -249,6 +249,8 @@ export function mount(root, H) {
     items.forEach(function (f, i) {
       // 行为披露:动图会丢动画、非常规格式会改输出类型,必须写在卡片上,不能静默
       var extraNote = '';
+      // 降级必须自曝:压缩程序没取到时是浏览器内置编码在干活,效果不如真实编码器,不能装作一样
+      if (f.real === false) extraNote += '<div class="sizes" style="color:#a1500a">这次用的是浏览器内置编码，不是我们的真实编码器（压缩程序没加载成功，多半是断网且本机还没存过它）。压缩效果会差一些；联网后重开这个工具再处理一次就能用上真实编码器。</div>';
       if (f.animated) extraNote += '<div class="sizes" style="color:#a1500a">这是动图（' + f.frames + ' 帧），压缩只保留第一帧，动画不会保留。</div>';
       else if (f.retyped && f.status === 'ok') extraNote += '<div class="sizes" style="color:#6e6e73">原格式不能直接压缩，已输出为 PNG。</div>';
       if (f.status === 'ok') {
@@ -283,8 +285,12 @@ export function mount(root, H) {
           + '<div class="sizes" style="color:#a1500a">' + why + '（原图 ' + H.fmt(f.origSize) + '，目标 ' + H.fmt(f.target) + '，已保留原图）</div>' + extraNote + '</div>'
           + '<span class="status-tag">未达标</span><button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';
       } else if (f.status === 'skip') {
+        // 用内置编码得出的"压不动"不能等同于"已经最小" —— 真实编码器的结论可能完全不同
+        var skipWhy = f.real === false
+          ? '这次用浏览器内置编码没能压得更小（原图 ' + H.fmt(f.origSize) + '）。这不代表它真的压不动——真实压缩程序没加载成功，联网后重开这个工具再试一次。你的原图没有被改动。'
+          : '已是最小，无需压缩（原图 ' + H.fmt(f.origSize) + '）。没有新文件可下载，你的原图没有被改动。';
         html += '<div class="result-card"><div class="info"><div class="name">' + H.esc(f.name) + '</div>'
-          + '<div class="sizes">已是最小，无需压缩（原图 ' + H.fmt(f.origSize) + '）。没有新文件可下载，你的原图没有被改动。</div>' + extraNote + '</div>'
+          + '<div class="sizes">' + skipWhy + '</div>' + extraNote + '</div>'
           + '<span class="status-tag">未缩小</span><button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';
       } else if (f.status === 'noenc') {
         html += '<div class="result-card result-fail"><div class="info"><div class="name">' + H.esc(f.name) + '</div>'
@@ -330,6 +336,8 @@ export function mount(root, H) {
       }
       if (fail.length) parts.push('失败 ' + fail.length + ' 张');
       if (noenc.length) parts.push('压缩程序未加载 ' + noenc.length + ' 张');
+      var softCount = items.filter(function (f) { return f.real === false && (f.status === 'ok' || f.status === 'skip'); }).length;
+      if (softCount) parts.push('用内置编码 ' + softCount + ' 张');
       if (savedTotal > 0) parts.push('共节省 <strong>' + H.fmt(savedTotal) + '</strong>');
       var loads = encLoadsNow() - loadsFrom;
       var proof = (H.netLine ? H.netLine(netFrom) : '本次处理:上传 0 个文件');

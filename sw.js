@@ -11,7 +11,7 @@
 //      断网时用户看到的是"工具打不开",而不是一个可用的降级页面;
 //   3) 工具页要能离线**处理文件**,除 HTML 与工具模块外还需要 /shared/encoders.js、
 //      encoder-worker.js、encoder-core.js 与 /vendor/encoders/* —— 这些在"第一次成功处理"时才进缓存。
-const CACHE = 'gongjuhe-v13';
+const CACHE = 'gongjuhe-v14';
 // /offline.html 是"断网打开一个确实没缓存过的地址"时的兜底说明页
 const OFFLINE_PAGE = '/offline.html';
 // 首次访问就把**所有工具页的 HTML** 预缓存(20 页,合计约 60KB)。
