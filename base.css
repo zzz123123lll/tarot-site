@@ -31,10 +31,16 @@
   --c-muted: #6e6e73;
   --c-band: #f5f5f7;
   --c-hairline: rgba(0, 0, 0, 0.08);
-  --c-accent: #0071e3;
-  --c-ok: #147a3a;
-  --c-warn: #a1500a;
-  --c-err: #d70015;
+  --c-accent: #0071e3;          /* 实心按钮/焦点底:白字 4.70(苹果实测 rgb(0,113,227)) */
+  --c-accent-hover: #0076df;    /* 苹果实测 hover */
+  --c-accent-active: #006edb;   /* 苹果实测 active */
+  --c-accent-text: #0066cc;     /* 浅底文字链接:5.57(实测 #0066CC)。比 #0071e3 的 4.70 更适合当正文级链接色 */
+  --c-surface-2: #fafafc;       /* 苹果实测的极浅面(hero 底色) */
+  --c-fill: #e8e8ed;            /* 苹果实测的浅填充(进度条轨道) */
+  --c-line-strong: #d2d2d7;     /* 苹果实测的强描边灰 */
+  --c-ok: #008009;              /* 5.13(苹果实测语义绿,替换原先 5.0 的 #147a3a) */
+  --c-warn: #bf4800;            /* 5.07 */
+  --c-err: #e30000;             /* 4.92 */
   --hairline: 1px solid var(--c-hairline);
   /* —— 高度(阴影)阶梯:灵感来自 Vercel 的 DESIGN.md(awesome-design-md 收录)——
      它整套 elevation 都是"多个小偏移叠加 + 一圈内描边",而不是一坨 8px 模糊的大投影。

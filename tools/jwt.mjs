@@ -5,7 +5,7 @@ export function mount(root, H) {
     '<p class="tool-sub">解码 header/payload、检查过期。仅本地解析，不验证签名。</p>' +
     '<div class="tool-field"><label>JWT</label><textarea id="jwt" class="tool-textarea mono" placeholder="粘贴 JWT…" style="min-height:100px"></textarea></div>' +
     '<div class="tool-row" style="margin-bottom:12px"><button class="tool-btn" id="go">解码</button><button class="tool-btn tool-btn--ghost" id="cp" disabled>复制 payload</button></div>' +
-    '<p class="err-box" id="err" style="display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(215,0,21,.06);color:#d70015;font-size:14px"></p>' +
+    '<p class="err-box" id="err" style="display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(227,0,0,.06);color:var(--c-err);font-size:14px"></p>' +
     '<div id="out"></div>';
 
   function b64url(s) {
@@ -37,7 +37,7 @@ export function mount(root, H) {
       if (payload.exp) {
         var now = Math.floor(Date.now() / 1000);
         var left = payload.exp - now;
-        if (left < 0) html += '<p class="tool-sub" style="margin-top:4px;color:#d70015">已过期 ' + Math.abs(left) + ' 秒</p>';
+        if (left < 0) html += '<p class="tool-sub" style="margin-top:4px;color:var(--c-err)">已过期 ' + Math.abs(left) + ' 秒</p>';
         else html += '<p class="tool-sub" style="margin-top:4px;color:var(--c-ok)">剩余 ' + left + ' 秒（' + new Date(payload.exp * 1000).toString() + ' 过期）</p>';
       }
       html += '<p class="tool-sub" style="margin-top:10px">本页只做本地解码，不验证签名，也不上传任何数据。</p>';

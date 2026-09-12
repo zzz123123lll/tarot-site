@@ -51,7 +51,8 @@ body {
   background: var(--t-accent); color: #fff; font-size: var(--t-fs-small); font-weight: 500;
   font-family: inherit; letter-spacing: inherit; cursor: pointer; transition: background .16s, border-color .16s, transform .16s;
 }
-.tool-btn:hover { background: #0077ed; border-color: #0077ed; transform: translateY(-1px); }
+.tool-btn:hover { background: var(--c-accent-hover, #0076df); border-color: var(--c-accent-hover, #0076df); transform: translateY(-1px); }
+.tool-btn:active { background: var(--c-accent-active, #006edb); border-color: var(--c-accent-active, #006edb); }
 .tool-btn--ghost { background: transparent; color: var(--t-accent); border: 1px solid var(--t-line-strong); }
 .tool-btn--ghost:hover { background: rgba(0,113,227,0.06); transform: none; }
 .tool-btn:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -93,7 +94,7 @@ body {
 .tool-output { font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: var(--t-fs-small); line-height: var(--lh-small); background:#f5f5f7; border-radius:var(--r-sm); padding:14px; min-height:60px; white-space:pre-wrap; word-break:break-all; color:var(--t-text); margin-top:6px; }
 .swatch { width:100%; height:64px; border-radius: var(--r-3); border:1px solid var(--t-line-strong); margin:10px 0; }
 .mono { font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-.err-text { color:#d70015; font-size: var(--t-fs-small); margin-top:8px; display:none; }
+.err-text { color:var(--c-err); font-size: var(--t-fs-small); margin-top:8px; display:none; }
 /* —— Tippy 提示（苹果式深色小气泡）—— */
 .tippy-box[data-theme~='tool'] { background:#1d1d1f; color:#fff; font-size:12px; font-weight:500; border-radius: var(--r-2); box-shadow:0 6px 20px rgba(0,0,0,0.16); }
 .tippy-box[data-theme~='tool'] .tippy-content { padding:4px 9px; line-height: var(--lh-caption); }
@@ -102,7 +103,7 @@ body {
 .tippy-box[data-theme~='tool'][data-placement^='left'] > .tippy-arrow::before { border-left-color:#1d1d1f; }
 .tippy-box[data-theme~='tool'][data-placement^='right'] > .tippy-arrow::before { border-right-color:#1d1d1f; }
 /* —— 拖入文件格式不支持时的提示 —— */
-.tool-warn { margin: 10px 0 0; font-size: var(--t-fs-small); line-height: var(--lh-small); color: #a1500a; background: rgba(200,106,30,0.08); border: 1px solid rgba(200,106,30,0.22); border-radius: var(--r-3); padding: 9px 12px; }
+.tool-warn { margin: 10px 0 0; font-size: var(--t-fs-small); line-height: var(--lh-small); color: var(--c-warn); background: rgba(191,72,0,0.08); border: 1px solid rgba(191,72,0,0.22); border-radius: var(--r-3); padding: 9px 12px; }
 .tool-warn:empty { display: none; }
 /* —— 分段控件不要拉满整行:控件拉太宽会显得空,也让人看不出是一组选项 —— */
 .tool-container .preset-tabs { max-width: 480px; }
@@ -123,7 +124,8 @@ body {
 .tool-foot { max-width: 860px; margin: 48px auto 0; padding: 24px 24px 56px; border-top: 1px solid var(--t-line); }
 .tool-foot-line { margin: 0 0 10px; font-size: var(--t-fs-small); line-height: var(--lh-small); color: #6e6e73; }
 .tool-foot-links { display: flex; flex-wrap: wrap; gap: 10px 24px; font-size: var(--t-fs-small); line-height: var(--lh-small); }
-.tool-foot-links a { color: var(--t-accent); text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; padding: 10px 0; }
+/* 文字链接用 #0066CC(5.57),实心按钮才用 #0071E3(白字 4.70) */
+.tool-foot-links a { color: var(--c-accent-text, #0066cc); text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; padding: 10px 0; }
 .tool-foot-links a:hover { text-decoration: underline; }
 /* —— 公共控件:分段选择器(所有工具共用,原先各模块重复注入 5 份) —— */
 .mode-tabs { display:inline-flex; background:#f5f5f7; border-radius: var(--r-3); padding:3px; margin-bottom:16px; }
@@ -131,7 +133,7 @@ body {
 .mode-tabs button.active { background:#fff; color:#1d1d1f; box-shadow:0 1px 3px rgba(0,0,0,.12); }
 /* 焦点环由 base.css 统一提供 */
 /* —— 公共控件:错误提示条 —— */
-.err-box { display:none; margin:10px 0 0; padding:10px 14px; border-radius: var(--r-4); background:rgba(215,0,21,.06); color:#d70015; font-size: var(--t-fs-small); }
+.err-box { display:none; margin:10px 0 0; padding:10px 14px; border-radius: var(--r-4); background:rgba(227,0,0,.06); color:var(--c-err); font-size: var(--t-fs-small); }
 /* —— 公共控件:拖拽区图标尺寸(原先只在部分模块注入,导致个别页面图标被撑到 668px) —— */
 .tool-drop .icon svg { width:40px; height:40px; color:var(--t-accent); }
 /* —— 对比度修正:小字灰原先 3.62:1(不达 AA),统一提到 5.07:1 —— */
@@ -144,7 +146,7 @@ body {
 
 /* —— 文件行 / 结果卡(共享组件) ——
    原先 pdf-merge / pdf-split / images-to-pdf / image-convert / img-compress 各 injectCss 抄一份,
-   颜色(#86868b 与 #6e6e73 混用)、圆角(4/6/0)、字号(15px 游离值)全不一样。
+   颜色(var(--c-muted) 与 #6e6e73 混用)、圆角(4/6/0)、字号(15px 游离值)全不一样。
    这里统一一份:颜色用 --t-muted,移除/排序/下载都到 44px 触控目标。 */
 .file-list { margin-top: 16px; }
 .file-row { display: flex; align-items: center; gap: 8px; font-size: var(--t-fs-small); line-height: var(--lh-small); color: var(--t-text); padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,.06); }
@@ -174,11 +176,11 @@ body {
 .result-card .sizes .new { color: var(--c-ok); font-weight: 600; }
 .result-card.result-fail .name { color: var(--c-err); }
 .status-tag { font-size: var(--t-fs-caption); line-height: var(--lh-caption); color: var(--t-muted); background: var(--t-surface); border-radius: var(--r-pill); padding: 3px 9px; white-space: nowrap; }
-.result-card.result-fail .status-tag { color: var(--c-err); background: rgba(215,0,21,.08); }
+.result-card.result-fail .status-tag { color: var(--c-err); background: rgba(227,0,0,.08); }
 .saved-badge { display: inline-block; font-size: var(--t-fs-caption); line-height: var(--lh-caption); border-radius: var(--r-pill); padding: 2px 8px; margin-left: 8px; color: var(--c-ok); background: rgba(20,122,58,.10); }
-.saved-badge--bad { color: var(--c-warn); background: rgba(200,106,30,.12); }
+.saved-badge--bad { color: var(--c-warn); background: rgba(191,72,0,.12); }
 .download-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 64px; background: var(--t-accent); color: #fff; border: none; border-radius: var(--r-pill); padding: 8px 18px; font-size: var(--t-fs-small); line-height: var(--lh-small); font-family: inherit; cursor: pointer; white-space: nowrap; }
-.download-btn:hover { background: #0077ed; }
+.download-btn:hover { background: var(--c-accent-hover, #0076df); }
 .summary { margin-top: 20px; background: var(--t-surface); border-radius: var(--t-r); padding: 16px 18px; }
 .summary .total, .summary .note { font-size: var(--t-fs-small); line-height: var(--lh-small); }
 .summary .total { color: var(--t-text); }

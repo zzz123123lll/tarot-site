@@ -8,7 +8,7 @@ export function mount(root, H) {
     '<div class="tool-row" style="margin-bottom:12px"><button class="tool-btn" id="go">计算</button><button class="tool-btn tool-btn--ghost" id="cp" disabled>复制</button></div>' +
     '<div class="tool-output mono" id="out" style="min-height:30px;word-break:break-all"></div>' +
     '<div class="tool-drop" id="dz" style="margin-top:20px"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"/><path d="M14 3v4h4"/></svg></div><div class="title">或拖入文件计算哈希（不大于 500MB）</div></div>' +
-    '<p class="err-box" id="err" style="display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(215,0,21,.06);color:#d70015;font-size:14px"></p>';
+    '<p class="err-box" id="err" style="display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(227,0,0,.06);color:var(--c-err);font-size:14px"></p>';
 
   var algo = 'SHA-256', out = root.querySelector('#out'), err = root.querySelector('#err');
   root.querySelector('#algo').addEventListener('click', function (e) {

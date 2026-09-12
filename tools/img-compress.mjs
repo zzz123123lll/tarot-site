@@ -1,6 +1,6 @@
 // tools/img-compress.mjs — 图片批量瘦身（三档预设 + 没压更小就跳过）
 export function mount(root, H) {
-  H.injectCss(".preset-tabs{display:flex;gap:0;background:#f5f5f7;border-radius:12px;padding:3px;margin-bottom:6px}.preset-tab{flex:1;padding:9px 0;border:none;border-radius:9px;background:transparent;color:#6e6e73;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .15s}.preset-tab.active{background:#fff;color:#1d1d1f;box-shadow:0 1px 3px rgba(0,0,0,.12)}.preset-hint{font-size:14px;color:#86868b;margin:0 0 22px}.result-card.result-fail .name{color:#d70015}.result-card.result-fail .tool-drop .icon svg{width:40px;height:40px;color:#0071e3}.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);align-items:center;justify-content:center;z-index:100}.modal.show{display:flex}.modal img{max-width:90%;max-height:90%;border-radius:12px}.modal .close{line-height:1;position:absolute;top:20px;right:24px;color:#fff;font-size:28px;cursor:pointer}");
+  H.injectCss(".preset-tabs{display:flex;gap:0;background:#f5f5f7;border-radius:12px;padding:3px;margin-bottom:6px}.preset-tab{flex:1;padding:9px 0;border:none;border-radius:9px;background:transparent;color:#6e6e73;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .15s}.preset-tab.active{background:#fff;color:#1d1d1f;box-shadow:0 1px 3px rgba(0,0,0,.12)}.preset-hint{font-size:14px;color:var(--c-muted);margin:0 0 22px}.result-card.result-fail .name{color:var(--c-err)}.result-card.result-fail .tool-drop .icon svg{width:40px;height:40px;color:#0071e3}.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);align-items:center;justify-content:center;z-index:100}.modal.show{display:flex}.modal img{max-width:90%;max-height:90%;border-radius:12px}.modal .close{line-height:1;position:absolute;top:20px;right:24px;color:#fff;font-size:28px;cursor:pointer}");
 
   var icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="M3 17l5-5 3.5 3.5L16 11l5 5"/></svg>';
 
@@ -250,8 +250,8 @@ export function mount(root, H) {
       // 行为披露:动图会丢动画、非常规格式会改输出类型,必须写在卡片上,不能静默
       var extraNote = '';
       // 降级必须自曝:压缩程序没取到时是浏览器内置编码在干活,效果不如真实编码器,不能装作一样
-      if (f.real === false) extraNote += '<div class="sizes" style="color:#a1500a">这次用的是浏览器内置编码，不是我们的真实编码器（压缩程序没加载成功，多半是断网且本机还没存过它）。压缩效果会差一些；联网后重开这个工具再处理一次就能用上真实编码器。</div>';
-      if (f.animated) extraNote += '<div class="sizes" style="color:#a1500a">这是动图（' + f.frames + ' 帧），压缩只保留第一帧，动画不会保留。</div>';
+      if (f.real === false) extraNote += '<div class="sizes" style="color:var(--c-warn)">这次用的是浏览器内置编码，不是我们的真实编码器（压缩程序没加载成功，多半是断网且本机还没存过它）。压缩效果会差一些；联网后重开这个工具再处理一次就能用上真实编码器。</div>';
+      if (f.animated) extraNote += '<div class="sizes" style="color:var(--c-warn)">这是动图（' + f.frames + ' 帧），压缩只保留第一帧，动画不会保留。</div>';
       else if (f.retyped && f.status === 'ok') extraNote += '<div class="sizes" style="color:#6e6e73">原格式不能直接压缩，已输出为 PNG。</div>';
       if (f.status === 'ok') {
         var pct = f.origSize > 0 ? Math.round(f.saved / f.origSize * 100) : 0;
@@ -261,8 +261,8 @@ export function mount(root, H) {
         var note = '';
         if (f.target && !f.met) {
           note = f.reason === 'png-lossless'
-            ? '<div class="sizes" style="color:#a1500a">PNG 是无损格式，压不到更小。建议用「图片转换」输出成 JPG 或 WebP 再试。</div>'
-            : '<div class="sizes" style="color:#a1500a">这已是该格式能压到的较小体积（' + H.fmt(f.outSize) + '），仍超过目标 ' + H.fmt(f.target) + '。建议改用 JPG / WebP，或先缩小尺寸。</div>';
+            ? '<div class="sizes" style="color:var(--c-warn)">PNG 是无损格式，压不到更小。建议用「图片转换」输出成 JPG 或 WebP 再试。</div>'
+            : '<div class="sizes" style="color:var(--c-warn)">这已是该格式能压到的较小体积（' + H.fmt(f.outSize) + '），仍超过目标 ' + H.fmt(f.target) + '。建议改用 JPG / WebP，或先缩小尺寸。</div>';
         }
         html += '<div class="result-card">'
           + '<img class="preview" src="' + urlFor(f.blob) + '" alt="" onclick="void 0">'
@@ -282,7 +282,7 @@ export function mount(root, H) {
           ? '已经试到最低画质，还是不会比原图更小，所以没有生成新文件。建议改用 JPG / WebP，或者先把尺寸改小。'
           : '这个格式在当前浏览器里没法编码，没有生成新文件。建议改用 JPG / PNG / WebP。';
         html += '<div class="result-card"><div class="info"><div class="name">' + H.esc(f.name) + '<span class="saved-badge saved-badge--bad">未达标</span></div>'
-          + '<div class="sizes" style="color:#a1500a">' + why + '（原图 ' + H.fmt(f.origSize) + '，目标 ' + H.fmt(f.target) + '，已保留原图）</div>' + extraNote + '</div>'
+          + '<div class="sizes" style="color:var(--c-warn)">' + why + '（原图 ' + H.fmt(f.origSize) + '，目标 ' + H.fmt(f.target) + '，已保留原图）</div>' + extraNote + '</div>'
           + '<span class="status-tag">未达标</span><button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';
       } else if (f.status === 'skip') {
         // 用内置编码得出的"压不动"不能等同于"已经最小" —— 真实编码器的结论可能完全不同

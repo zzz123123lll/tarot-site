@@ -1,6 +1,6 @@
 // tools/regex.mjs — 正则测试（匹配高亮/替换预览，Worker 防 ReDoS）
 export function mount(root, H) {
-  H.injectCss(".hl mark{background:rgba(0,113,227,.15);color:#1d1d1f;border-radius:2px;padding:0 1px}.cheat{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}.cheat button{font-size:14px;color:#6e6e73;background:#f5f5f7;border:1px solid rgba(0,0,0,.06);border-radius:999px;padding:4px 10px;cursor:pointer;font-family:inherit}.cheat button:hover{color:#0071e3}.err-box{display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(215,0,21,.06);color:#d70015;font-size:14px}");
+  H.injectCss(".hl mark{background:rgba(0,113,227,.15);color:#1d1d1f;border-radius:2px;padding:0 1px}.cheat{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}.cheat button{font-size:14px;color:#6e6e73;background:#f5f5f7;border:1px solid rgba(0,0,0,.06);border-radius:999px;padding:4px 10px;cursor:pointer;font-family:inherit}.cheat button:hover{color:#0071e3}.err-box{display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(227,0,0,.06);color:var(--c-err);font-size:14px}");
 
   root.innerHTML =
     '<h1 class="tool-h1">正则测试</h1>' +

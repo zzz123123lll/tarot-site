@@ -1,6 +1,6 @@
 // tools/json.mjs — JSON 工具（美化/压缩/树形视图/校验定位）
 export function mount(root, H) {
-  H.injectCss(".jtree{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;line-height:1.47;color:#1d1d1f}.jtree ul{list-style:none;margin:0;padding-left:18px;border-left:1px solid rgba(0,0,0,.08)}.jtree summary{cursor:pointer;user-select:none;color:#6e6e73}.jtree summary:hover{color:#1d1d1f}.jtree .jk{color:#b25000}.jtree .js{color:var(--c-ok)}.jtree .jn{color:#0071e3}.jtree .jp{color:#6e6e73}.err-box{display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(215,0,21,.06);color:#d70015;font-size:14px}");
+  H.injectCss(".jtree{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;line-height:1.47;color:#1d1d1f}.jtree ul{list-style:none;margin:0;padding-left:18px;border-left:1px solid rgba(0,0,0,.08)}.jtree summary{cursor:pointer;user-select:none;color:#6e6e73}.jtree summary:hover{color:#1d1d1f}.jtree .jk{color:#b25000}.jtree .js{color:var(--c-ok)}.jtree .jn{color:#0071e3}.jtree .jp{color:#6e6e73}.err-box{display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(227,0,0,.06);color:var(--c-err);font-size:14px}");
 
   root.innerHTML =
     '<h1 class="tool-h1">JSON 格式化</h1>' +

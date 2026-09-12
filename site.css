@@ -38,13 +38,13 @@ body.page-home .nav-links a:hover { opacity:1; color:var(--c-accent); }
 body.page-home .home { flex:1 0 auto; width:100%; }
 
 /* ① hero */
-body.page-home .hero { background:#fbfbfd; border-bottom:1px solid var(--c-hairline); padding:88px 0 0; overflow:hidden; }
+body.page-home .hero { background:var(--c-surface-2); border-bottom:1px solid var(--c-hairline); padding:88px 0 0; overflow:hidden; }
 body.page-home .hero-inner { max-width:var(--home-max); margin:0 auto; padding:0 var(--sp-5); }
 body.page-home .hero-kicker { display:inline-flex; align-items:center; gap:7px; font-size:var(--fs-caption); font-weight:500; color:var(--c-accent); background:rgba(0,113,227,0.07); border:1px solid rgba(0,113,227,0.16); border-radius:999px; padding:5px 14px; margin:0 0 var(--sp-3); }
 body.page-home .hero-title { font-size:clamp(40px,5.4vw,72px); font-weight:600; letter-spacing:0; line-height:1.06; margin:0 0 var(--sp-3); color:var(--c-text); max-width:20ch; }
 body.page-home .hero-sub { font-size:var(--fs-h3); line-height:1.4; letter-spacing:0; color:var(--c-muted); margin:0; max-width:640px; }
 body.page-home .search-wrap { position:relative; max-width:592px; margin:var(--sp-4) 0 0; }
-body.page-home .search-icon { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:#86868b; pointer-events:none; line-height:0; }
+body.page-home .search-icon { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--c-muted); pointer-events:none; line-height:0; }
 body.page-home .search-icon svg { width:16px; height:16px; display:block; }
 body.page-home .search { width:100%; height:48px; padding:0 18px 0 44px; border-radius:var(--r-sm); border:1px solid var(--c-hairline); background:#fff; font-size:var(--fs-body); letter-spacing:0; font-family:inherit; color:var(--c-text); outline:none; -webkit-appearance:none; }
 body.page-home .search:focus { border-color:var(--c-accent); box-shadow:0 0 0 3px rgba(0,113,227,0.15); }
@@ -157,16 +157,6 @@ body.page-home .hero-shot { animation-delay:.18s; }
 body.page-home {
   --ease-out: cubic-bezier(.22,1,.36,1);
   --ease-in-out: cubic-bezier(.4,0,.2,1);
-  --a-image: #0b7f6e;   /* 图片工具 */
-  --a-pdf: #b2500a;     /* PDF 工具 */
-  --a-util: #5b4bd6;    /* 文本小工具 */
-  --a-id: #0a66c2;      /* 证件照 */
-  --a-tarot: #8a6a2f;   /* 塔罗 */
-  --a-image-tint: rgba(11,127,110,.10); --a-image-line: rgba(11,127,110,.22); --a-image-glow: rgba(11,127,110,.30);
-  --a-pdf-tint: rgba(178,80,10,.10);    --a-pdf-line: rgba(178,80,10,.22);    --a-pdf-glow: rgba(178,80,10,.28);
-  --a-util-tint: rgba(91,75,214,.10);   --a-util-line: rgba(91,75,214,.22);   --a-util-glow: rgba(91,75,214,.28);
-  --a-id-tint: rgba(10,102,194,.10);    --a-id-line: rgba(10,102,194,.22);    --a-id-glow: rgba(10,102,194,.28);
-  --a-tarot-tint: rgba(138,106,47,.12); --a-tarot-line: rgba(138,106,47,.24);
 }
 
 /* —— hero 柔光洗色:三团低饱和的大半径径向渐变,呼吸式极慢变化(不做流动/闪烁)—— */
@@ -211,12 +201,6 @@ body.page-home .site-nav { transition: background .24s cubic-bezier(.4,0,.6,1), 
 body.page-home .site-nav.is-scrolled { background: rgba(251,251,253,.94); box-shadow: 0 1px 0 rgba(0,0,0,.05), 0 10px 30px -22px rgba(0,0,0,.30); }
 
 /* —— 三件事:每行一个强调色(点、链接、图片柔光)—— */
-body.page-home .feature-row--id { --acc: var(--a-id); --acc-tint: var(--a-id-tint); --acc-line: var(--a-id-line); --acc-glow: var(--a-id-glow); }
-body.page-home .feature-row--invoice { --acc: var(--a-pdf); --acc-tint: var(--a-pdf-tint); --acc-line: var(--a-pdf-line); --acc-glow: var(--a-pdf-glow); }
-body.page-home .feature-row--util { --acc: var(--a-util); --acc-tint: var(--a-util-tint); --acc-line: var(--a-util-line); --acc-glow: var(--a-util-glow); }
-body.page-home .feature-list li::before { background: var(--acc, var(--c-accent)); }
-body.page-home .feature-link { color: var(--acc, var(--c-accent)); }
-body.page-home .feature-title::after {
   content: ""; display: block; width: 34px; height: 3px; border-radius: 999px; margin: 14px 0 0;
   background: var(--acc, var(--c-accent)); opacity: .85;
 }
@@ -236,14 +220,8 @@ body.page-home .group-title::before {
   content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 999px; margin-right: 8px; vertical-align: 2px;
   background: var(--g-acc, var(--c-accent));
 }
-body.page-home .group--divination { --g-acc: var(--a-tarot); --g-tint: var(--a-tarot-tint); --g-line: var(--a-tarot-line); }
-body.page-home .group--image { --g-acc: var(--a-image); --g-tint: var(--a-image-tint); --g-line: var(--a-image-line); }
-body.page-home .group--pdf { --g-acc: var(--a-pdf); --g-tint: var(--a-pdf-tint); --g-line: var(--a-pdf-line); }
-body.page-home .group--utility { --g-acc: var(--a-util); --g-tint: var(--a-util-tint); --g-line: var(--a-util-line); }
-body.page-home .group .app-icon { background: var(--g-tint, var(--c-band)); color: var(--g-acc, #1d1d1f); }
 body.page-home .group .app { border-color: rgba(0,0,0,.07); }
 body.page-home .group a.app:hover { border-color: var(--g-line, rgba(0,0,0,.14)); box-shadow: 0 16px 32px -16px var(--g-glow, rgba(0,0,0,.20)); }
-body.page-home .group a.app:hover .app-icon { background: var(--g-tint, rgba(0,113,227,.08)); }
 body.page-home .group .app-icon svg { transition: transform .28s var(--ease-out); }
 body.page-home .group a.app:hover .app-icon svg { transform: scale(1.08) rotate(-2deg); }
 
@@ -277,3 +255,45 @@ body.page-home .feature { overflow: hidden; }
 
 /* 按压:Apple 全站统一 scale(.95)(airpods.css 的 play/pause 按钮等多处实测);卡片大,用更轻的 .985。 */
 body.page-home a.app:active, body.page-home .tool-more-card:active { transform: translateY(0) scale(.985); transition-duration: .1s; }
+
+/* ===== 配色校准(苹果实测值;调研见 工具盒-内部\内部文档\配色方案-苹果实测.md)=====
+   原则:anchor 只做图标/色点/描边,浅底上的文字与图标一律用更深的 -ink 变体;
+   tint 用 6 / 10 / 16 三档(默认 6%,悬停 10%,选中 16%),不再只用一个 10%。 */
+body.page-home {
+  --a-image: #0071E3; --a-image-ink: #0060C1; --a-image-tint: rgba(0,113,227,.06); --a-image-tint-2: rgba(0,113,227,.10); --a-image-tint-3: rgba(0,113,227,.16); --a-image-line: rgba(0,113,227,.22); --a-image-glow: rgba(0,113,227,.26);
+  --a-pdf: #F2416B; --a-pdf-ink: #B53050; --a-pdf-tint: rgba(242,65,107,.06); --a-pdf-tint-2: rgba(242,65,107,.10); --a-pdf-tint-3: rgba(242,65,107,.16); --a-pdf-line: rgba(242,65,107,.22); --a-pdf-glow: rgba(242,65,107,.24);
+  --a-util: #8AA169; --a-util-ink: #5E6D47; --a-util-tint: rgba(138,161,105,.06); --a-util-tint-2: rgba(138,161,105,.10); --a-util-tint-3: rgba(138,161,105,.16); --a-util-line: rgba(138,161,105,.24); --a-util-glow: rgba(138,161,105,.26);
+  --a-id: #6467E6; --a-id-ink: #5457C2; --a-id-tint: rgba(100,103,230,.06); --a-id-tint-2: rgba(100,103,230,.10); --a-id-tint-3: rgba(100,103,230,.16); --a-id-line: rgba(100,103,230,.22); --a-id-glow: rgba(100,103,230,.26);
+  --a-tarot: #B6975A; --a-tarot-ink: #7A653C; --a-tarot-tint: rgba(182,151,90,.06); --a-tarot-tint-2: rgba(182,151,90,.10); --a-tarot-tint-3: rgba(182,151,90,.16); --a-tarot-line: rgba(182,151,90,.24);
+}
+/* 分组标题与图标:色点/图标用 -ink 色,底色用 6% tint,悬停升到 10% */
+body.page-home .group-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+body.page-home .group-title::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 999px; margin-right: 8px; vertical-align: 2px; background: var(--g-ink, var(--c-accent)); }
+body.page-home .group .app-icon { background: var(--g-tint, var(--c-band)); color: var(--g-ink, #1d1d1f); }
+body.page-home .group a.app:hover .app-icon { background: var(--g-tint-2, rgba(0,113,227,.08)); color: var(--g-ink, #1d1d1f); }
+body.page-home .group a.app:hover { border-color: var(--g-line, rgba(0,0,0,.14)); }
+/* 三件事:文字/圆点/强调线用 -ink,anchor 只出现在图片柔光里 */
+body.page-home .feature-list li::before { background: var(--acc-ink, var(--c-accent)); }
+body.page-home .feature-title::after { content: ""; display: block; width: 34px; height: 3px; border-radius: 999px; margin: 14px 0 0; background: var(--acc-ink, var(--c-accent)); opacity: .9; }
+/* 分区修饰符:把 --g-* / --acc-* 绑到各自的实测色 */
+body.page-home .group--divination { --g-ink: var(--a-tarot-ink); --g-tint: var(--a-tarot-tint); --g-tint-2: var(--a-tarot-tint-2); --g-line: var(--a-tarot-line); }
+body.page-home .group--image { --g-ink: var(--a-image-ink); --g-tint: var(--a-image-tint); --g-tint-2: var(--a-image-tint-2); --g-line: var(--a-image-line); --g-glow: var(--a-image-glow); }
+body.page-home .group--pdf { --g-ink: var(--a-pdf-ink); --g-tint: var(--a-pdf-tint); --g-tint-2: var(--a-pdf-tint-2); --g-line: var(--a-pdf-line); --g-glow: var(--a-pdf-glow); }
+body.page-home .group--utility { --g-ink: var(--a-util-ink); --g-tint: var(--a-util-tint); --g-tint-2: var(--a-util-tint-2); --g-line: var(--a-util-line); --g-glow: var(--a-util-glow); }
+body.page-home .feature-row--id { --acc: var(--a-id); --acc-ink: var(--a-id-ink); --acc-tint: var(--a-id-tint); --acc-line: var(--a-id-line); --acc-glow: var(--a-id-glow); }
+body.page-home .feature-row--invoice { --acc: var(--a-pdf); --acc-ink: var(--a-pdf-ink); --acc-tint: var(--a-pdf-tint); --acc-line: var(--a-pdf-line); --acc-glow: var(--a-pdf-glow); }
+body.page-home .feature-row--util { --acc: var(--a-util); --acc-ink: var(--a-util-ink); --acc-tint: var(--a-util-tint); --acc-line: var(--a-util-line); --acc-glow: var(--a-util-glow); }
+/* 文字链接用 #0066CC(5.57);实心按钮仍用 #0071E3(白字 4.70) */
+body.page-home .hero-actions a, body.page-home .foot-note a { color: var(--c-accent-text); }
+body.page-home .feature-link { color: var(--acc-ink, var(--c-accent-text)); }
+body.page-home .search:focus { border-color: var(--c-accent); box-shadow: 0 0 0 3px rgba(0,113,227,.15); }
+body.page-home .hero { background: var(--c-surface-2); }
+/* hero 洗色:苹果实测的"180deg 浅蓝→#F9F9F9→白"打底,再叠两团 5-6% 极淡色,不做大色块 */
+body.page-home .hero::before {
+  background:
+    linear-gradient(180deg, #D4EAF6 0%, #F9F9F9 75%, #FFFFFF 100%),
+    radial-gradient(52% 44% at 78% 2%, rgba(100,103,230,.06), rgba(100,103,230,0) 70%),
+    radial-gradient(46% 40% at 42% 12%, rgba(242,65,107,.05), rgba(242,65,107,0) 72%);
+  filter: blur(0);
+  opacity: .9;
+}

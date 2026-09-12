@@ -1,6 +1,6 @@
 // tools/pdf-merge.mjs — 多个 PDF 合并成一个
 export function mount(root, H) {
-  H.injectCss(".gen-bar{display:none;margin-top:18px}.note{font-size:14px;margin-top:12px;display:none}.note.ok{color:var(--c-ok)}.note.err{color:#d70015}.opt-row{display:flex;align-items:center;gap:14px;margin-bottom:20px;flex-wrap:wrap}.opt-row label{font-size:14px;color:#6e6e73;white-space:nowrap}.seg{display:inline-flex;background:#f5f5f7;border-radius:10px;padding:3px}.seg button{flex:1;padding:7px 14px;border:none;border-radius:8px;background:transparent;color:#6e6e73;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer}.seg button.active{background:#fff;color:#1d1d1f;box-shadow:0 1px 3px rgba(0,0,0,.12)}.tool-drop .icon svg{width:40px;height:40px;color:#0071e3}");
+  H.injectCss(".gen-bar{display:none;margin-top:18px}.note{font-size:14px;margin-top:12px;display:none}.note.ok{color:var(--c-ok)}.note.err{color:var(--c-err)}.opt-row{display:flex;align-items:center;gap:14px;margin-bottom:20px;flex-wrap:wrap}.opt-row label{font-size:14px;color:#6e6e73;white-space:nowrap}.seg{display:inline-flex;background:#f5f5f7;border-radius:10px;padding:3px}.seg button{flex:1;padding:7px 14px;border:none;border-radius:8px;background:transparent;color:#6e6e73;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer}.seg button.active{background:#fff;color:#1d1d1f;box-shadow:0 1px 3px rgba(0,0,0,.12)}.tool-drop .icon svg{width:40px;height:40px;color:#0071e3}");
   root.innerHTML =
     '<h1 class="tool-h1">PDF 合并</h1>' +
     '<p class="tool-sub">多个 PDF 按顺序合并成一个，纯本地处理。</p>' +

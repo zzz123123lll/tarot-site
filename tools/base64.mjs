@@ -1,6 +1,6 @@
 // tools/base64.mjs — Base64（文本 UTF-8 安全 / 文件 / base64url）
 export function mount(root, H) {
-  H.injectCss(".err-box{display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(215,0,21,.06);color:#d70015;font-size:14px}");
+  H.injectCss(".err-box{display:none;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(227,0,0,.06);color:var(--c-err);font-size:14px}");
 
   root.innerHTML =
     '<h1 class="tool-h1">Base64 编解码</h1>' +

@@ -101,7 +101,7 @@ export function mount(root, H) {
       ok.style.display = 'block';
     } catch (e) {
       ok.textContent = H.isLibFail(e) ? H.friendlyError(e) : '生成失败：' + H.friendlyError(e, '图片可能已损坏，或格式不受支持。');
-      ok.style.color = '#d70015';
+      ok.style.color = 'var(--c-err)';
       ok.style.display = 'block';
     }
     btn.disabled = false;

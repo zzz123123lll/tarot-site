@@ -11,9 +11,9 @@ export function mount(root, H) {
     + '.inv-item .n{font-size:14px;color:#6e6e73;min-width:18px}'
     + '.inv-item .nm{flex:1;font-size:14px;color:#1d1d1f;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}'
     + '.inv-item .mv,.inv-item .rm{background:none;border:none;color:#6e6e73;cursor:pointer;font-size:14px;padding:4px 8px;border-radius:6px}'
-    + '.inv-item .rm:hover{color:#d70015;background:rgba(215,0,21,.08)}'
+    + '.inv-item .rm:hover{color:var(--c-err);background:rgba(227,0,0,.08)}'
     + '.inv-hint{font-size:14px;color:#6e6e73;line-height:1.43}'
-    + '.inv-warn{font-size:14px;color:#a1500a;background:rgba(200,106,30,.08);border:1px solid rgba(200,106,30,.18);border-radius:12px;padding:12px 14px;line-height:1.43;margin-bottom:16px}'
+    + '.inv-warn{font-size:14px;color:var(--c-warn);background:rgba(191,72,0,.08);border:1px solid rgba(191,72,0,.18);border-radius:12px;padding:12px 14px;line-height:1.43;margin-bottom:16px}'
     + '.inv-out{margin-top:16px;font-size:14px;line-height:1.8}'
     + '.inv-out b{font-weight:600}'
   );

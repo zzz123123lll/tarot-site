@@ -1,6 +1,6 @@
 // tools/color.mjs — 颜色工具（HEX/RGB/HSL 双向、拾色、WCAG 对比度）
 export function mount(root, H) {
-  H.injectCss(".crow{display:flex;align-items:center;gap:8px;margin-bottom:12px}.crow label{font-size:14px;color:#6e6e73;min-width:34px}.cinput{width:64px}.swatch{width:100%;height:64px;border-radius:10px;border:1px solid rgba(0,0,0,.12);margin:8px 0 16px}.wcag-ok{color:#147a3a}.wcag-bad{color:#d70015}");
+  H.injectCss(".crow{display:flex;align-items:center;gap:8px;margin-bottom:12px}.crow label{font-size:14px;color:#6e6e73;min-width:34px}.cinput{width:64px}.swatch{width:100%;height:64px;border-radius:10px;border:1px solid rgba(0,0,0,.12);margin:8px 0 16px}.wcag-ok{color:#147a3a}.wcag-bad{color:var(--c-err)}");
 
   root.innerHTML =
     '<h1 class="tool-h1">颜色工具</h1>' +
