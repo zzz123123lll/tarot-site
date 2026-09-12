@@ -217,7 +217,7 @@ export function mount(root, H) {
           push({
             name: file.name, origSize: origSize, outSize: r.blob.size, blob: r.blob,
             status: 'ok', saved: Math.max(0, origSize - r.blob.size),
-            met: !!r.met, target: target, reason: r.reason, real: !!r.real, codec: r.codec
+            met: !!r.met, target: target, reason: r.reason, real: !!r.real, codec: r.codec, orig: file
           });
         } else if (r.met) {
           push({ name: file.name, origSize: origSize, status: 'met', target: target });
@@ -232,7 +232,7 @@ export function mount(root, H) {
       if (blob.size >= origSize) {
         push({ name: file.name, origSize: origSize, status: 'skip', real: !!res.real, codec: res.codec });
       } else {
-        push({ name: file.name, origSize: origSize, outSize: blob.size, blob: blob, status: 'ok', saved: origSize - blob.size, real: !!res.real, codec: res.codec });
+        push({ name: file.name, origSize: origSize, outSize: blob.size, blob: blob, status: 'ok', saved: origSize - blob.size, real: !!res.real, codec: res.codec, orig: file });
       }
     } catch (e) {
       push({ name: file.name, origSize: origSize, status: 'fail' });
@@ -266,11 +266,20 @@ export function mount(root, H) {
             ? '<div class="sizes" style="color:var(--c-warn)">PNG 是无损格式，压不到更小。建议用「图片转换」输出成 JPG 或 WebP 再试。</div>'
             : '<div class="sizes" style="color:var(--c-warn)">这已是该格式能压到的较小体积（' + H.fmt(f.outSize) + '），仍超过目标 ' + H.fmt(f.target) + '。建议改用 JPG / WebP，或先缩小尺寸。</div>';
         }
+        var outUrl = urlFor(f.blob);
+        // 前后对比:原图放底层,压缩结果放上层并用 clip-path 按滑块裁切;
+        // 用原生 range 是为了键盘/读屏可用(自己写拖拽手柄会丢掉这两点)。
+        var cmp = f.orig
+          ? '<div class="cmp"><img class="cmp-old" src="' + urlFor(f.orig) + '" alt="原图预览">'
+            + '<div class="cmp-new"><img src="' + outUrl + '" alt="压缩后预览"></div>'
+            + '<span class="cmp-line" aria-hidden="true"></span>'
+            + '<input class="cmp-r" type="range" min="0" max="100" value="50" step="1" aria-label="拖动对比原图与压缩后的画面"></div>'
+          : '';
         html += '<div class="result-card">'
-          + '<img class="preview" src="' + urlFor(f.blob) + '" alt="" onclick="void 0">'
+          + '<img class="preview" src="' + outUrl + '" alt="" onclick="void 0">'
           + '<div class="info"><div class="name">' + H.esc(f.name) + badge + '</div>'
           + '<div class="sizes"><span class="old">' + H.fmt(f.origSize) + '</span> → <span class="new">' + H.fmt(f.outSize) + '</span>'
-          + (f.target ? '（目标 ' + H.fmt(f.target) + '）' : '') + '</div>' + note + extraNote + '</div>'
+          + (f.target ? '（目标 ' + H.fmt(f.target) + '）' : '') + '</div>' + note + extraNote + cmp + '</div>'
           + '<button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button>'
           + '<button class="download-btn" data-i="' + i + '">下载</button></div>';
       } else if (f.status === 'met') {
@@ -310,6 +319,19 @@ export function mount(root, H) {
     res.querySelectorAll('.download-btn').forEach(function (b) {
       b.addEventListener('click', function () { downloadOne(parseInt(b.dataset.i, 10)); });
     });
+    // 对比滑块:拖动时同步裁切与分界线位置
+    res.querySelectorAll('.cmp').forEach(function (box) {
+      var r = box.querySelector('.cmp-r'), top = box.querySelector('.cmp-new'), line = box.querySelector('.cmp-line');
+      if (!r || !top || !line) return;
+      function sync() {
+        var v = parseInt(r.value, 10) || 0;
+        top.style.clipPath = 'inset(0 ' + (100 - v) + '% 0 0)';
+        line.style.left = v + '%';
+      }
+      r.addEventListener('input', sync);
+      sync();
+    });
+
     res.querySelectorAll('.remove-btn').forEach(function (b) {
       b.addEventListener('click', function () { removeOne(parseInt(b.dataset.i, 10)); });
     });

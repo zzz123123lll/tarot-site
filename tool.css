@@ -283,3 +283,15 @@ label[for], label:has(input), label:has(select), label:has(textarea) { cursor: p
 @media (prefers-reduced-motion: reduce) {
   .tool-btn::after, .download-btn::after { display: none; }
 }
+
+/* ===== 前后对比(图片压缩结果卡)=====
+   原图在下、压缩结果在上,用 clip-path 按滑块裁切;滑块用原生 range(键盘/读屏可用)。
+   参考做法:各家图片工具的前后对比;我们没有自己写拖拽手柄,因为那会丢键盘可达性。 */
+.cmp { position: relative; margin: 12px 0 0; border-radius: 12px; overflow: hidden; background: var(--c-band); border: 1px solid var(--c-line); padding-bottom: 44px; }
+.cmp .cmp-old, .cmp .cmp-new img { display: block; width: 100%; height: 260px; object-fit: contain; }
+.cmp .cmp-new { position: absolute; top: 0; left: 0; right: 0; height: 260px; }
+.cmp .cmp-line { position: absolute; top: 0; height: 260px; width: 2px; background: rgba(0,0,0,.45); transform: translateX(-1px); pointer-events: none; }
+.cmp .cmp-r { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 44px; margin: 0; accent-color: var(--c-accent); }
+@media (max-width: 735px) {
+  .cmp .cmp-old, .cmp .cmp-new img, .cmp .cmp-new, .cmp .cmp-line { height: 200px; }
+}
