@@ -45,7 +45,7 @@ export function mount(root, H) {
   var _enc = null;
   function ensureEnc() {
     if (!_enc) {
-      _enc = import('/shared/encoders.js?v=7');
+      _enc = import('/shared/encoders.js?v=8');
       _enc.then(function (m) { encMod = m; }, function () {});
     }
     return _enc;
@@ -217,7 +217,7 @@ export function mount(root, H) {
           push({
             name: file.name, origSize: origSize, outSize: r.blob.size, blob: r.blob,
             status: 'ok', saved: Math.max(0, origSize - r.blob.size),
-            met: !!r.met, target: target, reason: r.reason, real: !!r.real
+            met: !!r.met, target: target, reason: r.reason, real: !!r.real, codec: r.codec
           });
         } else if (r.met) {
           push({ name: file.name, origSize: origSize, status: 'met', target: target });
@@ -230,9 +230,9 @@ export function mount(root, H) {
       var blob = res.blob;
       if (!blob) { push({ name: file.name, origSize: origSize, status: 'fail' }); return; }
       if (blob.size >= origSize) {
-        push({ name: file.name, origSize: origSize, status: 'skip', real: !!res.real });
+        push({ name: file.name, origSize: origSize, status: 'skip', real: !!res.real, codec: res.codec });
       } else {
-        push({ name: file.name, origSize: origSize, outSize: blob.size, blob: blob, status: 'ok', saved: origSize - blob.size, real: !!res.real });
+        push({ name: file.name, origSize: origSize, outSize: blob.size, blob: blob, status: 'ok', saved: origSize - blob.size, real: !!res.real, codec: res.codec });
       }
     } catch (e) {
       push({ name: file.name, origSize: origSize, status: 'fail' });
@@ -250,7 +250,9 @@ export function mount(root, H) {
       // 行为披露:动图会丢动画、非常规格式会改输出类型,必须写在卡片上,不能静默
       var extraNote = '';
       // 降级必须自曝:压缩程序没取到时是浏览器内置编码在干活,效果不如真实编码器,不能装作一样
-      if (f.real === false) extraNote += '<div class="sizes" style="color:var(--c-warn)">这次用的是浏览器内置编码，不是我们的真实编码器（压缩程序没加载成功，多半是断网且本机还没存过它）。压缩效果会差一些；联网后重开这个工具再处理一次就能用上真实编码器。</div>';
+      // 两种降级要分开说(否则会冤枉自己的程序):codec===false 才是"程序没就绪";
+      // codec 就绪但选了内置编码,是"内置编码这张图更小",与加载失败无关。
+      if (f.codec === false) extraNote += '<div class="sizes" style="color:var(--c-warn)">这次用的是浏览器内置编码，不是我们的真实编码器（压缩程序没加载成功，多半是断网且本机还没存过它）。压缩效果会差一些；联网后重开这个工具再处理一次就能用上真实编码器。</div>';
       if (f.animated) extraNote += '<div class="sizes" style="color:var(--c-warn)">这是动图（' + f.frames + ' 帧），压缩只保留第一帧，动画不会保留。</div>';
       else if (f.retyped && f.status === 'ok') extraNote += '<div class="sizes" style="color:#6e6e73">原格式不能直接压缩，已输出为 PNG。</div>';
       if (f.status === 'ok') {
@@ -286,9 +288,10 @@ export function mount(root, H) {
           + '<span class="status-tag">未达标</span><button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';
       } else if (f.status === 'skip') {
         // 用内置编码得出的"压不动"不能等同于"已经最小" —— 真实编码器的结论可能完全不同
-        var skipWhy = f.real === false
+        // codec===false(程序没就绪)时的说法要和 codec 就绪时分开:后者是真实编码器也算过了,才能说"已是最小"
+        var skipWhy = f.codec === false
           ? '这次用浏览器内置编码没能压得更小（原图 ' + H.fmt(f.origSize) + '）。这不代表它真的压不动——真实压缩程序没加载成功，联网后重开这个工具再试一次。你的原图没有被改动。'
-          : '已是最小，无需压缩（原图 ' + H.fmt(f.origSize) + '）。没有新文件可下载，你的原图没有被改动。';
+          : '已是最小，无需压缩（原图 ' + H.fmt(f.origSize) + '）。真实编码器和浏览器内置编码都试过，没有更小的结果；你的原图没有被改动。';
         html += '<div class="result-card"><div class="info"><div class="name">' + H.esc(f.name) + '</div>'
           + '<div class="sizes">' + skipWhy + '</div>' + extraNote + '</div>'
           + '<span class="status-tag">未缩小</span><button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';

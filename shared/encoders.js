@@ -134,11 +134,11 @@ async function pngCandidates(img, mime, mode, param) {
   var out = [];
   try {
     var r = await askWorker(img.data.data.buffer, img.width, img.height, mime, mode, param);
-    if (r.buf) out.push({ blob: blobOf(r.buf, mime), real: true });
+    if (r.buf) out.push({ blob: blobOf(r.buf, mime), real: true, codec: true });
   } catch (e) { /* Worker 不可用就只比画布 */ }
   _encLoads = Math.max(_encLoads, codecLoads());
   var cb = await canvasEncode(img.canvas, mime, undefined);
-  if (cb) out.push({ blob: cb, real: false });
+  if (cb) out.push({ blob: cb, real: false, codec: false });
   return out;
 }
 
@@ -182,26 +182,28 @@ export async function encodeToTarget(file, mime, targetBytes) {
     var cands = await pngCandidates(img, mime, 'target', param);
     var best = null;
     cands.forEach(function (c) { if (c.blob && c.blob.size < origSize && (!best || c.blob.size < best.blob.size)) best = c; });
-    if (!best) return { blob: null, met: false, reason: 'png-lossless' };
-    return { blob: best.blob, met: best.blob.size <= targetBytes, real: best.real, reason: best.blob.size <= targetBytes ? 'ok' : 'png-lossless' };
+    if (!best) return { blob: null, met: false, reason: 'png-lossless', codec: cands.some(function (c) { return c.codec; }) };
+    return { blob: best.blob, met: best.blob.size <= targetBytes, real: best.real, codec: cands.some(function (c) { return c.codec; }), reason: best.blob.size <= targetBytes ? 'ok' : 'png-lossless' };
   }
 
   // 1) Worker 里的真编码器
   try {
     var r = await askWorker(img.data.data.buffer, img.width, img.height, mime, 'target', param);
     if (r.buf) warmEncoderChain(kind);
-    return { blob: blobOf(r.buf, mime), met: !!r.met, reason: r.reason, quality: r.quality };
+    return { blob: blobOf(r.buf, mime), met: !!r.met, reason: r.reason, quality: r.quality, real: true, codec: true };
   } catch (e) { /* 降级 */ }
 
   // 2) 主线程跑同一份真编码器
   try {
     var rr = await encodeTarget(reExtract(img), img.width, img.height, mime, targetBytes, origSize);
     _encLoads = Math.max(_encLoads, codecLoads());
-    if (rr.reason !== 'no-codec') return { blob: blobOf(rr.buf, mime), met: !!rr.met, reason: rr.reason, quality: rr.quality };
+    if (rr.reason !== 'no-codec') return { blob: blobOf(rr.buf, mime), met: !!rr.met, reason: rr.reason, quality: rr.quality, real: true, codec: true };
   } catch (e) { /* 降级 */ }
 
-  // 3) 画布编码
-  return canvasTarget(img, mime, targetBytes, origSize);
+  // 3) 画布编码:到这里说明真编码器没能出结果
+  var t = await canvasTarget(img, mime, targetBytes, origSize);
+  t.real = false; t.codec = false;
+  return t;
 }
 
 export async function encodeWithQuality(file, mime, qualityPercent) {
@@ -210,17 +212,22 @@ export async function encodeWithQuality(file, mime, qualityPercent) {
     var cands = await pngCandidates(img, mime, 'quality', qualityPercent);
     var best = null;
     cands.forEach(function (c) { if (c.blob && (!best || c.blob.size < best.blob.size)) best = c; });
-    return best ? { blob: best.blob, real: best.real } : { blob: null, real: false };
+    // codec = 真实编码器这次到底有没有出东西(和 real 区分开:
+    // real 说的是"被选中的这份是谁",codec 说的是"真编码器是否可用/已就绪"。
+    // 之前把两者混为一谈,导致 PNG 上画布更小、选了画布时,界面错误地说"压缩程序没加载成功"。)
+    return best
+      ? { blob: best.blob, real: best.real, codec: cands.some(function (c) { return c.codec; }) }
+      : { blob: null, real: false, codec: false };
   }
   try {
     var r = await askWorker(img.data.data.buffer, img.width, img.height, mime, 'quality', qualityPercent);
-    if (r.buf) { warmEncoderChain(pickKind(mime)); return { blob: blobOf(r.buf, mime), real: true }; }
+    if (r.buf) { warmEncoderChain(pickKind(mime)); return { blob: blobOf(r.buf, mime), real: true, codec: true }; }
   } catch (e) { /* 降级 */ }
   try {
     var rr = await encodeQuality(reExtract(img), img.width, img.height, mime, qualityPercent);
     _encLoads = Math.max(_encLoads, codecLoads());
-    if (rr.buf) return { blob: blobOf(rr.buf, mime), real: true };
+    if (rr.buf) return { blob: blobOf(rr.buf, mime), real: true, codec: true };
   } catch (e) { /* 降级 */ }
   var b = await canvasEncode(img.canvas, mime, qualityPercent / 100);
-  return { blob: b, real: false };
+  return { blob: b, real: false, codec: false };
 }

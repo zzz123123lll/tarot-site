@@ -315,7 +315,7 @@ export function mount(root, H) {
       var seed = await new Promise(function (res) { c.toBlob(function (b) { res(b); }, 'image/jpeg', 0.98); });
       var seedFile = new File([seed], 'seed.jpg', { type: 'image/jpeg' });
       var enc;
-      try { enc = await import('/shared/encoders.js?v=7'); }
+      try { enc = await import('/shared/encoders.js?v=8'); }
       catch (err) {
         // 编码器加载失败要和"照片有问题"分开说,否则是在冤枉用户的照片
         throw new Error('encoder-load-failed');
@@ -323,17 +323,19 @@ export function mount(root, H) {
       // 关键:encodeToTarget 在"原片本来就小于上限"时会返回 blob:null(它不为没必要的事重压),
       // 但用户要的是"一个能交上去的文件",所以这里必须退回用当前画布导出的那片,
       // 并如实报告它到底达标没有 —— 绝不因为"没压缩"就报告失败。
-      var bytes = null, met = false, reason = 'ok';
+      var bytes = null, met = false, reason = 'ok', codecOk = null;
       var seedBuf = await seed.arrayBuffer();
       if (cap > 0) {
         var result = await enc.encodeToTarget(seedFile, 'image/jpeg', cap);
         if (result.blob) { bytes = await result.blob.arrayBuffer(); met = true; reason = result.reason; }
         else { bytes = seedBuf; met = seed.size <= cap; reason = result.reason; }
+        codecOk = result.codec !== false; // undefined 视为"没走到编码器"(例如本来就达标),不报降级
       } else {
         var q = await enc.encodeWithQuality(seedFile, 'image/jpeg', 92);
         bytes = q.blob ? await q.blob.arrayBuffer() : seedBuf;
         met = true;
         reason = q.real ? 'ok' : 'canvas';
+        codecOk = q.codec !== false;
       }
       var finalBlob = bytes ? new Blob([setJpegDpi(bytes, dpi)], { type: 'image/jpeg' }) : null;
       var back = finalBlob ? await createImageBitmap(finalBlob) : null;
@@ -355,7 +357,11 @@ export function mount(root, H) {
             '<div class="' + (bg.ok === null ? '' : bg.ok ? 'idp-ok' : 'idp-bad') + '">底色:' + H.esc(bg.text)
               + (preset.id === 'custom' ? '' : ';该用途要求「' + H.esc(preset.bgName) + '」')
               + (bg.ok === false ? ' —— 我们不会替你换底色,请换一张底色合规的照片' : '') + '</div>' +
-            (reason === 'canvas' ? '<div class="idp-bad">这次用的是浏览器内置编码，不是我们的真实编码器（压缩程序没加载成功，多半是断网且本机还没存过它）。照片本身没问题；联网后重开这个工具再处理一次，就能用上真实编码器。</div>' : '') +
+            (reason === 'canvas'
+              ? (codecOk === false
+                ? '<div class="idp-bad">这次用的是浏览器内置编码，不是我们的真实编码器（压缩程序没加载成功，多半是断网且本机还没存过它）。照片本身没问题；联网后重开这个工具再处理一次，就能用上真实编码器。</div>'
+                : '<div class="idp-ok">照片已按规格输出。真实编码器已就绪，只是浏览器内置编码在这张照片上给出的结果更小，所以选了它。</div>')
+              : '') +
             '<div class="idp-hint" style="margin-top:6px">' + H.esc(proof) + (loads > 0 ? ' · 压缩程序已就绪' : '') + ' · <a href="/verify/">怎么自己验证</a></div>' +
             '<div class="idp-row" style="margin-top:10px"><button class="tool-btn" id="dl">下载照片</button></div>' +
           '</div>' +
