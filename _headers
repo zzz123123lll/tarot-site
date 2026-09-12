@@ -1,8 +1,17 @@
-/site.css
-  Cache-Control: public, max-age=0, must-revalidate
-
-/tarot/js/*
-  Cache-Control: public, max-age=0, must-revalidate
+/*
+  # ===== 安全响应头(全站)=====
+  # CSP 里的 sha256 都是本仓库内联脚本的真实哈希。改了内联脚本或版本号之后必须重跑:
+  #   node "工具盒-内部/构建脚本/update-csp-hash.mjs" "<仓库路径>"
+  # 一致性自检会核对哈希是否最新;过期会让页面在浏览器里报 CSP 违规、脚本不执行。
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'none'; script-src 'self' 'wasm-unsafe-eval' 'sha256-/fkJi32rMu2LAgKIcbNJQ4HJpKuIlSKa8Tb0M56K5aw=' 'sha256-0gILS4dCB+E/H7/sgaOwuWhdPVTXYKxDj8Ydl2wuqIs=' 'sha256-3t6lNSxffHpLdWlxBtp9T/c6VdRcv7cR1poxnq8fTkQ=' 'sha256-x8ALIWMDV97JnzfVv1BM0X/IiOtiYanbB2mUvRcm4ZA=' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://cloudflareinsights.com https://static.cloudflareinsights.com; media-src 'self' blob:; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+  X-Permitted-Cross-Domain-Policies: none
+  Permissions-Policy: accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), usb=(), xr-spatial-tracking=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
 
 /tarot/css/*
   Cache-Control: public, max-age=0, must-revalidate
