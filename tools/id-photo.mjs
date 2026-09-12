@@ -3,11 +3,14 @@
 // 诚实边界:不做人脸检测、不自动抠图换底色。像素/DPI/体积严格按要求输出,底色是否合规用"取样提醒"的方式告诉你。
 export function mount(root, H) {
   H.injectCss(
-    '.idp-presets{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:0 0 18px}'
-    + '.idp-preset{text-align:left;border:1px solid rgba(0,0,0,.12);background:#fff;border-radius:12px;padding:10px 12px;cursor:pointer;font-family:inherit}'
+    '.idp-presets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 20px}'
+    + '.idp-preset{display:block;text-align:left;border:1px solid rgba(0,0,0,.12);background:#fff;border-radius:14px;padding:14px 16px;min-height:96px;cursor:pointer;font-family:inherit;transition:border-color .16s,box-shadow .16s,transform .16s}'
+    + '.idp-preset:hover{transform:translateY(-1px);border-color:rgba(0,0,0,.2)}'
     + '.idp-preset.active{border-color:#0071e3;box-shadow:0 0 0 3px rgba(0,113,227,.12)}'
-    + '.idp-preset b{display:block;font-size:14px;color:#1d1d1f;font-weight:600}'
-    + '.idp-preset span{display:block;font-size:14px;color:#6e6e73;margin-top:3px;line-height:1.4}'
+    + '@media (max-width:735px){.idp-presets{grid-template-columns:repeat(2,minmax(0,1fr))}}'
+    + '.idp-preset b{display:block;font-size:15px;color:#1d1d1f;font-weight:600;line-height:1.3}'
+    + '.idp-preset .idp-preset-num{display:block;font-size:14px;color:#1d1d1f;margin-top:7px;line-height:1.4}'
+    + '.idp-preset .idp-preset-meta{display:block;font-size:14px;color:#6e6e73;margin-top:2px;line-height:1.4}'
     + '.idp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}'
     + '@media (max-width:640px){.idp-grid{grid-template-columns:1fr}}'
     + '.idp-stage{background:#f5f5f7;border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:12px;text-align:center}'
@@ -89,7 +92,9 @@ export function mount(root, H) {
   function renderPresets() {
     ps.innerHTML = PRESETS.map(function (p) {
       return '<button class="idp-preset' + (p.id === state.preset ? ' active' : '') + '" data-p="' + p.id + '">'
-        + '<b>' + H.esc(p.name) + '</b><span>' + p.w + '×' + p.h + ' px · ' + p.dpi + ' dpi · ' + H.esc(p.bgName) + (p.kb.length ? ' · ≤' + p.kb.join('/') + ' KB' : '') + '</span></button>';
+        + '<b>' + H.esc(p.name) + '</b>'
+        + '<span class="idp-preset-num">' + p.w + ' × ' + p.h + ' px · ' + p.dpi + ' dpi</span>'
+        + '<span class="idp-preset-meta">' + H.esc(p.bgName) + (p.kb.length ? ' · ≤ ' + p.kb.join(' / ') + ' KB' : '') + '</span></button>';
     }).join('');
   }
 

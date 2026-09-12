@@ -194,3 +194,32 @@ body {
   .tool-foot { padding: 20px 16px 40px; }
   .tool-drop { padding: 36px 18px; }
 }
+
+/* ===== 视觉统一(第 2 版):与新版首页同一套语言 ===== */
+/* 1) 标题区与正文之间加一根发丝线:苹果产品页的"header / body"分层,不用改任何模块的 HTML。
+   2) 圆角从 6/8px 提到 10/14px,和首页卡片(16px)同一族。
+   3) 分段控件改成"白色选中块 + 发丝线 + 极浅投影",按钮尺寸不变(44px 触控目标不动)。
+   4) 页脚新增"接着可以做什么":同分区的 3 个工具卡片(数据来自 tools-manifest.js)。 */
+.tool-container { padding: 56px 24px 88px; }
+.tool-h1 { margin: 0 0 8px; }
+.tool-sub { margin: 0 0 30px; padding-bottom: 26px; border-bottom: 1px solid var(--t-line); }
+.tool-input, .tool-select, .tool-textarea, .tool-output { border-radius: var(--r-3); }
+.tool-drop { border-radius: 14px; }
+.tool-card, .result-card, .summary { border-radius: 14px; }
+.mode-tabs { border-radius: 12px; padding: 4px; }
+.mode-tabs button { border-radius: 9px; padding: 8px 16px; }
+.mode-tabs button.active { box-shadow: inset 0 0 0 1px var(--t-line), 0 1px 2px rgba(0,0,0,.06); }
+.tool-foot { margin: 56px auto 0; padding: 32px 24px 56px; }
+.tool-more-title { font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600; letter-spacing: 0; margin: 0 0 14px; color: var(--t-text); }
+.tool-more-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0 0 26px; }
+.tool-more-card { display: flex; flex-direction: column; gap: 4px; background: #fff; border: 1px solid var(--t-line); border-radius: 14px; padding: 16px; text-decoration: none; color: inherit; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.tool-more-card:hover { transform: translateY(-2px); border-color: rgba(0,0,0,0.14); box-shadow: 0 12px 24px -14px rgba(0,0,0,0.20); }
+.tool-more-card .tmc-name { font-size: var(--fs-body); line-height: 1.3; font-weight: 600; letter-spacing: 0; color: var(--t-text); }
+.tool-more-card .tmc-desc { font-size: var(--fs-small); line-height: 1.45; letter-spacing: 0; color: var(--c-muted); }
+@media (max-width: 1069px) { .tool-more-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 735px) {
+  .tool-container { padding: 40px 16px 64px; }
+  .tool-sub { padding-bottom: 20px; margin-bottom: 24px; }
+  .tool-more-grid { grid-template-columns: 1fr; }
+  .tool-more-title { font-size: var(--fs-h3); }
+}
