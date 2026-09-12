@@ -315,7 +315,7 @@ export function mount(root, H) {
       var seed = await new Promise(function (res) { c.toBlob(function (b) { res(b); }, 'image/jpeg', 0.98); });
       var seedFile = new File([seed], 'seed.jpg', { type: 'image/jpeg' });
       var enc;
-      try { enc = await import('/shared/encoders.js?v=8'); }
+      try { enc = await import('/shared/encoders.js?v=9'); }
       catch (err) {
         // 编码器加载失败要和"照片有问题"分开说,否则是在冤枉用户的照片
         throw new Error('encoder-load-failed');

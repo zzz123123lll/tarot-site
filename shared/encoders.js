@@ -231,3 +231,98 @@ export async function encodeWithQuality(file, mime, qualityPercent) {
   var b = await canvasEncode(img.canvas, mime, qualityPercent / 100);
   return { blob: b, real: false, codec: false };
 }
+
+// ---------- 目标体积的"换策略"链路 ----------
+// 用户要的是"一个能交上去的文件",不是"我尽力了"。所以目标达不到时按顺序换策略:
+//   ① 原格式压 → ② 转 JPG(PNG/GIF/BMP 常常压不动,转 JPG 是最实在的解法)
+//   → ③ 转 WebP(同样画质更小)→ ④ 按比例缩尺寸(0.8 / 0.65 / 0.5)后重压
+//   → ⑤ 实在不行就如实报告最好结果 + 每一步试过什么(attempts),不让用户猜。
+// 时间预算 7 秒:宁可在"已经够好了"的地方停下,也不让用户干等。
+function fileFromCanvas(canvas, mime, name) {
+  return new Promise(function (resolve) {
+    var q = mime === 'image/jpeg' ? 0.93 : undefined;
+    canvas.toBlob(function (b) {
+      resolve(b ? new File([b], name, { type: mime }) : null);
+    }, mime, q);
+  });
+}
+function scaledCanvas(src, scale) {
+  var c = document.createElement('canvas');
+  c.width = Math.max(1, Math.round(src.width * scale));
+  c.height = Math.max(1, Math.round(src.height * scale));
+  var g = c.getContext('2d');
+  g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
+  g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); // JPEG 不支持透明,统一铺白底
+  g.drawImage(src.canvas, 0, 0, c.width, c.height);
+  return c;
+}
+
+export async function encodeToTargetSmart(file, mime, targetBytes) {
+  var now = function () { return (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now(); };
+  var t0 = now();
+  var budgetMs = 7000;
+  var over = function () { return now() - t0 > budgetMs; };
+  var attempts = [];
+  var best = null;
+
+  function take(res, strategy, outMime, extra) {
+    if (res && res.blob) {
+      var rec = { strategy: strategy, mime: outMime, size: res.blob.size, met: !!res.met, real: !!res.real, codec: res.codec };
+      attempts.push(rec);
+      if (!best || res.blob.size < best.blob.size) {
+        best = { blob: res.blob, met: !!res.met, reason: res.reason, strategy: strategy, mime: outMime, real: !!res.real, codec: res.codec,
+                 width: extra && extra.w, height: extra && extra.h, scale: extra && extra.scale, size: res.blob.size };
+      }
+      return !!res.met;
+    }
+    attempts.push({ strategy: strategy, mime: outMime, size: null, met: false, reason: res && res.reason });
+    return false;
+  }
+  function done() {
+    return {
+      blob: best ? best.blob : null,
+      met: !!(best && best.met),
+      reason: best ? best.reason : 'fail',
+      strategy: best ? best.strategy : null,
+      outMime: best ? best.mime : mime,
+      width: best ? best.width : null,
+      height: best ? best.height : null,
+      scale: best ? best.scale : null,
+      real: best ? best.real : false,
+      codec: best ? best.codec : false,
+      size: best ? best.size : null,
+      attempts: attempts,
+      timedOut: over()
+    };
+  }
+
+  // ① 原格式
+  var r1 = await encodeToTarget(file, mime, targetBytes);
+  if (take(r1, 'same', mime)) return done();
+
+  var src = await toImageData(file, mime === 'image/jpeg');
+
+  // ② 转 JPG
+  if (pickKind(mime) !== 'jpeg' && !over()) {
+    var jf = await fileFromCanvas(src.canvas, 'image/jpeg', 'conv.jpg');
+    if (jf) { if (take(await encodeToTarget(jf, 'image/jpeg', targetBytes), 'to-jpeg', 'image/jpeg', { w: src.width, h: src.height })) return done(); }
+  }
+  // ③ 转 WebP
+  if (pickKind(mime) !== 'webp' && !over()) {
+    var wf = await fileFromCanvas(src.canvas, 'image/webp', 'conv.webp');
+    if (wf) { if (take(await encodeToTarget(wf, 'image/webp', targetBytes), 'to-webp', 'image/webp', { w: src.width, h: src.height })) return done(); }
+  }
+  // ④ 缩尺寸后重压
+  var scales = [0.8, 0.65, 0.5];
+  for (var i = 0; i < scales.length; i++) {
+    if (over()) break;
+    var sc = scales[i];
+    var c2 = scaledCanvas(src, sc);
+    var outMime = pickKind(mime) === 'webp' ? 'image/webp' : 'image/jpeg';
+    var f2 = await fileFromCanvas(c2, outMime, outMime === 'image/webp' ? 'small.webp' : 'small.jpg');
+    if (!f2) continue;
+    if (take(await encodeToTarget(f2, outMime, targetBytes), 'downscale', outMime, { w: c2.width, h: c2.height, scale: sc })) return done();
+  }
+
+  return done();
+}

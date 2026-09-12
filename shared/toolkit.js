@@ -310,8 +310,8 @@ export function makeDropZone(el, onFiles, accept, opts) {
 }
 
 const REGISTRY = {
-  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 19 },
-  'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 16 },
+  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 20 },
+  'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 17 },
   'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs', v: 5 },
   'images-to-pdf': { title: '图片合成 PDF', module: '/tools/images-to-pdf.mjs', v: 6 },
   'invoice-nup': { title: '发票拼版', module: '/tools/invoice-nup.mjs', v: 8 },

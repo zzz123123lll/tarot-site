@@ -45,7 +45,7 @@ export function mount(root, H) {
   var _enc = null;
   function ensureEnc() {
     if (!_enc) {
-      _enc = import('/shared/encoders.js?v=8');
+      _enc = import('/shared/encoders.js?v=9');
       _enc.then(function (m) { encMod = m; }, function () {});
     }
     return _enc;
@@ -212,17 +212,22 @@ export function mount(root, H) {
     try {
       if (mode === 'target') {
         var target = currentTarget();
-        var r = await E.encodeToTarget(file, mime, target);
+        // 换策略链路:原格式 → 转 JPG → 转 WebP → 缩尺寸,谁先达标用谁(见 encoders.js encodeToTargetSmart)
+        var r = await E.encodeToTargetSmart(file, mime, target);
+        var sr = {
+          strategy: r.strategy, outMime: r.outMime, outW: r.width, outH: r.height,
+          scale: r.scale, attempts: r.attempts, timedOut: r.timedOut, inMime: mime
+        };
         if (r.blob) {
-          push({
+          push(Object.assign({
             name: file.name, origSize: origSize, outSize: r.blob.size, blob: r.blob,
             status: 'ok', saved: Math.max(0, origSize - r.blob.size),
             met: !!r.met, target: target, reason: r.reason, real: !!r.real, codec: r.codec, orig: file
-          });
+          }, sr));
         } else if (r.met) {
-          push({ name: file.name, origSize: origSize, status: 'met', target: target });
+          push(Object.assign({ name: file.name, origSize: origSize, status: 'met', target: target }, sr));
         } else {
-          push({ name: file.name, origSize: origSize, status: 'nowin', target: target, reason: r.reason });
+          push(Object.assign({ name: file.name, origSize: origSize, status: 'nowin', target: target, reason: r.reason }, sr));
         }
         return;
       }
@@ -253,6 +258,22 @@ export function mount(root, H) {
       // 两种降级要分开说(否则会冤枉自己的程序):codec===false 才是"程序没就绪";
       // codec 就绪但选了内置编码,是"内置编码这张图更小",与加载失败无关。
       if (f.codec === false) extraNote += '<div class="sizes" style="color:var(--c-warn)">这次用的是浏览器内置编码，不是我们的真实编码器（压缩程序没加载成功，多半是断网且本机还没存过它）。压缩效果会差一些；联网后重开这个工具再处理一次就能用上真实编码器。</div>';
+      // "换了什么策略"必须写在卡片上:格式变了、尺寸缩了,都是用户要交出去的东西
+      if (f.strategy === 'to-jpeg' || f.strategy === 'to-webp') {
+        extraNote += '<div class="sizes" style="color:#6e6e73">已自动转成 ' + (f.strategy === 'to-jpeg' ? 'JPG' : 'WebP') + ' 才达标：'
+          + (f.inMime === 'image/png' ? 'PNG 是无损格式，原格式压不到目标' : '原格式在当前编码下压不到目标')
+          + '。输出像素不变（' + f.outW + ' × ' + f.outH + '）。</div>';
+      } else if (f.strategy === 'downscale' && f.met !== false) { // 未达标时上面那句已经说清缩到多少了,不重复
+        extraNote += '<div class="sizes" style="color:var(--c-warn)">为了达标，尺寸缩到了 ' + Math.round((f.scale || 0) * 100) + '%（' + f.outW + ' × ' + f.outH + '）。对方若要求原始像素，请放宽目标体积或改用 JPG / WebP。</div>';
+      }
+      var _tried = (f.attempts || []).filter(function (a) { return a.size; });
+      var _names = { same: '原格式', 'to-jpeg': '转 JPG', 'to-webp': '转 WebP', downscale: '缩小尺寸' };
+      var triedNote = '';
+      if (_tried.length > 1) {
+        var _smallest = Math.min.apply(null, _tried.map(function (a) { return a.size; }));
+        triedNote = ' 试过 ' + _tried.length + ' 种办法（' + Array.from(new Set(_tried.map(function (a) { return _names[a.strategy] || a.strategy; }))).join(' / ') + '），最小只到 ' + H.fmt(_smallest) + '。'
+          + (f.timedOut ? '为了不让你干等，试到 7 秒就停了。' : '');
+      }
       if (f.animated) extraNote += '<div class="sizes" style="color:var(--c-warn)">这是动图（' + f.frames + ' 帧），压缩只保留第一帧，动画不会保留。</div>';
       else if (f.retyped && f.status === 'ok') extraNote += '<div class="sizes" style="color:#6e6e73">原格式不能直接压缩，已输出为 PNG。</div>';
       if (f.status === 'ok') {
@@ -264,7 +285,10 @@ export function mount(root, H) {
         if (f.target && !f.met) {
           note = f.reason === 'png-lossless'
             ? '<div class="sizes" style="color:var(--c-warn)">PNG 是无损格式，压不到更小。建议用「图片转换」输出成 JPG 或 WebP 再试。</div>'
-            : '<div class="sizes" style="color:var(--c-warn)">这已是该格式能压到的较小体积（' + H.fmt(f.outSize) + '），仍超过目标 ' + H.fmt(f.target) + '。建议改用 JPG / WebP，或先缩小尺寸。</div>';
+            : (f.strategy === 'downscale'
+              // 已经缩过尺寸还压不到:不能说"该格式的极限",要如实说明缩到什么程度
+              ? '<div class="sizes" style="color:var(--c-warn)">已经把尺寸缩到 ' + Math.round((f.scale || 0) * 100) + '%（' + f.outW + ' × ' + f.outH + '）并试到最低画质，最小只有 ' + H.fmt(f.outSize) + '，仍超过目标 ' + H.fmt(f.target) + '。' + triedNote + '</div>'
+              : '<div class="sizes" style="color:var(--c-warn)">这已是该格式能压到的较小体积（' + H.fmt(f.outSize) + '），仍超过目标 ' + H.fmt(f.target) + '。' + triedNote + ' 建议改用 JPG / WebP，或先缩小尺寸。</div>')
         }
         var outUrl = urlFor(f.blob);
         // 前后对比:原图放底层,压缩结果放上层并用 clip-path 按滑块裁切;
