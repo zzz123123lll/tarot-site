@@ -260,3 +260,26 @@ button:disabled, .tool-btn:disabled { cursor: not-allowed; }
 /* 关联标签(label[for])是可点元素:给它 pointer;尺寸不强制 44px ——
    它指向的控件自己已经是 44px 目标,标签只是"点字也能聚焦"的便利(与正文行内链接同理)。 */
 label[for], label:has(input), label:has(select), label:has(textarea) { cursor: pointer; }
+
+/* ===== 指针特效(工具页):卡片聚光 + 按钮光扫 ===== */
+@media (hover: hover) and (pointer: fine) {
+  .tool-more-card { position: relative; overflow: hidden; }
+  .tool-more-card::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
+    background: radial-gradient(180px circle at var(--mx, 50%) var(--my, 50%), rgba(0,113,227,.10), rgba(0,0,0,0) 72%);
+    transition: opacity .35s ease;
+  }
+  .tool-more-card.fx-spot-on::before { opacity: 1; }
+  /* 光扫:实心按钮上扫过一道白光(transform 驱动,不碰布局) */
+  .tool-btn:not(.tool-btn--ghost), .download-btn { position: relative; overflow: hidden; }
+  .tool-btn:not(.tool-btn--ghost)::after, .download-btn::after {
+    content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 55%; pointer-events: none;
+    background: linear-gradient(100deg, rgba(255,255,255,0), rgba(255,255,255,.42), rgba(255,255,255,0));
+    transform: translateX(-140%) skewX(-16deg);
+  }
+  .tool-btn:not(.tool-btn--ghost):hover::after, .download-btn:hover::after { animation: sheenSweep .72s cubic-bezier(.22,1,.36,1); }
+  @keyframes sheenSweep { from { transform: translateX(-140%) skewX(-16deg); } to { transform: translateX(260%) skewX(-16deg); } }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tool-btn::after, .download-btn::after { display: none; }
+}

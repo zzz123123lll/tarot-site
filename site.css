@@ -331,3 +331,35 @@ body.page-home .hero::before {
 /* 按压:0.97 是共识值,卡片更大用 0.96 */
 body.page-home a.app:active, body.page-home .tool-more-card:active { transform: translateY(0) scale(var(--scale-large, .96)); transition-duration: var(--dur-micro, 80ms); }
 body.page-home .feature-link span, body.page-home .nav-links a { transition-duration: var(--dur-quick, 150ms); }
+
+/* ===== 指针特效(参考 reactbits.dev 的 SpotlightCard / TiltedCard / GlareHover,ui.aceternity.com 的 Card Spotlight)
+   三条约束:只在"细指针 + 允许动效"时启用;全部是 ::before/::after 的渐变配 opacity/transform;不隐藏任何内容。
+   我们刻意收敛的地方:TiltedCard 原值 14°→ 我们用 5°;原作者用弹簧库 → 我们用一次性 rAF 缓动(不留常驻动画)。 */
+@media (hover: hover) and (pointer: fine) {
+  /* 1) 聚光跟随:光斑跟着指针走,离开淡出(reactbits 的 var(--mouse-x/--mouse-y) 写法) */
+  body.page-home .app, body.page-home .tool-more-card { position: relative; overflow: hidden; }
+  body.page-home .app::before, body.page-home .tool-more-card::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
+    background: radial-gradient(200px circle at var(--mx, 50%) var(--my, 50%), var(--fx-spot, rgba(0,113,227,.10)), rgba(0,0,0,0) 72%);
+    transition: opacity .35s ease;
+  }
+  body.page-home .app.fx-spot-on::before, body.page-home .tool-more-card.fx-spot-on::before { opacity: 1; }
+  /* 2) 3D 倾斜:5° 上限;hero 截图同时要保留视差,所以两条 transform 合成一条 */
+  body.page-home .shot { transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); }
+  body.page-home .shot-hero { transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translate3d(0, var(--py, 0), 0); }
+  body.page-home .feature-media .shot:hover, body.page-home .hero-shot .shot:hover { box-shadow: 0 2px 6px rgba(0,0,0,.04), 0 46px 90px -42px var(--acc-glow, rgba(0,0,0,.3)); }
+}
+/* 3) 强调线下划线:滚入时从左长出来(装饰,无 JS 时保持满宽,不会被藏住) */
+html.js-motion body.page-home .feature-title::after { width: 0; transition: width .5s var(--ease-primary, cubic-bezier(.22,1,.36,1)) .12s; }
+html.js-motion body.page-home .feature-row.is-in .feature-title::after { width: 34px; }
+/* 4) 分区色点:滚入时从小到大弹出来 */
+html.js-motion body.page-home .group-head .group-title::before { transform: scale(.3); }
+html.js-motion body.page-home .group-head.is-in .group-title::before { transform: scale(1); transition: transform .42s var(--ease-primary, cubic-bezier(.22,1,.36,1)) .08s; }
+
+/* ===== 工具页:卡片聚光 + 实心按钮的光扫(GlareHover 的位移做法,白色高光扫过按钮)===== */
+
+/* 聚光的颜色跟随分区:图片=蓝、PDF=粉、小工具=橄榄、占卜=鎏金 */
+body.page-home .group--divination { --fx-spot: var(--a-tarot-tint-2); }
+body.page-home .group--image { --fx-spot: var(--a-image-tint-2); }
+body.page-home .group--pdf { --fx-spot: var(--a-pdf-tint-2); }
+body.page-home .group--utility { --fx-spot: var(--a-util-tint-2); }

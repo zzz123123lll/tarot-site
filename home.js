@@ -53,7 +53,7 @@
   // 产品卡(对标 Apple 的 tile 逻辑:名字大、一句人话、整卡可点;图标只做标识)
   function card(t, order, showSec) {
     var iconCls = t.dark ? 'app-icon app-icon--dark' : 'app-icon app-icon--light';
-    return '<a class="app reveal" href="' + t.url + '">'
+    return '<a class="app reveal" data-fx="spotlight" href="' + t.url + '">'
       + '<span class="' + iconCls + '">' + icon(t.icon) + '</span>'
       + '<span class="app-body">'
       + '<span class="app-name">' + esc(t.name) + (t.status === 'download' ? '<span class="app-badge app-badge--dl">下载</span>' : '') + '</span>'

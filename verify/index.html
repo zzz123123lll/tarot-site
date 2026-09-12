@@ -21,7 +21,7 @@
 <link rel="preload" href="/vendor/fonts/Geist-sub.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/fonts.css?v=4">
 <link rel="stylesheet" href="/base.css?v=7">
-<link rel="stylesheet" href="/tool.css?v=34">
+<link rel="stylesheet" href="/tool.css?v=35">
 <style>
 .verify h2{font-size:17px;font-weight:600;color:#1d1d1f;margin:34px 0 8px}
 .verify p,.verify li{font-size:14px;line-height:1.75;color:#1d1d1f}
@@ -86,11 +86,12 @@
   <p>请用上面第一步的方法取证(请求列表截图或 HAR 文件),连同你用的工具与时间发给我们。这属于产品事故,我们会当作最高优先级处理,并在页面上说明。</p>
   <p class="quiet">顺带说明我们的边界:HEIC、OFD、Office 转 PDF、OCR 这些暂不支持——不是因为要上传,而是纯浏览器里做不好。做不好的事我们不假装能做。</p>
 </main>
-<footer class="tool-foot"><h2 class="tool-more-title">接着可以做什么</h2><div class="tool-more-grid"><a class="tool-more-card" href="/img-compress/"><span class="tmc-name">图片压缩</span><span class="tmc-desc">批量变小，也可以压到指定大小（如 500KB 以内）。</span></a><a class="tool-more-card" href="/id-photo/"><span class="tmc-name">证件照</span><span class="tmc-desc">按官方要求输出精确像素、DPI 与体积上限。</span></a><a class="tool-more-card" href="/invoice-nup/"><span class="tmc-name">发票拼版</span><span class="tmc-desc">多张发票按原比例排到 A4,输出一份 PDF。</span></a><a class="tool-more-card" href="/tools/json/"><span class="tmc-name">JSON 格式化</span><span class="tmc-desc">美化、校验、压缩 JSON。</span></a></div><p class="tool-foot-line">全部工具本地运行 · 文件不上传</p><nav class="tool-foot-links" aria-label="相关页面"><a href="/">全部工具</a><a href="/img-compress/">图片压缩</a><a href="/pdf-merge/">PDF 合并</a></nav></footer>
+<footer class="tool-foot"><h2 class="tool-more-title">接着可以做什么</h2><div class="tool-more-grid"><a class="tool-more-card" data-fx="spotlight" href="/img-compress/"><span class="tmc-name">图片压缩</span><span class="tmc-desc">批量变小，也可以压到指定大小（如 500KB 以内）。</span></a><a class="tool-more-card" data-fx="spotlight" href="/id-photo/"><span class="tmc-name">证件照</span><span class="tmc-desc">按官方要求输出精确像素、DPI 与体积上限。</span></a><a class="tool-more-card" data-fx="spotlight" href="/invoice-nup/"><span class="tmc-name">发票拼版</span><span class="tmc-desc">多张发票按原比例排到 A4,输出一份 PDF。</span></a><a class="tool-more-card" data-fx="spotlight" href="/tools/json/"><span class="tmc-name">JSON 格式化</span><span class="tmc-desc">美化、校验、压缩 JSON。</span></a></div><p class="tool-foot-line">全部工具本地运行 · 文件不上传</p><nav class="tool-foot-links" aria-label="相关页面"><a href="/">全部工具</a><a href="/img-compress/">图片压缩</a><a href="/pdf-merge/">PDF 合并</a></nav></footer>
 <script>
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=19'); });
 }
 </script>
+  <script defer src="/assets/pointer-fx.js?v=1"></script>
 </body>
 </html>
