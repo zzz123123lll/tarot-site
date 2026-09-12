@@ -11,7 +11,7 @@
 //      断网时用户看到的是"工具打不开",而不是一个可用的降级页面;
 //   3) 工具页要能离线**处理文件**,除 HTML 与工具模块外还需要 /shared/encoders.js、
 //      encoder-worker.js、encoder-core.js 与 /vendor/encoders/* —— 这些在"第一次成功处理"时才进缓存。
-const CACHE = 'gongjuhe-v18';
+const CACHE = 'gongjuhe-v19';
 // 兜底说明页(断网打开一个确实没缓存过的地址时用,塔罗页也走这条路径)。
 // 注意必须写**最终地址** /offline:Cloudflare Pages 会把 /offline.html 用 308 跳到 /offline,
 // 而"带 redirect 标记的缓存响应"在导航时会被 Chromium 直接拒绝(ERR_FAILED)——
@@ -56,11 +56,28 @@ const SHELL = ['/', OFFLINE_PAGE, OFFLINE_PAGE_ALT, '/verify/'].concat(TOOL_PAGE
 const CACHEABLE = ['/vendor/', '/icons/', '/assets/', '/tool.css', '/base.css', '/fonts.css', '/site.css', '/home.js', '/tools-manifest.js'];
 const SHARED = ['/shared/', '/tools/'];
 
-// 缓存查找:先精确匹配,再忽略查询串(把 /x.css?v=3 与预缓存的 /x.css 对上)
+// 缓存查找:先精确匹配;带 ?v= 的请求**不回退**到无版本的旧缓存。
+// 为什么(真事故):页面请求 /site.css?v=39,而缓存里有安装期存的 /site.css(v34 的字节),
+// 忽略查询串就会把旧文件当成命中返回 —— 于是"版本号加了也白加",用户永远看不到新样式与新动效。
+// 现在:带版本的请求只认精确命中(没命中就联网取并缓存),不带版本的请求才回退。
+function isVersioned(req) {
+  try { return new URL(req.url).search.length > 0; } catch (e) { return false; }
+}
 function fromCache(c, req) {
   return c.match(req).then(function (hit) {
-    return hit || c.match(req, { ignoreSearch: true });
+    if (hit) return hit;
+    if (isVersioned(req)) return null;
+    return c.match(req, { ignoreSearch: true });
   });
+}
+// 取到带版本的新文件后,顺手也存一份"无版本"的键:断网时页面对任何版本号都能拿到它。
+function putBoth(c, req, res) {
+  c.put(req, res.clone()).catch(function () {});
+  if (!isVersioned(req)) return;
+  try {
+    var u = new URL(req.url);
+    c.put(new Request(u.origin + u.pathname, { method: 'GET' }), res.clone()).catch(function () {});
+  } catch (e) {}
 }
 
 self.addEventListener('install', function (e) {
@@ -140,7 +157,7 @@ self.addEventListener('fetch', function (e) {
       caches.open(CACHE).then(function (c) {
         return fromCache(c, req).then(function (hit) {
           var fresh = fetch(req, { cache: 'reload' }).then(function (res) {
-            if (res.ok) c.put(req, res.clone());
+            if (res.ok) putBoth(c, req, res);
             return res;
           }).catch(function () { return hit; });
           return hit || fresh;
@@ -156,7 +173,7 @@ self.addEventListener('fetch', function (e) {
         return fromCache(c, req).then(function (hit) {
           if (hit) return hit;
           return fetch(req).then(function (res) {
-            if (res.ok) c.put(req, res.clone());
+            if (res.ok) putBoth(c, req, res);
             return res;
           }).catch(function () {
             // 断网且没缓存:不要 reject(那会让整页报错),交给浏览器按普通失败处理

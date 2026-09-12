@@ -40,7 +40,7 @@ mountTool(slugFromPath(), document.getElementById('toolRoot'), document.getEleme
 </script>
 <script>
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
-  window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=18'); });
+  window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=19'); });
 }
 </script>
   <footer class="tool-foot"><h2 class="tool-more-title">接着可以做什么</h2><div class="tool-more-grid"><a class="tool-more-card" href="/invoice-nup/"><span class="tmc-name">发票拼版</span><span class="tmc-desc">多张发票按原比例排到 A4,输出一份 PDF。</span></a><a class="tool-more-card" href="/pdf-split/"><span class="tmc-name">PDF 拆分/旋转</span><span class="tmc-desc">提取页面、拆分、旋转。</span></a><a class="tool-more-card" href="/pdf-render/"><span class="tmc-name">PDF 转图片</span><span class="tmc-desc">PDF 转 JPG/PNG（可调 DPI）。</span></a></div><p class="tool-foot-line">PDF 工具 · 全部工具本地运行，文件不上传</p><nav class="tool-foot-links" aria-label="同分区工具"><a href="/pdf-split/">PDF 拆分 / 旋转</a><a href="/pdf-render/">PDF 转图片</a><a href="/pdf-compress/">PDF 压缩</a><a href="/verify/">怎么验证不上传</a><a href="/">全部工具</a></nav></footer>
