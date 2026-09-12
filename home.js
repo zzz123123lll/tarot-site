@@ -111,13 +111,15 @@
   var canIO = 'IntersectionObserver' in window;
   var io = null;
   function eachText(list, fn) { Array.prototype.forEach.call(list, fn); }
-  // 可见性守卫(取自 Vercel 线上实现):元素自己或任一祖先是 display:none / visibility:hidden / opacity:0 时不播动画。
-  // 优先用原生的 checkVisibility,不支持就逐级看计算样式。
+  // 可见性守卫(取自 Vercel 线上实现的思路):元素或祖先没被 display:none / visibility:hidden 时才算能播。
+  // ⚠️ 不能把 opacity:0 当"不可见":reveal 元素此刻正是被我们自己设成 opacity:0 的,
+  //    带上 opacityProperty 会变成"因为看不见所以不播动画 → 永远看不见"的死锁(线上实测 hidden=35/35 就是这个原因)。
+  //    祖先的 opacity 也不看,只看 display / visibility / content-visibility。
   function isRendered(el) {
-    if (typeof el.checkVisibility === 'function') return el.checkVisibility({ opacityProperty: true, contentVisibilityAuto: true });
-    for (var node = el; node && node.nodeType === 1; node = node.parentElement) {
+    if (typeof el.checkVisibility === 'function') return el.checkVisibility({ contentVisibilityAuto: true });
+    for (var node = el.parentElement; node && node.nodeType === 1; node = node.parentElement) {
       var cs = getComputedStyle(node);
-      if (cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity) === 0) return false;
+      if (cs.display === 'none' || cs.visibility === 'hidden') return false;
     }
     return true;
   }
