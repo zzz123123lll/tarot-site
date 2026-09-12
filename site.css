@@ -297,3 +297,37 @@ body.page-home .hero::before {
   filter: blur(0);
   opacity: .9;
 }
+
+/* ===== 动效终稿:按调研收敛后的数值(见 工具盒-内部/内部文档/动效规范-*.md)=====
+   1) 按压缩放 0.97(四条独立来源一致:Kowalski / animations.dev / transitions.dev / Linear);
+   2) 滚动显现用苹果实测:位移 30px、透明度 0.45s、位移 0.7s、交错每项 150ms(封顶 6 项);
+   3) reduced-motion 用 Linear 的反向包裹写法:默认态根本没有动画与隐藏规则,关掉 JS 或减动效时天然可见;
+   4) 顶栏过渡 .24s + cubic-bezier(.4,0,.6,1)(Apple globalheader 实测 78 次),滚动只变背景与模糊、不变高度。 */
+
+/* 滚动显现:默认可见;只有"允许动效"的环境才给初态 */
+@media (prefers-reduced-motion: no-preference) {
+  html.js-motion .reveal { opacity: 0; transform: translate3d(0, var(--dist-large, 30px), 0); }
+  html.js-motion .reveal.is-in {
+    opacity: 1; transform: none;
+    transition: opacity .45s ease-out var(--rd, 0ms), transform .7s var(--ease-smooth-out) var(--rd, 0ms);
+  }
+  /* hero 进入 */
+  @keyframes heroRise2 { from { opacity: 0; transform: translate3d(0, 14px, 0); } to { opacity: 1; transform: none; } }
+  @keyframes shotRise2 { from { opacity: 0; transform: translate3d(0, 26px, 0) scale(.985); } to { opacity: 1; transform: none; } }
+  body.page-home .hero-kicker { animation: heroRise2 .5s ease-out both; }
+  body.page-home .hero-title { animation: heroRise2 .6s ease-out .06s both; }
+  body.page-home .hero-sub { animation: heroRise2 .6s ease-out .13s both; }
+  body.page-home .search-wrap { animation: heroRise2 .6s ease-out .2s both; }
+  body.page-home .hero-actions { animation: heroRise2 .6s ease-out .26s both; }
+  body.page-home .hero-shot { animation: shotRise2 .8s var(--ease-smooth-out) .2s both; }
+  body.page-home .hero::before { animation: washDrift 18s var(--ease-in-out) infinite alternate; }
+  body.page-home .shot-hero { transform: translate3d(0, var(--py, 0), 0); }
+}
+/* 减动效时:洗色与视差不再加载动画(默认态已经是静止的) */
+@media (prefers-reduced-motion: reduce) {
+  body.page-home .hero::before { animation: none; }
+  body.page-home .shot-hero { transform: none; }
+}
+/* 按压:0.97 是共识值,卡片更大用 0.96 */
+body.page-home a.app:active, body.page-home .tool-more-card:active { transform: translateY(0) scale(var(--scale-large, .96)); transition-duration: var(--dur-micro, 80ms); }
+body.page-home .feature-link span, body.page-home .nav-links a { transition-duration: var(--dur-quick, 150ms); }

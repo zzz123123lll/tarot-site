@@ -64,19 +64,29 @@ elevation:
   sh-shot: "0 2px 4px rgba(0,0,0,.03), 0 40px 80px -40px rgba(0,0,0,.26)"
 
 motion:
+  ease-primary: "cubic-bezier(.22,1,.36,1)"
+  ease-alternate: "cubic-bezier(.25,.46,.45,.94)"
   ease-out: "cubic-bezier(.22,1,.36,1)"
   ease-in-out: "cubic-bezier(.4,0,.2,1)"
   ease-nav: "cubic-bezier(.4,0,.6,1)"
-  duration-reveal: 720ms
-  duration-hero: 700ms
+  ease-overlay: "cubic-bezier(.175,.885,.32,1.1)"
+  duration-micro: 80ms
+  duration-quick: 150ms
+  duration-interact: 160ms
+  duration-fast: 250ms
+  duration-reveal-opacity: 450ms
+  duration-reveal-transform: 700ms
+  duration-hero: 600ms
   duration-nav: 240ms
   duration-hover: 200ms
-  duration-press: 100ms
-  press-scale-button: 0.95
-  press-scale-card: 0.985
-  stagger-card: 20ms
+  press-scale-button: 0.97
+  press-scale-card: 0.96
+  stagger-card: 40ms
   stagger-card-cap: 240ms
-  stagger-hero: 60ms
+  stagger-block: 150ms
+  stagger-block-cap: 6
+  reveal-distance: 30px
+  reveal-threshold: 0.1
   parallax-factor: 0.05
   wash-duration: 18s
 
@@ -157,16 +167,27 @@ layout:
 
 | 场景 | 参数 | 出处 |
 | --- | --- | --- |
-| 滚入显现 | 720ms cubic-bezier(.22,1,.36,1),位移 18px,卡片按列 20ms 错峰(封顶 240ms) | 错峰节奏取自 Apple globalheader 实测的 min(.16s + 20ms*(total-index), .24s) |
-| hero 进入 | 700ms,标题→副标题→搜索→截图按 60ms 递进上升 | 递进量级对齐 Apple 的分组错峰 40-80ms |
-| 导航状态切换 | 240ms cubic-bezier(.4,0,.6,1) | Apple globalheader.css 的主导曲线(该文件出现 78 次) |
-| 悬停 | 200ms ease 抬起 2px;图标 1.08 倍轻转;图片 1.015 缓推;链接箭头右移 4px | 对齐 Apple 最常用的 opacity 100ms linear, transform .2s ease |
-| 按压 | 按钮 scale(.95)、卡片 scale(.985),100ms | scale(.95) 是 Apple 全站统一值(airpods.css 多处) |
+| 滚入显现 | 位移 30px;透明度 450ms ease-out;位移 700ms `--ease-primary`;观察器 `{rootMargin:'0px', threshold:.1}` + 一次性标记 + 可见性守卫 | 位移/时长取自 Apple `--staggered-translate-y:30px`、`opacity .45s`;观察器配置逐字取自 Vercel 线上原码;守卫用 `checkVisibility({opacityProperty:true})` |
+| 卡片错峰 | 每列 40ms、封顶 240ms | transitions.dev 的 `--duration-stagger:40ms` + 我们的封顶(20 张卡不能等 1 秒) |
+| 区块错峰 | 每项 150ms、封顶 6 项(三件事与目录标题) | Apple `--staggered-delay:0.15` |
+| hero 进入 | 500-800ms,标题→副标题→搜索→截图每级 60-70ms | 递进量级对齐 Apple 的分组错峰 40-80ms |
+| 导航状态切换 | 240ms `--ease-nav`;滚动只变背景与模糊,高度恒定 44px | Apple globalheader.css 主导曲线(78 次);localnav 的 320ms 是子导航,不用在我们这根单条上 |
+| 悬停 | 200ms ease 抬起 2px;图标 1.08 倍轻转;图片 1.015 缓推;箭头右移 4px | 对齐 Apple 最常用的 `opacity 100ms linear, transform .2s ease` |
+| 按压 | 按钮 0.97、卡片 0.96,80-150ms | 0.97 是四条独立来源的共识(Kowalski / animations.dev / transitions.dev / Linear);Apple 自己用 0.95 |
 | 视差 | hero 截图 5%,上限 34px,仅 >=1069px | **与 Apple 不同**:Apple 是滚动进度映射(caption 系数 2.6x + 淡出),我们刻意用更便宜的位移近似 |
-| hero 洗色 | 三团径向渐变,18s 缓慢呼吸,仅 transform/opacity | 我们自己的做法 |
+| hero 洗色 | 苹果实测的 180deg 浅蓝→#F9F9F9→白 打底,18s 缓慢呼吸,仅 transform/opacity | 渐变值取自 Apple macbook-air;呼吸是我们加的 |
 | 搜索过滤 | 原生 view transition 240ms 交叉淡入 | 我们自己的做法 |
+| reduced-motion | 动画与初态一律包在 `@media (prefers-reduced-motion: no-preference)` 里(默认态本身就没有动画) | Linear 的反向包裹写法;苹果导航组件自身 0 处兜底,不照抄 |
+| JS 失效可见 | `html.js-motion` 门控 + head 内联 2s 兜底计时器 + `<noscript>` 三条保险 | 苹果用 `html.enhanced` 门控(实测 66 处),我们多两层 |
 
 比 Apple 多做的一点:Apple 的导航组件没有 prefers-reduced-motion 兜底(globalheader.css 实测 0 处),我们全站都有。
+
+**刻意不跟的三处**(调研里给了原值,但我们选择更省的实现,原因写在这里):
+1. Linear 的显现用 `filter: blur(10px)` 起步 —— 大面积 blur 合成成本高,我们只用位移+透明度(调研自身的规范也只允许 2px 级 blur 用在面板上)。
+2. Linear 的显现时长 1s —— 那是叙事级;我们取 700ms,和 Apple 的 0.7s 位移一致。
+3. 苹果/Linear 的弹簧物理(阻尼谐振子) —— 我们只有 CSS 曲线,没有弹簧库;工具站不需要回弹,省一个 JS 依赖。
+
+**动效调研原始件**:工具盒-内部/内部文档/动效规范-调研结论.md 及其三份追加(含 Apple / Vercel / Linear / transitions.dev / Motion / Animista 的实测字节与出处 URL)。
 
 硬约束:只动 transform / opacity / filter;reveal 的初态挂在 html.js-motion 上(关 JS 时内容全在);
 prefers-reduced-motion: reduce 下不做任何动画;瞬间跳转导致 IntersectionObserver 跳过时,按几何位置兜底补显。

@@ -229,7 +229,7 @@ body {
 /* ===== 第 2 阶段:工具页的触感(只做按压/悬停,不做滚动显现)=====
    工具页首屏就是操作区,内容不该等动画;所以这里只补"手指按下去有反馈"这一层。 */
 .tool-btn, .download-btn, .tool-btn--ghost { transition: background .16s cubic-bezier(.22,1,.36,1), border-color .16s, transform .12s, box-shadow .2s; }
-.tool-btn:active, .download-btn:active { transform: scale(.95); } /* Apple 实测的统一按压比例 */
+.tool-btn:active, .download-btn:active { transform: scale(var(--scale-medium, .97)); } /* 0.97:四条独立来源一致(Kowalski / animations.dev / transitions.dev / Linear) */
 .tool-more-card:active { transform: translateY(0) scale(.985); transition-duration: .09s; }
 .tool-more-card:hover .tmc-name { color: var(--c-accent); }
 .file-row { transition: background .16s ease; border-radius: 8px; }

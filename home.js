@@ -105,16 +105,33 @@
   }
 
   // ---------- 动效运行时(第 2 阶段) ----------
-  // 原则:只动 transform/opacity;无 JS 时内容可见(reveal 的初态挂在 html.js-motion 上);
-  //      尊重 prefers-reduced-motion(直接跳到终态);卡片按列做 45ms stagger。
+  // 原则:只动 transform/opacity;无 JS 时内容可见(初态挂在 html.js-motion 上,且 head 里有 2s 兜底会摘掉它);
+  //      reduced-motion 由 CSS 的反向包裹(prefers-reduced-motion: no-preference)负责,这里只跳过错峰与观察器。
   var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   var canIO = 'IntersectionObserver' in window;
   var io = null;
   function eachText(list, fn) { Array.prototype.forEach.call(list, fn); }
+  // 可见性守卫(取自 Vercel 线上实现):元素自己或任一祖先是 display:none / visibility:hidden / opacity:0 时不播动画。
+  // 优先用原生的 checkVisibility,不支持就逐级看计算样式。
+  function isRendered(el) {
+    if (typeof el.checkVisibility === 'function') return el.checkVisibility({ opacityProperty: true, contentVisibilityAuto: true });
+    for (var node = el; node && node.nodeType === 1; node = node.parentElement) {
+      var cs = getComputedStyle(node);
+      if (cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity) === 0) return false;
+    }
+    return true;
+  }
   function stagger() {
     eachText(root.querySelectorAll('.group'), function (g) {
-      // Apple 实测的错峰是"每项 20ms、整组封顶 240ms"(见 globalheader 的 min(.16s + 20ms*(total-index), .24s)),照此改
-      eachText(g.querySelectorAll('a.app'), function (cardEl, i) { cardEl.style.setProperty('--rd', Math.min(240, (i % 3) * 20) + 'ms'); });
+      // 卡片错峰:步长 40ms(transitions.dev 的 --duration-stagger),封顶 240ms,避免第 20 张等 1 秒
+      eachText(g.querySelectorAll('a.app'), function (cardEl, i) { cardEl.style.setProperty('--rd', Math.min(240, (i % 3) * 40) + 'ms'); });
+    });
+    // 三件事与目录标题:用苹果实测的交错(每项 150ms、封顶 6 项)
+    eachText(document.querySelectorAll('.feature-head, .feature-row, .catalog-head'), function (el, i) {
+      el.style.setProperty('--rd', Math.min(6, i) * 150 + 'ms');
+    });
+    eachText(document.querySelectorAll('.group-head'), function (el, i) {
+      el.style.setProperty('--rd', Math.min(6, i) * 150 + 'ms');
     });
   }
   // 兜底扫描:IntersectionObserver 在"瞬间跳转"(例如点『看全部工具 ↓』)时可能整段跳过,
@@ -122,7 +139,7 @@
   function sweep() {
     eachText(document.querySelectorAll('.reveal:not(.is-in)'), function (el) {
       var r = el.getBoundingClientRect();
-      if (r.top < window.innerHeight * 0.96) el.classList.add('is-in');
+      if (r.top < window.innerHeight * 0.96 && isRendered(el)) el.classList.add('is-in');
     });
   }
   function initReveal() {
@@ -134,10 +151,11 @@
       io = new IntersectionObserver(function (entries) {
         entries.forEach(function (en) {
           if (!en.isIntersecting) return;
+          io.unobserve(en.target); // 只播一次,滚回去不重播
+          if (!isRendered(en.target)) return; // 祖先 display:none 之类就不必播(否则动画播在看不见的地方)
           en.target.classList.add('is-in');
-          io.unobserve(en.target);
         });
-      }, { rootMargin: '0px 0px -10% 0px', threshold: 0.06 });
+      }, { root: null, rootMargin: '0px', threshold: 0.1 }); // Vercel 线上原码的配置(threshold .1 / rootMargin 0)
     }
     eachText(els, function (el) { io.observe(el); });
   }
@@ -162,6 +180,8 @@
     requestAnimationFrame(function () { onScroll(); ticking = false; });
   }, { passive: true });
   window.addEventListener('pageshow', function () { onScroll(); });
+  // 主脚本起来了,撤掉 head 里的兜底计时器(它到点会摘掉 js-motion 类,把内容直接显示出来)
+  if (window.__revealFallback) clearTimeout(window.__revealFallback);
   function isTyping() {
     var el = document.activeElement;
     return el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable);

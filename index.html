@@ -28,10 +28,14 @@
   <meta name="apple-mobile-web-app-title" content="工具盒">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="preload" href="/vendor/fonts/Geist-sub.woff2" as="font" type="font/woff2" crossorigin>
-  <script>/* 只有 JS 可用时才给 reveal 元素加初态:关掉 JS 或爬虫拿到的是最终态,内容不会被藏住 */document.documentElement.classList.add('js-motion');</script>
+  <script>/* 只有 JS 可用时才给 reveal 元素加初态:关掉 JS 或爬虫拿到的是最终态,内容不会被藏住。
+     2 秒兜底:主脚本挂了(报错/被拦)就摘掉这个类,内容立即全部可见 —— 不拿"内容可见"去赌脚本能不能跑完。 */
+    document.documentElement.classList.add('js-motion');
+    window.__revealFallback = setTimeout(function () { document.documentElement.classList.remove('js-motion'); }, 2000);</script>
+  <noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
   <link rel="stylesheet" href="fonts.css?v=4">
-  <link rel="stylesheet" href="base.css?v=6">
-  <link rel="stylesheet" href="site.css?v=38">
+  <link rel="stylesheet" href="base.css?v=7">
+  <link rel="stylesheet" href="site.css?v=39">
 </head>
 <body class="page-home">
   <nav class="site-nav">
@@ -132,7 +136,7 @@
   </footer>
 
   <script src="tools-manifest.js?v=5"></script>
-  <script src="home.js?v=18"></script>
+  <script src="home.js?v=19"></script>
   <script>
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
     window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=18'); });

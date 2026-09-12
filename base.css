@@ -51,6 +51,28 @@
   --sh-4: 0 2px 6px rgba(0,0,0,.04), 0 20px 36px -18px rgba(0,0,0,.14);                           /* 浮层卡片 / 大面板 */
   --sh-5: 0 1px 1px rgba(0,0,0,.03), 0 28px 56px -22px rgba(0,0,0,.20);                           /* 弹层 / 对话框 */
   --sh-shot: 0 2px 4px rgba(0,0,0,.03), 0 40px 80px -40px rgba(0,0,0,.26);                       /* 产品截图:唯一允许的大范围柔和投影 */
+
+  /* —— 动效令牌(实测值,不许在组件里另发明)——
+     时长阶梯取自 transitions.dev 的原文 token;曲线取自 Apple 生产 CSS 实测 + transitions.dev 全站主曲线。
+     规则:UI 反馈 <300ms;滚动叙事可以更长;只用 transform/opacity/filter。 */
+  --dur-stagger: 40ms;      /* 卡片错峰步长 */
+  --dur-micro: 80ms;        /* 极短反馈 */
+  --dur-quick: 150ms;       /* 悬停过渡、错峰封顶后单项 */
+  --dur-fast: 250ms;        /* 分段控件、弹层开 */
+  --dur-medium: 350ms;      /* 面板开 */
+  --dur-slow: 400ms;        /* 面板关、大字淡入 */
+  --dur-very-slow: 500ms;   /* 大图揭示 */
+  --ease-smooth-out: cubic-bezier(.22, 1, .36, 1);   /* 我们的滚动显现 / 搜索交叉(transitions.dev 用了 149 次) */
+  --ease-apple-nav: cubic-bezier(.4, 0, .6, 1);      /* Apple globalheader 实测 78 次 */
+  --ease-apple-std: cubic-bezier(0, 0, .2, 1);       /* Apple mac 页实测 24 次 */
+  --ease-ios: cubic-bezier(.32, .72, 0, 1);          /* Linear / Vaul 的抽屉曲线 */
+  --ease-out-quad: cubic-bezier(.25, .46, .45, .94); /* 跨站收敛值:Animista 主力 = Linear --ease-out-quad = animations.dev 最常用 */
+  --ease-swift: cubic-bezier(.175, .885, .32, 1.1);  /* Vercel 浮层曲线(y2=1.1,带轻微回弹) */
+  --scale-overlay: .96;                              /* Vercel 浮层入场缩放 */
+  --dur-interact: 160ms;                             /* Linear 的交互时长(.16s ease-out-quad) */
+  --dist-micro: 4px; --dist-small: 6px; --dist-base: 8px; --dist-medium: 12px; --dist-large: 30px;
+  --scale-tiny: .99; --scale-small: .98; --scale-medium: .97; --scale-large: .96;
+  --blur-small: 2px; --blur-medium: 3px; --blur-large: 8px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
