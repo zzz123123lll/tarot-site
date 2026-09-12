@@ -53,7 +53,7 @@
   // 产品卡(对标 Apple 的 tile 逻辑:名字大、一句人话、整卡可点;图标只做标识)
   function card(t, order, showSec) {
     var iconCls = t.dark ? 'app-icon app-icon--dark' : 'app-icon app-icon--light';
-    return '<a class="app" href="' + t.url + '" style="animation-delay:' + (order * 30) + 'ms">'
+    return '<a class="app reveal" href="' + t.url + '">'
       + '<span class="' + iconCls + '">' + icon(t.icon) + '</span>'
       + '<span class="app-body">'
       + '<span class="app-name">' + esc(t.name) + (t.status === 'download' ? '<span class="app-badge app-badge--dl">下载</span>' : '') + '</span>'
@@ -80,7 +80,7 @@
       var list = scored.map(function (x) { return x.t; });
       if (list.length) {
         html += '<div class="group group--search">'
-          + '<div class="group-head"><h3 class="group-title">搜索结果</h3>'
+          + '<div class="group-head reveal"><h3 class="group-title">搜索结果</h3>'
           + '<p class="group-desc">' + list.length + ' 个工具匹配「' + esc(q) + '」</p></div>'
           + '<div class="apps-grid">';
         list.forEach(function (t) { html += card(t, order, true); order++; });
@@ -96,7 +96,7 @@
       var list = data.tools.filter(function (t) { return t.section === sec.id; });
       if (!list.length) return;
       html += '<div class="group group--' + sec.id + '">'
-        + '<div class="group-head"><h3 class="group-title">' + esc(sec.name) + '</h3><p class="group-desc">' + esc(sec.desc || '') + '</p></div>'
+        + '<div class="group-head reveal"><h3 class="group-title">' + esc(sec.name) + '</h3><p class="group-desc">' + esc(sec.desc || '') + '</p></div>'
         + '<div class="apps-grid">';
       list.forEach(function (t) { html += card(t, order, false); order++; });
       html += '</div></div>';
@@ -104,17 +104,74 @@
     root.innerHTML = html;
   }
 
+  // ---------- 动效运行时(第 2 阶段) ----------
+  // 原则:只动 transform/opacity;无 JS 时内容可见(reveal 的初态挂在 html.js-motion 上);
+  //      尊重 prefers-reduced-motion(直接跳到终态);卡片按列做 45ms stagger。
+  var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var canIO = 'IntersectionObserver' in window;
+  var io = null;
+  function eachText(list, fn) { Array.prototype.forEach.call(list, fn); }
+  function stagger() {
+    eachText(root.querySelectorAll('.group'), function (g) {
+      eachText(g.querySelectorAll('a.app'), function (cardEl, i) { cardEl.style.setProperty('--rd', ((i % 3) * 45) + 'ms'); });
+    });
+  }
+  // 兜底扫描:IntersectionObserver 在"瞬间跳转"(例如点『看全部工具 ↓』)时可能整段跳过,
+  // 这里在滚动时按几何位置补一次 —— 已经滚过头的(在视口上方)也直接显示,避免"看不见的空卡"。
+  function sweep() {
+    eachText(document.querySelectorAll('.reveal:not(.is-in)'), function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight * 0.96) el.classList.add('is-in');
+    });
+  }
+  function initReveal() {
+    // 注意:要查整页,不只是 #apps —— 三件事/catalog 标题这些 reveal 元素在 #apps 外面(静态 HTML 里的),
+    // 上一版只查了 #apps,结果那几块永远停在 opacity:0(测试才发现)。
+    var els = document.querySelectorAll('.reveal:not(.is-in)');
+    if (reduce || !canIO) { eachText(els, function (el) { el.classList.add('is-in'); }); return; }
+    if (!io) {
+      io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (!en.isIntersecting) return;
+          en.target.classList.add('is-in');
+          io.unobserve(en.target);
+        });
+      }, { rootMargin: '0px 0px -10% 0px', threshold: 0.06 });
+    }
+    eachText(els, function (el) { io.observe(el); });
+  }
+  // 搜索过滤:支持的浏览器用原生 view transition 做交叉淡入,不支持就直接切换
+  function paint(q) {
+    var run = function () { render(q); stagger(); initReveal(); sweep(); };
+    if (!reduce && document.startViewTransition) { document.startViewTransition(run); } else { run(); }
+  }
+  var navEl = document.querySelector('.site-nav');
+  var ticking = false;
+  function onScroll() {
+    if (navEl) navEl.classList.toggle('is-scrolled', window.scrollY > 8);
+    sweep();
+    if (!reduce && window.innerWidth >= 1069 && window.scrollY < 900) {
+      var shot = document.querySelector('.shot-hero');
+      if (shot) shot.style.setProperty('--py', Math.round(Math.min(window.scrollY * 0.05, 34)) + 'px');
+    }
+  }
+  window.addEventListener('scroll', function () {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () { onScroll(); ticking = false; });
+  }, { passive: true });
+  window.addEventListener('pageshow', function () { onScroll(); });
   function isTyping() {
     var el = document.activeElement;
     return el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable);
   }
 
   if (search) {
-    search.addEventListener('input', function () { render(search.value); });
+    search.addEventListener('input', function () { paint(search.value); });
     search.addEventListener('keydown', function (e) {
       var apps = root.querySelectorAll('a.app');
       if (e.key === 'ArrowDown' && apps.length) { e.preventDefault(); apps[0].focus(); }
-      else if (e.key === 'Escape') { search.value = ''; render(''); search.blur(); }
+      else if (e.key === 'Escape') { search.value = ''; paint(''); search.blur(); }
     });
   }
   document.addEventListener('keydown', function (e) {
@@ -126,5 +183,6 @@
   var kicker = document.getElementById('kicker');
   if (kicker) kicker.innerHTML = '<svg class="star-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.4l2.55 7.05L21.6 12l-7.05 2.55L12 21.6l-2.55-7.05L2.4 12l7.05-2.55z" fill="currentColor"/></svg> ' + data.tools.length + ' 个工具 · 全部本地运行';
 
-  render('');
+  paint('');
+  onScroll();
 })();

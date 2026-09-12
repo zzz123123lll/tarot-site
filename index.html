@@ -28,9 +28,10 @@
   <meta name="apple-mobile-web-app-title" content="工具盒">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="preload" href="/vendor/fonts/Geist-sub.woff2" as="font" type="font/woff2" crossorigin>
+  <script>/* 只有 JS 可用时才给 reveal 元素加初态:关掉 JS 或爬虫拿到的是最终态,内容不会被藏住 */document.documentElement.classList.add('js-motion');</script>
   <link rel="stylesheet" href="fonts.css?v=4">
   <link rel="stylesheet" href="base.css?v=4">
-  <link rel="stylesheet" href="site.css?v=34">
+  <link rel="stylesheet" href="site.css?v=35">
 </head>
 <body class="page-home">
   <nav class="site-nav">
@@ -60,13 +61,13 @@
 
     <section class="feature" aria-labelledby="feature-head">
       <div class="feature-inner">
-        <div class="feature-head">
+        <div class="feature-head reveal">
           <h2 class="feature-h2" id="feature-head">最常被卡住的三件事</h2>
           <p class="feature-lead">报名的证件照、报销的发票、还有一堆零碎的格式转换。这三件事我们先做到"能自证"。</p>
         </div>
 
-        <div class="feature-row">
-          <div class="feature-text">
+        <div class="feature-row feature-row--id reveal">
+          <div class="feature-text reveal">
             <h3 class="feature-title">证件照:按对方要的规格输出</h3>
             <p class="feature-copy">不是"裁成正方形"就完事,而是把像素、DPI、体积上限都按官方要求写进文件。</p>
             <ul class="feature-list">
@@ -76,11 +77,11 @@
             </ul>
             <a class="feature-link" href="/id-photo/">打开证件照 <span aria-hidden="true">→</span></a>
           </div>
-          <div class="feature-media"><div class="shot feature-shot"><img src="/assets/shots/id-photo.webp" width="1200" height="1344" alt="证件照工具:左侧是官方预设与照片预览,右侧是像素、DPI、体积上限与缩放位置控制" loading="lazy"></div></div>
+          <div class="feature-media reveal"><div class="shot feature-shot"><img src="/assets/shots/id-photo.webp" width="1200" height="1344" alt="证件照工具:左侧是官方预设与照片预览,右侧是像素、DPI、体积上限与缩放位置控制" loading="lazy"></div></div>
         </div>
 
-        <div class="feature-row">
-          <div class="feature-text">
+        <div class="feature-row feature-row--invoice reveal">
+          <div class="feature-text reveal">
             <h3 class="feature-title">发票拼版:把票据排到一张 A4 上</h3>
             <p class="feature-copy">图片和 PDF 混着投,按原比例居中排在 A4——不裁剪、不变形、不压到看不清。</p>
             <ul class="feature-list">
@@ -90,11 +91,11 @@
             </ul>
             <a class="feature-link" href="/invoice-nup/">打开发票拼版 <span aria-hidden="true">→</span></a>
           </div>
-          <div class="feature-media"><div class="shot feature-shot"><img src="/assets/shots/invoice-nup.webp" width="1200" height="1026" alt="发票拼版工具:两张发票排在 A4 上、输出信息与「本次处理:上传 0 个文件」" loading="lazy"></div></div>
+          <div class="feature-media reveal"><div class="shot feature-shot"><img src="/assets/shots/invoice-nup.webp" width="1200" height="1026" alt="发票拼版工具:两张发票排在 A4 上、输出信息与「本次处理:上传 0 个文件」" loading="lazy"></div></div>
         </div>
 
-        <div class="feature-row">
-          <div class="feature-text">
+        <div class="feature-row feature-row--util reveal">
+          <div class="feature-text reveal">
             <h3 class="feature-title">10 个文本小工具:打开就算,断网也能用</h3>
             <p class="feature-copy">JSON、Base64、正则、颜色、二维码、JWT、Hash、URL、UUID、日期时间戳。</p>
             <ul class="feature-list">
@@ -104,14 +105,14 @@
             </ul>
             <a class="feature-link" href="/tools/json/">打开小工具 <span aria-hidden="true">→</span></a>
           </div>
-          <div class="feature-media"><div class="shot feature-shot"><img src="/assets/shots/json.webp" width="1000" height="772" alt="JSON 格式化工具:左侧输入原始 JSON,右侧输出带缩进的美化结果" loading="lazy"></div></div>
+          <div class="feature-media reveal"><div class="shot feature-shot"><img src="/assets/shots/json.webp" width="1000" height="772" alt="JSON 格式化工具:左侧输入原始 JSON,右侧输出带缩进的美化结果" loading="lazy"></div></div>
         </div>
       </div>
     </section>
 
     <section class="catalog" aria-labelledby="catalog-head">
       <div class="catalog-inner">
-        <div class="catalog-head">
+        <div class="catalog-head reveal">
           <h2 class="catalog-h2" id="catalog-head">全部 20 个工具</h2>
           <p class="catalog-lead">按用途分成四组。每个工具都写着它能做什么、不能做什么。</p>
         </div>
@@ -131,7 +132,7 @@
   </footer>
 
   <script src="tools-manifest.js?v=5"></script>
-  <script src="home.js?v=16"></script>
+  <script src="home.js?v=17"></script>
   <script>
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
     window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=18'); });

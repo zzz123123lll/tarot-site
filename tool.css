@@ -223,3 +223,20 @@ body {
   .tool-more-grid { grid-template-columns: 1fr; }
   .tool-more-title { font-size: var(--fs-h3); }
 }
+
+/* ===== 第 2 阶段:工具页的触感(只做按压/悬停,不做滚动显现)=====
+   工具页首屏就是操作区,内容不该等动画;所以这里只补"手指按下去有反馈"这一层。 */
+.tool-btn, .download-btn, .tool-btn--ghost { transition: background .16s cubic-bezier(.22,1,.36,1), border-color .16s, transform .12s, box-shadow .2s; }
+.tool-btn:active, .download-btn:active { transform: scale(.97); }
+.tool-more-card:active { transform: translateY(0) scale(.985); transition-duration: .09s; }
+.tool-more-card:hover .tmc-name { color: var(--c-accent); }
+.file-row { transition: background .16s ease; border-radius: 8px; }
+.file-row:hover { background: rgba(0,0,0,.02); }
+.result-card { transition: box-shadow .2s ease, border-color .2s ease; }
+.result-card:hover { border-color: rgba(0,0,0,.14); box-shadow: 0 10px 22px -14px rgba(0,0,0,.18); }
+.mode-tabs button { transition: background .18s ease, color .18s ease, box-shadow .18s ease; }
+.tool-drop { transition: border-color .18s ease, background .18s ease, transform .18s ease; }
+.tool-drop.active { transform: scale(1.005); }
+@media (prefers-reduced-motion: reduce) {
+  .tool-btn:active, .download-btn:active, .tool-more-card:active, .tool-drop.active { transform: none; }
+}
