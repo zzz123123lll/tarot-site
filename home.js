@@ -113,7 +113,8 @@
   function eachText(list, fn) { Array.prototype.forEach.call(list, fn); }
   function stagger() {
     eachText(root.querySelectorAll('.group'), function (g) {
-      eachText(g.querySelectorAll('a.app'), function (cardEl, i) { cardEl.style.setProperty('--rd', ((i % 3) * 45) + 'ms'); });
+      // Apple 实测的错峰是"每项 20ms、整组封顶 240ms"(见 globalheader 的 min(.16s + 20ms*(total-index), .24s)),照此改
+      eachText(g.querySelectorAll('a.app'), function (cardEl, i) { cardEl.style.setProperty('--rd', Math.min(240, (i % 3) * 20) + 'ms'); });
     });
   }
   // 兜底扫描:IntersectionObserver 在"瞬间跳转"(例如点『看全部工具 ↓』)时可能整段跳过,

@@ -206,7 +206,8 @@ body.page-home .hero-shot { animation: shotRise .9s var(--ease-out) .2s both; }
 body.page-home .shot-hero { transform: translate3d(0, var(--py, 0), 0); will-change: transform; }
 
 /* —— 顶部导航:滚过一点点后加重底与投影(苹果式的"贴住"感)—— */
-body.page-home .site-nav { transition: background .3s var(--ease-in-out), box-shadow .3s var(--ease-in-out), backdrop-filter .3s var(--ease-in-out); }
+/* 导航状态切换:Apple 的 globalheader 主导曲线是 cubic-bezier(.4,0,.6,1) + .24s(该文件出现 78 次),照此改 */
+body.page-home .site-nav { transition: background .24s cubic-bezier(.4,0,.6,1), box-shadow .24s cubic-bezier(.4,0,.6,1), backdrop-filter .24s cubic-bezier(.4,0,.6,1); }
 body.page-home .site-nav.is-scrolled { background: rgba(251,251,253,.94); box-shadow: 0 1px 0 rgba(0,0,0,.05), 0 10px 30px -22px rgba(0,0,0,.30); }
 
 /* —— 三件事:每行一个强调色(点、链接、图片柔光)—— */
@@ -247,9 +248,10 @@ body.page-home .group .app-icon svg { transition: transform .28s var(--ease-out)
 body.page-home .group a.app:hover .app-icon svg { transform: scale(1.08) rotate(-2deg); }
 
 /* —— 微交互:悬停抬起 + 按压回弹(120ms 内,有触感但不吵)—— */
-body.page-home a.app, body.page-home .tool-more-card { transition: transform .22s var(--ease-out), box-shadow .22s var(--ease-out), border-color .22s var(--ease-out); }
+/* 悬停用 .2s ease(Apple 最常用的一组:opacity 100ms linear, transform .2s ease),按压用 Apple 全站统一的 scale(.95) */
+body.page-home a.app, body.page-home .tool-more-card { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
 body.page-home a.app:active, body.page-home .tool-more-card:active { transform: translateY(0) scale(.985); transition-duration: .09s; }
-body.page-home .feature-link span { display: inline-block; transition: transform .24s var(--ease-out); }
+body.page-home .feature-link span { display: inline-block; transition: transform .2s ease; }
 body.page-home .feature-link:hover span { transform: translateX(4px); }
 body.page-home .nav-links a { transition: color .2s var(--ease-out), opacity .2s var(--ease-out); }
 body.page-home .search { transition: border-color .2s var(--ease-out), box-shadow .25s var(--ease-out); }
@@ -272,3 +274,6 @@ body.page-home .feature-media::before { opacity: .9; }
 /* 横向溢出修复:三件事的彩色柔光是负 inset 的伪元素,不裁的话会把文档撑宽
    (实测 1024px 下 scrollWidth 1069、768 下 792、375 下 377;给区块加 overflow 后回到视口宽度) */
 body.page-home .feature { overflow: hidden; }
+
+/* 按压:Apple 全站统一 scale(.95)(airpods.css 的 play/pause 按钮等多处实测);卡片大,用更轻的 .985。 */
+body.page-home a.app:active, body.page-home .tool-more-card:active { transform: translateY(0) scale(.985); transition-duration: .1s; }

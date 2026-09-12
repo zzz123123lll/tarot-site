@@ -57,11 +57,16 @@ elevation:
 motion:
   ease-out: "cubic-bezier(.22,1,.36,1)"
   ease-in-out: "cubic-bezier(.4,0,.2,1)"
+  ease-nav: "cubic-bezier(.4,0,.6,1)"
   duration-reveal: 720ms
   duration-hero: 700ms
-  duration-hover: 220ms
-  duration-press: 90ms
-  stagger-card: 45ms
+  duration-nav: 240ms
+  duration-hover: 200ms
+  duration-press: 100ms
+  press-scale-button: 0.95
+  press-scale-card: 0.985
+  stagger-card: 20ms
+  stagger-card-cap: 240ms
   stagger-hero: 60ms
   parallax-factor: 0.05
   wash-duration: 18s
@@ -135,15 +140,18 @@ layout:
 
 ## Motion
 
-| 场景 | 参数 |
-| --- | --- |
-| 滚入显现 | 720ms cubic-bezier(.22,1,.36,1),位移 18px,卡片按列 45ms 错峰 |
-| hero 进入 | 700ms,标题→副标题→搜索→截图按 60ms 递进上升 |
-| 悬停 | 220ms 抬起 2px;图标 1.08 倍轻转;图片 1.015 缓推;链接箭头右移 4px |
-| 按压 | 90ms scale(.985)(按钮 .97) |
-| 视差 | hero 截图 5%,上限 34px,仅 >=1069px |
-| hero 洗色 | 三团径向渐变,18s 缓慢呼吸,仅 transform/opacity |
-| 搜索过滤 | 原生 view transition 240ms 交叉淡入 |
+| 场景 | 参数 | 出处 |
+| --- | --- | --- |
+| 滚入显现 | 720ms cubic-bezier(.22,1,.36,1),位移 18px,卡片按列 20ms 错峰(封顶 240ms) | 错峰节奏取自 Apple globalheader 实测的 min(.16s + 20ms*(total-index), .24s) |
+| hero 进入 | 700ms,标题→副标题→搜索→截图按 60ms 递进上升 | 递进量级对齐 Apple 的分组错峰 40-80ms |
+| 导航状态切换 | 240ms cubic-bezier(.4,0,.6,1) | Apple globalheader.css 的主导曲线(该文件出现 78 次) |
+| 悬停 | 200ms ease 抬起 2px;图标 1.08 倍轻转;图片 1.015 缓推;链接箭头右移 4px | 对齐 Apple 最常用的 opacity 100ms linear, transform .2s ease |
+| 按压 | 按钮 scale(.95)、卡片 scale(.985),100ms | scale(.95) 是 Apple 全站统一值(airpods.css 多处) |
+| 视差 | hero 截图 5%,上限 34px,仅 >=1069px | **与 Apple 不同**:Apple 是滚动进度映射(caption 系数 2.6x + 淡出),我们刻意用更便宜的位移近似 |
+| hero 洗色 | 三团径向渐变,18s 缓慢呼吸,仅 transform/opacity | 我们自己的做法 |
+| 搜索过滤 | 原生 view transition 240ms 交叉淡入 | 我们自己的做法 |
+
+比 Apple 多做的一点:Apple 的导航组件没有 prefers-reduced-motion 兜底(globalheader.css 实测 0 处),我们全站都有。
 
 硬约束:只动 transform / opacity / filter;reveal 的初态挂在 html.js-motion 上(关 JS 时内容全在);
 prefers-reduced-motion: reduce 下不做任何动画;瞬间跳转导致 IntersectionObserver 跳过时,按几何位置兜底补显。
