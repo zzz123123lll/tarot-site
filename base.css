@@ -36,6 +36,15 @@
   --c-warn: #a1500a;
   --c-err: #d70015;
   --hairline: 1px solid var(--c-hairline);
+  /* —— 高度(阴影)阶梯:灵感来自 Vercel 的 DESIGN.md(awesome-design-md 收录)——
+     它整套 elevation 都是"多个小偏移叠加 + 一圈内描边",而不是一坨 8px 模糊的大投影。
+     这样做出来的卡片边缘更利落、层次更静。组件里不要再写死 box-shadow,一律取这里的别名。 */
+  --sh-1: 0 1px 1px rgba(0,0,0,.02), 0 2px 4px rgba(0,0,0,.04);                                  /* 平面卡片 / 结果行 */
+  --sh-2: 0 1px 1px rgba(0,0,0,.02), 0 4px 8px -4px rgba(0,0,0,.06);                              /* 轻微抬起:输入框聚焦、文件行悬停 */
+  --sh-3: 0 2px 4px rgba(0,0,0,.03), 0 10px 20px -10px rgba(0,0,0,.08);                           /* 卡片悬停 / 分段控件 */
+  --sh-4: 0 2px 6px rgba(0,0,0,.04), 0 20px 36px -18px rgba(0,0,0,.14);                           /* 浮层卡片 / 大面板 */
+  --sh-5: 0 1px 1px rgba(0,0,0,.03), 0 28px 56px -22px rgba(0,0,0,.20);                           /* 弹层 / 对话框 */
+  --sh-shot: 0 2px 4px rgba(0,0,0,.03), 0 40px 80px -40px rgba(0,0,0,.26);                       /* 产品截图:唯一允许的大范围柔和投影 */
 }
 
 *, *::before, *::after { box-sizing: border-box; }

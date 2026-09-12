@@ -240,3 +240,21 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .tool-btn:active, .download-btn:active, .tool-more-card:active, .tool-drop.active { transform: none; }
 }
+
+/* ===== 高度阶梯落到组件上(令牌在 base.css,这里只做替换)===== */
+.tool-card, .result-card, .summary { box-shadow: var(--sh-1); }
+.result-card:hover { box-shadow: var(--sh-2); }
+.tool-more-card { box-shadow: var(--sh-1); }
+.tool-more-card:hover { box-shadow: var(--sh-4); }
+.tool-drop { box-shadow: var(--sh-1); }
+.tool-drop:hover, .tool-drop.active { box-shadow: var(--sh-3); }
+.mode-tabs { box-shadow: inset 0 0 0 1px rgba(0,0,0,.04); }
+.mode-tabs button.active { box-shadow: inset 0 0 0 1px var(--c-hairline), var(--sh-1); }
+.tool-input:focus, .tool-select:focus { box-shadow: 0 0 0 3px rgba(0,113,227,.15); }
+.tippy-box[data-theme~='tool'] { box-shadow: var(--sh-5); }
+button, [role='button'], .mode-tabs button, .file-row .mv, .file-row .rm, .result-card .remove-btn { cursor: pointer; }
+button:disabled, .tool-btn:disabled { cursor: not-allowed; }
+
+/* 关联标签(label[for])是可点元素:给它 pointer;尺寸不强制 44px ——
+   它指向的控件自己已经是 44px 目标,标签只是"点字也能聚焦"的便利(与正文行内链接同理)。 */
+label[for], label:has(input), label:has(select), label:has(textarea) { cursor: pointer; }

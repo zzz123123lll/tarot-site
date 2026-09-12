@@ -258,3 +258,17 @@ body.page-home .search { transition: border-color .2s var(--ease-out), box-shado
 @media (prefers-reduced-motion: no-preference) {
   ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .24s; animation-timing-function: cubic-bezier(.22,1,.36,1); }
 }
+
+/* ===== 高度阶梯落到首页组件上(令牌在 base.css)===== */
+body.page-home .shot { box-shadow: var(--sh-shot); }
+body.page-home .feature-media .shot { box-shadow: 0 2px 4px rgba(0,0,0,.03), 0 40px 80px -40px var(--acc-glow, rgba(0,0,0,.26)); }
+body.page-home .app { box-shadow: var(--sh-1); }
+body.page-home a.app:hover { box-shadow: var(--sh-3); }
+body.page-home .group a.app:hover { box-shadow: 0 2px 4px rgba(0,0,0,.03), 0 16px 30px -16px var(--g-glow, rgba(0,0,0,.18)); }
+body.page-home .search { box-shadow: var(--sh-1); }
+body.page-home .search:focus { box-shadow: 0 0 0 3px rgba(0,113,227,.15); }
+body.page-home .feature-media::before { opacity: .9; }
+
+/* 横向溢出修复:三件事的彩色柔光是负 inset 的伪元素,不裁的话会把文档撑宽
+   (实测 1024px 下 scrollWidth 1069、768 下 792、375 下 377;给区块加 overflow 后回到视口宽度) */
+body.page-home .feature { overflow: hidden; }
