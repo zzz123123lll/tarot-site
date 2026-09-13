@@ -358,6 +358,7 @@ export async function checkPdf(out, expect) {
 }
 
 const REGISTRY = {
+  'receipt-clean': { title: '票据清理', module: '/tools/receipt-clean.mjs', v: 2 },
   'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 22 },
   'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 18 },
   'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs', v: 5 },

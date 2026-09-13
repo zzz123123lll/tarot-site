@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231d1d1f'/%3E%3Cpath d='M50 16L59 41L84 50L59 59L50 84L41 59L16 50L41 41Z' fill='%23e6c784'/%3E%3C/svg%3E">
+<title>票据清理 - 发票去灰底、自动摆正、自动裁边 · 工具盒</title>
+<meta name="description" content="票据清理：手机拍的发票/单据一键去灰底、自动裁掉多余边距、自动摆正；支持扫描件 PDF 逐页处理。全程本地，不上传。">
+<link rel="canonical" href="https://gongjuhe.top/receipt-clean/">
+<meta property="og:title" content="票据清理 - 发票去灰底、自动摆正、自动裁边 · 工具盒">
+<meta property="og:description" content="手机拍的发票一键去灰底、自动裁边、自动摆正，支持扫描件 PDF。全程本地，不上传。">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://gongjuhe.top/og.png">
+<meta property="og:url" content="https://gongjuhe.top/receipt-clean/">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="工具盒">
+<link rel="preload" href="/vendor/fonts/Geist-sub.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts.css?v=4">
+<link rel="stylesheet" href="/base.css?v=7">
+<link rel="stylesheet" href="/tool.css?v=36">
+</head>
+<body>
+<nav class="tool-nav">
+  <a class="tool-nav-brand" href="/"><span class="nav-mark"><svg class="nav-star" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.4l2.55 7.05L21.6 12l-7.05 2.55L12 21.6l-2.55-7.05L2.4 12l7.05-2.55z" fill="currentColor"/></svg></span>工具盒</a>
+  <span class="tool-nav-title" id="toolTitle"></span>
+</nav>
+<div class="tool-container" id="toolRoot"><div class="tool-static"><h1 class="tool-h1">票据清理</h1><p class="tool-sub">把手机拍的发票、单据、扫描件变干净：去灰底、自动裁掉四周多余边距、自动摆正。支持图片与 PDF（扫描件 PDF 会逐页处理），全程在本地完成。</p><p class="tool-static-note">这个工具在你的浏览器里本地运行，文件不会上传到任何服务器；加载完成后下方即可直接使用。</p></div></div>
+<script type="module">
+import { mountTool } from '/shared/toolkit.js?v=23';
+function slugFromPath() {
+  var p = (location.pathname || '').replace(/^\/+|\/+$/g, '');
+  if (p.indexOf('tools/') === 0) p = p.slice(6);
+  return p;
+}
+mountTool(slugFromPath(), document.getElementById('toolRoot'), document.getElementById('toolTitle'));
+</script>
+<script>
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=20'); });
+}
+</script>
+  <footer class="tool-foot"><h2 class="tool-more-title">接着可以做什么</h2><div class="tool-more-grid"><a class="tool-more-card" data-fx="spotlight" href="/invoice-nup/"><span class="tmc-name">发票拼版</span><span class="tmc-desc">多张发票按原比例排到 A4,输出一份 PDF。</span></a><a class="tool-more-card" data-fx="spotlight" href="/invoice-check/"><span class="tmc-name">发票查重</span><span class="tmc-desc">标出重复提交的发票,导出报销清单。</span></a><a class="tool-more-card" data-fx="spotlight" href="/img-compress/"><span class="tmc-name">图片压缩</span><span class="tmc-desc">批量变小，也可以压到指定大小。</span></a></div><p class="tool-foot-line">图片工具 · 全部工具本地运行，文件不上传</p><nav class="tool-foot-links" aria-label="同分区工具"><a href="/img-compress/">图片压缩</a><a href="/image-convert/">图片转换</a><a href="/images-to-pdf/">图片合成 PDF</a><a href="/invoice-nup/">发票拼版</a><a href="/invoice-check/">发票查重</a><a href="/verify/">怎么验证不上传</a><a href="/">全部工具</a></nav></footer>
+  <script defer src="/assets/pointer-fx.js?v=1"></script>
+</body>
+</html>
