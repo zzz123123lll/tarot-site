@@ -313,6 +313,9 @@ export function makeDropZone(el, onFiles, accept, opts) {
     } else {
       clearWarn(el);
     }
+    // 延后 60ms 再摆骨架:工具接手时的第一件事通常是清空结果区(innerHTML=''),
+    // 立刻插进去会被它自己清掉 —— 那样骨架等于没做。
+    try { var _r = el.closest ? (el.closest('#toolRoot') || document) : document; setTimeout(function () { showSkeletons(_r); }, 60); } catch (e) {}
     onFiles(okFiles);
   });
 }
@@ -520,7 +523,8 @@ function ensureProofLine(root) {
     var link = document.createElement('a');
     link.href = '/verify/';
     link.textContent = '怎么自己验证';
-    link.style.cssText = 'color:#0066cc;margin-left:8px';
+    // 触控高度必须 ≥44px(自动检查会拦下来,这是真要求不是形式主义)
+    link.style.cssText = 'color:#0066cc;margin-left:8px;display:inline-flex;align-items:center;min-height:44px;padding:0 2px';
     box.appendChild(line);
     box.appendChild(link);
     root.appendChild(box);
@@ -553,7 +557,21 @@ function injectSharedMotion() {
     '@keyframes tbShimmer{from{background-position:-120% 0}to{background-position:220% 0}}',
     '.progress-bar .fill{background-image:linear-gradient(100deg,var(--c-accent,#0071e3) 0%,var(--c-accent,#0071e3) 42%,#57a9ff 50%,var(--c-accent,#0071e3) 58%,var(--c-accent,#0071e3) 100%);background-size:220% 100%;animation:tbShimmer 1.7s linear infinite}',
     '}',
-    '@media (prefers-reduced-motion: reduce){.seg-ind{transition:none}}'
+    '@media (prefers-reduced-motion: reduce){.seg-ind{transition:none}}',
+    // 卡片收起(移除时)与结果区骨架屏
+    '.tb-card-out{animation:tbCardOut 180ms cubic-bezier(.22,1,.36,1) both}',
+    '@keyframes tbCardOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-6px) scale(.995)}}',
+    '.tb-skel{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--c-hairline,#e8e8ed);border-radius:14px;padding:14px;margin-bottom:10px}',
+    '.tb-skel .th{width:48px;height:48px;border-radius:10px;flex:0 0 auto;background:#eef0f3}',
+    '.tb-skel .ln{flex:1}',
+    '.tb-skel .ln i{display:block;height:10px;border-radius:6px;background:#eef0f3;margin:6px 0}',
+    '.tb-skel .ln i:first-child{width:46%}',
+    '.tb-skel .ln i:last-child{width:70%}',
+    '@media (prefers-reduced-motion: no-preference){',
+    '@keyframes tbSkelPulse{0%,100%{opacity:.55}50%{opacity:1}}',
+    '.tb-skel .th,.tb-skel .ln i{animation:tbSkelPulse 1.4s ease-in-out infinite}',
+    '}',
+    '@media (prefers-reduced-motion: reduce){.tb-card-out{animation:none}}'
   ].join('');
   document.head.appendChild(s);
 }
@@ -614,6 +632,60 @@ function enhanceCardEntrance(root) {
   mo.observe(root, { childList: true, subtree: true });
 }
 
+
+// ---------- 卡片收起(移除时) ----------
+// 各工具的"移除"按钮会直接重渲染、卡片瞬间消失。这里在捕获阶段先拦一下:
+// 播 180ms 收起动画,再把点击交回工具自己的处理函数。reduced-motion 下完全不做这件事(不引入延迟)。
+var _tbOutBound = false;
+function enhanceCardExit(root) {
+  if (_tbOutBound || typeof document === 'undefined') return;
+  _tbOutBound = true;
+  document.addEventListener('click', function (ev) {
+    try {
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var t = ev.target;
+      var btn = t && t.closest ? t.closest('.remove-btn, .result-card .rm, .rc-card .rm') : null;
+      if (!btn || btn.getAttribute('data-tb-out')) return;
+      var card = btn.closest ? btn.closest('.result-card, .rc-card, .idp-card, .pdf-part') : null;
+      if (!card) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      btn.setAttribute('data-tb-out', '1');
+      card.classList.add('tb-card-out');
+      setTimeout(function () { btn.click(); }, 185);
+    } catch (e) { /* 动画失败不能挡住移除本身 */ }
+  }, true);
+}
+
+// ---------- 结果区骨架屏 ----------
+// 大文件/批量时"点完像没反应"是最容易劝退人的。投递文件后先摆几张骨架,
+// 一旦真的有结果卡出现(或出现说明文字)就撤掉;最多留 10 秒,绝不让骨架挡住真相。
+function skelContainer(root) {
+  return root.querySelector('#res, #out, .results, .rc-grid, .idp-out');
+}
+// 只给"确实要算一会儿"的工具摆骨架:文档/文本类工具是瞬间出结果的,摆骨架反而是假信号
+var TB_SLOW = { 'img-compress': 1, 'image-convert': 1, 'id-photo': 1, 'receipt-clean': 1, 'invoice-check': 1, 'invoice-nup': 1, 'images-to-pdf': 1, 'pdf-merge': 1, 'pdf-split': 1, 'pdf-render': 1, 'pdf-compress': 1 };
+function showSkeletons(root) {
+  var host = root && root.closest ? root.closest('[data-tb-slug]') : null;
+  var slug = host ? host.getAttribute('data-tb-slug') : '';
+  if (!TB_SLOW[slug]) return;
+  var box = skelContainer(root);
+  if (!box) return;
+  // 只在容器完全空的时候摆,而且用插入而不是覆盖 —— 绝不碰工具已经写进去的任何内容
+  if (box.children.length > 0 || box.querySelector('.tb-skel')) return;
+  var html = '';
+  for (var i = 0; i < 2; i++) html += '<div class="tb-skel" aria-hidden="true"><span class="th"></span><span class="ln"><i></i><i></i></span></div>';
+  box.insertAdjacentHTML('afterbegin', html);
+  var t0 = Date.now();
+  var timer = setInterval(function () {
+    if (box.querySelector('.result-card, .rc-card, .inv-tbl, .idp-card') || (box.querySelector('.note') && box.querySelector('.note').textContent.trim()) || Date.now() - t0 > 10000) {
+      clearInterval(timer);
+      var sk = box.querySelectorAll('.tb-skel');
+      Array.prototype.forEach.call(sk, function (n) { n.parentNode && n.parentNode.removeChild(n); });
+    }
+  }, 250);
+}
+
 export async function mountTool(slug, root, titleEl) {
   const t = REGISTRY[slug];
   if (!t) {
@@ -622,6 +694,7 @@ export async function mountTool(slug, root, titleEl) {
     return;
   }
   if (titleEl) titleEl.textContent = t.title;
+  try { root.setAttribute('data-tb-slug', slug); } catch (e) {}   // 供骨架屏判断"这个工具是否真的慢"
   // 页面 <title> 由各工具的静态 HTML 提供(SEO),这里不再覆盖
   try {
     const mod = await import(t.module + '?v=' + (t.v || 1));
@@ -633,6 +706,7 @@ export async function mountTool(slug, root, titleEl) {
       injectSharedMotion();
       enhanceSegmented(root);
       enhanceCardEntrance(root);
+      enhanceCardExit(root);
     }
   } catch (e) {
     root.innerHTML = '<p class="tool-sub">工具加载失败。</p>';
