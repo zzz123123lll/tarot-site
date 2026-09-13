@@ -116,11 +116,19 @@ export function mount(root, H) {
     // ① 单文件达标
     if (single && single.byteLength <= target) {
       hideProgress();
-      H.downloadBlob(new Blob([single], { type: 'application/pdf' }), base + '_compressed.pdf');
+      // 导出后自检:把产物读回来核对页数与体积,过了才让下载
+      var chk1 = await H.checkPdf(single, { pages: doc.numPages, maxBytes: target });
+      var file1 = base + '_compressed.pdf';
+      if (chk1.ok) H.downloadBlob(new Blob([single], { type: 'application/pdf' }), file1);
       var pct1 = Math.round((1 - single.byteLength / origSize) * 100);
-      say('已压缩:' + H.fmt(origSize) + ' → ' + H.fmt(single.byteLength) + '(-' + pct1 + '%),' + usedDpi + ' dpi 栅格化重压。代价:文字变成图,不能复制、不能搜索。', 'ok');
-      out.innerHTML = '<div class="pdf-parts"><div class="pdf-part"><span class="nm">' + H.esc(base + '_compressed.pdf') + '</span><span class="meta">' + H.fmt(single.byteLength) + ' · 1 份 · ' + doc.numPages + ' 页</span><button class="tool-btn" id="dl1">下载</button></div></div>';
-      root.querySelector('#dl1').addEventListener('click', function () { H.downloadBlob(new Blob([single], { type: 'application/pdf' }), base + '_compressed.pdf'); });
+      say('已压缩:' + H.fmt(origSize) + ' → ' + H.fmt(single.byteLength) + '(-' + pct1 + '%),' + usedDpi + ' dpi 栅格化重压。代价:文字变成图,不能复制、不能搜索。'
+        + (chk1.ok ? ' 自检 ✓ ' + chk1.pages + ' 页(与原文一致)· ' + H.fmt(chk1.bytes) + ' ≤ 目标。' : ' 自检没通过,先别拿去交:' + chk1.error),
+        chk1.ok ? 'ok' : 'err');
+      // 自检没过就不给下载按钮(宁可少一步操作,也不让人拿坏文件去交)
+      out.innerHTML = '<div class="pdf-parts"><div class="pdf-part"><span class="nm">' + H.esc(file1) + '</span><span class="meta">' + H.fmt(single.byteLength) + ' · 1 份 · ' + doc.numPages + ' 页 · ' + (chk1.ok ? '自检 ✓ ' + chk1.pages + ' 页' : '自检失败') + '</span>'
+        + (chk1.ok ? '<button class="tool-btn" id="dl1">下载</button>' : '') + '</div></div>';
+      var dl1 = root.querySelector('#dl1');
+      if (dl1) dl1.addEventListener('click', function () { H.downloadBlob(new Blob([single], { type: 'application/pdf' }), file1); });
       return;
     }
     // ② 拆分成多份:按每页 JPEG 字节累计切(留 5% + 24KB 组装余量)
@@ -156,10 +164,18 @@ export function mount(root, H) {
           guard++;
         }
         var first = groups[g][0] + 1, last = groups[g][groups[g].length - 1] + 1;
-        parts.push({ name: base + '_part' + (g + 1) + '.pdf', bytes: bytes, pages: fmtPages(first, last), size: bytes.byteLength, met: bytes.byteLength <= target });
+        // 导出后自检:每一份都读回来核对页数(必须等于这份应有的页数)与体积
+        var chkP = await H.checkPdf(bytes, { pages: groups[g].length, maxBytes: target });
+        parts.push({ name: base + '_part' + (g + 1) + '.pdf', bytes: bytes, pages: fmtPages(first, last), size: bytes.byteLength, met: bytes.byteLength <= target, want: groups[g].length, chk: chkP });
       }
       hideProgress();
       var allMet = parts.every(function (x) { return x.met; });
+      // 页覆盖自检:每一页都必须出现且只出现一次(拆分的经典事故就是丢页/重页)
+      var seen = {}, dup = 0, total = 0;
+      groups.forEach(function (gg) { gg.forEach(function (idx) { if (seen[idx]) dup++; seen[idx] = 1; total++; }); });
+      var missing = pages.length - Object.keys(seen).length;
+      var coverageOk = dup === 0 && missing === 0 && total === pages.length;
+      var checkBad = parts.filter(function (x) { return !x.chk.ok; });
       var worst = Math.max.apply(null, parts.map(function (x) { return x.size; }));
       // 全部都是"一页一份"却仍超标 = 单页本身就超目标,拆页解决不了 —— 按实测数字说清,别给假希望
       var allSinglePage = parts.length === groups.length && groups.every(function (g) { return g.length === 1; });
@@ -168,11 +184,14 @@ export function mount(root, H) {
           + '建议放宽目标,或先把 PDF 里的图片单独压小再合并。(下面这些每页一份的文件仍比原文件小,需要可以拿。)', 'err');
       } else {
         say('目标 ' + H.fmt(target) + ' 拆不开:' + usedDpi + ' dpi 之下整份仍超过,所以拆成了 ' + parts.length + ' 份,最大一份 ' + H.fmt(worst) + '。'
-          + (allMet ? '每份都在上限内。' : '仍有份超标(下面标出来了)。') + '代价:文字变成图,不能复制、不能搜索。', allMet ? 'ok' : 'err');
+          + (allMet ? '每份都在上限内。' : '仍有份超标(下面标出来了)。')
+          + ' 自检 ' + (coverageOk && !checkBad.length ? '✓ ' + parts.length + ' 份 · 共 ' + total + ' 页 · 无重复无遗漏 · 每份页数与体积都与预期一致。'
+            : '没通过:' + (coverageOk ? '' : ('页覆盖有问题(重复 ' + dup + ' 页 / 缺 ' + missing + ' 页);')) + (checkBad.length ? checkBad.length + ' 份产物读回来不对;' : ''))
+          + '代价:文字变成图,不能复制、不能搜索。', coverageOk && !checkBad.length ? (allMet ? 'ok' : 'err') : 'err');
       }
       var html = '<div class="pdf-parts">';
       parts.forEach(function (x, i) {
-        html += '<div class="pdf-part"><span class="nm">' + H.esc(x.name) + '</span><span class="meta">' + x.pages + ' · ' + H.fmt(x.size) + (x.met ? '' : ' · 超目标') + '</span><button class="tool-btn" data-p="' + i + '">下载</button></div>';
+        html += '<div class="pdf-part"><span class="nm">' + H.esc(x.name) + '</span><span class="meta">' + x.pages + ' · ' + H.fmt(x.size) + ' · ' + (x.chk.ok ? '自检 ✓ ' + x.chk.pages + ' 页' : '自检失败:' + H.esc(x.chk.error || '')) + (x.met ? '' : ' · 超目标') + '</span>' + (x.chk.ok ? '<button class="tool-btn" data-p="' + i + '">下载</button>' : '') + '</div>';
       });
       html += '<div class="tool-row" style="margin-top:12px"><button class="tool-btn tool-btn--ghost" id="dlzip">打包下载全部(' + parts.length + ' 份)</button></div></div>';
       out.innerHTML = html;
@@ -224,9 +243,13 @@ export function mount(root, H) {
     if (outBytes.length >= origSize) {
       say('压缩后没有变小(' + H.fmt(outBytes.length) + ' ≥ ' + H.fmt(origSize) + '),已保留原文件。', 'err');
     } else {
-      H.downloadBlob(new Blob([outBytes], { type: 'application/pdf' }), f.name.replace(/\.pdf$/i, '_compressed.pdf'));
+      // 导出后自检:预设模式也要核对页数
+      var chkPre = await H.checkPdf(outBytes, { pages: doc.numPages });
       var pct = Math.round((1 - outBytes.length / origSize) * 100);
-      say('已压缩:' + H.fmt(origSize) + ' → ' + H.fmt(outBytes.length) + '(-' + pct + '%)', 'ok');
+      if (chkPre.ok) H.downloadBlob(new Blob([outBytes], { type: 'application/pdf' }), f.name.replace(/\.pdf$/i, '_compressed.pdf'));
+      say('已压缩:' + H.fmt(origSize) + ' → ' + H.fmt(outBytes.length) + '(-' + pct + '%)'
+        + (chkPre.ok ? ' 自检 ✓ ' + chkPre.pages + ' 页(与原文一致)。' : ' 自检没通过,先别拿去交:' + chkPre.error),
+        chkPre.ok ? 'ok' : 'err');
     }
   }
 

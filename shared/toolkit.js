@@ -309,8 +309,56 @@ export function makeDropZone(el, onFiles, accept, opts) {
   });
 }
 
+// ---------- 导出后自检(把"悄悄坏掉"挡在下载之前) ----------
+// 为什么需要:调研里最扎心的一条原话是"导出 PDF 排版丢了好几页,问题是我马上就要交了"。
+// 做法:产物生成后**真的读回来**核对 —— 图片能不能解码、像素对不对、体积有没有超;
+// PDF 能不能被解析、页数是不是和预期一致。自检不过就把话说清楚,而不是让你拿去交。
+export async function checkImage(out, expect) {
+  var res = { ok: false, bytes: 0, width: 0, height: 0, type: '', error: '' };
+  try {
+    var blob = out instanceof Blob ? out : new Blob([out]);
+    res.bytes = blob.size;
+    res.type = blob.type || '';
+    var bmp = await createImageBitmap(blob);
+    res.width = bmp.width; res.height = bmp.height;
+    if (bmp.close) bmp.close();
+    var problems = [];
+    if (!res.bytes) problems.push('产物是 0 字节');
+    if (expect && expect.maxBytes && res.bytes > expect.maxBytes) problems.push('体积 ' + fmt(res.bytes) + ' 超过目标 ' + fmt(expect.maxBytes));
+    if (expect && expect.width && res.width !== expect.width) problems.push('宽度 ' + res.width + ' 与预期 ' + expect.width + ' 不一致');
+    if (expect && expect.height && res.height !== expect.height) problems.push('高度 ' + res.height + ' 与预期 ' + expect.height + ' 不一致');
+    if (expect && expect.maxSide && Math.max(res.width, res.height) > expect.maxSide) problems.push('边长超过 ' + expect.maxSide);
+    res.ok = problems.length === 0;
+    if (!res.ok) res.error = problems.join(';');
+  } catch (e) {
+    res.error = '产物读不回来(可能已损坏):' + friendlyError(e, '解码失败');
+  }
+  return res;
+}
+export async function checkPdf(out, expect) {
+  var res = { ok: false, bytes: 0, pages: 0, error: '' };
+  try {
+    var blob = out instanceof Blob ? out : new Blob([out], { type: 'application/pdf' });
+    res.bytes = blob.size;
+    await loadLib('/vendor/pdf-lib.min.js?v=1', 'PDF 校验程序');
+    var bytes = new Uint8Array(await blob.arrayBuffer());
+    var doc = await window.PDFLib.PDFDocument.load(bytes, { ignoreEncryption: true, updateMetadata: false });
+    res.pages = doc.getPageCount();
+    var problems = [];
+    if (!res.bytes) problems.push('产物是 0 字节');
+    if (!res.pages) problems.push('页数为 0');
+    if (expect && expect.pages && res.pages !== expect.pages) problems.push('页数 ' + res.pages + ' 与预期 ' + expect.pages + ' 不一致');
+    if (expect && expect.maxBytes && res.bytes > expect.maxBytes) problems.push('体积 ' + fmt(res.bytes) + ' 超过目标 ' + fmt(expect.maxBytes));
+    res.ok = problems.length === 0;
+    if (!res.ok) res.error = problems.join(';');
+  } catch (e) {
+    res.error = '产物读不回来(可能已损坏):' + friendlyError(e, 'PDF 解析失败');
+  }
+  return res;
+}
+
 const REGISTRY = {
-  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 20 },
+  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 21 },
   'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 17 },
   'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs', v: 5 },
   'images-to-pdf': { title: '图片合成 PDF', module: '/tools/images-to-pdf.mjs', v: 6 },
@@ -318,7 +366,7 @@ const REGISTRY = {
   'pdf-merge': { title: 'PDF 合并', module: '/tools/pdf-merge.mjs', v: 6 },
   'pdf-split': { title: 'PDF 拆分/旋转', module: '/tools/pdf-split.mjs', v: 6 },
   'pdf-render': { title: 'PDF 转图片', module: '/tools/pdf-render.mjs', v: 6 },
-  'pdf-compress': { title: 'PDF 压缩', module: '/tools/pdf-compress.mjs', v: 8 },
+  'pdf-compress': { title: 'PDF 压缩', module: '/tools/pdf-compress.mjs', v: 9 },
   'json': { title: 'JSON 格式化', module: '/tools/json.mjs', v: 6 },
   'base64': { title: 'Base64 编解码', module: '/tools/base64.mjs', v: 5 },
   'regex': { title: '正则测试', module: '/tools/regex.mjs', v: 5 },
@@ -331,7 +379,7 @@ const REGISTRY = {
   'date': { title: '日期 & 时间戳', module: '/tools/date.mjs', v: 5 }
 };
 
-const H = { esc, fmt, downloadBlob, downloadZip, injectCss, makeDropZone, loadScript, loadLib, dynLib, isLibFail, copyText, initTips, friendlyError, warnBelow, clearWarn, netMark, netReport, netLine };
+const H = { esc, fmt, downloadBlob, downloadZip, checkImage, checkPdf, injectCss, makeDropZone, loadScript, loadLib, dynLib, isLibFail, copyText, initTips, friendlyError, warnBelow, clearWarn, netMark, netReport, netLine };
 
 // 通用无障碍增强:动态状态区可被读屏播报;标签与输入框建立关联
 export function enhanceA11y(root) {

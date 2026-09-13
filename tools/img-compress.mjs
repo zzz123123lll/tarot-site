@@ -219,10 +219,14 @@ export function mount(root, H) {
           scale: r.scale, attempts: r.attempts, timedOut: r.timedOut, inMime: mime
         };
         if (r.blob) {
+          // 导出后自检:产物读回来核对像素与体积,不达标就不给下载按钮
+          var expect = { maxBytes: target };
+          if (r.width && r.height) { expect.width = r.width; expect.height = r.height; }
+          var chk = await H.checkImage(r.blob, expect);
           push(Object.assign({
             name: file.name, origSize: origSize, outSize: r.blob.size, blob: r.blob,
             status: 'ok', saved: Math.max(0, origSize - r.blob.size),
-            met: !!r.met, target: target, reason: r.reason, real: !!r.real, codec: r.codec, orig: file
+            met: !!r.met, target: target, reason: r.reason, real: !!r.real, codec: r.codec, orig: file, check: chk
           }, sr));
         } else if (r.met) {
           push(Object.assign({ name: file.name, origSize: origSize, status: 'met', target: target }, sr));
@@ -234,10 +238,11 @@ export function mount(root, H) {
       var res = await E.encodeWithQuality(file, mime, PRESETS[preset]);
       var blob = res.blob;
       if (!blob) { push({ name: file.name, origSize: origSize, status: 'fail' }); return; }
+      var chkQ = await H.checkImage(blob);
       if (blob.size >= origSize) {
-        push({ name: file.name, origSize: origSize, status: 'skip', real: !!res.real, codec: res.codec });
+        push({ name: file.name, origSize: origSize, status: 'skip', real: !!res.real, codec: res.codec, check: chkQ });
       } else {
-        push({ name: file.name, origSize: origSize, outSize: blob.size, blob: blob, status: 'ok', saved: origSize - blob.size, real: !!res.real, codec: res.codec, orig: file });
+        push({ name: file.name, origSize: origSize, outSize: blob.size, blob: blob, status: 'ok', saved: origSize - blob.size, real: !!res.real, codec: res.codec, orig: file, check: chkQ });
       }
     } catch (e) {
       push({ name: file.name, origSize: origSize, status: 'fail' });
@@ -299,13 +304,21 @@ export function mount(root, H) {
             + '<span class="cmp-line" aria-hidden="true"></span>'
             + '<input class="cmp-r" type="range" min="0" max="100" value="50" step="1" aria-label="拖动对比原图与压缩后的画面"></div>'
           : '';
+        // 自检行:产物读回来核对过了才给"下载"(调研原话:导出坏了才被发现是最要命的)
+        var checkLine = '';
+        var checkOk = !f.check || f.check.ok;
+        if (f.check) {
+          checkLine = f.check.ok
+            ? '<div class="sizes" style="color:var(--c-ok)">自检:产物读回 ' + f.check.width + ' × ' + f.check.height + ' · ' + H.fmt(f.check.bytes) + (f.target ? ' ≤ 目标 ' + H.fmt(f.target) : '') + '</div>'
+            : '<div class="sizes" style="color:var(--c-err)">自检没通过，先别拿去交：' + H.esc(f.check.error) + '</div>';
+        }
         html += '<div class="result-card">'
           + '<img class="preview" src="' + outUrl + '" alt="" onclick="void 0">'
           + '<div class="info"><div class="name">' + H.esc(f.name) + badge + '</div>'
           + '<div class="sizes"><span class="old">' + H.fmt(f.origSize) + '</span> → <span class="new">' + H.fmt(f.outSize) + '</span>'
-          + (f.target ? '（目标 ' + H.fmt(f.target) + '）' : '') + '</div>' + note + extraNote + cmp + '</div>'
+          + (f.target ? '（目标 ' + H.fmt(f.target) + '）' : '') + '</div>' + note + extraNote + checkLine + cmp + '</div>'
           + '<button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button>'
-          + '<button class="download-btn" data-i="' + i + '">下载</button></div>';
+          + (checkOk ? '<button class="download-btn" data-i="' + i + '">下载</button>' : '') + '</div>';
       } else if (f.status === 'met') {
         html += '<div class="result-card"><div class="info"><div class="name">' + H.esc(f.name) + '<span class="saved-badge saved-badge--ok">已达标</span></div>'
           + '<div class="sizes">原图 ' + H.fmt(f.origSize) + ' 已经在目标 ' + H.fmt(f.target) + ' 以内，不需要压缩，也不会生成新文件。</div>' + extraNote + '</div>'
