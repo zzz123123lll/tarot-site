@@ -362,7 +362,17 @@ export function mount(root, H) {
       } else {
         // 逐条给出**这一张**失败的原因,并给"重试"(单张重试不会影响其它文件)
         html += '<div class="result-card result-fail"><div class="info"><div class="name">' + H.esc(f.name) + '</div>'
-          + (f.heic ? H.heicNotice() : '<div class="sizes">这一张没处理成功：' + H.esc(f.why || '读不了这个文件') + '</div>') + extraNote + '</div><span class="status-tag">' + (f.heic ? '需先转 JPG' : '失败') + '</span>'
+          + (f.heic ? H.heicNotice(f.orig, function (jpgFile) {
+              // 解码成功后:把这个文件换成 JPG,沿用同一个条目重跑一次(用户不用重新拖)
+              jpgFile.__id = f.id;
+              var idx = -1;
+              for (var k = 0; k < originals.length; k++) if (originals[k].__id === f.id) idx = k;
+              if (idx < 0) originals.push(jpgFile); else originals[idx] = jpgFile;
+              items = items.filter(function (it) { return it.id !== f.id; });
+              render();
+              var myRun = runSeq;
+              compressOne(jpgFile, myRun, function () { if (myRun === runSeq) render(); });
+            }) : '<div class="sizes">这一张没处理成功：' + H.esc(f.why || '读不了这个文件') + '</div>') + extraNote + '</div><span class="status-tag">' + (f.heic ? '需先转 JPG' : '失败') + '</span>'
           + '<button class="tool-btn tool-btn--ghost retry" data-retry="' + f.id + '" style="min-height:44px">重试</button>'
           + '<button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';
       }

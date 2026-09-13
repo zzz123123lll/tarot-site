@@ -82,7 +82,7 @@ export function mount(root, H) {
     }).catch(async function () {
       // HEIC 不是"文件坏了":浏览器根本解不了,要单独说清并给出可走的路
       var heic = await H.sniffHeic(file);
-      items.push({ name: file.name, status: 'fail', heic: heic });
+      items.push({ name: file.name, status: 'fail', heic: heic, file: file });
       cb();
     });
   }
@@ -103,7 +103,16 @@ export function mount(root, H) {
           + '<button class="download-btn" data-i="' + i + '">下载</button></div>';
       } else {
         html += '<div class="result-card result-fail"><div class="info"><div class="name">' + H.esc(f.name) + '</div>'
-          + (f.heic ? H.heicNotice() : '<div class="meta">处理失败</div>') + '</div><span class="status-tag">' + (f.heic ? '需先转 JPG' : '失败') + '</span></div>';
+          + (f.heic ? H.heicNotice(f.file, function (jpgFile) {
+              // 解码成功后:替换掉列表里这份原件,只重跑这一份
+              var idx = -1;
+              for (var k = 0; k < files.length; k++) if (files[k] === f.file || files[k].name === f.name) { idx = k; break; }
+              if (idx >= 0) files[idx] = jpgFile; else files.push(jpgFile);
+              items = items.filter(function (it) { return it !== f; });
+              render();
+              var w = parseInt(root.querySelector('#w').value, 10) || 0;
+              convertOne(jpgFile, w, function () { render(); });
+            }) : '<div class="meta">处理失败</div>') + '</div><span class="status-tag">' + (f.heic ? '需先转 JPG' : '失败') + '</span></div>';
       }
     });
     res.innerHTML = html;

@@ -211,9 +211,15 @@ export function mount(root, H) {
       if (go) { go.disabled = true; go.textContent = '生成合规照片'; }
       // HEIC 单独提示:这不是文件损坏,而是浏览器解不了;把可走的路写清楚
       var isHeic = await H.sniffHeic(f);
-      H.warnBelow(dz, isHeic
-        ? '这是 iPhone 的 HEIC 照片:Chrome / Edge / Firefox / 安卓浏览器都解不了它(只有 Safari 能),所以读不出来。可以先在 iPhone/Mac 上导出成 JPG,或 Windows 装微软商店的「HEIF 图像扩展」后用「照片」另存为 JPG;你的文件没有被上传。'
-        : '这张图读不了:文件可能已损坏,或者格式不受支持。请先转成 JPG 再试。');
+      if (isHeic) {
+        // 给一张卡:可以就地下载本地解码器,解码完成后自动接着走后续流程(不用用户重新拖)
+        out.innerHTML = '<div class="idp-card">' + H.heicNotice(f, function (jpgFile) {
+          out.innerHTML = '';
+          addFiles([jpgFile]);
+        }) + '</div>';
+      } else {
+        H.warnBelow(dz, '这张图读不了:文件可能已损坏,或者格式不受支持。请先转成 JPG 再试。');
+      }
     }
   }
 

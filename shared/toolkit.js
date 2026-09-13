@@ -337,11 +337,54 @@ export async function sniffHeic(file) {
   } catch (e) { /* 读不了头就当不是 */ }
   return false;
 }
-export function heicNotice() {
+// 解码按钮的回调登记:这个函数返回的是 HTML 字符串,没法直接绑事件,所以用一次性的事件委托
+var _heicCbs = {};
+var _heicSeq = 0;
+var _heicDelegated = false;
+function ensureHeicUI() {
+  if (_heicDelegated || typeof document === 'undefined') return;
+  _heicDelegated = true;
+  document.addEventListener('click', function (ev) {
+    var btn = ev.target && ev.target.closest ? ev.target.closest('[data-heic-decode]') : null;
+    if (!btn) return;
+    var entry = _heicCbs[btn.getAttribute('data-heic-decode')];
+    if (!entry || entry.busy) return;
+    entry.busy = true;
+    var old = btn.textContent;
+    btn.disabled = true;
+    var status = document.createElement('div');
+    status.style.cssText = 'font-size:14px;color:#6e6e73;margin-top:8px';
+    btn.insertAdjacentElement('afterend', status);
+    status.textContent = '正在下载本地解码器(约 1.9MB,只下一次)…';
+    import('/shared/heic.js?v=1').then(function (m) {
+      return m.heicToJpeg(entry.file, function (s) { status.textContent = s; });
+    }).then(function (out) {
+      status.textContent = '解码完成:' + out.width + ' × ' + out.height + ' · ' + fmt(out.bytes) + ',已作为 JPG 交给这个工具继续处理。';
+      status.style.color = '#008009';
+      if (entry.cb) entry.cb(out.file);
+    }).catch(function (e) {
+      entry.busy = false;
+      btn.disabled = false;
+      btn.textContent = old;
+      status.style.color = '#e30000';
+      status.textContent = '解码没成功:' + friendlyError(e, 'HEIC 解码失败') + '(文件没有被上传)';
+    });
+  });
+}
+export function heicNotice(file, onDecoded) {
+  var btn;
+  if (onDecoded && file) {
+    ensureHeicUI();
+    var token = 'h' + (++_heicSeq);
+    _heicCbs[token] = { file: file, cb: onDecoded, busy: false };
+    btn = '<div class="tool-row" style="margin-top:10px"><button class="tool-btn" data-heic-decode="' + token + '">用本地解码器转成 JPG(下载约 1.9MB)</button></div>'
+      + '<div class="sizes" style="color:#6e6e73">基于 libheif(LGPL-3.0,见 <a href="/licenses/">第三方组件</a>)。解码在你本机完成,照片不会被上传;解码器只下载一次,之后走浏览器缓存。</div>';
+  } else {
+    btn = '<div class="sizes">最快的办法:用本站<b>「图片转换」</b>把它转成 JPG —— 那个工具已经内置本地 HEIC 解码器。</div>';
+  }
   return '<div class="sizes" style="color:var(--c-warn)">这是 iPhone 的 HEIC 照片 —— Chrome / Edge / Firefox / 安卓浏览器目前<b>都不能解码它</b>(只有 Safari 能),所以在这里打不开。你的文件没有被上传，也没有被改动。</div>'
-    + '<div class="sizes">可以走的几条路：① iPhone「设置 → 照片 → 传输到 Mac 或 PC」选<b>自动</b>，再用数据线导出（得到 JPG）；'
-    + '② 在 iPhone / Mac 上直接「导出为 JPG」；③ Windows 装微软商店的「HEIF 图像扩展」后，用「照片」打开并另存为 JPG。</div>'
-    + '<div class="sizes" style="color:#6e6e73">我们正在评估内置 HEIC 解码器：它会让首次使用多下载约 1.4MB，还涉及第三方库的许可证问题，所以还没上线。</div>';
+    + btn
+    + '<div class="sizes" style="color:#6e6e73">不想下载也可以:① iPhone「设置 → 照片 → 传输到 Mac 或 PC」选<b>自动</b>,再用数据线导出(得到 JPG);② 在 iPhone / Mac 上直接「导出为 JPG」;③ Windows 装微软商店的「HEIF 图像扩展」后,用「照片」打开并另存为 JPG。</div>';
 }
 
 // ---------- 导出后自检(把"悄悄坏掉"挡在下载之前) ----------
@@ -394,9 +437,9 @@ export async function checkPdf(out, expect) {
 
 const REGISTRY = {
   'receipt-clean': { title: '票据清理', module: '/tools/receipt-clean.mjs', v: 3 },
-  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 23 },
-  'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 19 },
-  'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs', v: 6 },
+  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 24 },
+  'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 20 },
+  'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs', v: 7 },
   'images-to-pdf': { title: '图片合成 PDF', module: '/tools/images-to-pdf.mjs', v: 6 },
   'invoice-nup': { title: '发票拼版', module: '/tools/invoice-nup.mjs', v: 8 },
   'pdf-merge': { title: 'PDF 合并', module: '/tools/pdf-merge.mjs', v: 6 },

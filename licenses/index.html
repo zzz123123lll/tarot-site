@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231d1d1f'/%3E%3Cpath d='M50 16L59 41L84 50L59 59L50 84L41 59L16 50L41 41Z' fill='%23e6c784'/%3E%3C/svg%3E">
+<title>第三方组件与许可证 · 工具盒</title>
+<meta name="description" content="工具盒用到的第三方组件清单：名称、精确版本、许可证、用途与来源；以及 HEIC 解码器（libheif，LGPL-3.0）的许可说明与我们做的合规处理。">
+<link rel="canonical" href="https://gongjuhe.top/licenses/">
+<meta property="og:title" content="第三方组件与许可证 · 工具盒">
+<meta property="og:description" content="第三方组件清单：名称、精确版本、许可证、用途与来源。">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://gongjuhe.top/og.png">
+<meta property="og:url" content="https://gongjuhe.top/licenses/">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="preload" href="/vendor/fonts/Geist-sub.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts.css?v=4">
+<link rel="stylesheet" href="/base.css?v=7">
+<link rel="stylesheet" href="/tool.css?v=36">
+</head>
+<body>
+<nav class="tool-nav">
+  <a class="tool-nav-brand" href="/"><span class="nav-mark"><svg class="nav-star" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.4l2.55 7.05L21.6 12l-7.05 2.55L12 21.6l-2.55-7.05L2.4 12l7.05-2.55z" fill="currentColor"/></svg></span>工具盒</a>
+  <span class="tool-nav-title">第三方组件与许可证</span>
+</nav>
+<div class="tool-container">
+  <h1 class="tool-h1">第三方组件与许可证</h1>
+  <p class="tool-sub">这里的每个文件都是随站点分发的静态资源，没有服务端；下表列出名称、精确版本、许可证、用途与来源。工具盒自己的代码没有把任何第三方库编译进去——都是按独立文件加载，可以单独替换。</p>
+
+  <h2 class="tool-more-title" style="margin-top:28px">清单</h2>
+  <div style="overflow-x:auto">
+  <table class="tool-table" style="width:100%;border-collapse:collapse;font-size:14px">
+    <thead><tr>
+      <th style="text-align:left;padding:8px;border-bottom:1px solid #e8e8ed">组件</th>
+      <th style="text-align:left;padding:8px;border-bottom:1px solid #e8e8ed">版本</th>
+      <th style="text-align:left;padding:8px;border-bottom:1px solid #e8e8ed">许可证</th>
+      <th style="text-align:left;padding:8px;border-bottom:1px solid #e8e8ed">用途</th>
+      <th style="text-align:left;padding:8px;border-bottom:1px solid #e8e8ed">来源</th>
+    </tr></thead>
+    <tbody>
+      <tr><td style="padding:8px;border-bottom:1px solid #f2f2f4">libheif-js</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">1.23.2</td><td style="padding:8px;border-bottom:1px solid #f2f2f4"><b>LGPL-3.0</b></td><td style="padding:8px;border-bottom:1px solid #f2f2f4">HEIC/HEIF 本地解码（仅在你点“用本地解码器转成 JPG”时加载，约 1.9MB）</td><td style="padding:8px;border-bottom:1px solid #f2f2f4"><a href="https://github.com/catdad-experiments/libheif-js">github.com/catdad-experiments/libheif-js</a> · <a href="https://registry.npmjs.org/libheif-js/-/libheif-js-1.23.2.tgz">对应源码 tarball</a></td></tr>
+      <tr><td style="padding:8px;border-bottom:1px solid #f2f2f4">@jsquash/png</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">3.1.1</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">Apache-2.0</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">PNG 无损重压</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">Squoosh（GoogleChromeLabs）</td></tr>
+      <tr><td style="padding:8px;border-bottom:1px solid #f2f2f4">@jsquash/jpeg</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">1.6.0</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">Apache-2.0</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">JPEG 重压（mozjpeg）</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">Squoosh（GoogleChromeLabs）</td></tr>
+      <tr><td style="padding:8px;border-bottom:1px solid #f2f2f4">@jsquash/webp</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">1.5.0</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">Apache-2.0</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">WebP 编码（libwebp）</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">Squoosh（GoogleChromeLabs）</td></tr>
+      <tr><td style="padding:8px;border-bottom:1px solid #f2f2f4">pdf-lib</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">1.17.1</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">MIT</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">生成/合并/校验 PDF</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">github.com/Hopding/pdf-lib</td></tr>
+      <tr><td style="padding:8px;border-bottom:1px solid #f2f2f4">pdfjs-dist（PDF.js）</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">6.3.289</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">Apache-2.0</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">读取/渲染 PDF（含取文字）</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">mozilla/pdf.js</td></tr>
+      <tr><td style="padding:8px;border-bottom:1px solid #f2f2f4">jszip</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">3.10.2</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">MIT（上游为 MIT 或 GPL-3.0，这里按 MIT 使用）</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">打包下载 ZIP</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">Stuk/jszip</td></tr>
+      <tr><td style="padding:8px;border-bottom:1px solid #f2f2f4">spark-md5</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">3.0.2</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">MIT（上游为 WTFPL 或 MIT，这里按 MIT 使用）</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">大文件校验（分片计算）</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">satazor/js-spark-md5</td></tr>
+      <tr><td style="padding:8px;border-bottom:1px solid #f2f2f4">tippy.js</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">6.3.7</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">MIT</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">按钮提示气泡</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">atomiks/tippyjs</td></tr>
+      <tr><td style="padding:8px;border-bottom:1px solid #f2f2f4">@popperjs/core</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">2.11.8</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">MIT</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">气泡定位（tippy 依赖）</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">popperjs/popper-core</td></tr>
+      <tr><td style="padding:8px;border-bottom:1px solid #f2f2f4">qrcode</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">1.5.4</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">MIT</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">生成二维码</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">soldair/node-qrcode</td></tr>
+      <tr><td style="padding:8px;border-bottom:1px solid #f2f2f4">canvas-confetti</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">1.9.4</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">ISC</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">塔罗页的小庆祝动效</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">catdad/canvas-confetti</td></tr>
+      <tr><td style="padding:8px;border-bottom:1px solid #f2f2f4">Geist / Geist Mono（字体子集）</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">随仓库提供</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">OFL-1.1</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">界面字体</td><td style="padding:8px;border-bottom:1px solid #f2f2f4">vercel/geist-font</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2 class="tool-more-title" style="margin-top:32px">关于 HEIC 解码器（libheif，LGPL-3.0）：我们做了什么</h2>
+  <ul class="tool-sub" style="line-height:1.7">
+    <li><b>没有修改上游代码</b>：文件按原样分发，完整许可证文本在 <code>/vendor/heic/LICENSE-libheif.txt</code>。</li>
+    <li><b>独立文件、可替换</b>：它没有被编译进工具盒自己的代码，而是通过 <code>&lt;script&gt;</code> 单独加载；任何人都可以换成自己构建的同名文件。</li>
+    <li><b>按需加载、用户决定</b>：只有你在某个工具里点“用本地解码器转成 JPG”时才会下载（约 1.9MB），不点就不下载。</li>
+    <li><b>源码可获取</b>：见上表“对应源码 tarball”；版本号 1.23.2，与本站分发的文件一一对应。</li>
+    <li><b>供应链核对</b>：该 tarball 的 SHA-1 与 SHA-512 与 npm registry 公布值逐位一致后才引入；本站文件的 SHA-256 记录在内部文档中。</li>
+    <li><b>专利提醒（如实说）</b>：HEIC 背后的 HEVC/H.265 存在专利池（如 MPEG LA、Access Advance）。开源许可证与专利授权是两件事；若你要把本站用于商业场景，建议就这一点单独咨询法务。</li>
+  </ul>
+
+  <h2 class="tool-more-title" style="margin-top:32px">我们做了什么、没做什么</h2>
+  <ul class="tool-sub" style="line-height:1.7">
+    <li>全站是静态文件，没有服务端；没有上传接口，也没有把文件内容发出去的地方。</li>
+    <li>唯一的第三方请求是 Cloudflare 的访问统计脚本（不含你的文件内容）；它不是我们主动要的追踪，也可以关掉。</li>
+    <li>没有广告、没有登录、没有把文件送到别人的服务器上做处理。</li>
+  </ul>
+  <p class="tool-sub" style="margin-top:24px">想自己验证“文件没有离开你的电脑”？请见 <a href="/verify/">怎么验证不上传</a>；遇到问题或发现清单有误，也欢迎反馈。</p>
+</div>
+<footer class="tool-foot"><h2 class="tool-more-title">接着可以做什么</h2><div class="tool-more-grid"><a class="tool-more-card" data-fx="spotlight" href="/verify/"><span class="tmc-name">怎么验证不上传</span><span class="tmc-desc">三步自己验证文件没离开电脑。</span></a><a class="tool-more-card" data-fx="spotlight" href="/"><span class="tmc-name">全部工具</span><span class="tmc-desc">22 个本地工具,打开就能用。</span></a><a class="tool-more-card" data-fx="spotlight" href="/image-convert/"><span class="tmc-name">图片转换</span><span class="tmc-desc">含 HEIC 本地解码。</span></a></div><p class="tool-foot-line">工具盒 · 全部工具本地运行，文件不上传</p><nav class="tool-foot-links" aria-label="相关页面"><a href="/verify/">怎么验证不上传</a><a href="/image-convert/">图片转换</a><a href="/receipt-clean/">票据清理</a><a href="/">全部工具</a></nav></footer>
+  <script defer src="/assets/pointer-fx.js?v=1"></script>
+</body>
+</html>
