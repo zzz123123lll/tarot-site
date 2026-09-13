@@ -226,15 +226,20 @@ export function mount(root, H) {
       }
       var bytes = await doc.save();
       var blob = new Blob([bytes], { type: 'application/pdf' });
-      state.out = blob;
+      // 导出后自检:产物必须是有效 PDF,且页数等于刚才排出来的页数
+      var chk = await H.checkPdf(blob, { pages: doc.getPageCount() });
+      state.out = chk.ok ? blob : null;   // 自检不过就不让下载,避免拿着坏文件去报销
       var dims = placedSizes[0] ? (placedSizes[0].w.toFixed(1) + '×' + placedSizes[0].h.toFixed(1) + ' cm') : '-';
       var proof = H.netLine ? H.netLine(netFrom) : '本次处理:上传 0 个文件';
       out.innerHTML =
         '<div><b>' + doc.getPageCount() + ' 页 A4</b> · ' + items.length + ' 张发票 · ' + H.fmt(blob.size) + ' · 每张约 ' + dims + '</div>'
+        + '<div class="inv-hint" style="color:' + (chk.ok ? '#008009' : '#e30000') + '">'
+        + (chk.ok ? '自检 ✓ 产物读回 ' + chk.pages + ' 页 · ' + H.fmt(chk.bytes) : '自检没通过，已停止下载：' + H.esc(chk.error)) + '</div>'
         + '<div class="inv-hint">每页 ' + perPage + ' 张,页边距 ' + state.marginMm + 'mm,按原比例居中缩放,<b>没有裁剪</b>发票内容。</div>'
-        + '<div class="inv-row" style="margin-top:12px"><button class="tool-btn" id="dl">下载 PDF</button></div>'
+        + (chk.ok ? '<div class="inv-row" style="margin-top:12px"><button class="tool-btn" id="dl">下载 PDF</button></div>' : '')
         + '<div class="inv-hint">' + H.esc(proof) + ' · <a href="/verify/">怎么自己验证</a></div>';
-      out.querySelector('#dl').addEventListener('click', function () {
+      var dlBtn = out.querySelector('#dl');
+      if (dlBtn) dlBtn.addEventListener('click', function () {
         if (state.out) H.downloadBlob(state.out, '发票拼版-A4-' + doc.getPageCount() + '页.pdf');
       });
     } catch (e) {

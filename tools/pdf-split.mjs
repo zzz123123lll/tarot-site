@@ -64,16 +64,31 @@ export function mount(root, H) {
           var o = await one.save();
           parts.push({ name: 'page-' + (idx[k] + 1) + '.pdf', blob: new Blob([o], { type: 'application/pdf' }) });
         }
-        H.downloadZip(parts, '拆分页面.zip');
-        note.textContent = '已生成 ' + idx.length + ' 个单页 PDF,已打包下载。'; note.className = 'note ok'; note.style.display = 'block';
+        // 导出后自检:每个单页文件都必须真的是 1 页(拆分类翻车最常见的形态)
+        var bad = [];
+        for (var q = 0; q < parts.length; q++) {
+          var ck = await H.checkPdf(parts[q].blob, { pages: 1 });
+          if (!ck.ok) bad.push(parts[q].name + ':' + ck.error);
+        }
+        if (!bad.length) H.downloadZip(parts, '拆分页面.zip');
+        note.textContent = bad.length
+          ? '自检没通过，已停止下载：' + bad.slice(0, 2).join(';')
+          : '已生成 ' + idx.length + ' 个单页 PDF（自检 ✓ 每个 1 页），已打包下载。';
+        note.className = bad.length ? 'note err' : 'note ok'; note.style.display = 'block';
       } else {
         var out = await PDFDoc.create();
         var cpages = await out.copyPages(src, idx);
         cpages.forEach(function (p) { out.addPage(p); });
         if (rot) out.getPages().forEach(function (p) { p.setRotation(degrees(rot)); });
         var bytes = await out.save();
-        H.downloadBlob(new Blob([bytes], { type: 'application/pdf' }), 'output.pdf');
-        note.textContent = '已处理 ' + idx.length + ' 页。'; note.className = 'note ok'; note.style.display = 'block';
+        var outBlob = new Blob([bytes], { type: 'application/pdf' });
+        // 自检:产物页数必须等于你选中的页数
+        var ck2 = await H.checkPdf(outBlob, { pages: idx.length });
+        if (ck2.ok) H.downloadBlob(outBlob, 'output.pdf');
+        note.textContent = ck2.ok
+          ? '已处理 ' + idx.length + ' 页（自检 ✓ ' + ck2.pages + ' 页 · ' + H.fmt(ck2.bytes) + '）。'
+          : '自检没通过，已停止下载：' + ck2.error;
+        note.className = ck2.ok ? 'note ok' : 'note err'; note.style.display = 'block';
       }
     } catch (e) {
       note.textContent = '处理失败：' + H.friendlyError(e); note.className = 'note err'; note.style.display = 'block';

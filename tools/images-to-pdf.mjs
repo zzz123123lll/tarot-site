@@ -95,9 +95,13 @@ export function mount(root, H) {
     }
     var out = await pdfDoc.save();
       var blob = new Blob([out], { type: 'application/pdf' });
-      H.downloadBlob(blob, 'images.pdf');
-      ok.textContent = 'PDF 已生成，开始下载。';
-      ok.style.color = '';
+      // 导出后自检:页数必须等于图片张数(合成类最常见的翻车就是少页/重页)
+      var chk = await H.checkPdf(blob, { pages: pdfDoc.getPageCount() });
+      if (chk.ok) H.downloadBlob(blob, 'images.pdf');
+      ok.textContent = chk.ok
+        ? 'PDF 已生成，开始下载（自检 ✓ ' + chk.pages + ' 页 · ' + H.fmt(chk.bytes) + '）。'
+        : '自检没通过，先别拿去交：' + chk.error;
+      ok.style.color = chk.ok ? '' : '#e30000';
       ok.style.display = 'block';
     } catch (e) {
       ok.textContent = H.isLibFail(e) ? H.friendlyError(e) : '生成失败：' + H.friendlyError(e, '图片可能已损坏，或格式不受支持。');
