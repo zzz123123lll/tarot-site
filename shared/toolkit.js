@@ -652,7 +652,37 @@ function enhanceCardExit(root) {
       ev.stopPropagation();
       btn.setAttribute('data-tb-out', '1');
       card.classList.add('tb-card-out');
-      setTimeout(function () { btn.click(); }, 185);
+      // FLIP:记下移除前每张卡的位置,等工具重渲染后把还在的卡片从不该在的位置动回去。
+      // 很多工具是整块 innerHTML 重渲染(旧节点直接没了),所以按**内容签名**配对,而不是拿节点比。
+      var box = card.parentElement;
+      var before = {};
+      if (box) {
+        Array.prototype.forEach.call(box.querySelectorAll('.result-card, .rc-card'), function (n) {
+          var s = (n.textContent || '').replace(/\s+/g, ' ').slice(0, 90);
+          before[s] = n.getBoundingClientRect().top;
+        });
+      }
+      setTimeout(function () {
+        btn.click();
+        if (!box) return;
+        requestAnimationFrame(function () {
+          try {
+            Array.prototype.forEach.call(box.querySelectorAll('.result-card, .rc-card'), function (n) {
+              var s = (n.textContent || '').replace(/\s+/g, ' ').slice(0, 90);
+              if (before[s] === undefined) return;           // 新出现的卡交给入场动画
+              var dy = before[s] - n.getBoundingClientRect().top;
+              if (Math.abs(dy) < 4) return;
+              n.style.transition = 'none';
+              n.style.transform = 'translateY(' + Math.round(dy) + 'px)';
+              requestAnimationFrame(function () {
+                n.style.transition = 'transform 240ms cubic-bezier(.22,1,.36,1)';
+                n.style.transform = '';
+                setTimeout(function () { n.style.transition = ''; }, 280);
+              });
+            });
+          } catch (e) { /* 补位动画失败不能影响移除结果 */ }
+        });
+      }, 185);
     } catch (e) { /* 动画失败不能挡住移除本身 */ }
   }, true);
 }
