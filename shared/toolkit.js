@@ -501,6 +501,36 @@ function warmOffline(urls) {
   } catch (e) { /* 离线增强失败不影响功能 */ }
 }
 
+
+// ---------- 每个工具页都有的"零上传自证"行 ----------
+// 为什么放在这里:以前只有 3 个工具自己画了这一行,其余 18 个页面没有 —— 而"能不能自己验证"
+// 正是这个站点最该被看到的东西。放进位工具入口,谁都不用记得写。
+// 已经是工具自己画的(文案更细,还带"压缩程序已就绪")就不重复加。
+function ensureProofLine(root) {
+  try {
+    if (!root) return;
+    if (root.getAttribute('data-tb-proof')) return;
+    if (String(root.textContent || '').indexOf('上传 0 个文件') >= 0) return;
+    if (String(root.textContent || '').indexOf('没有向服务器发送任何内容') >= 0) return;
+    var box = document.createElement('div');
+    box.className = 'tool-proof';
+    box.setAttribute('data-tb-proof', '1');
+    box.style.cssText = 'margin-top:22px;padding-top:14px;border-top:1px solid var(--c-hairline,#e8e8ed);font-size:14px;color:#6e6e73;line-height:1.6';
+    var line = document.createElement('span');
+    var link = document.createElement('a');
+    link.href = '/verify/';
+    link.textContent = '怎么自己验证';
+    link.style.cssText = 'color:#0066cc;margin-left:8px';
+    box.appendChild(line);
+    box.appendChild(link);
+    root.appendChild(box);
+    var paint = function () { line.textContent = netLine(0); };
+    paint();
+    // 处理过程中数字会变(尤其是"跨域请求"),所以定期刷新;页面不可见时不刷,省电
+    setInterval(function () { if (!document.hidden) paint(); }, 2000);
+  } catch (e) { /* 自证行画不出来不能影响工具 */ }
+}
+
 export async function mountTool(slug, root, titleEl) {
   const t = REGISTRY[slug];
   if (!t) {
@@ -516,6 +546,7 @@ export async function mountTool(slug, root, titleEl) {
       mod.mount(root, H);
       enhanceA11y(root);
       warmOffline([t.module + '?v=' + (t.v || 1)]);
+      ensureProofLine(root);
     }
   } catch (e) {
     root.innerHTML = '<p class="tool-sub">工具加载失败。</p>';
