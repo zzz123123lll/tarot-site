@@ -52,7 +52,9 @@ export function mount(root, H) {
   root.innerHTML =
     '<h1 class="tool-h1">证件照 / 报名照</h1>' +
     '<p class="tool-sub">按对方要求的像素、DPI 和体积上限输出,全程在浏览器里完成,不换底色、不美颜。像素与 KB 是硬要求,我们只改这两件事。</p>' +
+    '<div class="mode-tabs" id="md"><button data-m="make" class="active">生成证件照</button><button data-m="check">检查已有照片</button></div>' +
     '<div class="idp-presets" id="ps"></div>' +
+    '<div id="chk"></div>' +
     '<div class="idp-grid">' +
       '<div>' +
         '<div class="tool-drop" id="dz"><div class="title">点击选择照片,或拖拽到此处</div><div class="hint">JPG / PNG / WebP,单张。照片不合规的通常是这几处:像素不够、底色不对、体积超限——前两个我们管,底色请看下方提醒。</div></div>' +
@@ -87,7 +89,10 @@ export function mount(root, H) {
       : '<br>底色的要求是「' + H.esc(p.bgName) + '」——我们不会替你换底色(浏览器里抠图容易留下毛边),只会在下方提醒你的照片看起来是什么颜色。';
     return '<b>' + H.esc(p.name) + '</b>:' + H.esc(p.spec) + (p.src ? '<br>来源:' + H.esc(p.src) : '') + bg;
   }
-  function refreshSpec() { root.querySelector('#spec').innerHTML = specHtml(P(state.preset)); }
+  function refreshSpec() {
+    root.querySelector('#spec').innerHTML = specHtml(P(state.preset));
+    if (typeof mode !== 'undefined' && mode === 'check' && state.img && state.file) checkPhoto(state.file);
+  }
 
   function renderPresets() {
     ps.innerHTML = PRESETS.map(function (p) {
@@ -147,6 +152,25 @@ export function mount(root, H) {
     });
   });
 
+  // 模式:生成 / 检查已有照片。检查模式只多"逐项核对 + 一键修",生成逻辑完全复用。
+  var mode = 'make';
+  root.querySelector('#md').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    mode = b.dataset.m;
+    root.querySelectorAll('#md button').forEach(function (x) { x.classList.toggle('active', x === b); });
+    var isCheck = mode === 'check';
+    root.querySelector('#chk').innerHTML = '';
+    var go = root.querySelector('#go');
+    if (go) go.textContent = isCheck ? '一键修到合规' : '生成合规照片';
+    var t = dz.querySelector('.title');
+    var h = dz.querySelector('.hint');
+    if (t) t.textContent = isCheck ? '点击选择你已有的证件照,或拖拽到此处' : '点击选择照片,或拖拽到此处';
+    if (h) h.textContent = isCheck
+      ? '我们按当前选中的用途逐项核对:像素 / 长宽比 / DPI / 体积 / 底色。核对完可以一键按这些要求重做。'
+      : 'JPG / PNG / WebP,单张。照片不合规的通常是这几处:像素不够、底色不对、体积超限——前两个我们管,底色请看下方提醒。';
+    if (state.img) { if (isCheck) checkPhoto(state.file); }
+  });
+
   H.makeDropZone(dz, addFiles, 'image/*', { multiple: false }); // 证件照一次只做一张
   root.querySelector('#go').addEventListener('click', generate);
   root.querySelector('#clr').addEventListener('click', function () {
@@ -180,6 +204,8 @@ export function mount(root, H) {
       root.querySelector('#stage').style.display = 'block';
       out.innerHTML = '';
       draw();
+      // 检查模式:拖进来立刻逐项核对(生成模式清掉上一次的核对结果)
+      if (mode === 'check') checkPhoto(f); else root.querySelector('#chk').innerHTML = '';
     } catch (e) {
       state.reading = false; state.img = null;
       if (go) { go.disabled = true; go.textContent = '生成合规照片'; }
@@ -259,6 +285,106 @@ export function mount(root, H) {
       return { ok: false, text: '边缘底色不统一(可能背景有噪点、渐变或有物体贴近边缘),无法确认是白底' + mean };
     }
     return { ok: null, text: '这一项没有统一底色要求' + mean };
+  }
+
+
+  // ---------- 检查已有照片(A5):逐项核对,再给"一键修到合规" ----------
+  // 为什么做:报名/制卡被打回,最常见的原因不是照片难看,而是"规格不对"——
+  // 像素差几个、DPI 没写、体积超几十 KB。与其让用户猜,不如把每一项都摊开算一遍。
+  // 读 JPEG 的 JFIF 密度字段(我们写进去的 DPI 就存在这里;很多手机/截图导出不写)
+  function readJpegDpi(buf) {
+    try {
+      var b = new Uint8Array(buf);
+      if (b[0] !== 0xFF || b[1] !== 0xD8) return null;
+      var i = 2;
+      while (i + 4 <= b.length) {
+        if (b[i] !== 0xFF) { i++; continue; }
+        var marker = b[i + 1];
+        if (marker === 0xD8 || marker === 0x01 || (marker >= 0xD0 && marker <= 0xD7)) { i += 2; continue; }
+        if (marker === 0xDA) break;
+        var len = (b[i + 2] << 8) | b[i + 3];
+        if (marker === 0xE0 && i + 17 <= b.length) {
+          var tag = String.fromCharCode(b[i + 4], b[i + 5], b[i + 6], b[i + 7]);
+          if (tag === 'JFIF') {
+            var units = b[i + 11];
+            var xd = (b[i + 12] << 8) | b[i + 13];
+            var yd = (b[i + 14] << 8) | b[i + 15];
+            if (units === 1) return { x: xd, y: yd, note: '' };
+            if (units === 2) return { x: Math.round(xd * 2.54), y: Math.round(yd * 2.54), note: '(原文件用 dpcm 存,已换算)' };
+            return { x: xd, y: yd, note: '(原文件只存了宽高比、没写单位)' };
+          }
+        }
+        i += 2 + len;
+      }
+    } catch (e) { /* 读不到就当没有 */ }
+    return null;
+  }
+
+  async function checkPhoto(file) {
+    var box = root.querySelector('#chk');
+    var p = P(state.preset);
+    var bmp = state.img;
+    if (!box || !bmp) return;
+    var realW = bmp.width, realH = bmp.height;
+    var sizeKB = file.size / 1024;
+    var dpiInfo = null;
+    try { dpiInfo = readJpegDpi(await file.arrayBuffer()); } catch (e) {}
+    var bg = { ok: null, text: '取不到底色样本。' };
+    try {
+      var c = document.createElement('canvas');
+      var maxSide = 900;
+      var sc = Math.min(1, maxSide / Math.max(realW, realH));
+      c.width = Math.max(1, Math.round(realW * sc));
+      c.height = Math.max(1, Math.round(realH * sc));
+      var cx = c.getContext('2d', { willReadFrequently: true });
+      cx.drawImage(bmp, 0, 0, c.width, c.height);
+      bg = judgeBg(borderStats(c), p);
+    } catch (e) {}
+
+    var rows = [];
+    var samePixels = realW === p.w && realH === p.h;
+    rows.push({
+      name: '像素', ok: samePixels, want: p.w + ' × ' + p.h, got: realW + ' × ' + realH,
+      why: samePixels ? '' : (realW * realH > p.w * p.h ? '偏大,缩到精确像素即可' : '不够,放大后官方常不接受')
+    });
+    var aspectOk = Math.abs((realW / realH) - (p.w / p.h)) / (p.w / p.h) < 0.02;
+    rows.push({ name: '长宽比', ok: aspectOk, want: p.w + ' : ' + p.h, got: realW + ' : ' + realH, why: aspectOk ? '' : '不符,需要重新裁切(会裁掉一部分画面)' });
+    var dpiOk = dpiInfo ? (Math.abs(dpiInfo.x - p.dpi) <= 1 && Math.abs(dpiInfo.y - p.dpi) <= 1) : null;
+    rows.push({
+      name: 'DPI', ok: dpiOk === null ? null : dpiOk, want: String(p.dpi),
+      got: dpiInfo ? (dpiInfo.x + (dpiInfo.note ? ' ' + dpiInfo.note : '')) : '文件里没写',
+      why: dpiOk === null ? '很多手机导出、截图、微信保存都不写 DPI;打印店按像素处理,但报名系统可能会查' : (dpiOk ? '' : '需要改写文件里的密度字段')
+    });
+    var kbLimit = p.kb.length ? state.kb : 0;
+    var sizeOk = !kbLimit ? null : (sizeKB <= kbLimit);
+    rows.push({
+      name: '体积', ok: sizeOk, want: kbLimit ? ('≤ ' + kbLimit + ' KB') : '不限', got: sizeKB.toFixed(1) + ' KB',
+      why: sizeOk === false ? '超了,需要按上限重压' : ''
+    });
+    rows.push({ name: '底色', ok: bg.ok, want: p.id === 'custom' ? '按对方公告' : p.bgName, got: bg.text, why: bg.ok === false ? '我们只提醒,不替你换底色' : '' });
+
+    var bad = rows.filter(function (r) { return r.ok === false; }).length;
+    var unknown = rows.filter(function (r) { return r.ok === null; }).length;
+    var html = '<div class="idp-card" style="margin-top:16px">'
+      + '<div class="idp-kv"><div><b>按「' + H.esc(p.name) + '」核对:' + (bad ? bad + ' 项不符' : '全部符合') + (unknown ? '(' + unknown + ' 项无法判定)' : '') + '</b></div>';
+    rows.forEach(function (r) {
+      var mark = r.ok === true ? '<span class="idp-ok">✓</span>' : r.ok === false ? '<span class="idp-bad">✗</span>' : '<span class="idp-hint">?</span>';
+      html += '<div>' + mark + ' <b>' + H.esc(r.name) + '</b>:要求 ' + H.esc(String(r.want)) + ',实际 ' + H.esc(String(r.got))
+        + (r.why ? ' —— ' + H.esc(r.why) : '') + '</div>';
+    });
+    if (bad) {
+      html += '<div class="idp-row" style="margin-top:10px"><button class="tool-btn" id="fix">一键修到合规(按上面的要求重做)</button></div>';
+    } else {
+      html += '<div class="idp-ok" style="margin-top:8px">这一张看起来可以直接交;若对方另有要求,改上面的像素/DPI/体积后重新核对。</div>';
+    }
+    html += '<div class="idp-hint" style="margin-top:6px">我们只改像素、DPI、体积与裁切;不换底色、不美颜、不做人脸检测。</div>'
+      + '</div></div>';
+    box.innerHTML = html;
+    var fix = root.querySelector('#fix');
+    if (fix) fix.addEventListener('click', function () {
+      var go = root.querySelector('#go');
+      if (go && !go.disabled) go.click();
+    });
   }
 
   function setJpegDpi(buf, dpi) {
