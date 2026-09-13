@@ -19,6 +19,11 @@
 <link rel="stylesheet" href="/fonts.css?v=4">
 <link rel="stylesheet" href="/base.css?v=7">
 <link rel="stylesheet" href="/tool.css?v=36">
+<style>
+  /* 表格里的链接也要满足 44px 触控高度(自动检查会拦下来) */
+  .tool-table a { display: inline-block; min-height: 44px; padding: 12px 0; line-height: 1.5; }
+  .tool-table td, .tool-table th { vertical-align: top; }
+</style>
 </head>
 <body>
 <nav class="tool-nav">
