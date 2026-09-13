@@ -202,6 +202,19 @@ prefers-reduced-motion: reduce 下不做任何动画;瞬间跳转导致 Intersec
 - 提示气泡:深色 #1d1d1f、12px、圆角 6、--sh-5;库不可用时退化为原生 title。
 - 导航:44px、rgba(251,251,253,.82) + saturate(180%) blur(20px);首页滚过 8px 后底色加深到 .94 并加一层柔和投影。塔罗页是唯一的深色例外(深色导航 + 鎏金强调)。
 
+
+### 动效:刻意偏离与理由(C 线统一手感)
+
+工具页的手感增强在工具入口统一实现(分段滑块 / 结果卡入场 / 进度条流光),规则只有一条:**能只用 transform/opacity 就只用这两样**。以下是唯一的例外,写清楚原因:
+
+| 位置 | 偏离 | 为什么可以接受 |
+|---|---|---|
+| 分段控件滑块(`.seg-ind`) | 除了 `transform: translate()`,还过渡了 `width/height`(220ms) | 滑块是**绝对定位**的独立元素,宽度变化不引起任何其它内容的排版位移;分段只有 2–4 项,实测无掉帧。若换成 `scaleX` 会把圆角拉变形,反而更差。 |
+| 结果卡入场 | 一次性 320ms 的 `opacity + translateY(10px)`,按 40ms 递增、最多 240ms | 只播一次;整块重渲染时按内容签名跳过,不会"批处理时每完成一张就全部重播"。reduced-motion 下完全不播。 |
+| 进度条流光 | 背景图 `background-position` 循环(1.7s) | 只在处理中可见的一根 4px 进度条上;reduced-motion 下关闭。 |
+
+共同前提:全部包在 `@media (prefers-reduced-motion: no-preference)` 内;滑块过渡在 `reduce` 下置为 none;结果卡在没有 JS 的页面上不存在(卡片本来就由 JS 生成),不影响"关掉 JS 也能读到正文"。
+
 ## Do's and Don'ts
 
 Do

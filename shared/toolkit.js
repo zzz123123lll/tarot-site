@@ -531,6 +531,89 @@ function ensureProofLine(root) {
   } catch (e) { /* 自证行画不出来不能影响工具 */ }
 }
 
+
+// ---------- C 线:统一的手感增强(分段控件滑块 / 结果卡入场 / 进度条流光) ----------
+// 放在工具入口而不是各工具里:22 个工具都应该有同样的手感,而且不该有人"忘了写"。
+// 动效只做在 transform/opacity 上;分段滑块的 width 是唯一的例外(DESIGN.md 已如实记录原因)。
+var _tbCssDone = false;
+function injectSharedMotion() {
+  if (_tbCssDone || typeof document === 'undefined') return;
+  _tbCssDone = true;
+  var s = document.createElement('style');
+  s.setAttribute('data-tb-motion', '1');
+  s.textContent = [
+    '.seg-ind{position:absolute;left:0;top:0;z-index:0;border-radius:9px;background:#fff;',
+    'box-shadow:inset 0 0 0 1px var(--c-hairline,#e8e8ed),0 1px 2px rgba(0,0,0,.06);pointer-events:none;',
+    'transition:transform 220ms cubic-bezier(.22,1,.36,1),width 220ms cubic-bezier(.22,1,.36,1),height 220ms cubic-bezier(.22,1,.36,1)}',
+    '.mode-tabs>button,.preset-tabs>button{position:relative;z-index:1}',
+    '.mode-tabs>button.active,.preset-tabs>button.active{background:transparent!important;box-shadow:none!important}',
+    '@media (prefers-reduced-motion: no-preference){',
+    '@keyframes tbCardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}',
+    '.tb-card-in{animation:tbCardIn 320ms cubic-bezier(.22,1,.36,1) both}',
+    '@keyframes tbShimmer{from{background-position:-120% 0}to{background-position:220% 0}}',
+    '.progress-bar .fill{background-image:linear-gradient(100deg,var(--c-accent,#0071e3) 0%,var(--c-accent,#0071e3) 42%,#57a9ff 50%,var(--c-accent,#0071e3) 58%,var(--c-accent,#0071e3) 100%);background-size:220% 100%;animation:tbShimmer 1.7s linear infinite}',
+    '}',
+    '@media (prefers-reduced-motion: reduce){.seg-ind{transition:none}}'
+  ].join('');
+  document.head.appendChild(s);
+}
+
+// 分段控件:一个会滑过去的白色药丸,跟着 active 走
+function enhanceSegmented(root) {
+  var boxes = root.querySelectorAll('.mode-tabs, .preset-tabs');
+  Array.prototype.forEach.call(boxes, function (box) {
+    if (box.getAttribute('data-tb-seg')) return;
+    box.setAttribute('data-tb-seg', '1');
+    if (getComputedStyle(box).position === 'static') box.style.position = 'relative';
+    var ind = document.createElement('span');
+    ind.className = 'seg-ind';
+    ind.setAttribute('aria-hidden', 'true');
+    box.insertBefore(ind, box.firstChild);
+    function move() {
+      var act = box.querySelector('button.active') || box.querySelector('button');
+      if (!act) return;
+      ind.style.width = act.offsetWidth + 'px';
+      ind.style.height = act.offsetHeight + 'px';
+      ind.style.transform = 'translate(' + act.offsetLeft + 'px,' + act.offsetTop + 'px)';
+    }
+    move();
+    box.addEventListener('click', function () { requestAnimationFrame(move); });
+    window.addEventListener('resize', move);
+    if (window.ResizeObserver) { try { new ResizeObserver(move).observe(box); } catch (e) {} }
+    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(move, function () {}); }
+    // 工具可能在挂载后才渲染出 active(例如按用途预设),给它两次补位机会
+    setTimeout(move, 120); setTimeout(move, 600);
+  });
+}
+
+// 结果卡入场:只给"新出现的卡片"放一次动画,已经出现过的(整块重渲染时)不再重复播
+var _tbCardSeen = {};
+function enhanceCardEntrance(root) {
+  if (typeof MutationObserver === 'undefined') return;
+  var sel = '.result-card,.rc-card,.idp-card,.pdf-part,.cmp';
+  var seen = _tbCardSeen;
+  var mo = new MutationObserver(function (muts) {
+    muts.forEach(function (m) {
+      Array.prototype.forEach.call(m.addedNodes || [], function (n) {
+        if (!n || n.nodeType !== 1) return;
+        var list = [];
+        if (n.matches && n.matches(sel)) list.push(n);
+        if (n.querySelectorAll) list = list.concat(Array.prototype.slice.call(n.querySelectorAll(sel)));
+        list.forEach(function (c, i) {
+          if (c.getAttribute('data-tb-in')) return;
+          c.setAttribute('data-tb-in', '1');
+          var sig = (c.textContent || '').replace(/\s+/g, ' ').slice(0, 90);
+          if (seen[sig]) return;           // 同一张卡(整块重渲染)不再重播
+          seen[sig] = 1;
+          c.classList.add('tb-card-in');
+          c.style.animationDelay = Math.min(i * 40, 240) + 'ms';
+        });
+      });
+    });
+  });
+  mo.observe(root, { childList: true, subtree: true });
+}
+
 export async function mountTool(slug, root, titleEl) {
   const t = REGISTRY[slug];
   if (!t) {
@@ -547,6 +630,9 @@ export async function mountTool(slug, root, titleEl) {
       enhanceA11y(root);
       warmOffline([t.module + '?v=' + (t.v || 1)]);
       ensureProofLine(root);
+      injectSharedMotion();
+      enhanceSegmented(root);
+      enhanceCardEntrance(root);
     }
   } catch (e) {
     root.innerHTML = '<p class="tool-sub">工具加载失败。</p>';
