@@ -19,7 +19,7 @@ export function mount(root, H) {
     '<div class="tool-drop" id="dz"><div class="icon">' + icon + '</div><div class="title">点击选择图片，或拖拽到此处</div><div class="hint">支持 JPG、PNG、WebP、BMP、GIF（可批量）。GIF 动图只压缩第一帧，动画不会保留；BMP / GIF 会输出成 PNG。iPhone 的 HEIC 格式浏览器读不了，请先导出成 JPG。</div></div>' +
     '<div class="progress-bar" id="pg" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="fill" style="width:0%"></div></div>' +
     '<p class="progress-note" id="pgt" role="status" aria-live="polite" style="display:none"></p>' +
-    '<div class="batch-actions" id="ba"><button class="tool-btn" id="dlAll">全部下载</button><button class="tool-btn tool-btn--ghost" id="clr">清除</button></div>' +
+    '<div class="batch-actions" id="ba"><button class="tool-btn" id="dlAll">全部下载</button><button class="tool-btn tool-btn--ghost" id="retryAll" style="display:none">重试失败的</button><button class="tool-btn tool-btn--ghost" id="clr">清除</button></div>' +
     '<div class="results" id="res"></div>' +
     '<div class="summary" id="sum" role="status" aria-live="polite" style="display:none"></div>' +
     '<div class="modal" id="m"><span class="close">&times;</span><img id="mi" alt=""></div>';
@@ -43,10 +43,14 @@ export function mount(root, H) {
 
   // 真实编码器按需加载(首次压缩时才拉取 wasm)
   var _enc = null;
+  var _encTry = 0;
   function ensureEnc() {
     if (!_enc) {
-      _enc = import('/shared/encoders.js?v=9');
-      _enc.then(function (m) { encMod = m; }, function () {});
+      // 关键:重试要换一个 URL。浏览器会把"这个模块加载失败"记在文档上,
+      // 同一个 URL 再 import 只会立刻拿到同一个失败 —— 那样"重试"按钮永远没用。
+      var url = '/shared/encoders.js?v=9' + (_encTry ? '&r=' + _encTry : '');
+      _enc = import(url);
+      _enc.then(function (m) { encMod = m; }, function () { _enc = null; _encTry++; });
     }
     return _enc;
   }
@@ -100,6 +104,7 @@ export function mount(root, H) {
 
   H.makeDropZone(root.querySelector('#dz'), addFiles, 'image/*');
   root.querySelector('#dlAll').addEventListener('click', downloadAll);
+  root.querySelector('#retryAll').addEventListener('click', retryFailed);
   root.querySelector('#clr').addEventListener('click', clearAll);
 
   async function addFiles(files) {
@@ -182,7 +187,7 @@ export function mount(root, H) {
     (function next() {
       if (myRun !== runSeq) return; // 已被新一轮取代,安静退出
       if (done >= total) { pg.style.display = 'none'; note.style.display = 'none'; render(); return; }
-      note.textContent = '正在处理：第 ' + (done + 1) + ' / ' + total + ' 张（' + Math.round(done / total * 100) + '%）· ' + originals[done].name
+      note.textContent = '正在处理：第 ' + (done + 1) + ' / ' + total + ' 张（' + Math.round(done / total * 100) + '%）· 剩余 ' + (total - done) + ' 张 · ' + originals[done].name
         + (mode === 'target' ? '（大图压到很小体积需要多试几次，请稍等）' : '');
       compressOne(originals[done], myRun, function () {
         if (myRun !== runSeq) return;
@@ -208,7 +213,7 @@ export function mount(root, H) {
     // 编码器加载失败要和"文件读不了"分开说,否则是在冤枉用户的文件
     var E;
     try { E = await ensureEnc(); }
-    catch (e) { push({ name: file.name, origSize: origSize, status: 'noenc' }); return; }
+    catch (e) { push({ name: file.name, origSize: origSize, status: 'noenc', why: '压缩程序没加载成功', orig: file }); return; }
     try {
       if (mode === 'target') {
         var target = currentTarget();
@@ -237,7 +242,7 @@ export function mount(root, H) {
       }
       var res = await E.encodeWithQuality(file, mime, PRESETS[preset]);
       var blob = res.blob;
-      if (!blob) { push({ name: file.name, origSize: origSize, status: 'fail' }); return; }
+      if (!blob) { push({ name: file.name, origSize: origSize, status: 'fail', why: '编码器没有产出文件（这个格式或这张图可能不被支持）', orig: file }); return; }
       var chkQ = await H.checkImage(blob);
       if (blob.size >= origSize) {
         push({ name: file.name, origSize: origSize, status: 'skip', real: !!res.real, codec: res.codec, check: chkQ });
@@ -245,7 +250,8 @@ export function mount(root, H) {
         push({ name: file.name, origSize: origSize, outSize: blob.size, blob: blob, status: 'ok', saved: origSize - blob.size, real: !!res.real, codec: res.codec, orig: file, check: chkQ });
       }
     } catch (e) {
-      push({ name: file.name, origSize: origSize, status: 'fail' });
+      // 逐条记录失败原因:不要只说一句"处理失败",用户要能知道是哪一类问题、能不能重试
+      push({ name: file.name, origSize: origSize, status: 'fail', why: H.friendlyError(e, '处理失败'), orig: file });
     }
   }
 
@@ -343,11 +349,14 @@ export function mount(root, H) {
           + '<span class="status-tag">未缩小</span><button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';
       } else if (f.status === 'noenc') {
         html += '<div class="result-card result-fail"><div class="info"><div class="name">' + H.esc(f.name) + '</div>'
-          + '<div class="sizes">压缩程序没加载成功（不是文件的问题）：可能是网络把脚本拦掉了，或者你是离线打开、浏览器里还没缓存过它。联网后刷新一次页面再试；你的文件始终没有被上传。</div>' + extraNote + '</div><span class="status-tag">未加载</span>'
+          + '<div class="sizes">压缩程序没加载成功（不是文件的问题）：可能是网络把脚本拦掉了，或者你是离线打开、浏览器里还没缓存过它。联网后点"重试"即可；你的文件始终没有被上传。</div>' + extraNote + '</div><span class="status-tag">未加载</span>'
+          + '<button class="tool-btn tool-btn--ghost retry" data-retry="' + f.id + '" style="min-height:44px">重试</button>'
           + '<button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';
       } else {
+        // 逐条给出**这一张**失败的原因,并给"重试"(单张重试不会影响其它文件)
         html += '<div class="result-card result-fail"><div class="info"><div class="name">' + H.esc(f.name) + '</div>'
-          + '<div class="sizes">读不了这个文件：可能是 iPhone 的 HEIC 格式（请先转成 JPG），或者文件已损坏。</div>' + extraNote + '</div><span class="status-tag">失败</span>'
+          + '<div class="sizes">这一张没处理成功：' + H.esc(f.why || '读不了这个文件（可能是 HEIC 或已损坏）') + '</div>' + extraNote + '</div><span class="status-tag">失败</span>'
+          + '<button class="tool-btn tool-btn--ghost retry" data-retry="' + f.id + '" style="min-height:44px">重试</button>'
           + '<button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';
       }
     });
@@ -369,6 +378,9 @@ export function mount(root, H) {
       sync();
     });
 
+    res.querySelectorAll('.retry').forEach(function (b) {
+      b.addEventListener('click', function () { retryOne(parseInt(b.dataset.retry, 10)); });
+    });
     res.querySelectorAll('.remove-btn').forEach(function (b) {
       b.addEventListener('click', function () { removeOne(parseInt(b.dataset.i, 10)); });
     });
@@ -377,11 +389,19 @@ export function mount(root, H) {
     var ok = items.filter(function (f) { return f.status === 'ok'; });
     var skip = items.filter(function (f) { return f.status === 'skip'; });
     var fail = items.filter(function (f) { return f.status === 'fail'; });
+    var noenc = items.filter(function (f) { return f.status === 'noenc'; });
+    var softFail = fail.length + noenc.length; // "未加载"同样是失败,必须能被重试
     var met = items.filter(function (f) { return f.status === 'met'; });
     var nowin = items.filter(function (f) { return f.status === 'nowin'; });
     var noenc = items.filter(function (f) { return f.status === 'noenc'; });
     var savedTotal = 0; ok.forEach(function (f) { savedTotal += f.saved; });
-    root.querySelector('#ba').style.display = ok.length ? 'flex' : 'none';
+    root.querySelector('#ba').style.display = (ok.length || softFail) ? 'flex' : 'none';
+    // 批量区里的"重试失败的"只在真有失败项时出现,并写明张数
+    var ra = root.querySelector('#retryAll');
+    if (ra) {
+      ra.style.display = softFail ? 'inline-flex' : 'none';
+      ra.textContent = softFail ? ('重试失败的 ' + softFail + ' 张') : '重试失败的';
+    }
     var sum = root.querySelector('#sum');
     if (items.length) {
       sum.style.display = 'block';
@@ -426,6 +446,44 @@ export function mount(root, H) {
     if (!f || !f.blob) return;
     H.downloadBlob(f.blob, outName(f.name, f.blob));
   }
+  // ---------- 重试(A4:批量不能"一张失败就整批完蛋",也不能让人重新拖一遍) ----------
+  function fileById(id) {
+    for (var i = 0; i < originals.length; i++) if (originals[i].__id === id) return originals[i];
+    return null;
+  }
+  function retryOne(id) {
+    var file = fileById(id);
+    if (!file) return;
+    var myRun = runSeq; // 沿用当前轮次:重试不该打断正在跑的那一批
+    items = items.filter(function (it) { return it.id !== id; });
+    render();
+    compressOne(file, myRun, function () { if (myRun === runSeq) render(); });
+  }
+  function retryFailed() {
+    var failed = items.filter(function (it) { return it.status === 'fail' || it.status === 'noenc'; });
+    if (!failed.length) return;
+    var myRun = runSeq;
+    var ids = failed.map(function (it) { return it.id; });
+    var note = root.querySelector('#pgt'), pg = root.querySelector('#pg'), fill = pg.querySelector('.fill');
+    pg.style.display = 'block'; note.style.display = 'block';
+    var n = 0;
+    (function nextRetry() {
+      if (myRun !== runSeq) return;
+      if (n >= ids.length) { pg.style.display = 'none'; note.style.display = 'none'; render(); return; }
+      var file = fileById(ids[n]);
+      note.textContent = '正在重试失败项:第 ' + (n + 1) + ' / ' + ids.length + ' 张（' + file.name + '）…';
+      fill.style.width = ((n) / ids.length * 100) + '%';
+      items = items.filter(function (it) { return it.id !== ids[n]; });
+      render();
+      compressOne(file, myRun, function () {
+        if (myRun !== runSeq) return;
+        n++;
+        fill.style.width = (n / ids.length * 100) + '%';
+        setTimeout(nextRetry, 0);
+      });
+    })();
+  }
+
   function downloadAll() {
     var files = [];
     items.forEach(function (f) {
