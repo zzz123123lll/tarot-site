@@ -11,7 +11,8 @@ export function mount(root, H) {
     + ".inv-sus{color:var(--c-warn);font-weight:600}"
     + ".inv-ok{color:var(--c-ok)}"
     + ".inv-none{color:#6e6e73}"
-    + ".inv-sum{margin-top:14px;background:var(--t-surface);border-radius:12px;padding:14px 16px;font-size:14px;line-height:1.7}");
+    + ".inv-sum{margin-top:14px;background:var(--t-surface);border-radius:12px;padding:14px 16px;font-size:14px;line-height:1.7}"
+    + ".inv-peek{margin-top:6px;font-size:13px;color:#6e6e73}.inv-peek summary{cursor:pointer}.inv-peek div{margin-top:6px;white-space:pre-wrap;word-break:break-all;max-height:130px;overflow:auto;background:#f5f5f7;border-radius:8px;padding:8px}");
 
   root.innerHTML =
     '<h1 class="tool-h1">发票查重</h1>' +
@@ -30,33 +31,66 @@ export function mount(root, H) {
 
   function money(s) {
     if (!s) return null;
-    var v = parseFloat(String(s).replace(/[,¥￥\s]/g, ''));
+    var v = parseFloat(String(s).replace(/[,¥￥\s\u00a0]/g, ''));
     return isNaN(v) ? null : v;
   }
   function fmtMoney(v) { return v === null || v === undefined ? '' : '¥' + v.toFixed(2); }
+  // 内容指纹:重复报销最常见的形态就是"同一个文件交了两次"。这条与能不能读出版式无关。
+  async function sha256(bytes) {
+    try {
+      if (!(window.crypto && window.crypto.subtle)) return '';
+      var d = await window.crypto.subtle.digest('SHA-256', bytes);
+      return Array.prototype.map.call(new Uint8Array(d), function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+    } catch (e) { return ''; }
+  }
   function esc(s) { return H.esc(s == null ? '' : s); }
 
+  // 不同版式差异很大,先把文本"拍平"成统一形态再匹配:
+  // 全角数字/全角括号冒号 → 半角;不换行空格 → 普通空格。
+  function normText(t) {
+    return String(t || '')
+      .replace(/[\u00a0\u3000]/g, ' ')
+      .replace(/[\uff10-\uff19]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); })
+      .replace(/\uff1a/g, ':').replace(/\uff08/g, '(').replace(/\uff09/g, ')')
+      .replace(/[\uffe5]/g, '¥');
+  }
+  // pdf.js 取文字时经常在每个字符之间插空格("2 4 3 1 ..."),所以数字必须允许中间有空格,
+  // 取出来再拼回去;同时把 OCR 常见的 O/o 当 0。
+  function digits(s) {
+    return String(s || '').replace(/[\s\u00a0]/g, '').replace(/[Oo]/g, '0').replace(/[^0-9]/g, '');
+  }
+  function pickNum(seg, min, max) {
+    var d = digits(seg);
+    if (d.length < min) return '';
+    if (d.length > max) {
+      // 抓太长通常是"号码后面又跟了日期"之类的粘连:数电票固定 20 位,先按 20 位截断
+      d = d.length > max && max >= 20 ? d.slice(0, 20) : d.slice(0, max);
+    }
+    return d;
+  }
+
   // 从一页文字里抠字段。数电票是 20 位发票号码;老票是 12 位发票代码 + 8 位号码。
-  function parseInvoice(text) {
-    var t = String(text || '').replace(/[\u00a0]/g, ' ');
-    var out = { number: '', code: '', date: '', total: null, seller: '', raw: t.length };
+  function parseInvoice(rawText) {
+    var t = normText(rawText);
+    var out = { number: '', code: '', date: '', total: null, seller: '', raw: t.length, text: t.slice(0, 400) };
     var m;
-    if ((m = t.match(/发\s*票\s*号\s*码\s*[:：]?\s*([0-9O]{8,25})/))) out.number = m[1].replace(/O/g, '0');
-    // 英文/通用兜底:有些电子票或境外票用 Invoice No / No. 标注;号码本身是 8-25 位数字
-    if (!out.number && (m = t.match(/(?:invoice\s*(?:no|number|#)|no\.)\s*[:：#]?\s*([0-9]{8,25})/i))) out.number = m[1];
+    // 允许数字之间有空格(最多 40 个字符宽),再拼回连续数字
+    if ((m = t.match(/发\s*票\s*号\s*码\s*[:：]?\s*([0-9O][0-9O\s]{6,44})/))) out.number = pickNum(m[1], 8, 25);
+    if (!out.number && (m = t.match(/(?:invoice\s*(?:no|number|#)|no\.)\s*[:：#]?\s*([0-9][0-9\s]{6,44})/i))) out.number = pickNum(m[1], 8, 25);
     if (!out.number && (m = t.match(/\b(\d{20})\b/))) out.number = m[1];
-    if ((m = t.match(/发\s*票\s*代\s*码\s*[:：]?\s*(\d{10,12})/))) out.code = m[1];
-    if (!out.code && (m = t.match(/(?:invoice\s*code)\s*[:：]?\s*(\d{10,12})/i))) out.code = m[1];
+    if ((m = t.match(/发\s*票\s*代\s*码\s*[:：]?\s*([0-9][0-9\s]{9,22})/))) out.code = pickNum(m[1], 10, 12);
+    if (!out.code && (m = t.match(/(?:invoice\s*code)\s*[:：]?\s*([0-9][0-9\s]{9,22})/i))) out.code = pickNum(m[1], 10, 12);
     if ((m = t.match(/(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日/))) {
       out.date = m[1] + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[3]).slice(-2);
     } else if ((m = t.match(/(\d{4})[-/](\d{1,2})[-/](\d{1,2})/))) {
       out.date = m[1] + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[3]).slice(-2);
     }
-    if ((m = t.match(/价\s*税\s*合\s*计[^0-9¥￥]{0,24}[¥￥]?\s*([0-9,]+\.[0-9]{2})/))) out.total = money(m[1]);
-    if (out.total === null && (m = t.match(/\(?\s*小\s*写\s*\)?[^0-9¥￥]{0,12}[¥￥]?\s*([0-9,]+\.[0-9]{2})/))) out.total = money(m[1]);
+    if ((m = t.match(/价\s*税\s*合\s*计[^0-9¥￥]{0,24}[¥￥]?\s*([0-9][0-9,\s]*\.[0-9]{2})/))) out.total = money(m[1]);
+    if (out.total === null && (m = t.match(/\(?\s*小\s*写\s*\)?[^0-9¥￥]{0,12}[¥￥]?\s*([0-9][0-9,\s]*\.[0-9]{2})/))) out.total = money(m[1]);
     // 英文/通用兜底:价税合计 / total / amount,以及单独的 ¥￥ 金额
-    if (out.total === null && (m = t.match(/(?:total|amount|jia\s*shui\s*he\s*ji)[^0-9]{0,24}([0-9,]+\.[0-9]{2})/i))) out.total = money(m[1]);
-    if (out.total === null && (m = t.match(/[¥￥]\s*([0-9,]+\.[0-9]{2})/))) out.total = money(m[1]);
+    if (out.total === null && (m = t.match(/(?:total|amount|jia\s*shui\s*he\s*ji)[^0-9]{0,24}([0-9][0-9,\s]*\.[0-9]{2})/i))) out.total = money(m[1]);
+    if (out.total === null && (m = t.match(/(?:CNY|RMB)\s*([0-9][0-9,\s]*\.[0-9]{2})/i))) out.total = money(m[1]);
+    if (out.total === null && (m = t.match(/[¥￥]\s*([0-9][0-9,\s]*\.[0-9]{2})/))) out.total = money(m[1]);
     if ((m = t.match(/销\s*售\s*方[^名]{0,6}名\s*称\s*[:：]?\s*([^\s]{2,40})/))) out.seller = m[1];
     // 英文兜底要"非贪婪 + 遇到下一个标签就停",否则会把下一行的 Total 也吞进销售方
     if (!out.seller && (m = t.match(/(?:seller|xiaoshoufang)[^:：A-Za-z0-9]{0,12}[:：]?\s*([A-Za-z0-9 \-]{2,40}?)(?=\s+(?:Total|Amount|Date|Invoice|No)\b|$)/i))) out.seller = m[1].trim();
@@ -76,21 +110,27 @@ export function mount(root, H) {
     if (!rows.length) { out.innerHTML = ''; return; }
     var html = '<table class="inv-tbl"><thead><tr><th>#</th><th>文件名</th><th>发票号码</th><th>开票日期</th><th>价税合计</th><th>状态</th></tr></thead><tbody>';
     rows.forEach(function (r, i) {
-      var st = r.status === 'dup' ? '<span class="inv-dup">重复</span>'
+      var st = r.status === 'duphash' ? '<span class="inv-dup">重复:文件内容完全相同</span>'
+        : r.status === 'dup' ? '<span class="inv-dup">重复:发票号码相同</span>'
         : r.status === 'suspect' ? '<span class="inv-sus">疑似重复(需人工确认)</span>'
-        : r.status === 'notext' ? '<span class="inv-none">读不出文字(可能是扫描件/照片)</span>'
+        : r.status === 'image' ? '<span class="inv-none">图片发票:已按文件内容查重(不做 OCR)</span>'
+        : r.status === 'notext' ? '<span class="inv-none">读不出文字(扫描件)</span>'
         : r.status === 'error' ? '<span class="inv-dup">打不开:' + esc(r.why || '') + '</span>'
         : '<span class="inv-ok">唯一</span>';
+      // 版式千差万别:把"我们到底读到了什么"摊开给用户,读不到时也能自己判断要不要人工核对
+      var peek = r.text ? '<details class="inv-peek"><summary>看我们读到的文字</summary><div>' + esc(r.text) + '</div></details>' : '';
       html += '<tr><td class="num">' + (i + 1) + '</td><td>' + esc(r.file) + '</td>'
         + '<td class="num">' + (r.number ? esc(r.number) : '<span class="inv-none">—</span>') + '</td>'
         + '<td class="num">' + (r.date || '<span class="inv-none">—</span>') + '</td>'
         + '<td class="num">' + (r.total === null ? '<span class="inv-none">—</span>' : fmtMoney(r.total)) + '</td>'
-        + '<td>' + st + '</td></tr>';
+        + '<td>' + st + peek + '</td></tr>';
     });
     html += '</tbody></table>';
 
     var uniq = rows.filter(function (r) { return r.status === 'uniq' || r.status === 'suspect'; });
-    var dup = rows.filter(function (r) { return r.status === 'dup'; });
+    var dupHash = rows.filter(function (r) { return r.status === 'duphash'; });
+    var dup = rows.filter(function (r) { return r.status === 'dup' || r.status === 'duphash'; });
+    var imgRows = rows.filter(function (r) { return r.status === 'image'; });
     var notext = rows.filter(function (r) { return r.status === 'notext'; });
     var errs = rows.filter(function (r) { return r.status === 'error'; });
     var withMoney = rows.filter(function (r) { return r.total !== null; });
@@ -102,7 +142,9 @@ export function mount(root, H) {
       + ' · 读到金额的 ' + withMoney.length + ' 张,合计 <b>' + fmtMoney(sumAll) + '</b>'
       + (dup.length ? ' · <span class="inv-dup">重复 ' + dup.length + ' 张(' + fmtMoney(sumDup) + ')</span>' : ' · 没有发现重复')
       + ' · 去重后合计 <b>' + fmtMoney(sumUniq) + '</b>'
-      + (notext.length ? '<br>其中 ' + notext.length + ' 张读不出文字(扫描件/照片,本工具不做 OCR)' : '')
+      + (imgRows.length ? '<br>其中 ' + imgRows.length + ' 张是图片发票:不做 OCR,只按文件内容查重(同一个文件交两次能查出来)' : '')
+      + (dupHash.length ? '<br>有 ' + dupHash.length + ' 张与前面的文件<b>内容完全相同</b>(同一个文件交了两次)' : '')
+      + (notext.length ? '<br>其中 ' + notext.length + ' 张读不出文字(扫描件,本工具不做 OCR)' : '')
       + (noNumber && !notext.length ? '<br>有 ' + noNumber + ' 张没读到发票号码:可能是版式不同,建议人工核对' : '')
       + (errs.length ? '<br>有 ' + errs.length + ' 张打不开' : '')
       + '</div>';
@@ -115,7 +157,7 @@ export function mount(root, H) {
       var head = ['序号', '文件名', '发票代码', '发票号码', '开票日期', '价税合计', '销售方', '状态'];
       var lines = [head.join(',')];
       list.forEach(function (r, i) {
-        var st = r.status === 'dup' ? '重复' : r.status === 'suspect' ? '疑似重复' : r.status === 'notext' ? '读不出文字' : r.status === 'error' ? '打不开' : '唯一';
+        var st = r.status === 'duphash' ? '重复(文件内容相同)' : r.status === 'dup' ? '重复(号码相同)' : r.status === 'suspect' ? '疑似重复' : r.status === 'image' ? '图片发票(仅按内容查重)' : r.status === 'notext' ? '读不出文字' : r.status === 'error' ? '打不开' : '唯一';
         var cells = [i + 1, r.file, r.code || '', r.number || '', r.date || '', r.total === null ? '' : r.total.toFixed(2), r.seller || '', st];
         lines.push(cells.map(function (c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(','));
       });
@@ -137,8 +179,11 @@ export function mount(root, H) {
   }
 
   async function analyze(files) {
-    var pdfs = files.filter(function (f) { return f.type === 'application/pdf' || /\.pdf$/i.test(f.name); });
-    if (!pdfs.length) { say('这里只处理 PDF 电子发票(照片/截图请先拿到税务系统下载的 PDF 原件)。', 'err'); return; }
+    // PDF 走文字解析;图片(照片/截图)不做 OCR,但可以按**文件内容**查重 —— 重复报销最常见的情况就是同一个文件交了两次
+    var pdfs = files.filter(function (f) {
+      return f.type === 'application/pdf' || /\.pdf$/i.test(f.name) || /^image\//.test(f.type) || /\.(jpe?g|png|webp|bmp)$/i.test(f.name);
+    });
+    if (!pdfs.length) { say('请拖入 PDF 电子发票,或照片/截图(图片只做按内容查重,不做 OCR)。', 'err'); return; }
     rows = [];
     var pg = root.querySelector('#pg'), fill = pg.querySelector('.fill'), pgt = root.querySelector('#pgt');
     pg.style.display = 'block'; fill.style.width = '0%'; pgt.style.display = 'block';
@@ -150,39 +195,54 @@ export function mount(root, H) {
         var f = pdfs[i];
         pgt.textContent = '正在读第 ' + (i + 1) + ' / ' + pdfs.length + ' 个:' + f.name;
         fill.style.width = (10 + (i / pdfs.length) * 85) + '%';
-        var row = { file: f.name, number: '', code: '', date: '', total: null, seller: '', status: 'uniq', why: '' };
+        var row = { file: f.name, number: '', code: '', date: '', total: null, seller: '', status: 'uniq', why: '', sha: '', text: '', isImage: false };
         try {
           var bytes = new Uint8Array(await f.arrayBuffer());
-          var doc = await lib.getDocument({ data: bytes, cMapUrl: '/vendor/pdfjs/cmaps/', cMapPacked: true, standardFontDataUrl: '/vendor/pdfjs/standard_fonts/' }).promise;
-          var text = '';
-          for (var p = 1; p <= doc.numPages; p++) {
-            var page = await doc.getPage(p);
-            var tc = await page.getTextContent();
-            text += ' ' + tc.items.map(function (it) { return it.str; }).join(' ');
-          }
-          if (text.replace(/\s/g, '').length < 20) {
-            row.status = 'notext';   // 没有文字层:扫描件/照片
+          row.sha = await sha256(bytes);   // 内容指纹:与版式、有没有文字层都无关
+          row.isImage = /^image\//.test(f.type) || /\.(jpe?g|png|webp|bmp)$/i.test(f.name);
+          if (row.isImage) {
+            row.status = 'image';   // 图片发票:不做 OCR,只按内容查重
           } else {
-            var parsed = parseInvoice(text);
-            row.number = parsed.number; row.code = parsed.code; row.date = parsed.date; row.total = parsed.total; row.seller = parsed.seller;
+            var doc = await lib.getDocument({ data: bytes.slice(), cMapUrl: '/vendor/pdfjs/cmaps/', cMapPacked: true, standardFontDataUrl: '/vendor/pdfjs/standard_fonts/' }).promise;
+            var text = '';
+            for (var p = 1; p <= doc.numPages; p++) {
+              var page = await doc.getPage(p);
+              var tc = await page.getTextContent();
+              text += ' ' + tc.items.map(function (it) { return it.str; }).join(' ');
+            }
+            if (text.replace(/\s/g, '').length < 20) {
+              row.status = 'notext';   // 没有文字层:扫描件
+            } else {
+              var parsed = parseInvoice(text);
+              row.number = parsed.number; row.code = parsed.code; row.date = parsed.date; row.total = parsed.total; row.seller = parsed.seller;
+              row.text = parsed.text;
+            }
           }
         } catch (e) {
           row.status = 'error';
-          row.why = H.isLibFail(e) ? '程序没加载成功' : H.friendlyError(e, 'PDF 打不开');
+          row.why = H.isLibFail(e) ? '程序没加载成功' : H.friendlyError(e, 'PDF/图片打不开');
         }
         rows.push(row);
       }
-      // 查重:① 发票号码完全相同 ② 号码读不到时按费用要素(日期+金额+销售方)判"疑似"
+      // 查重:
+      // ① 文件内容指纹相同(最硬:同一个文件交了两次,图片发票也能查出来)
+      // ② 发票号码完全相同
+      // ③ 没有号码时按费用要素(日期+金额)判"疑似",交人工确认
+      var seenHash = {};
+      rows.forEach(function (r) {
+        if (!r.sha || r.status === 'error') return;
+        if (seenHash[r.sha]) { r.status = 'duphash'; } else { seenHash[r.sha] = 1; }
+      });
       var seen = {};
       rows.forEach(function (r) {
-        if (r.status === 'error' || r.status === 'notext') return;
+        if (r.status === 'error' || r.status === 'notext' || r.status === 'image' || r.status === 'duphash') return;
         var key = r.number ? ('N:' + r.number) : ('F:' + (r.date || '') + '|' + (r.total === null ? '' : r.total.toFixed(2)) + '|' + (r.seller || ''));
         if (r.number && seen[key]) { r.status = 'dup'; }
         else if (r.number) { seen[key] = 1; }
       });
       var feats = {};
       rows.forEach(function (r) {
-        if (r.status !== 'uniq' || r.number) return;
+        if (r.status !== 'uniq' || r.number || r.isImage) return;
         var k = (r.date || '') + '|' + (r.total === null ? '' : r.total.toFixed(2));
         if (k === '|') return;
         if (feats[k]) { r.status = 'suspect'; } else { feats[k] = 1; }
@@ -190,9 +250,10 @@ export function mount(root, H) {
       fill.style.width = '100%';
       pg.style.display = 'none'; pgt.style.display = 'none';
       render();
-      var dup = rows.filter(function (r) { return r.status === 'dup'; }).length;
+      var dup = rows.filter(function (r) { return r.status === 'dup' || r.status === 'duphash'; }).length;
+      var dupH = rows.filter(function (r) { return r.status === 'duphash'; }).length;
       var notext = rows.filter(function (r) { return r.status === 'notext'; }).length;
-      say('读完了 ' + rows.length + ' 张:' + (dup ? '发现 ' + dup + ' 张重复' : '没有发现重复')
+      say('读完了 ' + rows.length + ' 张:' + (dup ? '发现 ' + dup + ' 张重复' + (dupH ? '(其中 ' + dupH + ' 张是同一份文件交了两次)' : '') : '没有发现重复')
         + (notext ? ';有 ' + notext + ' 张读不出文字(扫描件/照片)' : '')
         + '。下面可以导出 CSV 报销清单。', dup ? 'err' : 'ok');
     } catch (e) {
