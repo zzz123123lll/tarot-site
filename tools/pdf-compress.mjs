@@ -133,7 +133,9 @@ export function mount(root, H) {
         cur.push(k); curBytes += cost;
       }
       if (cur.length) groups.push(cur);
-      if (groups.length > 1 && groups[0].length === 1 && pages[groups[0][0]].bytes.byteLength * margin + overhead > target) {
+      // 注意:这里不要用"单页 JPEG 字节 + 估算余量"提前判死 —— 估算值大于真实 PDF,会得出
+      // "95 KB 已经超过目标 102 KB"这种自相矛盾的结论。让它真的建一份出来,按实测说话(见下面 allSingle 分支)。
+      if (false) {
         hideProgress();
         say('即使降到 ' + usedDpi + ' dpi,单页就有 ' + H.fmt(pages[groups[0][0]].bytes.byteLength) + ',已经超过目标 ' + H.fmt(target) + ' —— 这种情况拆页也解决不了。建议放宽目标,或先把 PDF 里的图片单独压小再合并。', 'err');
         return;
@@ -159,8 +161,15 @@ export function mount(root, H) {
       hideProgress();
       var allMet = parts.every(function (x) { return x.met; });
       var worst = Math.max.apply(null, parts.map(function (x) { return x.size; }));
-      say('目标 ' + H.fmt(target) + ' 拆不开:' + usedDpi + ' dpi 之下整份仍超过,所以拆成了 ' + parts.length + ' 份,最大一份 ' + H.fmt(worst) + '。'
-        + (allMet ? '每份都在上限内。' : '仍有份超标(下面标出来了)。') + '代价:文字变成图,不能复制、不能搜索。', allMet ? 'ok' : 'err');
+      // 全部都是"一页一份"却仍超标 = 单页本身就超目标,拆页解决不了 —— 按实测数字说清,别给假希望
+      var allSinglePage = parts.length === groups.length && groups.every(function (g) { return g.length === 1; });
+      if (!allMet && allSinglePage) {
+        say('拆页也解决不了:即使降到 ' + usedDpi + ' dpi,单页就有 ' + H.fmt(worst) + ',已经超过目标 ' + H.fmt(target) + '。'
+          + '建议放宽目标,或先把 PDF 里的图片单独压小再合并。(下面这些每页一份的文件仍比原文件小,需要可以拿。)', 'err');
+      } else {
+        say('目标 ' + H.fmt(target) + ' 拆不开:' + usedDpi + ' dpi 之下整份仍超过,所以拆成了 ' + parts.length + ' 份,最大一份 ' + H.fmt(worst) + '。'
+          + (allMet ? '每份都在上限内。' : '仍有份超标(下面标出来了)。') + '代价:文字变成图,不能复制、不能搜索。', allMet ? 'ok' : 'err');
+      }
       var html = '<div class="pdf-parts">';
       parts.forEach(function (x, i) {
         html += '<div class="pdf-part"><span class="nm">' + H.esc(x.name) + '</span><span class="meta">' + x.pages + ' · ' + H.fmt(x.size) + (x.met ? '' : ' · 超目标') + '</span><button class="tool-btn" data-p="' + i + '">下载</button></div>';

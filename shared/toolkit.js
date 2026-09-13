@@ -318,7 +318,7 @@ const REGISTRY = {
   'pdf-merge': { title: 'PDF 合并', module: '/tools/pdf-merge.mjs', v: 6 },
   'pdf-split': { title: 'PDF 拆分/旋转', module: '/tools/pdf-split.mjs', v: 6 },
   'pdf-render': { title: 'PDF 转图片', module: '/tools/pdf-render.mjs', v: 6 },
-  'pdf-compress': { title: 'PDF 压缩', module: '/tools/pdf-compress.mjs', v: 7 },
+  'pdf-compress': { title: 'PDF 压缩', module: '/tools/pdf-compress.mjs', v: 8 },
   'json': { title: 'JSON 格式化', module: '/tools/json.mjs', v: 6 },
   'base64': { title: 'Base64 编解码', module: '/tools/base64.mjs', v: 5 },
   'regex': { title: '正则测试', module: '/tools/regex.mjs', v: 5 },
