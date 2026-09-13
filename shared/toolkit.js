@@ -169,13 +169,21 @@ export function clearWarn(el) {
 }
 function matchesAccept(file, accept) {
   if (!accept) return true;
-  return accept.split(',').some(function (a) {
-    a = a.trim();
-    if (!a) return false;
-    if (a.slice(-2) === '/*') return String(file.type || '').indexOf(a.slice(0, a.indexOf('/') + 1)) === 0;
-    if (a.charAt(0) === '.') return file.name.toLowerCase().slice(-a.length) === a.toLowerCase();
-    return file.type === a;
+  var name = String(file.name || '').toLowerCase();
+  var type = String(file.type || '');
+  var list = accept.split(',').map(function (a) { return a.trim(); }).filter(Boolean);
+  var hit = list.some(function (a) {
+    if (a.slice(-2) === '/*') return type.indexOf(a.slice(0, a.indexOf('/') + 1)) === 0;
+    if (a.charAt(0) === '.') return name.slice(-a.length) === a;
+    return type === a;
   });
+  if (hit) return true;
+  // HEIC/HEIF 常见两种形态:type 是空的(从某些系统拖出来),或 image/heic。
+  // 只要这个工具本来就是收图片的,就放行 —— 让工具自己去看文件头、并把"浏览器解不了 HEIC"这件事说清楚,
+  // 而不是在这一层丢一句"格式不支持"(那用户根本不知道发生了什么)。
+  var wantsImage = list.some(function (a) { return a.indexOf('image/') === 0 || /^\.(jpe?g|png|webp|bmp|gif|heic|heif)$/.test(a); });
+  var looksHeic = /\.(heic|heif)$/.test(name) || type === 'image/heic' || type === 'image/heif';
+  return wantsImage && looksHeic;
 }
 // ---------- 零上传自证:统计"可能夹带你的文件"的请求 ----------
 // 只统计,不改行为。统计对象:带请求体的请求(任何 fetch / XHR / sendBeacon)与跨域请求。
@@ -309,6 +317,33 @@ export function makeDropZone(el, onFiles, accept, opts) {
   });
 }
 
+// ---------- HEIC/HEIF 识别与说明 ----------
+// 为什么单独做:iPhone 拍的照片默认是 HEIC,而 Chrome / Edge / Firefox / 安卓 Chrome 都不能解码
+// (只有 Safari 可以,见 caniuse:heif)。它是真实高频痛点(调研原话:"iPhone 拍的 HEIC 在 Windows、
+// 安卓默认打不开,网上现成的转换工具基本都要上传服务器"),所以至少要说清楚、给出可走的路,
+// 而不是丢一句"读不了这个文件"。
+export async function sniffHeic(file) {
+  try {
+    if (!file) return false;
+    if (/\.(heic|heif)$/i.test(file.name || '')) return true;
+    if (/^image\/hei[cf]$/i.test(file.type || '')) return true;
+    // 有些设备传上来 type 是空的:看文件头 ftyp brand(HEIC 与 MP4 同族)
+    var head = new Uint8Array(await file.slice(0, 16).arrayBuffer());
+    if (head.length >= 12) {
+      var ftyp = String.fromCharCode(head[4], head[5], head[6], head[7]);
+      var brand = String.fromCharCode(head[8], head[9], head[10], head[11]).toLowerCase();
+      if (ftyp === 'ftyp' && ['heic', 'heix', 'hevc', 'hevx', 'heim', 'heis', 'hevm', 'hevs', 'mif1', 'msf1'].indexOf(brand) >= 0) return true;
+    }
+  } catch (e) { /* 读不了头就当不是 */ }
+  return false;
+}
+export function heicNotice() {
+  return '<div class="sizes" style="color:var(--c-warn)">这是 iPhone 的 HEIC 照片 —— Chrome / Edge / Firefox / 安卓浏览器目前<b>都不能解码它</b>(只有 Safari 能),所以在这里打不开。你的文件没有被上传，也没有被改动。</div>'
+    + '<div class="sizes">可以走的几条路：① iPhone「设置 → 照片 → 传输到 Mac 或 PC」选<b>自动</b>，再用数据线导出（得到 JPG）；'
+    + '② 在 iPhone / Mac 上直接「导出为 JPG」；③ Windows 装微软商店的「HEIF 图像扩展」后，用「照片」打开并另存为 JPG。</div>'
+    + '<div class="sizes" style="color:#6e6e73">我们正在评估内置 HEIC 解码器：它会让首次使用多下载约 1.4MB，还涉及第三方库的许可证问题，所以还没上线。</div>';
+}
+
 // ---------- 导出后自检(把"悄悄坏掉"挡在下载之前) ----------
 // 为什么需要:调研里最扎心的一条原话是"导出 PDF 排版丢了好几页,问题是我马上就要交了"。
 // 做法:产物生成后**真的读回来**核对 —— 图片能不能解码、像素对不对、体积有没有超;
@@ -358,10 +393,10 @@ export async function checkPdf(out, expect) {
 }
 
 const REGISTRY = {
-  'receipt-clean': { title: '票据清理', module: '/tools/receipt-clean.mjs', v: 2 },
-  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 22 },
-  'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 18 },
-  'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs', v: 5 },
+  'receipt-clean': { title: '票据清理', module: '/tools/receipt-clean.mjs', v: 3 },
+  'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 23 },
+  'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 19 },
+  'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs', v: 6 },
   'images-to-pdf': { title: '图片合成 PDF', module: '/tools/images-to-pdf.mjs', v: 6 },
   'invoice-nup': { title: '发票拼版', module: '/tools/invoice-nup.mjs', v: 8 },
   'pdf-merge': { title: 'PDF 合并', module: '/tools/pdf-merge.mjs', v: 6 },
@@ -381,7 +416,7 @@ const REGISTRY = {
   'date': { title: '日期 & 时间戳', module: '/tools/date.mjs', v: 5 }
 };
 
-const H = { esc, fmt, downloadBlob, downloadZip, checkImage, checkPdf, injectCss, makeDropZone, loadScript, loadLib, dynLib, isLibFail, copyText, initTips, friendlyError, warnBelow, clearWarn, netMark, netReport, netLine };
+const H = { esc, fmt, downloadBlob, downloadZip, checkImage, checkPdf, sniffHeic, heicNotice, injectCss, makeDropZone, loadScript, loadLib, dynLib, isLibFail, copyText, initTips, friendlyError, warnBelow, clearWarn, netMark, netReport, netLine };
 
 // 通用无障碍增强:动态状态区可被读屏播报;标签与输入框建立关联
 export function enhanceA11y(root) {

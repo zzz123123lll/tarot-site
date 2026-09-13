@@ -219,7 +219,7 @@ export function mount(root, H) {
             + (it.check.ok ? '自检:产物读回 ' + (it.isPdf ? (it.check.pages + ' 页(与原文一致)') : (it.check.width + ' × ' + it.check.height)) + ' · ' + H.fmt(it.check.bytes) : '自检没通过:' + H.esc(it.check.error)) + '</div>';
         }
       } else if (it.status === 'fail') {
-        html += '<div class="rc-meta" style="color:var(--c-err)">这一张没处理成功:' + H.esc(it.why || '读不了这个文件') + '</div>';
+        html += it.heic ? H.heicNotice() : '<div class="rc-meta" style="color:var(--c-err)">这一张没处理成功:' + H.esc(it.why || '读不了这个文件') + '</div>';
       } else {
         html += '<div class="rc-meta" style="color:#6e6e73">' + H.esc(it.why || '处理中…') + '</div>';
       }
@@ -258,7 +258,7 @@ export function mount(root, H) {
     var pg = root.querySelector('#pg'), fill = pg.querySelector('.fill'), pgt = root.querySelector('#pgt');
     pg.style.display = 'block'; pgt.style.display = 'block'; fill.style.width = '0%';
     var opt = opts();
-    var all = files.filter(function (f) { return /^image\//.test(f.type) || /\.(jpe?g|png|webp|bmp)$/i.test(f.name) || f.type === 'application/pdf' || /\.pdf$/i.test(f.name); });
+    var all = files.filter(function (f) { return /^image\//.test(f.type) || /\.(jpe?g|png|webp|bmp|heic|heif)$/i.test(f.name) || f.type === 'application/pdf' || /\.pdf$/i.test(f.name); });
     if (!all.length) { pg.style.display = 'none'; pgt.style.display = 'none'; say('请拖入图片或 PDF。', 'err'); return; }
     say('正在处理 ' + all.length + ' 个文件(本地运算,不上传)…');
     var ok = 0, fail = 0;
@@ -306,7 +306,8 @@ export function mount(root, H) {
         });
         ok++;
       } catch (e) {
-        items.push({ name: f.name, status: 'fail', why: H.friendlyError(e, '处理失败') });
+        var heic = await H.sniffHeic(f);
+        items.push({ name: f.name, status: 'fail', heic: heic, why: heic ? '' : H.friendlyError(e, '处理失败') });
         fail++;
       }
       render();

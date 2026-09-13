@@ -109,7 +109,12 @@ export function mount(root, H) {
 
   async function addFiles(files) {
     var added = [];
-    files.forEach(function (f) { if (f.type.indexOf('image/') === 0) { f.__id = nextId++; originals.push(f); added.push(f); } });
+    // 不能只看 type:iPhone 的 HEIC 拖进来常常 type 是空的。这类文件必须让流程接手,
+    // 才能给出"浏览器解不了 HEIC"的明确说明;否则就是拖进来毫无反应(最糟的体验)。
+    files.forEach(function (f) {
+      var looksImage = /^image\//.test(f.type || '') || /\.(jpe?g|png|webp|bmp|gif|heic|heif|avif|tiff?)$/i.test(f.name || '');
+      if (looksImage) { f.__id = nextId++; originals.push(f); added.push(f); }
+    });
     // 动图必须先认出来,不能悄悄只输出第一帧
     for (var i = 0; i < added.length; i++) {
       var f = added[i];
@@ -251,7 +256,9 @@ export function mount(root, H) {
       }
     } catch (e) {
       // 逐条记录失败原因:不要只说一句"处理失败",用户要能知道是哪一类问题、能不能重试
-      push({ name: file.name, origSize: origSize, status: 'fail', why: H.friendlyError(e, '处理失败'), orig: file });
+      // HEIC 单独说清楚(它不是"文件坏了",而是浏览器解不了),并给出可走的路
+      var isHeic = await H.sniffHeic(file);
+      push({ name: file.name, origSize: origSize, status: 'fail', heic: isHeic, why: isHeic ? '' : H.friendlyError(e, '处理失败'), orig: file });
     }
   }
 
@@ -355,7 +362,7 @@ export function mount(root, H) {
       } else {
         // 逐条给出**这一张**失败的原因,并给"重试"(单张重试不会影响其它文件)
         html += '<div class="result-card result-fail"><div class="info"><div class="name">' + H.esc(f.name) + '</div>'
-          + '<div class="sizes">这一张没处理成功：' + H.esc(f.why || '读不了这个文件（可能是 HEIC 或已损坏）') + '</div>' + extraNote + '</div><span class="status-tag">失败</span>'
+          + (f.heic ? H.heicNotice() : '<div class="sizes">这一张没处理成功：' + H.esc(f.why || '读不了这个文件') + '</div>') + extraNote + '</div><span class="status-tag">' + (f.heic ? '需先转 JPG' : '失败') + '</span>'
           + '<button class="tool-btn tool-btn--ghost retry" data-retry="' + f.id + '" style="min-height:44px">重试</button>'
           + '<button class="remove-btn" data-i="' + i + '" data-tippy-content="移除" aria-label="移除">×</button></div>';
       }

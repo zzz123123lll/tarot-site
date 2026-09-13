@@ -209,7 +209,11 @@ export function mount(root, H) {
     } catch (e) {
       state.reading = false; state.img = null;
       if (go) { go.disabled = true; go.textContent = '生成合规照片'; }
-      H.warnBelow(dz, '这张图读不了:可能是 iPhone 的 HEIC,或者文件已损坏。请先转成 JPG 再试。');
+      // HEIC 单独提示:这不是文件损坏,而是浏览器解不了;把可走的路写清楚
+      var isHeic = await H.sniffHeic(f);
+      H.warnBelow(dz, isHeic
+        ? '这是 iPhone 的 HEIC 照片:Chrome / Edge / Firefox / 安卓浏览器都解不了它(只有 Safari 能),所以读不出来。可以先在 iPhone/Mac 上导出成 JPG,或 Windows 装微软商店的「HEIF 图像扩展」后用「照片」另存为 JPG;你的文件没有被上传。'
+        : '这张图读不了:文件可能已损坏,或者格式不受支持。请先转成 JPG 再试。');
     }
   }
 

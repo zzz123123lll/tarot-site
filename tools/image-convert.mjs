@@ -31,7 +31,11 @@ export function mount(root, H) {
   root.querySelector('#clr').addEventListener('click', function () { files = []; items = []; render(); });
 
   function addFiles(fs) {
-    fs.forEach(function (f) { if (f.type.indexOf('image/') === 0) files.push(f); });
+    // 同图片压缩:HEIC 常带空 type,必须放进来由流程给出明确原因(而不是拖了没反应)
+    fs.forEach(function (f) {
+      var looksImage = /^image\//.test(f.type || '') || /\.(jpe?g|png|webp|bmp|gif|heic|heif|avif|tiff?)$/i.test(f.name || '');
+      if (looksImage) files.push(f);
+    });
     processAll();
   }
 
@@ -75,7 +79,12 @@ export function mount(root, H) {
         items.push({ name: file.name, blob: blob, status: 'ok', outName: file.name.replace(/\.[^.]+$/, '') + ext, size: blob.size, w: nw, h: nh, mime: mime });
         cb();
       }, mime, 0.92);
-    }).catch(function () { items.push({ name: file.name, status: 'fail' }); cb(); });
+    }).catch(async function () {
+      // HEIC 不是"文件坏了":浏览器根本解不了,要单独说清并给出可走的路
+      var heic = await H.sniffHeic(file);
+      items.push({ name: file.name, status: 'fail', heic: heic });
+      cb();
+    });
   }
 
   var _urls = [];
@@ -94,7 +103,7 @@ export function mount(root, H) {
           + '<button class="download-btn" data-i="' + i + '">下载</button></div>';
       } else {
         html += '<div class="result-card result-fail"><div class="info"><div class="name">' + H.esc(f.name) + '</div>'
-          + '<div class="meta">处理失败</div></div><span class="status-tag">失败</span></div>';
+          + (f.heic ? H.heicNotice() : '<div class="meta">处理失败</div>') + '</div><span class="status-tag">' + (f.heic ? '需先转 JPG' : '失败') + '</span></div>';
       }
     });
     res.innerHTML = html;
