@@ -17,6 +17,7 @@ window.TOOLS = {
     { slug: 'pdf-split', name: 'PDF 拆分/旋转', desc: '提取页面、拆分、旋转。', section: 'pdf', icon: 'scissors', url: '/pdf-split/', status: 'live' },
     { slug: 'pdf-render', name: 'PDF 转图片', desc: 'PDF 转 JPG/PNG（可调 DPI）。', section: 'pdf', icon: 'file-image', url: '/pdf-render/', status: 'live' },
     { slug: 'pdf-compress', name: 'PDF 压缩', desc: '扫描件/图片型 PDF 瘦身。', section: 'pdf', icon: 'archive', url: '/pdf-compress/', status: 'live' },
+    { slug: 'invoice-check', name: '发票查重', desc: '本地读电子发票 PDF 的号码/日期/金额，标出重复提交并导出报销清单。', section: 'pdf', icon: 'receipt-search', url: '/invoice-check/', status: 'live' },
     { slug: 'json', name: 'JSON 格式化', desc: '美化、校验、压缩 JSON。', section: 'utility', icon: 'braces', url: '/tools/json/', status: 'live' },
     { slug: 'base64', name: 'Base64 编解码', desc: '文本与 Base64 互转。', section: 'utility', icon: 'binary', url: '/tools/base64/', status: 'live' },
     { slug: 'regex', name: '正则测试', desc: '正则表达式实时匹配。', section: 'utility', icon: 'regex', url: '/tools/regex/', status: 'live' },
