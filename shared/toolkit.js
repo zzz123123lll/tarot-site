@@ -439,6 +439,7 @@ export async function checkPdf(out, expect) {
 }
 
 const REGISTRY = {
+  'beat-toy': { title: '节奏玩具', module: '/tools/beat-toy.mjs', v: 1 },
   'cover-gen': { title: '封面图生成', module: '/tools/cover-gen.mjs', v: 1 },
   'receipt-clean': { title: '票据清理', module: '/tools/receipt-clean.mjs', v: 3 },
   'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 24 },
