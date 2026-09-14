@@ -378,3 +378,14 @@ body.page-home .group--utility { --fx-spot: var(--a-util-tint-2); }
 .sniff-tool:hover { text-decoration: none; filter: brightness(.96); }
 @media (max-width: 735px) { .sniff { max-width: none; } }
 
+
+/* ===== 首页"两个小作品"展位:用真实截图,不插画 ===== */
+body.page-home .feature-row--play { --acc: var(--a-util); --acc-ink: var(--a-util-ink); --acc-tint: var(--a-util-tint); --acc-line: var(--a-util-line); }
+body.page-home .feature-row--stars { --acc: var(--a-tarot); --acc-ink: var(--a-tarot-ink); --acc-tint: var(--a-tarot-tint); --acc-line: var(--a-tarot-line); }
+body.page-home .work-badge { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; padding: 2px 10px; margin-bottom: 10px; border-radius: 999px; background: var(--acc-tint); color: var(--acc-ink); font-size: 13px; }
+body.page-home .work-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--acc); }
+
+
+/* 修正:13px 的强调色文字对比度不够(自动检查拦下),改成中性底 + 深色字,强调色只留小圆点 */
+body.page-home .work-badge { background: var(--t-surface, #f5f5f7); color: #3a3a3c; font-size: 14px; }
+
