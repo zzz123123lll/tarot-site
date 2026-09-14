@@ -241,7 +241,25 @@ export function mount(root, H) {
   });
 
   // ---------- 导出分享图(把我们"能交付"的基因接上) ----------
-  root.querySelector('#poster').addEventListener('click', function () {
+  // 分享图上带二维码:产物本身就是拉新入口(调研结论:传播发生在外部分享)
+  async function makeQr(text, size) {
+    if (!window.qrcode) await H.loadScript('/vendor/qrcode.min.js?v=1');
+    var qr = window.qrcode(0, 'M');
+    qr.addData(text); qr.make();
+    var n = qr.getModuleCount();
+    var cell = Math.max(2, Math.floor(size / (n + 4)));
+    var pad = 2 * cell;
+    var c2 = document.createElement('canvas');
+    c2.width = c2.height = n * cell + pad * 2;
+    var g2 = c2.getContext('2d');
+    g2.fillStyle = '#fff'; g2.fillRect(0, 0, c2.width, c2.height);
+    g2.fillStyle = '#000';
+    for (var r = 0; r < n; r++) for (var col = 0; col < n; col++) if (qr.isDark(r, col)) g2.fillRect(pad + col * cell, pad + r * cell, cell, cell);
+    return c2;
+  }
+  root.querySelector('#poster').addEventListener('click', async function () {
+    var qrImg = null;
+    try { qrImg = await makeQr('https://gongjuhe.top/beat-toy/', 200); } catch (e) { qrImg = null; }
     var pw = 1080, ph = 1350;
     var c = document.createElement('canvas'); c.width = pw; c.height = ph;
     var pg = c.getContext('2d');
@@ -267,6 +285,24 @@ export function mount(root, H) {
     pg.fillStyle = 'rgba(255,255,255,.55)';
     pg.font = '500 34px "Geist", -apple-system, "PingFang SC", sans-serif';
     pg.fillText('gongjuhe.top/beat-toy · 声音与画面全部在本机生成', 80, ph - 120);
+    if (qrImg) {
+      var qs = qrImg.width, qx = pw - qs - 88, qy = ph - qs - 150;
+      pg.fillStyle = '#fff';
+      pg.beginPath();
+      var rr = 14, qw = qs + 24;
+      pg.moveTo(qx - 12 + rr, qy - 12);
+      pg.arcTo(qx - 12 + qw, qy - 12, qx - 12 + qw, qy - 12 + qw, rr);
+      pg.arcTo(qx - 12 + qw, qy - 12 + qw, qx - 12, qy - 12 + qw, rr);
+      pg.arcTo(qx - 12, qy - 12 + qw, qx - 12, qy - 12, rr);
+      pg.arcTo(qx - 12, qy - 12, qx - 12 + qw, qy - 12, rr);
+      pg.closePath(); pg.fill();
+      pg.drawImage(qrImg, qx, qy);
+      pg.fillStyle = 'rgba(255,255,255,.78)';
+      pg.font = '500 24px "Geist", -apple-system, "PingFang SC", sans-serif';
+      pg.textAlign = 'center';
+      pg.fillText('扫码玩一个你的', qx + qs / 2, qy + qs + 20);
+      pg.textAlign = 'left';
+    }
     c.toBlob(async function (blob) {
       if (!blob) { out.innerHTML = '<div class="note err" style="display:block">导出失败,请重试。</div>'; return; }
       var chk = await H.checkImage(blob);

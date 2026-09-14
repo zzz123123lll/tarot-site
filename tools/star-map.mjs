@@ -109,7 +109,24 @@ export function mount(root, H) {
     }
   }
 
-  function draw(t) {
+  // 分享图上带二维码:产物本身就能拉人(调研结论:传播发生在外部分享,不在平台画廊)
+  async function makeQr(text, size) {
+    if (!window.qrcode) await H.loadScript('/vendor/qrcode.min.js?v=1');
+    var qr = window.qrcode(0, 'M');
+    qr.addData(text); qr.make();
+    var n = qr.getModuleCount();
+    var cell = Math.max(2, Math.floor(size / (n + 4)));
+    var pad = 2 * cell;
+    var c = document.createElement('canvas');
+    c.width = c.height = n * cell + pad * 2;
+    var g2 = c.getContext('2d');
+    g2.fillStyle = '#fff'; g2.fillRect(0, 0, c.width, c.height);
+    g2.fillStyle = '#000';
+    for (var r = 0; r < n; r++) for (var col = 0; col < n; col++) if (qr.isDark(r, col)) g2.fillRect(pad + col * cell, pad + r * cell, cell, cell);
+    return c;
+  }
+
+  function draw(t, qrImg) {
     var grad = g.createLinearGradient(0, 0, W, Hh);
     grad.addColorStop(0, '#070a12'); grad.addColorStop(0.55, '#0a0e1a'); grad.addColorStop(1, '#06070c');
     g.fillStyle = grad; g.fillRect(0, 0, W, Hh);
@@ -161,6 +178,24 @@ export function mount(root, H) {
     g.font = '500 24px "Geist", -apple-system, "PingFang SC", sans-serif';
     g.fillStyle = 'rgba(255,255,255,.42)';
     g.fillText('gongjuhe.top/star-map · 本机生成', W * 0.08, Hh - 70);
+    if (qrImg) {
+      var qs = qrImg.width, qx = W - qs - 68, qy = Hh - qs - 116;
+      g.fillStyle = '#fff';
+      g.beginPath();
+      var rr = 14, qw = qs + 24;
+      g.moveTo(qx - 12 + rr, qy - 12);
+      g.arcTo(qx - 12 + qw, qy - 12, qx - 12 + qw, qy - 12 + qw, rr);
+      g.arcTo(qx - 12 + qw, qy - 12 + qw, qx - 12, qy - 12 + qw, rr);
+      g.arcTo(qx - 12, qy - 12 + qw, qx - 12, qy - 12, rr);
+      g.arcTo(qx - 12, qy - 12, qx - 12 + qw, qy - 12, rr);
+      g.closePath(); g.fill();
+      g.drawImage(qrImg, qx, qy);
+      g.fillStyle = 'rgba(255,255,255,.75)';
+      g.font = '500 22px "Geist", -apple-system, "PingFang SC", sans-serif';
+      g.textAlign = 'center';
+      g.fillText('扫码做一张你的', qx + qs / 2, qy + qs + 16);
+      g.textAlign = 'left';
+    }
   }
   var raf = null;
   function loop(t) { draw(t || 0); raf = requestAnimationFrame(loop); }
@@ -187,23 +222,26 @@ export function mount(root, H) {
   body.addEventListener('input', build);
   titleEl.addEventListener('input', function () { /* 下一帧就会画上 */ });
   root.querySelector('#again').addEventListener('click', function () { salt++; build(); out.innerHTML = ''; });
+  // 星空是深色噪点图:PNG 会很大(实测 1.5MB),JPG 小得多。两种都编一份,谁小用谁,并如实说明。
+  async function encode() {
+    var toB = function (type, q) { return new Promise(function (r) { cv.toBlob(r, type, q); }); };
+    var arr = await Promise.all([toB('image/png'), toB('image/jpeg', 0.92)]);
+    start();
+    var png = arr[0], jpg = arr[1];
+    var useJpg = !!(png && jpg && jpg.size < png.size);
+    var blob = useJpg ? jpg : png;
+    if (!blob) { out.innerHTML = '<div class="note err" style="display:block">导出失败,请重试。</div>'; return; }
+    var chk = await H.checkImage(blob);
+    var base = '文字星图-' + (titleEl.value.trim() || '未命名');
+    if (chk.ok) H.downloadBlob(blob, base + (useJpg ? '.jpg' : '.png'));
+    out.innerHTML = '<div class="note ' + (chk.ok ? 'ok' : 'err') + '" style="display:block">'
+      + (chk.ok ? '已导出 ' + chk.width + ' × ' + chk.height + ' · ' + H.fmt(chk.bytes) + '(自检 ✓ 尺寸与预览一致)' + fmtNote(png, jpg, useJpg) + ' · 右下角是扫码入口' : '自检没通过:' + H.esc(chk.error)) + '</div>';
+  }
   root.querySelector('#poster').addEventListener('click', function () {
     stop();
-    draw(0);
-    // 星空是深色噪点图:PNG 会很大(实测 1.7MB),JPG 小得多。两种都编一份,谁小用谁,并如实说明。
-    var toB = function (type, q) { return new Promise(function (r) { cv.toBlob(r, type, q); }); };
-    Promise.all([toB('image/png'), toB('image/jpeg', 0.92)]).then(async function (arr) {
-      start();
-      var png = arr[0], jpg = arr[1];
-      var useJpg = !!(png && jpg && jpg.size < png.size);
-      var blob = useJpg ? jpg : png;
-      if (!blob) { out.innerHTML = '<div class="note err" style="display:block">导出失败,请重试。</div>'; return; }
-      var chk = await H.checkImage(blob);
-      var base = '文字星图-' + (titleEl.value.trim() || '未命名');
-      if (chk.ok) H.downloadBlob(blob, base + (useJpg ? '.jpg' : '.png'));
-      out.innerHTML = '<div class="note ' + (chk.ok ? 'ok' : 'err') + '" style="display:block">'
-        + (chk.ok ? '已导出 ' + chk.width + ' × ' + chk.height + ' · ' + H.fmt(chk.bytes) + '(自检 ✓ 尺寸与预览一致)' + fmtNote(png, jpg, useJpg) : '自检没通过:' + H.esc(chk.error)) + '</div>';
-    });
+    makeQr('https://gongjuhe.top/star-map/', 210)
+      .then(function (qr) { draw(0, qr); return encode(); })
+      .catch(function (e) { draw(0); out.innerHTML = '<div class="note err" style="display:block">二维码画不出来(不影响星图):' + H.esc(H.friendlyError(e, 'QR 失败')) + '</div>'; return encode(); });
   });
 
   build();
