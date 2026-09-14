@@ -27,8 +27,9 @@ export function mount(root, H) {
         '</div>' +
         '<div class="bt-row">' +
           '<button class="bt-chip active" data-m="free">自由敲</button>' +
-          '<button class="bt-chip" data-m="beat">跟拍(100 BPM)</button>' +
-          '<button class="bt-chip" id="bpm">速度:100</button>' +
+          '<button class="bt-chip" data-m="beat">跟拍</button>' +
+          '<button class="bt-chip" id="tmpl">伴奏:简单四拍</button>' +
+          '<button class="bt-chip" id="duo">双人模式:关</button>' +
           '<button class="bt-chip" id="poster">导出分享图</button>' +
         '</div>' +
       '</div>' +
@@ -97,11 +98,23 @@ export function mount(root, H) {
     src.connect(hp); hp.connect(gn); gn.connect(master); src.start(t);
   }
 
+  function playSnare(when) {
+    var t = when || ac.currentTime, len = 0.12;
+    var buf = ac.createBuffer(1, Math.floor(ac.sampleRate * len), ac.sampleRate);
+    var d = buf.getChannelData(0);
+    for (var i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 2);
+    var src = ac.createBufferSource(); src.buffer = buf;
+    var bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1800; bp.Q.value = 0.9;
+    var gn = ac.createGain(); gn.gain.value = 0.32;
+    src.connect(bp); bp.connect(gn); gn.connect(master); src.start(t);
+  }
+
   // ---------- 画面 ----------
   var shapes = [], ripples = [], pulse = 0, hueBase = 205;
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function addHit(i, x, y) {
-    var hue = (hueBase + i * 24) % 360;
+  function addHit(i, x, y, who) {
+    // 左边偏冷、右边偏暖:双人模式下谁在敲一眼能看出来
+    var hue = (hueBase + i * 24 + (who ? 130 : 0)) % 360;
     var n = reduce ? 6 : 18;
     for (var k = 0; k < n; k++) {
       var a = Math.random() * Math.PI * 2, sp = 0.6 + Math.random() * 3.2;
@@ -144,59 +157,89 @@ export function mount(root, H) {
   if (shapes.length === 0) requestAnimationFrame(step);
 
   // ---------- 交互 ----------
-  var mode = 'free', started = false, hits = 0, combo = 0, bestCombo = 0, lastHitAt = 0, bpm = 100;
-  var offsets = [];   // 跟拍模式下每次击打与最近拍点的偏差(毫秒)
-  var lastBeat = 0, loopTimer = null, nextBeatAt = 0, noteIdx = 0;
+  var mode = 'free', started = false, bpm = 100, duo = false;
+  // 两位玩家各自计数:双人模式下左右半区各算各的
+  var P = [{ hits: 0, combo: 0, best: 0, offsets: [] }, { hits: 0, combo: 0, best: 0, offsets: [] }];
+  var lastBeat = 0, loopTimer = null, nextBeatAt = 0, noteIdx = 0, lastHitAt = 0;
+  var KEYMAP_L = ['A', 'S', 'D', 'F'], KEYMAP_R = ['J', 'K', 'L', ';'];
   function timeNow() { return performance.now(); }
-  function hitAt(clientX, clientY) {
+  function hitAt(clientX, clientY, forced) {
     var rect = cv.getBoundingClientRect();
     var x = clientX == null ? W / 2 : (clientX - rect.left) / rect.width * W;
     var y = clientY == null ? Hh / 2 : (clientY - rect.top) / rect.height * Hh;
+    var who = forced !== undefined ? forced : (duo ? (x < W / 2 ? 0 : 1) : 0);
+    var st = P[who];
     var i = noteIdx++;
-    playNote(i, 1);
-    addHit(i, x, y);
-    hits++;
+    playNote(i + who * 3, 1);   // 右边比左边高几个音级,两个人听起来不打架
+    addHit(i, x, y, who);
+    st.hits++;
     var now = timeNow();
     if (mode === 'beat') {
       var period = 60000 / bpm;
       var off = now - lastBeat;
       var err = Math.min(off % period, period - (off % period));
-      offsets.push(err);
-      if (err < 120) { combo++; if (combo > bestCombo) bestCombo = combo; } else { combo = 0; }
+      st.offsets.push(err);
+      if (err < 120) { st.combo++; if (st.combo > st.best) st.best = st.combo; } else { st.combo = 0; }
     }
     lastHitAt = now;
     paintStats();
   }
+  function resetStats() { P = [{ hits: 0, combo: 0, best: 0, offsets: [] }, { hits: 0, combo: 0, best: 0, offsets: [] }]; noteIdx = 0; }
+  function avgOf(st) { return st.offsets.length ? Math.round(st.offsets.reduce(function (a, b) { return a + b; }, 0) / st.offsets.length) : null; }
   function paintStats() {
-    var n = offsets.length;
-    var avg = n ? Math.round(offsets.reduce(function (a, b) { return a + b; }, 0) / n) : null;
-    var lines = ['敲击次数 <b>' + hits + '</b>'];
-    if (mode === 'beat') {
-      lines.push('连击 <b>' + combo + '</b>(最长 <b>' + bestCombo + '</b>)');
-      lines.push('平均偏差 <b>' + (avg === null ? '—' : avg + ' ms') + '</b>' + (avg !== null && avg < 60 ? '(稳)' : ''));
+    var lines = [];
+    var t = TEMPLATES[tmplIdx];
+    if (duo) {
+      lines.push('<div style="display:flex;gap:18px"><div style="flex:1"><div style="color:#5b8def">左边(玩家 1)</div>敲 <b>' + P[0].hits + '</b> 下'
+        + (mode === 'beat' ? '<br>连击 <b>' + P[0].combo + '</b>(最长 <b>' + P[0].best + '</b>)<br>偏差 <b>' + (avgOf(P[0]) === null ? '—' : avgOf(P[0]) + ' ms') + '</b>' : '') + '</div>'
+        + '<div style="flex:1"><div style="color:#e0894f">右边(玩家 2)</div>敲 <b>' + P[1].hits + '</b> 下'
+        + (mode === 'beat' ? '<br>连击 <b>' + P[1].combo + '</b>(最长 <b>' + P[1].best + '</b>)<br>偏差 <b>' + (avgOf(P[1]) === null ? '—' : avgOf(P[1]) + ' ms') + '</b>' : '') + '</div></div>');
     } else {
-      lines.push('模式:<b>自由敲</b>(怎么敲都不会难听)');
+      lines.push('敲击次数 <b>' + P[0].hits + '</b>');
+      if (mode === 'beat') {
+        lines.push('连击 <b>' + P[0].combo + '</b>(最长 <b>' + P[0].best + '</b>)');
+        lines.push('平均偏差 <b>' + (avgOf(P[0]) === null ? '—' : avgOf(P[0]) + ' ms') + '</b>' + (avgOf(P[0]) !== null && avgOf(P[0]) < 60 ? '(稳)' : ''));
+      } else {
+        lines.push('模式:<b>自由敲</b>(怎么敲都不会难听)');
+      }
     }
+    lines.push('伴奏:<b>' + t.name + '</b> · ' + bpm + ' BPM' + (t.id === 'none' ? '(可以自己敲节奏)' : ''));
     lines.push('<span style="color:#6e6e73">声音全部由浏览器现场合成,没有音频文件,也没有任何请求。</span>');
     statsEl.innerHTML = lines.map(function (l) { return '<div>' + l + '</div>'; }).join('');
   }
-  root.querySelector('#kbd').innerHTML = KEYMAP.map(function (k) { return '<span>' + k + '</span>'; }).join('');
+  function paintKbd() {
+    var keys = duo ? KEYMAP_L.concat(['|']).concat(KEYMAP_R) : KEYMAP;
+    root.querySelector('#kbd').innerHTML = keys.map(function (k) { return '<span>' + (k === '|' ? '·' : k) + '</span>'; }).join('');
+  }
+  paintKbd();
 
+  // 节拍模板:每个模板用 16 分音符的字符串谱表示(1 = 这一格打一下)
+  var TEMPLATES = [
+    { id: 'simple', name: '简单四拍', bpm: 100, kick: '1000100010001000', hat: '0010001000100010' },
+    { id: 'four', name: '四拍舞曲', bpm: 120, kick: '1000100010001000', hat: '1010101010101010', clap: '0000100000001000' },
+    { id: 'bossa', name: '轻巴萨', bpm: 96, kick: '1000001010000010', hat: '0010101000101010' },
+    { id: 'none', name: '无伴奏', bpm: 100, kick: '', hat: '' }
+  ];
+  var tmplIdx = 0;
   function startLoop() {
-    if (loopTimer) clearInterval(loopTimer);
+    stopLoop();
     ensureAudio();
-    var period = 60000 / bpm;
+    var t = TEMPLATES[tmplIdx];
+    bpm = t.bpm;
+    var stepMs = (60000 / bpm) / 4;   // 十六分音符
+    var stepIdx = 0;
     nextBeatAt = timeNow();
     lastBeat = nextBeatAt;
     loopTimer = setInterval(function () {
       var now = timeNow();
-      while (nextBeatAt <= now + 40) {
-        var ahead = (nextBeatAt - now) / 1000;
-        var when = ac.currentTime + Math.max(0, ahead);
-        playKick(when);
-        if (Math.round((nextBeatAt / period)) % 2 === 1) playHat(when);
-        lastBeat = nextBeatAt;
-        nextBeatAt += period;
+      while (nextBeatAt <= now + 45) {
+        var when = ac.currentTime + Math.max(0, (nextBeatAt - now) / 1000);
+        if (t.kick.charAt(stepIdx % 16) === '1') playKick(when);
+        if (t.hat.charAt(stepIdx % 16) === '1') playHat(when);
+        if (t.clap && t.clap.charAt(stepIdx % 16) === '1') playSnare(when);
+        if (stepIdx % 4 === 0) lastBeat = nextBeatAt;   // 四分音符拍点,跟拍判定用它
+        stepIdx++;
+        nextBeatAt += stepMs;
       }
     }, 25);
   }
@@ -212,18 +255,30 @@ export function mount(root, H) {
   }
   root.querySelector('#start').addEventListener('click', start);
   cv.addEventListener('pointerdown', function (e) { if (!started) { start(); return; } hitAt(e.clientX, e.clientY); });
+  // 键盘:单人时 A W S E D F T G Y H U J;双人时左边 A S D F、右边 J K L ; 各管一半画面
+  function keyPlayer(k) {
+    k = (k || '').toUpperCase();
+    if (duo) {
+      if (KEYMAP_L.indexOf(k) >= 0) return 0;
+      if (KEYMAP_R.indexOf(k) >= 0) return 1;
+      return -1;
+    }
+    return KEYMAP.indexOf(k) >= 0 ? 0 : -1;
+  }
   cv.addEventListener('keydown', function (e) {
-    if (KEYMAP.indexOf((e.key || '').toUpperCase()) >= 0) { e.preventDefault(); if (!started) start(); else hitAt(null, null); }
+    var p = keyPlayer(e.key);
+    if (p >= 0) { e.preventDefault(); if (!started) start(); else hitAt(p === 0 ? W / 4 : W * 3 / 4, Hh / 2, p); }
     else if (e.key === ' ') { e.preventDefault(); if (!started) start(); else hitAt(null, null); }
   });
   cv.setAttribute('tabindex', '0');
   cv.setAttribute('role', 'button');
-  cv.setAttribute('aria-label', '节奏玩具:点一下开始,之后点击或按 A W S E D F T G Y H U J 演奏');
+  cv.setAttribute('aria-label', '节奏玩具:点一下开始;单人按 A W S E D F T G Y H U J,双人左边 A S D F、右边 J K L 分号');
   document.addEventListener('keydown', function (e) {
     if (!started) return;
     if (e.key === 'Escape') { stopLoop(); veil.style.display = 'flex'; started = false; return; }
     if (document.activeElement === cv) return;
-    if (KEYMAP.indexOf((e.key || '').toUpperCase()) >= 0) hitAt(null, null);
+    var p = keyPlayer(e.key);
+    if (p >= 0) hitAt(p === 0 ? W / 4 : W * 3 / 4, Hh / 2, p);
   });
   root.querySelectorAll('.bt-chip[data-m]').forEach(function (b) {
     b.addEventListener('click', function () {
@@ -231,13 +286,20 @@ export function mount(root, H) {
       root.querySelectorAll('.bt-chip[data-m]').forEach(function (x) { x.classList.toggle('active', x === b); });
       if (!started) { paintStats(); return; }
       if (mode === 'beat') startLoop(); else stopLoop();
-      combo = 0; paintStats();
+      resetStats(); paintStats();
     });
   });
-  root.querySelector('#bpm').addEventListener('click', function () {
-    bpm = bpm === 100 ? 140 : (bpm === 140 ? 80 : 100);
-    root.querySelector('#bpm').textContent = '速度:' + bpm;
+  root.querySelector('#tmpl').addEventListener('click', function () {
+    tmplIdx = (tmplIdx + 1) % TEMPLATES.length;
+    root.querySelector('#tmpl').textContent = '伴奏:' + TEMPLATES[tmplIdx].name;
+    resetStats();
     if (mode === 'beat' && started) startLoop();
+    paintStats();
+  });
+  root.querySelector('#duo').addEventListener('click', function () {
+    duo = !duo;
+    root.querySelector('#duo').textContent = '双人模式:' + (duo ? '开' : '关');
+    resetStats(); paintKbd(); paintStats();
   });
 
   // ---------- 导出分享图(把我们"能交付"的基因接上) ----------
@@ -267,10 +329,11 @@ export function mount(root, H) {
     grad.addColorStop(0, 'hsl(' + hueBase + ',45%,10%)'); grad.addColorStop(1, 'hsl(' + ((hueBase + 60) % 360) + ',50%,7%)');
     pg.fillStyle = grad; pg.fillRect(0, 0, pw, ph);
     // 波形:把敲击次数画成柱状节奏
-    var bars = Math.max(12, Math.min(64, hits || 12));
+    var totalHits = P[0].hits + P[1].hits;
+    var bars = Math.max(12, Math.min(64, totalHits || 12));
     pg.globalCompositeOperation = 'lighter';
     for (var i = 0; i < bars; i++) {
-      var h = 60 + 320 * Math.abs(Math.sin(i * 0.7 + hits * 0.11));
+      var h = 60 + 320 * Math.abs(Math.sin(i * 0.7 + totalHits * 0.11));
       pg.fillStyle = 'hsla(' + ((hueBase + i * 22) % 360) + ',85%,60%,.75)';
       var bw = (pw - 160) / bars;
       pg.fillRect(80 + i * bw, ph - 420 - h, Math.max(4, bw - 6), h);
@@ -278,10 +341,13 @@ export function mount(root, H) {
     pg.globalCompositeOperation = 'source-over';
     pg.fillStyle = '#fff'; pg.textBaseline = 'top';
     pg.font = '700 92px "Geist", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
-    pg.fillText('我敲了 ' + hits + ' 下', 80, 150);
+    pg.fillText(duo ? ('左边 ' + P[0].hits + ' 下 · 右边 ' + P[1].hits + ' 下') : ('我敲了 ' + P[0].hits + ' 下'), 80, 150);
     pg.font = '500 40px "Geist", -apple-system, "PingFang SC", sans-serif';
     pg.fillStyle = 'rgba(255,255,255,.8)';
-    pg.fillText(mode === 'beat' ? ('跟拍 ' + bpm + ' BPM · 最长连击 ' + bestCombo) : '自由敲 · 怎么敲都不会难听', 80, 280);
+    var subLine = mode === 'beat'
+      ? ('跟拍 · ' + TEMPLATES[tmplIdx].name + ' ' + bpm + ' BPM · 最长连击 ' + (duo ? (P[0].best + ' / ' + P[1].best) : P[0].best))
+      : ('自由敲 · ' + TEMPLATES[tmplIdx].name + ' · 怎么敲都不会难听');
+    pg.fillText(subLine, 80, 280);
     pg.fillStyle = 'rgba(255,255,255,.55)';
     pg.font = '500 34px "Geist", -apple-system, "PingFang SC", sans-serif';
     pg.fillText('gongjuhe.top/beat-toy · 声音与画面全部在本机生成', 80, ph - 120);
@@ -306,7 +372,7 @@ export function mount(root, H) {
     c.toBlob(async function (blob) {
       if (!blob) { out.innerHTML = '<div class="note err" style="display:block">导出失败,请重试。</div>'; return; }
       var chk = await H.checkImage(blob);
-      if (chk.ok) H.downloadBlob(blob, '节奏玩具-' + hits + '下.png');
+      if (chk.ok) H.downloadBlob(blob, '节奏玩具-' + totalHits + '下' + (duo ? '-双人' : '') + '.png');
       out.innerHTML = '<div class="note ' + (chk.ok ? 'ok' : 'err') + '" style="display:block">'
         + (chk.ok ? '已导出 ' + chk.width + ' × ' + chk.height + ' · ' + H.fmt(chk.bytes) + '(自检 ✓)' : '自检没通过:' + H.esc(chk.error)) + '</div>';
     }, 'image/png');
