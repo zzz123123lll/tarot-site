@@ -439,6 +439,7 @@ export async function checkPdf(out, expect) {
 }
 
 const REGISTRY = {
+  'star-map': { title: '文字星图', module: '/tools/star-map.mjs', v: 1 },
   'beat-toy': { title: '节奏玩具', module: '/tools/beat-toy.mjs', v: 1 },
   'cover-gen': { title: '封面图生成', module: '/tools/cover-gen.mjs', v: 1 },
   'receipt-clean': { title: '票据清理', module: '/tools/receipt-clean.mjs', v: 3 },
