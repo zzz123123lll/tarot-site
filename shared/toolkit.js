@@ -442,6 +442,7 @@ const REGISTRY = {
   'star-map': { title: '文字星图', module: '/tools/star-map.mjs', v: 3 },
   'beat-toy': { title: '节奏玩具', module: '/tools/beat-toy.mjs', v: 3 },
   'cover-gen': { title: '封面图生成', module: '/tools/cover-gen.mjs', v: 1 },
+  'watermark': { title: '批量加水印', module: '/tools/watermark.mjs', v: 1 },
   'receipt-clean': { title: '票据清理', module: '/tools/receipt-clean.mjs', v: 3 },
   'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 24 },
   'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 20 },

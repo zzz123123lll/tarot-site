@@ -9,6 +9,7 @@ window.TOOLS = {
   tools: [
     { slug: 'tarot', name: '塔罗占卜', desc: '78 张韦特牌，一次有依据、不套话的解读。', section: 'divination', icon: 'tarot', url: '/tarot/', status: 'live', dark: true },
     { slug: 'img-compress', name: '图片压缩', desc: '批量变小，也可以压到指定大小（如 500KB 以内）。', section: 'image', icon: 'image-down', url: '/img-compress/', status: 'live' },
+    { slug: 'watermark', name: '批量加水印', desc: '文字/logo 批量打水印,位置透明度旋转可调,可打包下载。', section: 'image', icon: 'image-down', url: '/watermark/', status: 'live' },
     { slug: 'cover-gen', name: '封面图生成', desc: '输入标题，一键出小红书/公众号/视频封面，本机排版。', section: 'image', icon: 'image-down', url: '/cover-gen/', status: 'live' },
     { slug: 'beat-toy', name: '节奏玩具', desc: '点开即玩：敲击发声、画面留痕，可导出分享图。', section: 'utility', icon: 'play', url: '/beat-toy/', status: 'live' },
     { slug: 'star-map', name: '文字星图', desc: '把一段文字变成星空,每个字一颗星,可导出分享图。', section: 'utility', icon: 'play', url: '/star-map/', status: 'live' },
