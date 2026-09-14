@@ -10,7 +10,10 @@ export function mount(root, H) {
     + ".sm-field{margin-bottom:14px}.sm-field label{display:block;font-size:14px;color:#6e6e73;margin-bottom:6px}"
     + ".sm-input{width:100%;padding:10px 12px;border:1px solid var(--c-line-strong);border-radius:10px;font-size:16px;font-family:inherit;background:#fff}"
     + ".sm-legend{margin-top:12px;background:var(--t-surface);border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.7;min-height:76px}"
-    + ".sm-oneline{font-size:14px;color:#6e6e73;margin-top:8px}");
+    + ".sm-oneline{font-size:14px;color:#6e6e73;margin-top:8px}"
+    + ".sm-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}"
+    + ".sm-chip{min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--c-line-strong);background:#fff;font-size:14px;cursor:pointer}"
+    + ".sm-chip.active{background:var(--c-accent);border-color:var(--c-accent);color:#fff}");
 
   var SAMPLE = '床前明月光\n疑是地上霜\n举头望明月\n低头思故乡';
   root.innerHTML =
@@ -27,7 +30,8 @@ export function mount(root, H) {
         '<div id="out"></div>' +
       '</div>' +
       '<div>' +
-        '<div class="sm-field"><label for="title">标题(可留空)</label><input class="sm-input" id="title" value="静夜思"></div>' +
+        '<div class="sm-chips" id="mode"><button class="sm-chip active" data-m="char">按字(每字一颗星)</button><button class="sm-chip" data-m="phrase">按词句(重复的更大)</button><button class="sm-chip" data-m="line">按行(每行一颗星)</button></div>'
+        + '<div class="sm-field"><label for="title">标题(可留空)</label><input class="sm-input" id="title" value="静夜思"></div>' +
         '<div class="sm-field"><label for="body">文字(每换行一句,逗号句号也算断开)</label><textarea class="sm-input" id="body" rows="7" spellcheck="false"></textarea></div>' +
         '<div class="sm-legend" id="legend" role="status" aria-live="polite"></div>' +
         '<p class="sm-oneline">把鼠标放到星星上(手机点一下),能看到它是哪个字。</p>' +
@@ -40,8 +44,14 @@ export function mount(root, H) {
   var legend = root.querySelector('#legend'), info = root.querySelector('#info'), out = root.querySelector('#out');
   body.value = SAMPLE;
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var salt = 0;
+  var salt = 0, mode = 'char';
   var stars = [], lines = [], hoverIdx = -1;
+  root.querySelector('#mode').addEventListener('click', function (e) {
+    var b = e.target.closest('.sm-chip'); if (!b) return;
+    mode = b.dataset.m;
+    root.querySelectorAll('#mode .sm-chip').forEach(function (x) { x.classList.toggle('active', x === b); });
+    build();
+  });
   var W = cv.width, Hh = cv.height;
 
   // ---------- 确定性随机:同一段文字必须得到同一片星空 ----------
@@ -54,8 +64,22 @@ export function mount(root, H) {
     var a = seed >>> 0;
     return function () { a += 0x6D2B79F5; var t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
   }
-  function charsOf(text) {
+  // 三种"星"的单位:按字 / 按词句(按标点断开)/ 按行(每行一颗,适合同名、名单)
+  function tokensFor(text, mode) {
     var out2 = [];
+    if (mode === 'line') {
+      text.split(/\n/).forEach(function (line) {
+        var t = line.trim();
+        if (t) out2.push({ ch: t, line: 0 });
+      });
+      return out2;
+    }
+    if (mode === 'phrase') {
+      text.split(/[，。！？；：、,.!?;:\s"'“”‘’()（）【】《》〈〉…—\-]+/).forEach(function (t) {
+        if (t) out2.push({ ch: t, line: 0 });
+      });
+      return out2;
+    }
     text.split(/\n/).forEach(function (line, li) {
       var seg = line.replace(/[\s]+/g, '');
       for (var i = 0; i < seg.length; i++) out2.push({ ch: seg[i], line: li });
@@ -66,8 +90,13 @@ export function mount(root, H) {
 
   function build() {
     var text = body.value || '';
-    var cs = charsOf(text);
-    var seed = hashStr(text + '|' + salt);
+    var cs = tokensFor(text, mode);
+    // 词频:重复出现的单位要更大更亮(同一句话里重复的名字/词,一眼能看出来)
+    var freq = {};
+    cs.forEach(function (c) { if (c.br) return; freq[c.ch] = (freq[c.ch] || 0) + 1; });
+    var maxCount = 1, dupKinds = 0;
+    Object.keys(freq).forEach(function (k) { if (freq[k] > maxCount) maxCount = freq[k]; if (freq[k] > 1) dupKinds++; });
+    var seed = hashStr(text + '|' + salt + '|' + mode);
     var rnd = rng(seed);
     var padX = W * 0.14, padY = Hh * 0.16;
     var innerW = W - padX * 2, innerH = Hh * 0.6;
@@ -81,8 +110,10 @@ export function mount(root, H) {
       var rad = Math.sqrt(rnd()) * 0.92;
       var x = cx + Math.cos(ang) * (innerW / 2) * rad * (0.75 + 0.35 * t);
       var y = cy + Math.sin(ang) * (innerH / 2) * rad * (0.55 + 0.45 * t);
-      var big = rnd() > 0.86;
-      stars.push({ ch: c.ch, x: x, y: y, r: big ? 3.4 + rnd() * 2.6 : 1.5 + rnd() * 1.9, hue: 200 + rnd() * 120, tw: rnd() * Math.PI * 2, big: big });
+      var cnt = freq[c.ch] || 1;
+      var big = rnd() > 0.86 || cnt > 1;
+      var boost = cnt > 1 ? (1 + Math.min(2.2, Math.log2(cnt) * 0.9)) : 1;
+      stars.push({ ch: c.ch, x: x, y: y, r: (big ? 3.4 + rnd() * 2.6 : 1.5 + rnd() * 1.9) * boost, count: cnt, hue: 200 + rnd() * 120 + (cnt > 1 ? 40 : 0), tw: rnd() * Math.PI * 2, big: big });
       lines.push(stars.length - 1);
     });
     // 把上一句的最后一个字连到下一句的第一个字
@@ -90,7 +121,9 @@ export function mount(root, H) {
     lines.forEach(function (idx) { if (idx !== null) seq.push(idx); });
     lines = seq;
     hoverIdx = -1;
-    info.textContent = '共 ' + stars.length + ' 颗星(每个字一颗)';
+    var unit = mode === 'char' ? '个字符' : (mode === 'phrase' ? '个词句' : '行');
+    info.textContent = '共 ' + stars.length + ' 颗星(按' + unit + '计)'
+      + (dupKinds ? ' · ' + dupKinds + ' 个重复出现,最多 ' + maxCount + ' 次(重复的星更大更亮)' : '');
     paintLegend();
   }
   // 如实说明为什么换了格式(深色噪点图 PNG 天然大)
@@ -103,7 +136,7 @@ export function mount(root, H) {
   function paintLegend() {
     if (hoverIdx >= 0) {
       var s = stars[hoverIdx];
-      legend.innerHTML = '<div style="font-size:22px">' + H.esc(s.ch) + '</div><div style="color:#6e6e73">第 ' + (hoverIdx + 1) + ' 个字 · 亮度 ' + (s.big ? '亮星' : '常星') + '</div>';
+      legend.innerHTML = '<div style="font-size:22px">' + H.esc(s.ch) + '</div><div style="color:#6e6e73">第 ' + (hoverIdx + 1) + ' 颗' + (s.count > 1 ? ' · <b>重复出现 ' + s.count + ' 次</b>' : '') + ' · ' + (s.big ? '亮星' : '常星') + '</div>';
     } else {
       legend.innerHTML = '<div style="color:#6e6e73">把鼠标放到星星上(手机点一下),这里会显示它是哪个字。</div>';
     }
