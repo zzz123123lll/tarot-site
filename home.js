@@ -208,6 +208,92 @@
   var kicker = document.getElementById('kicker');
   if (kicker) kicker.innerHTML = '<svg class="star-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.4l2.55 7.05L21.6 12l-7.05 2.55L12 21.6l-2.55-7.05L2.4 12l7.05-2.55z" fill="currentColor"/></svg> ' + data.tools.length + ' 个工具 · 全部本地运行';
 
+
+  // ---------- 粘贴/拖拽即识别:解决"工具太多找不到" ----------
+  // 证据:一个 378 工具站的评论区里,用户自己提出"通过拖拽或者粘贴,自动识别内容给出相关工具,
+  // 而不是主动依靠用户去找"。这一层完全本地判断,零依赖、不发任何请求。
+  var T = (window.TOOLS && window.TOOLS.tools) || [];
+  function toolBySlug(slug) { for (var i = 0; i < T.length; i++) if (T[i].slug === slug && T[i].status === 'live') return T[i]; return null; }
+  function sugg(reason, slugs) {
+    var out = [];
+    slugs.forEach(function (s) { var t = toolBySlug(s); if (t) out.push(t); });
+    return { reason: reason, tools: out };
+  }
+  function looksLikeJson(s) {
+    var t = s.trim();
+    if (!/^[\[{]/.test(t)) return false;
+    try { JSON.parse(t); return true; } catch (e) { return false; }
+  }
+  function detectText(s) {
+    var t = String(s || '').trim();
+    if (!t) return null;
+    if (looksLikeJson(t)) return sugg('看起来是 JSON(能直接解析成对象/数组)', ['json']);
+    if (/^https?:\/\/[^\s]+$/.test(t)) return sugg('看起来是一条网址', ['url', 'qr']);
+    if (/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(t)) return sugg('看起来是 JWT(三段用点分隔)', ['jwt']);
+    if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(t)) return sugg('看起来是 UUID', ['uuid']);
+    if (/^\d{10}$/.test(t) || /^\d{13}$/.test(t)) return sugg('看起来是时间戳(秒或毫秒)', ['date']);
+    if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(t) || /^rgba?\(/i.test(t) || /^hsla?\(/i.test(t)) return sugg('看起来是一个颜色值', ['color']);
+    if (/^(\+?86)?1[3-9]\d{9}$/.test(t.replace(/[\s-]/g, ''))) return sugg('看起来是手机号(可以在正则工具里做批量校验/脱敏)', ['regex']);
+    if (t.length > 16 && /^[A-Za-z0-9+/=\s]+$/.test(t) && !/\s/.test(t.slice(0, 8))) {
+      try { if (typeof atob === 'function' && atob(t).length > 4) return sugg('看起来是 Base64 编码内容', ['base64']); } catch (e) {}
+    }
+    var lines = t.split(/\r?\n/);
+    if (lines.length >= 4) {
+      var short = lines.filter(function (l) { return l.trim().length > 0 && l.trim().length < 30; }).length;
+      if (short / lines.length > 0.6) return sugg('看起来是从 PDF 或网页复制出来的文本(一行很短、换行很多)—— 可以直接粘进正则工具做批量替换清理;专门的「文本清理」工具我们正在做', ['regex']);
+    }
+    if (lines.length === 1 && t.length >= 24) return sugg('看起来是一段普通文字:可以丢进正则工具做提取/替换,或看看下面这些工具', ['regex', 'hash']);
+    return sugg('我没认出这是什么类型。可以直接按名字搜,或者把文件拖进来我按文件类型判断', []);
+  }
+  function detectFile(f) {
+    if (!f) return null;
+    var name = (f.name || '').toLowerCase();
+    var type = f.type || '';
+    if (/\.(heic|heif)$/.test(name) || /^image\/hei[cf]$/.test(type)) return sugg('这是 iPhone 的 HEIC 照片:本站可以本地解码成 JPG(点开工具里点按钮才下载解码器)', ['image-convert', 'img-compress']);
+    if (/^image\//.test(type) || /\.(jpe?g|png|webp|bmp|gif|avif)$/.test(name)) return sugg('图片:压缩 / 换格式 / 去灰底摆正 / 合成 PDF 都在这儿', ['img-compress', 'image-convert', 'receipt-clean', 'images-to-pdf']);
+    if (type === 'application/pdf' || /\.pdf$/.test(name)) {
+      if (f.size > 8 * 1024 * 1024) return sugg('PDF 且体积不小:先按目标体积压(压不动会自动降画质/拆分),或直接拆分', ['pdf-compress', 'pdf-split']);
+      return sugg('PDF:合并 / 拆分旋转 / 转图片 / 压缩', ['pdf-merge', 'pdf-split', 'pdf-render', 'pdf-compress']);
+    }
+    if (/\.(pptx?|docx?|xlsx?)$/.test(name)) return sugg('Office 文档我们不做(没有服务端转换)。如果是发票类 PDF,可以试试发票拼版/查重', ['invoice-nup', 'invoice-check']);
+    return sugg('这个文件类型我没有对应的工具', []);
+  }
+  function renderSniff(res) {
+    var box = document.getElementById('sniffOut');
+    if (!box) return;
+    if (!res) { box.innerHTML = ''; return; }
+    var html = '<p class="sniff-say">' + esc(res.reason) + '</p>';
+    if (res.tools.length) {
+      html += '<div class="sniff-tools">';
+      res.tools.slice(0, 4).forEach(function (t, i) {
+        html += '<a class="sniff-tool' + (i ? ' ghost' : '') + '" href="' + t.url + '">' + esc(t.name) + '</a>';
+      });
+      html += '</div>';
+    }
+    box.innerHTML = html;
+  }
+  var sniff = document.getElementById('sniff');
+  if (sniff) {
+    ['dragenter', 'dragover'].forEach(function (ev) {
+      sniff.addEventListener(ev, function (e) { e.preventDefault(); sniff.classList.add('is-over'); });
+    });
+    ['dragleave', 'dragend'].forEach(function (ev) {
+      sniff.addEventListener(ev, function () { sniff.classList.remove('is-over'); });
+    });
+    sniff.addEventListener('drop', function (e) {
+      e.preventDefault(); sniff.classList.remove('is-over');
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) renderSniff(detectFile(e.dataTransfer.files[0]));
+    });
+  }
+  document.addEventListener('paste', function (e) {
+    if (isTyping()) return;                       // 不抢搜索框/输入框里的粘贴
+    if (!e.clipboardData) return;
+    if (e.clipboardData.files && e.clipboardData.files.length) { renderSniff(detectFile(e.clipboardData.files[0])); return; }
+    var text = e.clipboardData.getData ? e.clipboardData.getData('text') : '';
+    renderSniff(detectText(text));
+    if (sniff && text) sniff.scrollIntoView({ block: 'nearest' });
+  });
+
   paint('');
   onScroll();
 })();

@@ -53,6 +53,10 @@
           <span class="search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></span>
           <input type="search" id="searchInput" class="search" placeholder="搜索工具…（按 /）" aria-label="搜索工具">
         </div>
+        <div class="sniff" id="sniff">
+          <p class="sniff-hint">不知道用哪个?把内容 <strong>粘进来</strong>(Ctrl/⌘ + V),或把<strong>文件拖到这里</strong> —— 我直接告诉你该用哪个工具。</p>
+          <div class="sniff-out" id="sniffOut" role="status" aria-live="polite"></div>
+        </div>
         <nav class="hero-actions" aria-label="主要入口">
           <a href="#apps">看全部工具 <span class="arrow" aria-hidden="true">↓</span></a>
           <a href="/verify/">文件到底有没有被上传 <span class="arrow" aria-hidden="true">↗</span></a>
@@ -136,7 +140,7 @@
   </footer>
 
   <script src="tools-manifest.js?v=5"></script>
-  <script src="home.js?v=21"></script>
+  <script src="home.js?v=22"></script>
   <script defer src="/assets/pointer-fx.js?v=1"></script>
   <script>
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
