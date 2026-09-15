@@ -35,6 +35,7 @@
     calendar: tile('calendar', U, '<path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/>'),
     user: tile('user', G, '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'),
     'play': tile('play', O, '<path d="M6 4l14 8-14 8Z"/>'),
+    'shield': tile('shield', G, '<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="m9.5 12 1.8 1.8 3.4-3.6"/>'),
     'scan-clean': tile('scan-clean', O, '<path d="M4 7V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2"/><path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2"/><path d="M3 12h18"/><path d="m17 7 1.2 2.6L21 11l-2.8 1.4L17 15l-1.2-2.6L13 11l2.8-1.4Z"/>'),
     'receipt-search': tile('receipt-search', O, '<path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><circle cx="11" cy="9" r="3"/><path d="m13.5 11.5 3 3"/>'),
     receipt: tile('receipt', O, '<path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8"/><path d="M8 11h8"/><path d="M8 15h5"/>')

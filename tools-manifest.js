@@ -13,6 +13,7 @@ window.TOOLS = {
     { slug: 'cover-gen', name: '封面图生成', desc: '输入标题，一键出小红书/公众号/视频封面，本机排版。', section: 'image', icon: 'image-down', url: '/cover-gen/', status: 'live' },
     { slug: 'beat-toy', name: '节奏玩具', desc: '点开即玩：敲击发声、画面留痕，可导出分享图。', section: 'utility', icon: 'play', url: '/beat-toy/', status: 'live' },
     { slug: 'star-map', name: '文字星图', desc: '把一段文字变成星空,每个字一颗星,可导出分享图。', section: 'utility', icon: 'play', url: '/star-map/', status: 'live' },
+    { slug: 'exif-clean', name: '照片去信息', desc: '删掉照片里的拍摄时间、设备与 GPS 位置；无损,像素一个字节不动。', section: 'image', icon: 'shield', url: '/exif-clean/', status: 'live' },
     { slug: 'receipt-clean', name: '票据清理', desc: '手机拍的发票去灰底、自动裁边、自动摆正，支持扫描件 PDF。', section: 'image', icon: 'scan-clean', url: '/receipt-clean/', status: 'live' },
     { slug: 'id-photo', name: '证件照', desc: '按官方要求输出精确像素、DPI 与体积上限。', section: 'image', icon: 'user', url: '/id-photo/', status: 'live' },
     { slug: 'image-convert', name: '图片转换', desc: '缩放尺寸 + PNG/JPG/WebP 格式互转。', section: 'image', icon: 'arrow-left-right', url: '/image-convert/', status: 'live' },

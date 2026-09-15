@@ -11,7 +11,7 @@
 //      断网时用户看到的是"工具打不开",而不是一个可用的降级页面;
 //   3) 工具页要能离线**处理文件**,除 HTML 与工具模块外还需要 /shared/encoders.js、
 //      encoder-worker.js、encoder-core.js 与 /vendor/encoders/* —— 这些在"第一次成功处理"时才进缓存。
-const CACHE = 'gongjuhe-v27';
+const CACHE = 'gongjuhe-v28';
 // 兜底说明页(断网打开一个确实没缓存过的地址时用,塔罗页也走这条路径)。
 // 注意必须写**最终地址** /offline:Cloudflare Pages 会把 /offline.html 用 308 跳到 /offline,
 // 而"带 redirect 标记的缓存响应"在导航时会被 Chromium 直接拒绝(ERR_FAILED)——
@@ -31,6 +31,7 @@ const TOOL_PAGES = [
   '/md-wechat/',
   '/text-clean/',
   '/watermark/',
+  '/exif-clean/',
   '/star-map/',
   '/beat-toy/',
   '/cover-gen/',
@@ -45,6 +46,7 @@ const MODULES = [
   '/tools/md-wechat.mjs',
   '/tools/text-clean.mjs',
   '/tools/watermark.mjs',
+  '/tools/exif-clean.mjs',
   '/tools/star-map.mjs',
   '/tools/beat-toy.mjs',
   '/tools/cover-gen.mjs',
