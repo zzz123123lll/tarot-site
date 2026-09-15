@@ -79,6 +79,9 @@ body {
   text-align: center; cursor: pointer; background: var(--t-surface); transition: border-color .2s, background .2s;
 }
 .tool-drop:hover, .tool-drop.active { border: 1.5px solid var(--t-accent); background: #f2f7ff; }
+/* 拖错格式:立刻变红并写明只收什么,别让用户松手才知道 */
+.tool-drop.reject { border: 1.5px solid var(--c-err); background: rgba(227,0,0,.04); }
+.tool-drop.reject .hint { color: var(--c-err); }
 .tool-drop .icon { font-size: 40px; margin-bottom: 12px; }
 .tool-drop .title { font-size: var(--t-fs-body); color: var(--t-text); margin-bottom: 6px; }
 .tool-drop .hint { font-size: var(--t-fs-small); color: var(--t-muted); line-height: var(--lh-small); }

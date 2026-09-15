@@ -167,6 +167,49 @@ export function clearWarn(el) {
   var warn = el.parentNode.querySelector('.tool-warn');
   if (warn) warn.textContent = '';
 }
+// 接受格式的中文说法(集中一处,拖拽提示与拒绝提示共用,不再各写一份)
+function acceptLabel(accept) {
+  if (!accept) return '';
+  if (accept.indexOf('application/pdf') >= 0) return 'PDF 文件';
+  if (accept.indexOf('image/') >= 0) return '图片(JPG / PNG / WebP / BMP / GIF)';
+  return accept;
+}
+
+// 拖拽过程中"这个能不能收":与 matchesAccept 同一套规则,但只用 type/name 字符串(拖拽阶段拿不到 File)。
+// 关键:拖拽中很多浏览器(尤其从资源管理器拖)给不出 type —— 拿不到就不判"拒绝",免得把正常拖拽标红。
+function typeAcceptable(accept, type, name) {
+  var list = String(accept || '').split(',').map(function (a) { return a.trim(); }).filter(Boolean);
+  if (!list.length) return true;
+  var t = String(type || ''), n = String(name || '').toLowerCase();
+  var hit = list.some(function (a) {
+    if (a.slice(-2) === '/*') return t.indexOf(a.slice(0, a.indexOf('/') + 1)) === 0;
+    if (a.charAt(0) === '.') return n.slice(-a.length) === a;
+    return t === a;
+  });
+  if (hit) return true;
+  var wantsImage = list.some(function (a) { return a.indexOf('image/') === 0 || /^\.(jpe?g|png|webp|bmp|gif|heic|heif)$/.test(a); });
+  if (wantsImage && (/\.(heic|heif)$/.test(n) || t === 'image/heic' || t === 'image/heif')) return true;
+  return false;
+}
+
+function dragAcceptable(dt, accept) {
+  if (!dt || !accept) return true;
+  var items = dt.items;
+  if (items && items.length) {
+    var anyFile = false, unknown = false;
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i];
+      if (it.kind && it.kind !== 'file') continue;
+      anyFile = true;
+      if (!it.type) { unknown = true; continue; }
+      if (typeAcceptable(accept, it.type, '')) return true;
+    }
+    if (!anyFile) return true;
+    return unknown;
+  }
+  return true;
+}
+
 function matchesAccept(file, accept) {
   if (!accept) return true;
   var name = String(file.name || '').toLowerCase();
@@ -297,15 +340,29 @@ export function makeDropZone(el, onFiles, accept, opts) {
     input.onchange = function () { if (input.files && input.files.length) onFiles(Array.from(input.files)); };
     input.click();
   });
-  el.addEventListener('dragover', function (e) { e.preventDefault(); el.classList.add('active'); });
-  el.addEventListener('dragleave', function () { el.classList.remove('active'); });
+  // 拖拽三态(参照 react-dropzone 的 isDragActive / isDragAccept / isDragReject):
+  // 原来只有一个 active 态,拖错东西时高亮和能收时一模一样,用户得松手才知道不行。
+  var hintEl = el.querySelector && el.querySelector('.hint');
+  var hintOrig = hintEl ? hintEl.textContent : '';
+  function setDropState(ok, hovering) {
+    el.classList.toggle('active', !!hovering && ok);
+    el.classList.toggle('reject', !!hovering && !ok);
+    if (hintEl) hintEl.textContent = (hovering && !ok)
+      ? '这里不收这个格式' + (accept ? ' —— 只收 ' + acceptLabel(accept) : '') + ';松手也不会被处理'
+      : hintOrig;
+  }
+  el.addEventListener('dragover', function (e) {
+    e.preventDefault();
+    setDropState(dragAcceptable(e.dataTransfer, accept), true);
+  });
+  el.addEventListener('dragleave', function () { setDropState(true, false); });
   el.addEventListener('drop', function (e) {
-    e.preventDefault(); el.classList.remove('active');
+    e.preventDefault(); setDropState(true, false);
     if (!e.dataTransfer || !e.dataTransfer.files || !e.dataTransfer.files.length) return;
     var all = Array.from(e.dataTransfer.files);
     var okFiles = all.filter(function (f) { return matchesAccept(f, accept); });
     if (!okFiles.length) {
-      warnBelow(el, '这个格式不支持' + (accept ? '，请拖入 ' + accept.replace('image/*', '图片（JPG / PNG / WebP / BMP / GIF）').replace('application/pdf', 'PDF 文件') + '。' : '。'));
+      warnBelow(el, '这个格式不支持' + (accept ? '，请拖入 ' + acceptLabel(accept) + '。' : '。'));
       return;
     }
     if (okFiles.length < all.length) {
