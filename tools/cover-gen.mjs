@@ -57,6 +57,7 @@ export function mount(root, H) {
     '<div class="cv-wrap">' +
       '<div><div class="cv-stage"><canvas id="cv" width="1080" height="1440" aria-label="封面预览"></canvas></div>' +
       '<div class="tool-row" style="margin-top:14px"><button class="tool-btn" id="dl">下载 PNG</button>' +
+      '<button class="tool-btn tool-btn--ghost" id="set">导出一套尺寸(ZIP)</button>' +
       '<span class="idp-hint" id="info"></span></div></div>' +
       '<div>' +
         '<div class="cv-field"><label>模板(' + TEMPLATES.length + ' 个版式骨架,选中即套用规格与配色)</label><div class="cv-tpls" id="tpl"></div></div>' +
@@ -257,6 +258,36 @@ export function mount(root, H) {
         + (ok ? '已导出 ' + chk.width + ' × ' + chk.height + ' · ' + H.fmt(chk.bytes) + '(自检 ✓ 尺寸与所选平台一致)'
               : '自检没通过,先别拿去发:' + H.esc(chk.error || '尺寸不符')) + '</div>';
     }, 'image/png');
+  });
+
+  // 一稿多尺寸:同一份标题与配色,一次导出"小红书 + 公众号 + 视频号 + 方图"四个规格。
+  // 复用同一条渲染路径(改 state.size → render → toBlob),所以"看到什么就导出什么";
+  // 依据:Fotor/Canva 都直接列尺寸预设,调研里"多尺寸适配"是这类工具的标配。
+  var SET_SIZES = ['xhs', 'wx', 'sph', 'square'];
+  root.querySelector('#set').addEventListener('click', async function () {
+    var btn = root.querySelector('#set');
+    var orig = state.size;
+    btn.disabled = true; btn.textContent = '正在导出 ' + SET_SIZES.length + ' 个尺寸…';
+    var files = [];
+    try {
+      for (var i = 0; i < SET_SIZES.length; i++) {
+        var id = SET_SIZES[i];
+        var s = SIZES.filter(function (z) { return z.id === id; })[0];
+        if (!s) continue;
+        state.size = id; render();
+        await new Promise(function (r) { requestAnimationFrame(function () { requestAnimationFrame(r); }); });
+        var blob = await new Promise(function (r) { cv.toBlob(r, 'image/png'); });
+        if (blob) files.push({ name: 'cover-' + id + '-' + s.w + 'x' + s.h + '.png', blob: blob });
+      }
+    } catch (e) {
+      out.innerHTML = '<div class="note err" style="display:block">导出这套尺寸时出错:' + H.esc(H.friendlyError(e, '导出失败')) + '</div>';
+    }
+    state.size = orig; render();
+    root.querySelectorAll('#sz .cv-chip').forEach(function (x) { x.classList.toggle('active', x.dataset.v === orig); });
+    btn.disabled = false; btn.textContent = '导出一套尺寸(ZIP)';
+    if (!files.length) { out.innerHTML = '<div class="note err" style="display:block">没有可导出的尺寸。</div>'; return; }
+    out.innerHTML = '<div class="note ok" style="display:block">已导出 ' + files.length + ' 个尺寸:' + files.map(function (f2) { return H.esc(f2.name.replace('cover-', '').replace('.png', '')); }).join(' · ') + '(打包成 ZIP,全部本地生成)</div>';
+    H.downloadZip(files, 'cover-set.zip');
   });
 
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(render, function () {});
