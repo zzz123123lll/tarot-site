@@ -680,7 +680,8 @@ export function mount(root, H) {
     items.forEach(function (it, i) {
       html += '<div class="ec-card">';
       html += '<div class="ec-head">';
-      if (it.thumb) html += '<img class="ec-thumb" src="' + it.thumb + '" alt="">';
+      // 缩略图按需生成:清空会释放所有 object URL,"撤销"之后必须能重建(存字符串就会留下一张裂图)
+      if (it.file) { if (!it.thumb) it.thumb = urlFor(it.file); html += '<img class="ec-thumb" src="' + it.thumb + '" alt="">'; }
       html += '<div><div class="ec-name">' + H.esc(it.name) + '</div>';
       if (it.status === 'ok') {
         done++; removedTotal += it.removedBytes || 0;
@@ -797,7 +798,7 @@ export function mount(root, H) {
     return {
       name: file.name, status: 'ok', ok: ok, blob: blob, info: info, checks: checks,
       removedBytes: cleaned.removedBytes, inBytes: buf.length, dims: (info.dims ? info.dims[0] + '×' + info.dims[1] : ((px && px.join('×')) || (chk.width + '×' + chk.height))),
-      thumb: urlFor(file), outName: base + '-clean' + info.ext
+      file: file, thumb: null, outName: base + '-clean' + info.ext
     };
   }
 
@@ -857,8 +858,12 @@ export function mount(root, H) {
     else H.warnBelow(dz, '还没有通过自检的结果可以打包。');
   });
   root.querySelector('#clr').addEventListener('click', function () {
-    releaseUrls(); items = []; render();
+    var snap = items.slice();
+    releaseUrls();
+    snap.forEach(function (it) { it.thumb = null; }); // 释放后旧 URL 不能再用,清掉让 render 重建
+    items = []; render();
     root.querySelector('#heicBox').innerHTML = '';
     H.clearWarn(dz);
+    if (snap.length) H.toast('已清空 ' + snap.length + ' 张', { action: '撤销', onAction: function () { items = snap; render(); } });
   });
 }

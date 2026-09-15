@@ -203,5 +203,9 @@ export function mount(root, H) {
     if (list.length) H.downloadZip(list, 'watermarked.zip');
     else H.warnBelow(root.querySelector('#dz'), '还没有可下载的结果。');
   });
-  root.querySelector('#clr').addEventListener('click', function () { releaseUrls(); items = []; render(); H.clearWarn(root.querySelector('#dz')); });
+  root.querySelector('#clr').addEventListener('click', function () {
+    var snap = items.slice();
+    releaseUrls(); items = []; render(); H.clearWarn(root.querySelector('#dz'));
+    if (snap.length) H.toast('已清空 ' + snap.length + ' 张', { action: '撤销', onAction: function () { items = snap; render(); } });
+  });
 }

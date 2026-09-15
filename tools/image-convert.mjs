@@ -36,7 +36,11 @@ export function mount(root, H) {
 
   H.makeDropZone(root.querySelector('#dz'), addFiles, 'image/*');
   root.querySelector('#dlAll').addEventListener('click', downloadAll);
-  root.querySelector('#clr').addEventListener('click', function () { files = []; items = []; render(); });
+  root.querySelector('#clr').addEventListener('click', function () {
+    var snapFiles = files.slice(), snapItems = items.slice();
+    files = []; items = []; render();
+    if (snapItems.length) H.toast('已清空 ' + snapItems.length + ' 张', { action: '撤销', onAction: function () { files = snapFiles; items = snapItems; render(); } });
+  });
 
   function addFiles(fs) {
     // 同图片压缩:HEIC 常带空 type,必须放进来由流程给出明确原因(而不是拖了没反应)

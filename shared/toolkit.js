@@ -13,6 +13,74 @@ export function downloadBlob(blob, name) {
   a.href = url; a.download = name; a.click();
   setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
 }
+// 轻提示(可带一个动作按钮),用于"刚做的事可以撤回"。
+// 依据:sonner 的 action/undo(https://sonner.emilkowal.ski)、Radix Toast 的"悬停/聚焦时暂停倒计时"
+// (https://www.radix-ui.com/primitives/docs/components/toast)、NN/g 的"用户控制与自由"。
+// 站点里最需要它的是"清空/清除":一键就把整批结果销毁,而且原文件早被 URL 释放,撤不回来。
+export function toast(msg, opts) {
+  opts = opts || {};
+  if (typeof document === 'undefined') return null;
+  var host = document.getElementById('tb-toast-host');
+  if (!host) {
+    host = document.createElement('div');
+    host.id = 'tb-toast-host';
+    host.className = 'tb-toast-host';
+    document.body.appendChild(host);
+  }
+  var el = document.createElement('div');
+  el.className = 'tb-toast';
+  el.setAttribute('role', 'status');
+  el.setAttribute('aria-live', 'polite');
+  var text = document.createElement('span');
+  text.className = 'tb-toast-text';
+  text.textContent = String(msg == null ? '' : msg);
+  el.appendChild(text);
+
+  var timer = null, closed = false;
+  function close() {
+    if (closed) return;
+    closed = true;
+    if (timer) clearTimeout(timer);
+    el.classList.add('out');
+    setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); if (!host.childNodes.length && host.parentNode) host.parentNode.removeChild(host); }, 200);
+  }
+  function startTimer() {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(close, opts.ms || 8000);
+  }
+  function stopTimer() { if (timer) { clearTimeout(timer); timer = null; } }
+
+  if (opts.action) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'tb-toast-action';
+    btn.textContent = opts.action;
+    btn.addEventListener('click', function () { close(); if (opts.onAction) opts.onAction(); });
+    el.appendChild(btn);
+  }
+  var x = document.createElement('button');
+  x.type = 'button';
+  x.className = 'tb-toast-x';
+  x.setAttribute('aria-label', '关闭这条提示');
+  x.textContent = '×';
+  x.addEventListener('click', close);
+  el.appendChild(x);
+
+  // 鼠标悬停或键盘聚焦时暂停倒计时 —— 否则用户正要把鼠标移到"撤销"上,它自己消失了
+  el.addEventListener('mouseenter', stopTimer);
+  el.addEventListener('mouseleave', startTimer);
+  el.addEventListener('focusin', stopTimer);
+  el.addEventListener('focusout', startTimer);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+
+  host.appendChild(el);
+  if (opts.focusAction !== false && opts.action && el.querySelector('.tb-toast-action')) {
+    try { el.querySelector('.tb-toast-action').focus(); } catch (e) { /* 焦点给不上就算了,别影响主流程 */ }
+  }
+  startTimer();
+  return el;
+}
+
 export function copyText(text, el) {
   var t = String(text == null ? '' : text);
   function fallback() {
@@ -567,7 +635,7 @@ const REGISTRY = {
   'date': { title: '日期 & 时间戳', module: '/tools/date.mjs', v: 5 }
 };
 
-const H = { esc, fmt, downloadBlob, downloadZip, checkImage, checkPdf, sniffHeic, heicNotice, injectCss, makeDropZone, loadScript, loadLib, dynLib, isLibFail, copyText, initTips, friendlyError, warnBelow, clearWarn, netMark, netReport, netLine };
+const H = { esc, fmt, downloadBlob, downloadZip, checkImage, checkPdf, sniffHeic, heicNotice, injectCss, makeDropZone, loadScript, loadLib, dynLib, isLibFail, copyText, initTips, friendlyError, warnBelow, clearWarn, netMark, netReport, netLine, toast };
 
 // 通用无障碍增强:动态状态区可被读屏播报;标签与输入框建立关联
 export function enhanceA11y(root) {
