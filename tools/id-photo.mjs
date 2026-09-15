@@ -173,13 +173,28 @@ export function mount(root, H) {
 
   H.makeDropZone(dz, addFiles, 'image/*', { multiple: false }); // 证件照一次只做一张
   root.querySelector('#go').addEventListener('click', generate);
+  // 清空可撤销:证件照的"已选照片 + 裁切位置 + 已生成结果"一起还原 ——
+  // 只还原数组是不够的,预览区(stage)与画布也要重画,否则撤销回来是个空壳。
   root.querySelector('#clr').addEventListener('click', function () {
+    var snap = { img: state.img, file: state.file, out: state.out, zoom: state.zoom, offX: state.offX, offY: state.offY };
     state.img = null; state.file = null; state.out = null; state.reading = false;
     var go = root.querySelector('#go');
     if (go) { go.disabled = true; go.textContent = '生成合规照片'; }
     H.clearWarn(dz);
     root.querySelector('#stage').style.display = 'none';
     out.innerHTML = '';
+    if (snap.img) H.toast('已清除照片', { action: '撤销', onAction: function () {
+      state.img = snap.img; state.file = snap.file; state.out = snap.out;
+      state.zoom = snap.zoom; state.offX = snap.offX; state.offY = snap.offY;
+      var g2 = root.querySelector('#go');
+      if (g2) { g2.disabled = false; g2.textContent = '生成合规照片'; }
+      root.querySelector('#zoom').value = Math.round((snap.zoom || 1) * 100);
+      root.querySelector('#ox').value = snap.offX || 0;
+      root.querySelector('#oy').value = snap.offY || 0;
+      root.querySelector('#stage').style.display = 'block';
+      if (typeof draw === 'function') draw();
+      if (snap.out) generate();
+    } });
   });
 
   async function addFiles(files) {
