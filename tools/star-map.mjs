@@ -85,6 +85,8 @@ export function mount(root, H) {
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var salt = 0, mode = 'char';
   var stars = [], lines = [], hoverIdx = -1;
+  // 分享图要能"讲故事":把指标与星等带到图上(调研:分享图只给结论没人转,要带过程/指标)
+  var meta = { stars: 0, sentences: 0, units: 0, longest: 0, dupKinds: 0, maxCount: 0, rating: '', label: '' };
   root.querySelector('#mode').addEventListener('click', function (e) {
     var b = e.target.closest('.sm-chip'); if (!b) return;
     mode = b.dataset.m;
@@ -209,6 +211,8 @@ export function mount(root, H) {
       + '<div class="mx"><span>星 <b>' + stars.length + '</b></span><span>句 <b>' + sentenceCount + '</b></span>'
       + '<span>不重复单位 <b>' + uniqChars + '</b></span><span>最长句 <b>' + longest + '</b> 字符</span>'
       + (dupKinds ? '<span>重复 <b>' + dupKinds + '</b> 种,最多 <b>' + maxCount + '</b> 次</span>' : '') + '</div>';
+    meta.stars = stars.length; meta.sentences = sentenceCount; meta.units = uniqChars; meta.longest = longest;
+    meta.dupKinds = dupKinds; meta.maxCount = maxCount; meta.rating = stTxt; meta.label = gr.label;
     info.textContent = '共 ' + stars.length + ' 颗星(按' + unit + '计)'
       + (dupKinds ? ' · ' + dupKinds + ' 个重复出现,最多 ' + maxCount + ' 次(重复的星更大更亮)' : '');
     paintLegend();
@@ -295,6 +299,17 @@ export function mount(root, H) {
     g.font = '500 26px "Geist", -apple-system, "PingFang SC", sans-serif';
     g.fillStyle = 'rgba(255,255,255,.62)';
     g.fillText('每个字是一颗星 · 共 ' + stars.length + ' 颗', W * 0.08, Hh * 0.07 + 70);
+    // 指标条 + 星等:分享图上直接写清"这片星空是什么样",而不是只给一句结论
+    if (meta.stars) {
+      g.font = '600 30px "Geist", -apple-system, "PingFang SC", sans-serif';
+      g.fillStyle = '#e8c37a';
+      g.fillText(meta.rating + '  ' + meta.label, W * 0.08, Hh * 0.07 + 116);
+      g.font = '500 24px "Geist", -apple-system, "PingFang SC", sans-serif';
+      g.fillStyle = 'rgba(255,255,255,.72)';
+      var mx = ['星 ' + meta.stars, '句 ' + meta.sentences, '不重复 ' + meta.units, '最长句 ' + meta.longest + ' 字'];
+      if (meta.dupKinds) mx.push('重复 ' + meta.dupKinds + ' 种/最多 ' + meta.maxCount + ' 次');
+      g.fillText(mx.join('   ·   '), W * 0.08, Hh * 0.07 + 160);
+    }
     g.font = '500 24px "Geist", -apple-system, "PingFang SC", sans-serif';
     g.fillStyle = 'rgba(255,255,255,.42)';
     g.fillText('gongjuhe.top/star-map · 本机生成', W * 0.08, Hh - 70);
