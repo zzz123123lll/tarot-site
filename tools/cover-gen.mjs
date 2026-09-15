@@ -61,6 +61,7 @@ export function mount(root, H) {
   var elements = [], selId = null, elSeq = 0;
   // 导出时不能把"选中框"画进去:导出走的就是预览那块画布,不区分的话虚线框会被烙进成品
   var exporting = false;
+  var drag = null, guides = [];   // 拖动/缩放的临时状态与吸附参考线
   var state = { tpl: 'xhs-bold', size: 'xhs', style: 'bold', color: '#0071e3', align: 'left', title: '把文件改到能通过为止', sub: '22 个本地小工具 · 不上传不注册', tag: '' };
 
   root.innerHTML =
@@ -87,6 +88,7 @@ export function mount(root, H) {
           '<div class="cv-elprops" id="elprops" style="display:none"></div>' +
           '<div id="els"></div></div>' +
         '<div class="cv-field"><label><input type="checkbox" id="safe"> 显示安全区(不会被平台裁掉的范围)</label></div>' +
+        '<div class="idp-hint">编辑器:选中元素后可以直接在画布上<b>拖动</b>,拖四角<b>缩放</b>;挪到中线或边距会<b>吸附</b>并出现粉色参考线(只在编辑时显示,导出图干净)。</div>' +
         '<div class="idp-hint">提示:标题越短字越大;所有文字按最大可用字号自动排版,不会溢出画布。规格来自公开汇总、平台会调整,' +
         '所以导出前建议对照平台后台确认;安全区内的内容不会在列表/分享里被裁。</div>' +
       '</div>' +
@@ -140,6 +142,9 @@ export function mount(root, H) {
     }
     if (row) { selId = parseInt(row.dataset.id, 10); writeEls(); render(); }
   });
+  // 自测钩子:端到端脚本要能读到元素真实坐标(不然只能靠像素猜) —— 只读,不参与渲染
+  root.__cvState = function () { return { elements: elements, selId: selId, guides: guides.length }; };
+  updateTouch();
   writeEls();
   drawTpls(); // 首屏就要把模板列出来 —— 第一版漏了这一次调用,模板区是空的(端到端测试当场抓到)
   chips(root.querySelector('#st'), STYLES, 'style', function (x) { return x.name; });
@@ -229,6 +234,83 @@ export function mount(root, H) {
       e.align = b.dataset.a; al.querySelectorAll('.cv-chip').forEach(function (x) { x.classList.toggle('active', x === b); }); render();
     });
   }
+  // ---------- 第二步:画布上拖动 / 缩放 / 对齐吸附 ----------
+  // 触屏友好:只有"选中了元素"时才把 touch-action 设为 none(否则手指落在画布上会把页面滚动卡住)。
+  function updateTouch() { cv.style.touchAction = (elements.length && selId) ? 'none' : 'auto'; }
+  function cvPoint(ev) {
+    var r = cv.getBoundingClientRect();
+    return { x: (ev.clientX - r.left) / r.width, y: (ev.clientY - r.top) / r.height };
+  }
+  function hitEl(p) {
+    for (var i = elements.length - 1; i >= 0; i--) {
+      var e2 = elements[i];
+      if (p.x >= e2.x && p.x <= e2.x + e2.w && p.y >= e2.y && p.y <= e2.y + e2.h) return e2;
+    }
+    return null;
+  }
+  var HANDLE = 0.028, SNAP = 0.014;
+  function hitHandle(el, p) {
+    if (!el) return null;
+    var ry = HANDLE * (cv.width / cv.height);
+    var hs = [['nw', el.x, el.y], ['ne', el.x + el.w, el.y], ['sw', el.x, el.y + el.h], ['se', el.x + el.w, el.y + el.h]];
+    for (var i = 0; i < hs.length; i++) if (Math.abs(p.x - hs[i][1]) < HANDLE && Math.abs(p.y - hs[i][2]) < ry) return hs[i][0];
+    return null;
+  }
+  function snapTo(v, targets) {
+    for (var i = 0; i < targets.length; i++) if (Math.abs(v - targets[i]) < SNAP) return targets[i];
+    return v;
+  }
+  cv.addEventListener('pointerdown', function (ev) {
+    if (!elements.length) return;
+    var p = cvPoint(ev), sel = selEl();
+    var h = hitHandle(sel, p);
+    if (h && sel) {   // 先判手柄:角上优先缩放
+      drag = { id: sel.id, mode: 'resize', h: h, sx: p.x, sy: p.y, ow: sel.w, oh: sel.h, x0: sel.x, y0: sel.y };
+      try { cv.setPointerCapture(ev.pointerId); } catch (e) {}
+      ev.preventDefault(); updateTouch(); return;
+    }
+    var t = hitEl(p);
+    if (!t) return;   // 点空白处不抢事件,页面照常滚动
+    selId = t.id; writeEls(); render();
+    drag = { id: t.id, mode: 'move', sx: p.x, sy: p.y, x0: t.x, y0: t.y };
+    try { cv.setPointerCapture(ev.pointerId); } catch (e) {}
+    if (ev.cancelable) ev.preventDefault();
+    updateTouch();
+  });
+  cv.addEventListener('pointermove', function (ev) {
+    if (!drag) return;
+    var p = cvPoint(ev), el = selEl();
+    if (!el || el.id !== drag.id) return;
+    guides = [];
+    if (drag.mode === 'move') {
+      var cand = { x: drag.x0 + (p.x - drag.sx), y: drag.y0 + (p.y - drag.sy) };
+      var vx = [0.08, 0.5 - el.w / 2, 0.92 - el.w];
+      var hy = [0.08, 0.5 - el.h / 2, 0.92 - el.h];
+      elements.forEach(function (o) {
+        if (o.id === el.id) return;
+        vx.push(o.x, o.x + o.w - el.w, o.x + o.w / 2 - el.w / 2);
+        hy.push(o.y, o.y + o.h - el.h, o.y + o.h / 2 - el.h / 2);
+      });
+      var nx = snapTo(cand.x, vx), ny = snapTo(cand.y, hy);
+      if (nx !== cand.x) guides.push({ v: nx + el.w / 2 });
+      if (ny !== cand.y) guides.push({ h: ny + el.h / 2 });
+      cand.x = nx; cand.y = ny;
+      el.x = Math.max(0, Math.min(1 - el.w, cand.x));
+      el.y = Math.max(0, Math.min(1 - el.h, cand.y));
+    } else {
+      var w = drag.ow + (drag.h.indexOf('e') >= 0 ? (p.x - drag.sx) : (drag.sx - p.x));
+      var hh = drag.oh + (drag.h.indexOf('s') >= 0 ? (p.y - drag.sy) : (drag.sy - p.y));
+      w = Math.max(0.08, Math.min(1, w)); hh = Math.max(0.04, Math.min(1, hh));
+      if (drag.h.indexOf('w') >= 0) el.x = Math.max(0, Math.min(1 - w, drag.x0 + (drag.ow - w)));
+      if (drag.h.indexOf('n') >= 0) el.y = Math.max(0, Math.min(1 - hh, drag.y0 + (drag.oh - hh)));
+      el.w = w; el.h = hh;
+    }
+    render();
+  });
+  function endDrag() { if (!drag) return; drag = null; guides = []; render(); writeEls(); updateTouch(); }
+  cv.addEventListener('pointerup', endDrag);
+  cv.addEventListener('pointercancel', endDrag);
+
   function drawElements(g2, W2, H2) {
     elements.forEach(function (e) {
       var x = e.x * W2, y = e.y * H2, w = e.w * W2, h = e.h * H2;
@@ -255,6 +337,9 @@ export function mount(root, H) {
         g2.save();
         g2.strokeStyle = 'rgba(0,113,227,.95)'; g2.lineWidth = 3; g2.setLineDash([10, 7]);
         g2.strokeRect(x - 4, y - 4, w + 8, h + 8); g2.setLineDash([]);
+        // 四个角手柄:提示"这里可以拉大小"
+        g2.fillStyle = '#0071e3';
+        [[x, y], [x + w, y], [x, y + h], [x + w, y + h]].forEach(function (hh) { g2.fillRect(hh[0] - 7, hh[1] - 7, 14, 14); });
         g2.restore();
       }
     });
@@ -370,6 +455,17 @@ export function mount(root, H) {
     g.textAlign = 'left';
     g.fillText('gongjuhe.top · 本地生成', pad, Hh - pad * 0.68);
     drawElements(g, W, Hh);   // 叠加元素:模板之上,导出与多尺寸都会带上
+    if (!exporting && guides.length) {   // 吸附参考线:只在编辑时显示
+      g.save();
+      g.strokeStyle = 'rgba(242,65,107,.9)'; g.lineWidth = 2;
+      guides.forEach(function (gd) {
+        g.beginPath();
+        if (gd.v !== undefined) { g.moveTo(gd.v * W, 0); g.lineTo(gd.v * W, Hh); }
+        else { g.moveTo(0, gd.h * Hh); g.lineTo(W, gd.h * Hh); }
+        g.stroke();
+      });
+      g.restore();
+    }
     // 安全区预览:把"会被平台裁掉"的区域压暗 —— 只画在画布预览上,导出时不会带上
     var showSafe = root.querySelector('#safe') && root.querySelector('#safe').checked;
     if (showSafe) {
