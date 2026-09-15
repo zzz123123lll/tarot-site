@@ -14,6 +14,9 @@ export function mount(root, H) {
     + ".bt-chip.active{background:var(--c-accent);border-color:var(--c-accent);color:#fff}"
     + ".bt-stats{margin-top:14px;background:var(--t-surface);border-radius:14px;padding:14px 16px;font-size:14px;line-height:1.8}"
     + ".bt-stats b{font-variant-numeric:tabular-nums}"
+    + ".bt-kbd span.on{background:var(--c-accent);border-color:var(--c-accent);color:#fff;transform:translateY(1px)}"
+    + ".bt-grade{margin-top:8px;border-top:1px solid var(--c-hairline);padding-top:8px}"
+    + ".bt-grade .g{font-size:22px;font-weight:700;letter-spacing:1px;color:var(--c-accent)}"
     + ".bt-kbd{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}"
     + ".bt-kbd span{min-width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;background:#f2f2f4;font-size:13px;color:#6e6e73}");
 
@@ -35,7 +38,7 @@ export function mount(root, H) {
       '</div>' +
       '<div>' +
         '<div class="bt-stats" id="stats"></div>' +
-        '<p class="idp-hint" style="margin-top:10px">键盘 A W S E D F T G Y H U J 对应不同音高;空格重敲当前音;Esc 停。</p>' +
+        '<p class="idp-hint" style="margin-top:10px">不用先点开始:直接敲 <b>A W S E D F T G Y H U J</b> 任意一个键就进入(键位会跟着亮);空格重敲当前音;Esc 停。打拍子模式下会给<b>准确率与评级</b>(准确率 = 偏差 ≤120ms 的敲击占比)。</p>' +
         '<div class="bt-kbd" id="kbd"></div>' +
         '<p class="idp-hint" style="margin-top:10px">所有声音都是浏览器现场合成的正弦/三角波,没有任何音频文件;画面也是 Canvas 画的。</p>' +
       '</div>' +
@@ -186,6 +189,36 @@ export function mount(root, H) {
   }
   function resetStats() { P = [{ hits: 0, combo: 0, best: 0, offsets: [] }, { hits: 0, combo: 0, best: 0, offsets: [] }]; noteIdx = 0; }
   function avgOf(st) { return st.offsets.length ? Math.round(st.offsets.reduce(function (a, b) { return a + b; }, 0) / st.offsets.length) : null; }
+  // 准确率与评级:全部本地算、口径写在界面上("偏差 ≤120ms 的敲击占比"),不做玄学分数。
+  // 依据:NN/g 游戏化"先反馈再计分"+ ZType/Monkeytype 那种"立刻给结果、马上能再来一次"的做法。
+  function accOf(st) {
+    if (!st.offsets.length) return null;
+    var ok = st.offsets.filter(function (o) { return Math.abs(o) <= 120; }).length;
+    return Math.round(ok / st.offsets.length * 100);
+  }
+  function gradeOf(st) {
+    var acc = accOf(st);
+    if (acc === null) return null;
+    if (acc >= 95 && st.best >= 20) return { g: 'S', t: '和节拍锁死了' };
+    if (acc >= 88 && st.best >= 12) return { g: 'A', t: '很稳' };
+    if (acc >= 75) return { g: 'B', t: '跟上了' };
+    return { g: 'C', t: '再听两轮' };
+  }
+  function gradeLine(st, who) {
+    var gr = gradeOf(st), acc = accOf(st);
+    if (!gr) return '';
+    var color = who === 1 ? '#e0894f' : '#5b8def';
+    return '<div class="bt-grade"><span class="g" style="color:' + color + '">' + gr.g + '</span> · ' + H.esc(gr.t)
+      + ' · 准确率 <b>' + acc + '%</b><span style="color:#6e6e73">(偏差 ≤120ms 的敲击占比)</span>'
+      + ' · 最长连击 <b>' + st.best + '</b></div>';
+  }
+  function flashKey(k) {
+    if (!k) return;
+    var el = root.querySelector('.bt-kbd span[data-k="' + k.toUpperCase() + '"]');
+    if (!el) return;
+    el.classList.add('on');
+    setTimeout(function () { el.classList.remove('on'); }, 140);
+  }
   function paintStats() {
     var lines = [];
     var t = TEMPLATES[tmplIdx];
@@ -199,8 +232,17 @@ export function mount(root, H) {
       if (mode === 'beat') {
         lines.push('连击 <b>' + P[0].combo + '</b>(最长 <b>' + P[0].best + '</b>)');
         lines.push('平均偏差 <b>' + (avgOf(P[0]) === null ? '—' : avgOf(P[0]) + ' ms') + '</b>' + (avgOf(P[0]) !== null && avgOf(P[0]) < 60 ? '(稳)' : ''));
+        var gl = gradeLine(P[0], 0); if (gl) lines.push(gl);
       } else {
         lines.push('模式:<b>自由敲</b>(怎么敲都不会难听)');
+      }
+    }
+    if (duo && mode === 'beat') {
+      var g0 = gradeOf(P[0]), g1 = gradeOf(P[1]);
+      if (g0 && g1) {
+        lines.push('<div class="bt-grade">左边 <span class="g" style="color:#5b8def">' + g0.g + '</span> 准确率 <b>' + accOf(P[0]) + '%</b>'
+          + ' · 右边 <span class="g" style="color:#e0894f">' + g1.g + '</span> 准确率 <b>' + accOf(P[1]) + '%</b>'
+          + ' · ' + (accOf(P[0]) === accOf(P[1]) ? '平手' : (accOf(P[0]) > accOf(P[1]) ? '左边更稳' : '右边更稳')) + '</div>');
       }
     }
     lines.push('伴奏:<b>' + t.name + '</b> · ' + bpm + ' BPM' + (t.id === 'none' ? '(可以自己敲节奏)' : ''));
@@ -209,7 +251,9 @@ export function mount(root, H) {
   }
   function paintKbd() {
     var keys = duo ? KEYMAP_L.concat(['|']).concat(KEYMAP_R) : KEYMAP;
-    root.querySelector('#kbd').innerHTML = keys.map(function (k) { return '<span>' + (k === '|' ? '·' : k) + '</span>'; }).join('');
+    root.querySelector('#kbd').innerHTML = keys.map(function (k) {
+      return '<span' + (k === '|' ? '' : ' data-k="' + k + '"') + '>' + (k === '|' ? '·' : k) + '</span>';
+    }).join('');
   }
   paintKbd();
 
@@ -267,18 +311,20 @@ export function mount(root, H) {
   }
   cv.addEventListener('keydown', function (e) {
     var p = keyPlayer(e.key);
-    if (p >= 0) { e.preventDefault(); if (!started) start(); else hitAt(p === 0 ? W / 4 : W * 3 / 4, Hh / 2, p); }
+    if (p >= 0) { e.preventDefault(); flashKey(e.key); if (!started) start(); else hitAt(p === 0 ? W / 4 : W * 3 / 4, Hh / 2, p); }
     else if (e.key === ' ') { e.preventDefault(); if (!started) start(); else hitAt(null, null); }
   });
   cv.setAttribute('tabindex', '0');
   cv.setAttribute('role', 'button');
   cv.setAttribute('aria-label', '节奏玩具:点一下开始;单人按 A W S E D F T G Y H U J,双人左边 A S D F、右边 J K L 分号');
   document.addEventListener('keydown', function (e) {
-    if (!started) return;
-    if (e.key === 'Escape') { stopLoop(); veil.style.display = 'flex'; started = false; return; }
-    if (document.activeElement === cv) return;
-    var p = keyPlayer(e.key);
-    if (p >= 0) hitAt(p === 0 ? W / 4 : W * 3 / 4, Hh / 2, p);
+    if (e.key === 'Escape' && started) { stopLoop(); veil.style.display = 'flex'; started = false; return; }
+    var pk = keyPlayer(e.key);
+    // 之前这里"没开始就直接 return",于是遮罩还在时敲键毫无反应 —— 而 NN/g 的判据是"首屏可试"。
+    // 现在敲任意音符键就等于开始(并敲下第一下),不用先点一下遮罩。
+    if (!started) { if (pk >= 0 || e.key === ' ') { e.preventDefault(); if (pk >= 0) flashKey(e.key); start(); } return; }
+    if (document.activeElement === cv) return;   // 画布自己那份 keydown 已经处理过了,避免敲一下算两下
+    if (pk >= 0) { flashKey(e.key); hitAt(pk === 0 ? W / 4 : W * 3 / 4, Hh / 2, pk); }
   });
   root.querySelectorAll('.bt-chip[data-m]').forEach(function (b) {
     b.addEventListener('click', function () {
