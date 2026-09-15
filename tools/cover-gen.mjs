@@ -62,6 +62,30 @@ export function mount(root, H) {
   // 导出时不能把"选中框"画进去:导出走的就是预览那块画布,不区分的话虚线框会被烙进成品
   var exporting = false;
   var drag = null, guides = [];   // 拖动/缩放的临时状态与吸附参考线
+  // 撤销/重做:元素层的每次改动前都留一份快照(纯 JSON,元素很少,60 步足够用)。
+  // 依据:同类编辑器把撤销列为标配(avnac README 的交互清单),而"手滑删错一个元素"是真实痛点。
+  var history = [], hIdx = -1, HIST_MAX = 60;
+  function snapShot() { return JSON.stringify({ elements: elements, selId: selId }); }
+  function pushHistory() {
+    history = history.slice(0, hIdx + 1);
+    history.push(snapShot());
+    if (history.length > HIST_MAX) history.shift();
+    hIdx = history.length - 1;
+    paintHist();
+  }
+  function applyHistory(i) {
+    if (i < 0 || i >= history.length) return;
+    var s = JSON.parse(history[i]);
+    elements = s.elements; selId = s.selId; hIdx = i;
+    writeEls(); render(); paintHist(); updateTouch();
+  }
+  function undo() { if (hIdx > 0) { applyHistory(hIdx - 1); H.toast('已撤销', { ms: 2600 }); } }
+  function redo() { if (hIdx < history.length - 1) { applyHistory(hIdx + 1); H.toast('已重做', { ms: 2600 }); } }
+  function paintHist() {
+    var u = root.querySelector('#undo'), r = root.querySelector('#redo');
+    if (u) u.disabled = hIdx <= 0;
+    if (r) r.disabled = hIdx >= history.length - 1;
+  }
   var state = { tpl: 'xhs-bold', size: 'xhs', style: 'bold', color: '#0071e3', align: 'left', title: '把文件改到能通过为止', sub: '22 个本地小工具 · 不上传不注册', tag: '' };
 
   root.innerHTML =
@@ -84,7 +108,9 @@ export function mount(root, H) {
         '<div class="cv-field"><label>对齐</label><div class="cv-chips" id="al"><button class="cv-chip active" data-a="left">左对齐</button><button class="cv-chip" data-a="center">居中</button></div></div>' +
         '<div class="cv-field"><label>叠加元素(模板之上的文字/色块,可增删、调序)</label>' +
           '<div class="tool-row" style="margin-bottom:8px"><button class="tool-btn tool-btn--ghost" id="addText">+ 文字</button>' +
-          '<button class="tool-btn tool-btn--ghost" id="addBlock">+ 色块</button></div>' +
+          '<button class="tool-btn tool-btn--ghost" id="addBlock">+ 色块</button>' +
+          '<button class="tool-btn tool-btn--ghost" id="undo">撤销</button>' +
+          '<button class="tool-btn tool-btn--ghost" id="redo">重做</button></div>' +
           '<div class="cv-elprops" id="elprops" style="display:none"></div>' +
           '<div id="els"></div></div>' +
         '<div class="cv-field"><label><input type="checkbox" id="safe"> 显示安全区(不会被平台裁掉的范围)</label></div>' +
@@ -129,6 +155,14 @@ export function mount(root, H) {
     drawTpls(); render();
   });
   root.querySelector('#safe').addEventListener('change', function () { render(); });
+  root.querySelector('#undo').addEventListener('click', undo);
+  root.querySelector('#redo').addEventListener('click', redo);
+  document.addEventListener('keydown', function (ev) {
+    if (!(ev.ctrlKey || ev.metaKey)) return;
+    var k = (ev.key || '').toLowerCase();
+    if (k === 'z' && !ev.shiftKey) { ev.preventDefault(); undo(); }
+    else if ((k === 'z' && ev.shiftKey) || k === 'y') { ev.preventDefault(); redo(); }
+  });
   root.querySelector('#addText').addEventListener('click', function () { addElement('text'); });
   root.querySelector('#addBlock').addEventListener('click', function () { addElement('block'); });
   root.querySelector('#els').addEventListener('click', function (ev) {
@@ -145,7 +179,8 @@ export function mount(root, H) {
   // 自测钩子:端到端脚本要能读到元素真实坐标(不然只能靠像素猜) —— 只读,不参与渲染
   root.__cvState = function () { return { elements: elements, selId: selId, guides: guides.length }; };
   updateTouch();
-  writeEls();
+  writeEls(); pushHistory();   // 初始状态也进历史:撤销按钮一开始是禁用的
+  paintHist();
   drawTpls(); // 首屏就要把模板列出来 —— 第一版漏了这一次调用,模板区是空的(端到端测试当场抓到)
   chips(root.querySelector('#st'), STYLES, 'style', function (x) { return x.name; });
   root.querySelector('#co').innerHTML = COLORS.map(function (c) {
@@ -187,7 +222,7 @@ export function mount(root, H) {
       align: 'left'
     });
     selId = elements[elements.length - 1].id;
-    writeEls(); render();
+    writeEls(); render(); pushHistory();
     H.toast('已加一个' + EL_NAME[type] + '元素 —— 在下面改文字、字号、颜色与对齐', { ms: 4200 });
   }
   function moveEl(id, dir) {
@@ -196,9 +231,16 @@ export function mount(root, H) {
     var j = i + dir;
     if (i < 0 || j < 0 || j >= elements.length) return;
     var tmp = elements[i]; elements[i] = elements[j]; elements[j] = tmp;
-    writeEls(); render();
+    writeEls(); render(); pushHistory();
   }
-  function delEl(id) { elements = elements.filter(function (e) { return e.id !== id; }); if (selId === id) selId = null; writeEls(); render(); }
+  function delEl(id) { elements = elements.filter(function (e) { return e.id !== id; }); if (selId === id) selId = null; writeEls(); render(); pushHistory(); }
+  function zOrder(id, top) {
+    var i = -1; elements.forEach(function (e, k) { if (e.id === id) i = k; });
+    if (i < 0) return;
+    var e2 = elements.splice(i, 1)[0];
+    if (top) elements.push(e2); else elements.unshift(e2);
+    writeEls(); render(); pushHistory();
+  }
   function writeEls() {
     var box = root.querySelector('#els'); if (!box) return;
     box.innerHTML = elements.length ? elements.map(function (e, i) {
@@ -217,21 +259,29 @@ export function mount(root, H) {
       + '<div class="cv-field" style="margin-bottom:8px"><label for="elFs">字号(相对画布宽度)<span id="elFsV"> ' + Math.round(e.fs * 100) + '%</span></label>'
       + '<input class="cv-input" id="elFs" type="range" min="1.5" max="12" step="0.5" value="' + (e.fs * 100) + '"></div>'
       + '<div class="cv-field" style="margin-bottom:8px"><label for="elColor">颜色</label><input class="cv-input" id="elColor" type="color" value="' + e.color + '" style="height:44px;padding:4px"></div>'
+      + '<div class="cv-field" style="margin-bottom:8px"><label>图层顺序</label><div class="tool-row">' +
+        '<button class="tool-btn tool-btn--ghost" id="elTop">置顶</button><button class="tool-btn tool-btn--ghost" id="elBottom">置底</button></div></div>'
       + '<div class="cv-field" style="margin-bottom:0"><label>对齐</label><div class="cv-chips" id="elAlign">'
       + ['left:左', 'center:中', 'right:右'].map(function (x) {
           var v = x.split(':');
           return '<button class="cv-chip' + (e.align === v[0] ? ' active' : '') + '" data-a="' + v[0] + '">' + v[1] + '</button>';
         }).join('') + '</div></div>';
     var t = box2.querySelector('#elText');
+    // 文字用 change 而不是 input 记历史:否则每敲一个字都进历史,撤销要按很多次才回到上一步
     if (t) t.addEventListener('input', function () { e.text = t.value; writeEls(); render(); });
+    if (t) t.addEventListener('change', function () { pushHistory(); });
+    var zb = box2.querySelector('#elTop'), zb2 = box2.querySelector('#elBottom');
+    if (zb) zb.addEventListener('click', function () { zOrder(e.id, true); });
+    if (zb2) zb2.addEventListener('click', function () { zOrder(e.id, false); });
     var fs = box2.querySelector('#elFs');
     if (fs) fs.addEventListener('input', function () { e.fs = parseFloat(fs.value) / 100; box2.querySelector('#elFsV').textContent = ' ' + Math.round(e.fs * 100) + '%'; render(); });
     var co = box2.querySelector('#elColor');
     if (co) co.addEventListener('input', function () { e.color = co.value; render(); });
+    if (co) co.addEventListener('change', function () { pushHistory(); });
     var al = box2.querySelector('#elAlign');
     if (al) al.addEventListener('click', function (ev) {
       var b = ev.target.closest('.cv-chip'); if (!b) return;
-      e.align = b.dataset.a; al.querySelectorAll('.cv-chip').forEach(function (x) { x.classList.toggle('active', x === b); }); render();
+      e.align = b.dataset.a; al.querySelectorAll('.cv-chip').forEach(function (x) { x.classList.toggle('active', x === b); }); render(); pushHistory();
     });
   }
   // ---------- 第二步:画布上拖动 / 缩放 / 对齐吸附 ----------
@@ -265,6 +315,7 @@ export function mount(root, H) {
     var p = cvPoint(ev), sel = selEl();
     var h = hitHandle(sel, p);
     if (h && sel) {   // 先判手柄:角上优先缩放
+      pushHistory();   // 先记"拖之前"的状态,撤销才能回到原位
       drag = { id: sel.id, mode: 'resize', h: h, sx: p.x, sy: p.y, ow: sel.w, oh: sel.h, x0: sel.x, y0: sel.y };
       try { cv.setPointerCapture(ev.pointerId); } catch (e) {}
       ev.preventDefault(); updateTouch(); return;
@@ -272,6 +323,7 @@ export function mount(root, H) {
     var t = hitEl(p);
     if (!t) return;   // 点空白处不抢事件,页面照常滚动
     selId = t.id; writeEls(); render();
+    pushHistory();
     drag = { id: t.id, mode: 'move', sx: p.x, sy: p.y, x0: t.x, y0: t.y };
     try { cv.setPointerCapture(ev.pointerId); } catch (e) {}
     if (ev.cancelable) ev.preventDefault();
@@ -307,7 +359,7 @@ export function mount(root, H) {
     }
     render();
   });
-  function endDrag() { if (!drag) return; drag = null; guides = []; render(); writeEls(); updateTouch(); }
+  function endDrag() { if (!drag) return; drag = null; guides = []; render(); writeEls(); updateTouch(); pushHistory(); }
   cv.addEventListener('pointerup', endDrag);
   cv.addEventListener('pointercancel', endDrag);
 
