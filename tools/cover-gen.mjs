@@ -59,6 +59,9 @@ export function mount(root, H) {
   // 叠加元素的状态必须在这里声明:writeEls() 在 mount 早期就会被调用一次,
   // 而 var 是"提升声明、不提升赋值" —— 声明写在后面的话,那一刻 elements 还是 undefined(实测报错)。
   var elements = [], selId = null, elSeq = 0;
+  // "我的模板"的常量也必须在最前面:它会被 mount 早期的 paintMt() 读到,
+  // 放在后面就是又一次 var 提升坑(读到的 MT_KEY 是 undefined,已保存的模板显示不出来)。
+  var MT_KEY = 'tb-covers', MT_MAX = 24, MT_IMG_LIMIT = 400000;
   // 导出时不能把"选中框"画进去:导出走的就是预览那块画布,不区分的话虚线框会被烙进成品
   var exporting = false;
   var drag = null, guides = [];   // 拖动/缩放的临时状态与吸附参考线
@@ -110,6 +113,10 @@ export function mount(root, H) {
         '<div class="cv-field"><label>风格</label><div class="cv-chips" id="st"></div></div>' +
         '<div class="cv-field"><label>强调色</label><div class="cv-swatches" id="co"></div></div>' +
         '<div class="cv-field"><label>对齐</label><div class="cv-chips" id="al"><button class="cv-chip active" data-a="left">左对齐</button><button class="cv-chip" data-a="center">居中</button></div></div>' +
+        '<div class="cv-field"><label>我的模板(存在本机,下次一键载入)</label>' +
+          '<div class="tool-row" style="margin-bottom:8px"><input class="cv-input" id="mtName" placeholder="给它起个名(如:小店活动)" style="flex:1;min-width:120px">' +
+          '<button class="tool-btn tool-btn--ghost" id="mtSave">保存当前</button></div>' +
+          '<div id="mtList"></div></div>' +
         '<div class="cv-field"><label>叠加元素(模板之上的文字/色块,可增删、调序)</label>' +
           '<div class="tool-row" style="margin-bottom:8px"><button class="tool-btn tool-btn--ghost" id="addText">+ 文字</button>' +
           '<button class="tool-btn tool-btn--ghost" id="addBlock">+ 色块</button>' +
@@ -168,6 +175,15 @@ export function mount(root, H) {
     if (k === 'z' && !ev.shiftKey) { ev.preventDefault(); undo(); }
     else if ((k === 'z' && ev.shiftKey) || k === 'y') { ev.preventDefault(); redo(); }
   });
+  root.querySelector('#mtSave').addEventListener('click', saveMyTemplate);
+  root.querySelector('#mtList').addEventListener('click', function (ev) {
+    var row = ev.target.closest('.cv-el'); if (!row) return;
+    var i = parseInt(row.dataset.mi, 10);
+    var btn = ev.target.closest('button');
+    if (btn && btn.dataset.mact === 'del') { delMyTemplate(i); return; }
+    loadMyTemplate(i);
+  });
+  paintMt();
   root.querySelector('#addText').addEventListener('click', function () { addElement('text'); });
   root.querySelector('#addBlock').addEventListener('click', function () { addElement('block'); });
   root.querySelector('#addPic').addEventListener('click', pickImage);
@@ -189,6 +205,7 @@ export function mount(root, H) {
   updateTouch();
   writeEls(); pushHistory();   // 初始状态也进历史:撤销按钮一开始是禁用的
   paintHist();
+  paintMt();   // 放在 mount 末尾再渲染一次"我的模板":早先那次渲染出来的还是空状态(已保存的读不出来)
   drawTpls(); // 首屏就要把模板列出来 —— 第一版漏了这一次调用,模板区是空的(端到端测试当场抓到)
   chips(root.querySelector('#st'), STYLES, 'style', function (x) { return x.name; });
   root.querySelector('#co').innerHTML = COLORS.map(function (c) {
@@ -423,6 +440,77 @@ export function mount(root, H) {
   function endDrag() { if (!drag) return; drag = null; guides = []; render(); writeEls(); updateTouch(); pushHistory(); }
   cv.addEventListener('pointerup', endDrag);
   cv.addEventListener('pointercancel', endDrag);
+
+  // ---------- 我的模板:把"模板选择 + 文案 + 元素"整体存在本机 ----------
+  // 只用 localStorage,不上传(与全站一致)。图片元素存成 dataURL,过大的就不存并如实说明。
+  function mtRead() { try { var a = JSON.parse(localStorage.getItem(MT_KEY) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+  function mtWrite(a) { try { localStorage.setItem(MT_KEY, JSON.stringify(a.slice(0, MT_MAX))); } catch (e) { H.toast('本机存储写不进去了(可能已满)', { ms: 4200 }); } }
+  function paintMt() {
+    var box = root.querySelector('#mtList'); if (!box) return;
+    var list = mtRead();
+    box.innerHTML = list.length ? list.map(function (m, i) {
+      return '<div class="cv-el" data-mi="' + i + '"><span class="t" data-load="1">' + H.esc(m.name) + ' · ' + H.esc(m.size) + (m.elements && m.elements.length ? ' · ' + m.elements.length + ' 个元素' : '') + '</span>'
+        + '<button data-mact="load" aria-label="载入">载入</button><button data-mact="del" aria-label="删除">×</button></div>';
+    }).join('') : '<div class="cv-elhint">还没有保存过。调好版式与元素后,起个名字点「保存当前」。</div>';
+  }
+  function saveMyTemplate() {
+    var nameEl = root.querySelector('#mtName');
+    var name = (nameEl && nameEl.value || '').trim() || ('我的封面 ' + (mtRead().length + 1));
+    var skipped = 0;
+    var els = [];
+    elements.forEach(function (e) {
+      if (e.type === 'image') {
+        var rec = e.imgKey ? imgStore[e.imgKey] : null, im = e.img || (rec && rec.img);
+        if (!im || !im.width) { skipped++; return; }
+        try {
+          var c = document.createElement('canvas'); c.width = im.width; c.height = im.height;
+          c.getContext('2d').drawImage(im, 0, 0);
+          var du = c.toDataURL('image/png');
+          if (du.length > MT_IMG_LIMIT) { skipped++; return; }
+          els.push({ type: 'image', dataUrl: du, name: e.name, x: e.x, y: e.y, w: e.w, h: e.h, align: e.align });
+          return;
+        } catch (err) { skipped++; return; }
+      }
+      els.push({ type: e.type, text: e.text, x: e.x, y: e.y, w: e.w, h: e.h, fs: e.fs, color: e.color, align: e.align });
+    });
+    var list = mtRead();
+    list.unshift({ name: name, tpl: state.tpl, size: state.size, style: state.style, align: state.align, color: state.color,
+      title: root.querySelector('#t').value, sub: root.querySelector('#s').value, tag: root.querySelector('#g').value, elements: els });
+    mtWrite(list);
+    if (nameEl) nameEl.value = '';
+    paintMt();
+    H.toast('已保存「' + name + '」' + (skipped ? '(有 ' + skipped + ' 个图片元素太大,没有存进去)' : ''), { ms: 5200 });
+  }
+  function loadMyTemplate(i) {
+    var m = mtRead()[i]; if (!m) return;
+    state.tpl = m.tpl; state.size = m.size; state.style = m.style; state.align = m.align; state.color = m.color;
+    root.querySelector('#t').value = m.title || ''; root.querySelector('#s').value = m.sub || ''; root.querySelector('#g').value = m.tag || '';
+    root.querySelectorAll('#sz .cv-chip').forEach(function (x) { x.classList.toggle('active', x.dataset.v === m.size); });
+    root.querySelectorAll('#st .cv-chip').forEach(function (x) { x.classList.toggle('active', x.dataset.v === m.style); });
+    root.querySelectorAll('#al .cv-chip').forEach(function (x) { x.classList.toggle('active', x.dataset.a === m.align); });
+    elements = []; selId = null;
+    (m.elements || []).forEach(function (src) {
+      var id = ++elSeq;
+      var e2 = { id: id, type: src.type, text: src.text || '', x: src.x, y: src.y, w: src.w, h: src.h,
+        fs: src.fs || 0.05, color: src.color || state.color, align: src.align || 'left', name: src.name };
+      elements.push(e2);
+      if (src.type === 'image' && src.dataUrl) {
+        var key = 'img' + id;
+        var im = new Image();
+        im.onload = function () { imgStore[key] = { img: im, name: src.name || '图片' }; e2.imgKey = key; e2.img = im; render(); };
+        im.src = src.dataUrl;
+        e2.imgKey = key;
+      }
+    });
+    drawTpls(); writeEls(); render(); pushHistory(); paintMt();
+    H.toast('已载入「' + m.name + '」', { ms: 3600 });
+  }
+  function delMyTemplate(i) {
+    var list = mtRead();
+    var nm = list[i] ? list[i].name : '';
+    list.splice(i, 1); mtWrite(list); paintMt();
+    H.toast('已删除「' + nm + '」', { ms: 3200 });
+  }
 
   function drawElements(g2, W2, H2) {
     elements.forEach(function (e) {
