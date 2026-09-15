@@ -343,13 +343,20 @@ export function makeDropZone(el, onFiles, accept, opts) {
   // 拖拽三态(参照 react-dropzone 的 isDragActive / isDragAccept / isDragReject):
   // 原来只有一个 active 态,拖错东西时高亮和能收时一模一样,用户得松手才知道不行。
   var hintEl = el.querySelector && el.querySelector('.hint');
-  var hintOrig = hintEl ? hintEl.textContent : '';
+  // 提示原文必须"要改写前才记":有些工具会自己更新这一行(例如加水印页选完 logo 后写成"已选 logo: xxx.png")。
+  // 如果在绑定时就把原文记死,拖错一次再拖走,工具自己写进去的那句话会被我们还原掉 —— 那是我们引入的回归。
+  var hintOrig = null;
   function setDropState(ok, hovering) {
     el.classList.toggle('active', !!hovering && ok);
     el.classList.toggle('reject', !!hovering && !ok);
-    if (hintEl) hintEl.textContent = (hovering && !ok)
-      ? '这里不收这个格式' + (accept ? ' —— 只收 ' + acceptLabel(accept) : '') + ';松手也不会被处理'
-      : hintOrig;
+    if (!hintEl) return;
+    if (hovering && !ok) {
+      if (hintOrig === null) hintOrig = hintEl.textContent;
+      hintEl.textContent = '这里不收这个格式' + (accept ? ' —— 只收 ' + acceptLabel(accept) : '') + ';松手也不会被处理';
+    } else if (hintOrig !== null) {
+      hintEl.textContent = hintOrig;
+      hintOrig = null;
+    }
   }
   el.addEventListener('dragover', function (e) {
     e.preventDefault();
