@@ -102,7 +102,7 @@ export function mount(root, H) {
         items.push({
           name: file.name, blob: blob, status: 'ok',
           outName: file.name.replace(/\.[^.]+$/, '') + ext,
-          size: blob.size, w: chk.width, h: chk.height, mime: useMime, wantMime: mime,
+          size: blob.size, inSize: file.size, w: chk.width, h: chk.height, mime: useMime, wantMime: mime,
           fallback: fallback, check: chk
         });
         cb();
@@ -155,8 +155,14 @@ export function mount(root, H) {
     var sum = root.querySelector('#sum');
     if (items.length) {
       sum.style.display = 'block';
+      // 结果区给"前后体积 + 省了多少"(Squoosh 的做法:2.8MB → 13KB 一眼看懂;https://squoosh.app/)
+      var inSum = 0, outSum = 0;
+      ok.forEach(function (f2) { inSum += (f2.inSize || 0); outSum += (f2.size || 0); });
+      var saveTxt = (inSum && outSum && outSum < inSum)
+        ? ('合计 ' + H.fmt(inSum) + ' → ' + H.fmt(outSum) + '(省 ' + Math.round((1 - outSum / inSum) * 100) + '%)。')
+        : (inSum ? ('合计 ' + H.fmt(inSum) + (outSum && outSum > inSum ? ' → ' + H.fmt(outSum) + '(变大了,已按更小的那个输出)' : '') + '。') : '');
       sum.innerHTML = '<div class="total">成功 ' + ok.length + ' 张' + (fail.length ? ' · 失败 ' + fail.length + ' 张' : '') + '</div>'
-        + '<div class="note">全程本地运算，图片不会离开你的电脑。</div>';
+        + '<div class="note">' + saveTxt + '全程本地运算，图片不会离开你的电脑。</div>';
     } else {
       sum.style.display = 'none';
     }

@@ -613,7 +613,7 @@ const REGISTRY = {
   'receipt-clean': { title: '票据清理', module: '/tools/receipt-clean.mjs', v: 4 },
   'img-compress': { title: '图片压缩', module: '/tools/img-compress.mjs', v: 25 },
   'id-photo': { title: '证件照', module: '/tools/id-photo.mjs', v: 22 },
-  'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs', v: 8 },
+  'image-convert': { title: '图片转换', module: '/tools/image-convert.mjs', v: 9 },
   'images-to-pdf': { title: '图片合成 PDF', module: '/tools/images-to-pdf.mjs', v: 7 },
   'invoice-nup': { title: '发票拼版', module: '/tools/invoice-nup.mjs', v: 10 },
   'pdf-merge': { title: 'PDF 合并', module: '/tools/pdf-merge.mjs', v: 7 },
