@@ -165,7 +165,7 @@ export function mount(root, H) {
   var mode = 'free', started = false, bpm = 100, duo = false;
   // 每日挑战:当天固定模板 + 打满 20 下出评级,记录存在本机(localStorage),算"连续来练几天"。
   // 依据:Wordle 的"每日同题"(内部文档/计划-作品线成熟化.md 第 8 节)+ Monkeytype 的"秒重开"。
-  var dailyOn = false, DAILY_GOAL = 20;
+  var dailyOn = false, DAILY_GOAL = 20, clearedThisRun = false;
   function todayKey(d) { d = d || new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
   function dailyIdx() {
     var d = new Date();
@@ -217,7 +217,38 @@ export function mount(root, H) {
     lastHitAt = now;
     paintStats();
   }
-  function resetStats() { P = [{ hits: 0, combo: 0, best: 0, offsets: [] }, { hits: 0, combo: 0, best: 0, offsets: [] }]; noteIdx = 0; }
+  function resetStats() { P = [{ hits: 0, combo: 0, best: 0, offsets: [] }, { hits: 0, combo: 0, best: 0, offsets: [] }]; noteIdx = 0; clearedThisRun = false; }
+  // 章节式关卡(参照 Ableton 学习音乐的"章节/关卡"):每套鼓点 3 关,目标逐级提高,通关记在本机
+  var LEVELS = [
+    { name: '第一关', acc: 60, best: 0, min: 12, tip: '敲满 12 下且准确率 ≥60%' },
+    { name: '第二关', acc: 75, best: 8, min: 16, tip: '准确率 ≥75% 且最长连击 ≥8' },
+    { name: '第三关', acc: 88, best: 16, min: 24, tip: '准确率 ≥88% 且最长连击 ≥16' }
+  ];
+  function levelsRead() { try { return JSON.parse(localStorage.getItem('tb-levels') || '{}'); } catch (e) { return {}; } }
+  function levelsWrite(o) { try { localStorage.setItem('tb-levels', JSON.stringify(o)); } catch (e) {} }
+  function levelsDone(t) { var o = levelsRead(); return Math.min(LEVELS.length, o[t.id] || 0); }
+  function tryLevel() {
+    if (mode !== 'beat' || duo) return;
+    // 一次只过一关:否则一轮好成绩会把三关一口气全清掉,后两关连提示都来不及显示,
+    // 关卡也就失去了"再来一次"的意义(实测:塞一组好数据后 {"four":3} 直接满级)。
+    if (clearedThisRun) return;
+    var t = TEMPLATES[tmplIdx], done = levelsDone(t);
+    if (done >= LEVELS.length) return;
+    var L = LEVELS[done];
+    if (P[0].hits < L.min) return;
+    var acc = accOf(P[0]);
+    if (acc === null || acc < L.acc || P[0].best < L.best) return;
+    clearedThisRun = true;
+    var o = levelsRead(); o[t.id] = done + 1; levelsWrite(o);
+    var nx = done + 1 < LEVELS.length ? ('解锁 ' + LEVELS[done + 1].name + ':' + LEVELS[done + 1].tip) : '这套鼓点三关都过了';
+    H.toast('「' + t.name + '」' + L.name + ' 通过 · ' + nx, { ms: 6000 });
+    paintStats();
+  }
+  function paintLevelLine() {
+    var t = TEMPLATES[tmplIdx], done = levelsDone(t);
+    if (done >= LEVELS.length) return '<span style="color:var(--c-ok)">关卡:<b>' + H.esc(t.name) + '</b> 三关全部通过 ✓</span>';
+    return '<span style="color:#6e6e73">关卡:<b>' + H.esc(t.name) + '</b> 第 ' + (done + 1) + '/' + LEVELS.length + ' 关 · 目标 ' + H.esc(LEVELS[done].tip) + '</span>';
+  }
   function avgOf(st) { return st.offsets.length ? Math.round(st.offsets.reduce(function (a, b) { return a + b; }, 0) / st.offsets.length) : null; }
   // 准确率与评级:全部本地算、口径写在界面上("偏差 ≤120ms 的敲击占比"),不做玄学分数。
   // 依据:NN/g 游戏化"先反馈再计分"+ ZType/Monkeytype 那种"立刻给结果、马上能再来一次"的做法。
@@ -278,10 +309,12 @@ export function mount(root, H) {
     // 常驻显示(不只点了才显示):用户一进页面就该看到"今天有挑战、我连了几天" ——
     // 第一版只在 dailyOn 时显示,于是没点过的人完全不知道有这回事(端到端测试抓到的)。
     lines.push(paintDailyLine());
+    if (mode === 'beat' && !duo) lines.push(paintLevelLine());
     lines.push('伴奏:<b>' + t.name + '</b> · ' + bpm + ' BPM' + (t.id === 'none' ? '(可以自己敲节奏)' : ''));
     lines.push('<span style="color:#6e6e73">声音全部由浏览器现场合成,没有音频文件,也没有任何请求。</span>');
     statsEl.innerHTML = lines.map(function (l) { return '<div>' + l + '</div>'; }).join('');
     // 打满目标就结算一次,并把"今天来过了"记在本机;结果卡给"再来一次"
+    tryLevel();
     if (dailyOn && mode === 'beat' && P[0].hits === DAILY_GOAL) {
       var gr = gradeOf(P[0]), acc = accOf(P[0]);
       if (gr) {
@@ -302,6 +335,7 @@ export function mount(root, H) {
     }).join('');
   }
   paintKbd();
+  if (tmplIdx) { var _tb = root.querySelector('#tmpl'); if (_tb) _tb.textContent = '伴奏:' + TEMPLATES[tmplIdx].name; }
 
   // 节拍模板:每个模板用 16 分音符的字符串谱表示(1 = 这一格打一下)
   var TEMPLATES = [
@@ -311,6 +345,11 @@ export function mount(root, H) {
     { id: 'none', name: '无伴奏', bpm: 100, kick: '', hat: '' }
   ];
   var tmplIdx = 0;
+  try {
+    var lastTmpl = localStorage.getItem('tb-tmpl');
+    if (lastTmpl) { TEMPLATES.forEach(function (t, i) { if (t.id === lastTmpl) tmplIdx = i; }); }
+  } catch (e) { /* 隐私模式读不了就用第一套 */ }
+  function saveTmpl() { try { localStorage.setItem('tb-tmpl', TEMPLATES[tmplIdx].id); } catch (e) {} }
   function startLoop() {
     stopLoop();
     ensureAudio();
@@ -334,6 +373,20 @@ export function mount(root, H) {
     }, 25);
   }
   function stopLoop() { if (loopTimer) { clearInterval(loopTimer); loopTimer = null; } }
+  // 模板试听:切模板时用同一套合成器把这两小节鼓点排进 AudioContext,先听再玩。
+  // 依据(内部文档第 8 节清单第 1 条):"模板怎么选"是上手卡点,试听比看名字强。
+  function previewTemplate(t) {
+    try { ensureAudio(); } catch (e) { return; }
+    if (!ac) return;
+    var stepSec = (60 / t.bpm) / 4, t0 = ac.currentTime + 0.06, notes = 0;
+    for (var i = 0; i < 32; i++) {   // 两小节
+      var when = t0 + i * stepSec, k = i % 16;
+      if (t.kick.charAt(k) === '1') { playKick(when); notes++; }
+      if (t.hat.charAt(k) === '1') { playHat(when); notes++; }
+      if (t.clap && t.clap.charAt(k) === '1') { playSnare(when); notes++; }
+    }
+    if (root.__btTest) { root.__btTest.previews++; root.__btTest.notes += notes; }
+  }
 
   function start() {
     try { ensureAudio(); } catch (e) { out.innerHTML = '<div class="note err" style="display:block">' + H.esc(H.friendlyError(e, '音频初始化失败')) + '</div>'; return; }
@@ -344,6 +397,18 @@ export function mount(root, H) {
     hitAt(null, null);
   }
   root.querySelector('#start').addEventListener('click', start);
+  // 自测钩子:关卡达标依赖真实敲击时序,端到端很难稳定复现"刚好达标";
+  // 这里提供一个入口直接塞统计值再跑判定,用来验"解锁 → 落盘 localStorage → UI 更新"这条链路(只给测试用)。
+  root.__btTest = {
+    previews: 0, notes: 0,
+    forceClear: function (acc, best, hits) {
+      var n = Math.max(1, hits || 20), off = [];
+      for (var i = 0; i < n; i++) off.push(i < Math.round(n * acc / 100) ? 10 : 300);
+      P[0].hits = n; P[0].best = best || 0; P[0].offsets = off; clearedThisRun = false;
+      mode = 'beat'; tryLevel();
+      return levelsRead();
+    }
+  };
   var dailyBtn = root.querySelector('#daily');
   function startDaily() {
     var t = TEMPLATES[dailyIdx()];
@@ -403,6 +468,8 @@ export function mount(root, H) {
   root.querySelector('#tmpl').addEventListener('click', function () {
     tmplIdx = (tmplIdx + 1) % TEMPLATES.length;
     root.querySelector('#tmpl').textContent = '伴奏:' + TEMPLATES[tmplIdx].name;
+    saveTmpl();
+    previewTemplate(TEMPLATES[tmplIdx]);   // 切了就听得到,不用先开始
     resetStats();
     if (mode === 'beat' && started) startLoop();
     paintStats();
