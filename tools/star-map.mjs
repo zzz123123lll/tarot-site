@@ -29,6 +29,26 @@ export function mount(root, H) {
     { name: '说明文', text: '全部在浏览器里完成\n文件不会离开这台电脑\n不联网\n不上传\n不用注册', title: '为什么本地' }
   ];
   var SAMPLE = EXAMPLES[0].text;
+  // 今日星图:每天固定一篇,所有人当天看到同一片星空 —— 复玩理由来自"每天只有一篇"
+  // (Wordle 的每日同题做法,见 内部文档/计划-作品线成熟化.md 第 8 节 The Verge 的分析)
+  var DAILY = [
+    { t: '静夜思', x: '床前明月光\n疑是地上霜\n举头望明月\n低头思故乡' },
+    { t: '登鹳雀楼', x: '白日依山尽\n黄河入海流\n欲穷千里目\n更上一层楼' },
+    { t: '春晓', x: '春眠不觉晓\n处处闻啼鸟\n夜来风雨声\n花落知多少' },
+    { t: '江雪', x: '千山鸟飞绝\n万径人踪灭\n孤舟蓑笠翁\n独钓寒江雪' },
+    { t: '相思', x: '红豆生南国\n春来发几枝\n愿君多采撷\n此物最相思' },
+    { t: '赋得古原草送别', x: '离离原上草\n一岁一枯荣\n野火烧不尽\n春风吹又生' },
+    { t: '悯农', x: '锄禾日当午\n汗滴禾下土\n谁知盘中餐\n粒粒皆辛苦' }
+  ];
+  function dailyIndex() {
+    var d = new Date();
+    var days = Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
+    return ((days % DAILY.length) + DAILY.length) % DAILY.length;
+  }
+  function dailyLabel() {
+    var d = new Date();
+    return (d.getMonth() + 1) + ' 月 ' + d.getDate() + ' 日';
+  }
   root.innerHTML =
     '<h1 class="tool-h1">文字星图</h1>' +
     '<p class="tool-sub">写下一段文字,它会变成一片星空:<b>每个字是一颗星</b>,字与字之间的连线就是句子的走向。同一段文字永远是同一片星空,可以导出成分享图。</p>' +
@@ -38,6 +58,7 @@ export function mount(root, H) {
         '<div class="tool-row" style="margin-top:14px">' +
           '<button class="tool-btn" id="poster">导出分享图(PNG)</button>' +
           '<button class="tool-btn tool-btn--ghost" id="again">换一片星空</button>' +
+          '<button class="tool-btn" id="daily">今日星图</button>' +
           '<button class="tool-btn tool-btn--ghost" id="eg">换个例子</button>' +
           '<span class="idp-hint" id="info"></span>' +
         '</div>' +
@@ -49,6 +70,7 @@ export function mount(root, H) {
         '<div class="sm-field"><label for="body">文字(每换行一句,逗号句号也算断开)</label><textarea class="sm-input" id="body" rows="7" spellcheck="false"></textarea></div>' +
         '<div class="sm-legend" id="legend" role="status" aria-live="polite"></div>' +
         '<div class="sm-score" id="score" role="status" aria-live="polite"></div>' +
+        '<p class="sm-oneline" id="dailyline"></p>' +
         '<p class="sm-oneline">把鼠标放到星星上(手机点一下),能看到它是哪个字。</p>' +
         '<p class="sm-oneline">全部在浏览器里算:不联网、不上传、不用 AI。同一段文字 + 同一个种子 → 同一片星空。</p>' +
       '</div>' +
@@ -58,6 +80,8 @@ export function mount(root, H) {
   var body = root.querySelector('#body'), titleEl = root.querySelector('#title');
   var legend = root.querySelector('#legend'), info = root.querySelector('#info'), out = root.querySelector('#out');
   body.value = SAMPLE;
+  var _dailyLine = root.querySelector('#dailyline');
+  if (_dailyLine) _dailyLine.textContent = '今日星图(' + dailyLabel() + '):《' + DAILY[dailyIndex()].t + '》—— 点上面的按钮就能载入。';
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var salt = 0, mode = 'char';
   var stars = [], lines = [], hoverIdx = -1;
@@ -77,6 +101,17 @@ export function mount(root, H) {
     salt = 0; build();          // 换例子要看到立刻出图,不需要用户再点别的(NN/g:首屏可试)
     H.toast('例子:' + EXAMPLES[egIdx].name + '(再点一次换下一个)', { ms: 4000 });
   });
+
+  var dailyBtn = root.querySelector('#daily');
+  function loadDaily(announce) {
+    var it = DAILY[dailyIndex()];
+    body.value = it.x; titleEl.value = it.t; salt = 0;
+    build();
+    var line = root.querySelector('#dailyline');
+    if (line) line.textContent = '今日星图(' + dailyLabel() + '):《' + it.t + '》—— 每天换一篇,当天所有人看到的是同一片星空。';
+    if (announce) H.toast('今日星图:《' + it.t + '》', { ms: 4500 });
+  }
+  dailyBtn.addEventListener('click', function () { loadDaily(true); });
 
   // 目标与计分:先给可核对的反馈,再折算成"星等"(NN/g 游戏化:以学习者为中心、先反馈后计分)
   function gradeUnits(n, dupKinds, maxCount, sentenceCount) {
