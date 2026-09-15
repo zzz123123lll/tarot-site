@@ -13,9 +13,22 @@ export function mount(root, H) {
     + ".sm-oneline{font-size:14px;color:#6e6e73;margin-top:8px}"
     + ".sm-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}"
     + ".sm-chip{min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--c-line-strong);background:#fff;font-size:14px;cursor:pointer}"
-    + ".sm-chip.active{background:var(--c-accent);border-color:var(--c-accent);color:#fff}");
+    + ".sm-chip.active{background:var(--c-accent);border-color:var(--c-accent);color:#fff}"
+    + ".sm-score{margin-top:12px;border:1px solid var(--c-hairline);border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.7}"
+    + ".sm-score .st{font-size:20px;color:#e8a33d;letter-spacing:2px}"
+    + ".sm-score .lb{font-weight:600;margin-left:8px}"
+    + ".sm-score .why{color:#6e6e73;margin-top:4px}"
+    + ".sm-score .mx{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;color:#3a3a3c}"
+    + ".sm-score .mx b{font-variant-numeric:tabular-nums}");
 
-  var SAMPLE = '床前明月光\n疑是地上霜\n举头望明月\n低头思故乡';
+  // 引导:不知道写什么是最常见的卡点(NN/g 渐进披露:首屏给能直接用的例子,别弹教程)
+  var EXAMPLES = [
+    { name: '古诗', text: '床前明月光\n疑是地上霜\n举头望明月\n低头思故乡', title: '静夜思' },
+    { name: '名单', text: '张伟\n王芳\n李娜\n张伟\n刘洋\n王芳\n陈静\n张伟', title: '点名册' },
+    { name: '金句', text: '慢慢来\n比较快\n把一件小事\n做到不需要解释', title: '慢慢来' },
+    { name: '说明文', text: '全部在浏览器里完成\n文件不会离开这台电脑\n不联网\n不上传\n不用注册', title: '为什么本地' }
+  ];
+  var SAMPLE = EXAMPLES[0].text;
   root.innerHTML =
     '<h1 class="tool-h1">文字星图</h1>' +
     '<p class="tool-sub">写下一段文字,它会变成一片星空:<b>每个字是一颗星</b>,字与字之间的连线就是句子的走向。同一段文字永远是同一片星空,可以导出成分享图。</p>' +
@@ -25,6 +38,7 @@ export function mount(root, H) {
         '<div class="tool-row" style="margin-top:14px">' +
           '<button class="tool-btn" id="poster">导出分享图(PNG)</button>' +
           '<button class="tool-btn tool-btn--ghost" id="again">换一片星空</button>' +
+          '<button class="tool-btn tool-btn--ghost" id="eg">换个例子</button>' +
           '<span class="idp-hint" id="info"></span>' +
         '</div>' +
         '<div id="out"></div>' +
@@ -34,6 +48,7 @@ export function mount(root, H) {
         + '<div class="sm-field"><label for="title">标题(可留空)</label><input class="sm-input" id="title" value="静夜思"></div>' +
         '<div class="sm-field"><label for="body">文字(每换行一句,逗号句号也算断开)</label><textarea class="sm-input" id="body" rows="7" spellcheck="false"></textarea></div>' +
         '<div class="sm-legend" id="legend" role="status" aria-live="polite"></div>' +
+        '<div class="sm-score" id="score" role="status" aria-live="polite"></div>' +
         '<p class="sm-oneline">把鼠标放到星星上(手机点一下),能看到它是哪个字。</p>' +
         '<p class="sm-oneline">全部在浏览器里算:不联网、不上传、不用 AI。同一段文字 + 同一个种子 → 同一片星空。</p>' +
       '</div>' +
@@ -53,6 +68,30 @@ export function mount(root, H) {
     build();
   });
   var W = cv.width, Hh = cv.height;
+  var scoreEl = root.querySelector('#score');
+  var egBtn = root.querySelector('#eg'), egIdx = 0;
+  egBtn.addEventListener('click', function () {
+    egIdx = (egIdx + 1) % EXAMPLES.length;
+    body.value = EXAMPLES[egIdx].text;
+    titleEl.value = EXAMPLES[egIdx].title;
+    salt = 0; build();          // 换例子要看到立刻出图,不需要用户再点别的(NN/g:首屏可试)
+    H.toast('例子:' + EXAMPLES[egIdx].name + '(再点一次换下一个)', { ms: 4000 });
+  });
+
+  // 目标与计分:先给可核对的反馈,再折算成"星等"(NN/g 游戏化:以学习者为中心、先反馈后计分)
+  function gradeUnits(n, dupKinds, maxCount, sentenceCount) {
+    // 文案里不写"几颗星":星星本身已经画出来了,而"重复"会再加一颗 ——
+    // 第一版把星数写进 label,于出现过 ★★★★★ 旁边写着"四颗星"的自相矛盾(自己读出来的)。
+    var stars = 1, label = '太短了', why = '';
+    if (n >= 60) { stars = 5; label = '一片完整的星空'; }
+    else if (n >= 20) { stars = 4; label = '够铺开一片天'; }
+    else if (n >= 6) { stars = 3; label = '能连成星座了'; }
+    else if (n >= 3) { stars = 2; label = '再写一句'; }
+    if (dupKinds > 0 && stars < 5) { stars += 1; why = '有 ' + dupKinds + ' 个单位重复出现,星星更大更亮,加一颗。'; }
+    else if (dupKinds === 0 && stars >= 3) { why = '没有重复的单位,星空比较均匀。'; }
+    else if (n < 6) { why = '单位太少,连不成星座 —— 多写几行就好看多了。'; }
+    return { stars: stars, label: label, why: why, sentenceCount: sentenceCount, maxCount: maxCount };
+  }
 
   // ---------- 确定性随机:同一段文字必须得到同一片星空 ----------
   function hashStr(s) {
@@ -122,6 +161,19 @@ export function mount(root, H) {
     lines = seq;
     hoverIdx = -1;
     var unit = mode === 'char' ? '个字符' : (mode === 'phrase' ? '个词句' : '行');
+    // 指标条 + 星等:都是本地能核对出来的数,不编造
+    var units = text.replace(/[\s\u3000]/g, '').length;
+    var uniqChars = Object.keys(freq).length;
+    var sentenceCount = text.split(/\n/).filter(function (x) { return x.trim(); }).length;
+    var longest = text.split(/\n/).reduce(function (a, x) { return Math.max(a, x.replace(/[\s\u3000]/g, '').length); }, 0);
+    var gr = gradeUnits(stars.length, dupKinds, maxCount, sentenceCount);
+    var stTxt = '';
+    for (var si = 0; si < 5; si++) stTxt += (si < gr.stars ? '★' : '☆');
+    scoreEl.innerHTML = '<div><span class="st">' + stTxt + '</span><span class="lb">' + H.esc(gr.label) + '</span></div>'
+      + '<div class="why">' + H.esc(gr.why) + '</div>'
+      + '<div class="mx"><span>星 <b>' + stars.length + '</b></span><span>句 <b>' + sentenceCount + '</b></span>'
+      + '<span>不重复单位 <b>' + uniqChars + '</b></span><span>最长句 <b>' + longest + '</b> 字符</span>'
+      + (dupKinds ? '<span>重复 <b>' + dupKinds + '</b> 种,最多 <b>' + maxCount + '</b> 次</span>' : '') + '</div>';
     info.textContent = '共 ' + stars.length + ' 颗星(按' + unit + '计)'
       + (dupKinds ? ' · ' + dupKinds + ' 个重复出现,最多 ' + maxCount + ' 次(重复的星更大更亮)' : '');
     paintLegend();
