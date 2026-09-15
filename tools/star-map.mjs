@@ -85,6 +85,9 @@ export function mount(root, H) {
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var salt = 0, mode = 'char';
   var stars = [], lines = [], hoverIdx = -1;
+  // 超长文本降级:一份几千字的稿子硬画会糊成一片、还会卡。这里设上限并**如实告诉用户少画了多少**,
+  // 而不是默默吞掉后半段(调研清单第 5 条:就地提示并降级)。
+  var MAX_UNITS = 600, truncatedFrom = 0;
   // 分享图要能"讲故事":把指标与星等带到图上(调研:分享图只给结论没人转,要带过程/指标)
   var meta = { stars: 0, sentences: 0, units: 0, longest: 0, dupKinds: 0, maxCount: 0, rating: '', label: '' };
   root.querySelector('#mode').addEventListener('click', function (e) {
@@ -167,6 +170,11 @@ export function mount(root, H) {
   function build() {
     var text = body.value || '';
     var cs = tokensFor(text, mode);
+    truncatedFrom = 0;
+    if (cs.length > MAX_UNITS) {
+      truncatedFrom = cs.length;
+      cs = cs.slice(0, MAX_UNITS);
+    }
     // 词频:重复出现的单位要更大更亮(同一句话里重复的名字/词,一眼能看出来)
     var freq = {};
     cs.forEach(function (c) { if (c.br) return; freq[c.ch] = (freq[c.ch] || 0) + 1; });
@@ -213,6 +221,14 @@ export function mount(root, H) {
       + (dupKinds ? '<span>重复 <b>' + dupKinds + '</b> 种,最多 <b>' + maxCount + '</b> 次</span>' : '') + '</div>';
     meta.stars = stars.length; meta.sentences = sentenceCount; meta.units = uniqChars; meta.longest = longest;
     meta.dupKinds = dupKinds; meta.maxCount = maxCount; meta.rating = stTxt; meta.label = gr.label;
+    if (truncatedFrom) {
+      // 说明白:省掉了多少、怎么才能全画完
+      // 文案里的数字必须与画面一致:按字模式的"每行末尾分隔记号"不画成星,
+      // 所以"只画了前 600 个"会和"共 575 颗星"对不上 —— 直接用真实星数说。
+      scoreEl.innerHTML += '<div class="why" style="color:#a1500a;margin-top:6px">这段共 <b>' + truncatedFrom
+        + '</b> 个单位,超过上限 <b>' + MAX_UNITS + '</b> —— 现在画面里是前 <b>' + stars.length
+        + '</b> 个(星空再密就糊成一片、也会卡)。想全画完:按段落分成几次,或切到「按行」模式(每行一颗星)。</div>';
+    }
     info.textContent = '共 ' + stars.length + ' 颗星(按' + unit + '计)'
       + (dupKinds ? ' · ' + dupKinds + ' 个重复出现,最多 ' + maxCount + ' 次(重复的星更大更亮)' : '');
     paintLegend();
