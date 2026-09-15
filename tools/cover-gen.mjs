@@ -93,7 +93,7 @@ export function mount(root, H) {
     if (u) u.disabled = hIdx <= 0;
     if (r) r.disabled = hIdx >= history.length - 1;
   }
-  var state = { tpl: 'xhs-bold', size: 'xhs', style: 'bold', color: '#0071e3', align: 'left', title: '把文件改到能通过为止', sub: '22 个本地小工具 · 不上传不注册', tag: '' };
+  var state = { fmt: 'image/png', tpl: 'xhs-bold', size: 'xhs', style: 'bold', color: '#0071e3', align: 'left', title: '把文件改到能通过为止', sub: '22 个本地小工具 · 不上传不注册', tag: '' };
 
   root.innerHTML =
     '<h1 class="tool-h1">封面图生成</h1>' +
@@ -102,6 +102,7 @@ export function mount(root, H) {
       '<div><div class="cv-stage"><canvas id="cv" width="1080" height="1440" aria-label="封面预览"></canvas></div>' +
       '<div class="tool-row" style="margin-top:14px"><button class="tool-btn" id="dl">下载 PNG</button>' +
       '<button class="tool-btn tool-btn--ghost" id="set">导出一套尺寸(ZIP)</button>' +
+      '<span class="cv-chips" id="fmt" style="margin:0"><button class="cv-chip active" data-f="image/png">PNG</button><button class="cv-chip" data-f="image/jpeg">JPG(更小)</button></span>' +
       '<span class="idp-hint" id="info"></span></div></div>' +
       '<div>' +
         '<div class="cv-field"><label>模板(' + TEMPLATES.length + ' 个版式骨架,选中即套用规格与配色)</label><div class="cv-tpls" id="tpl"></div></div>' +
@@ -174,6 +175,11 @@ export function mount(root, H) {
     var k = (ev.key || '').toLowerCase();
     if (k === 'z' && !ev.shiftKey) { ev.preventDefault(); undo(); }
     else if ((k === 'z' && ev.shiftKey) || k === 'y') { ev.preventDefault(); redo(); }
+  });
+  root.querySelector('#fmt').addEventListener('click', function (ev) {
+    var b = ev.target.closest('.cv-chip'); if (!b) return;
+    state.fmt = b.dataset.f;
+    root.querySelectorAll('#fmt .cv-chip').forEach(function (x) { x.classList.toggle('active', x === b); });
   });
   root.querySelector('#mtSave').addEventListener('click', saveMyTemplate);
   root.querySelector('#mtList').addEventListener('click', function (ev) {
@@ -700,11 +706,12 @@ export function mount(root, H) {
       var chk = await H.checkImage(blob);
       var s = sizeOf();
       var ok = chk.ok && chk.width === s.w && chk.height === s.h;
-      if (ok) H.downloadBlob(blob, 'cover-' + s.id + '-' + s.w + 'x' + s.h + '.png');
+      var ext = state.fmt === 'image/jpeg' ? '.jpg' : '.png';
+      if (ok) H.downloadBlob(blob, 'cover-' + s.id + '-' + s.w + 'x' + s.h + ext);
       out.innerHTML = '<div class="note ' + (ok ? 'ok' : 'err') + '" style="display:block">'
-        + (ok ? '已导出 ' + chk.width + ' × ' + chk.height + ' · ' + H.fmt(chk.bytes) + '(自检 ✓ 尺寸与所选平台一致)'
+        + (ok ? '已导出 ' + chk.width + ' × ' + chk.height + ' · ' + H.fmt(chk.bytes) + ' · ' + (state.fmt === 'image/jpeg' ? 'JPG' : 'PNG') + '(自检 ✓ 尺寸与所选平台一致)'
               : '自检没通过,先别拿去发:' + H.esc(chk.error || '尺寸不符')) + '</div>';
-    }, 'image/png');
+    }, state.fmt, state.fmt === 'image/jpeg' ? 0.92 : undefined);
   });
 
   // 一稿多尺寸:同一份标题与配色,一次导出"小红书 + 公众号 + 视频号 + 方图"四个规格。
@@ -723,8 +730,9 @@ export function mount(root, H) {
         if (!s) continue;
         state.size = id; exporting = true; render();
         await new Promise(function (r) { requestAnimationFrame(function () { requestAnimationFrame(r); }); });
-        var blob = await new Promise(function (r) { cv.toBlob(r, 'image/png'); });
-        if (blob) files.push({ name: 'cover-' + id + '-' + s.w + 'x' + s.h + '.png', blob: blob });
+        var blob = await new Promise(function (r) { cv.toBlob(r, state.fmt, state.fmt === 'image/jpeg' ? 0.92 : undefined); });
+        var ext2 = state.fmt === 'image/jpeg' ? '.jpg' : '.png';
+        if (blob) files.push({ name: 'cover-' + id + '-' + s.w + 'x' + s.h + ext2, blob: blob });
       }
     } catch (e) {
       out.innerHTML = '<div class="note err" style="display:block">导出这套尺寸时出错:' + H.esc(H.friendlyError(e, '导出失败')) + '</div>';

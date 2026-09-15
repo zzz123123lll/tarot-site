@@ -227,6 +227,10 @@ export function mount(root, H) {
   function levelsRead() { try { return JSON.parse(localStorage.getItem('tb-levels') || '{}'); } catch (e) { return {}; } }
   function levelsWrite(o) { try { localStorage.setItem('tb-levels', JSON.stringify(o)); } catch (e) {} }
   function levelsDone(t) { var o = levelsRead(); return Math.min(LEVELS.length, o[t.id] || 0); }
+  // 难度曲线:每过一关,同一套鼓点提速 8% —— 之前只有"准确率门槛",没有速度变化,练到后面手感是平的。
+  // 每日挑战不加速(它是"每天同一题",所有人在同一起跑线才有可比性)。
+  function levelSpeedPct(t) { return dailyOn ? 0 : 8 * levelsDone(t); }
+  function effBpm(t) { return Math.round(t.bpm * (1 + levelSpeedPct(t) / 100)); }
   function tryLevel() {
     if (mode !== 'beat' || duo) return;
     // 一次只过一关:否则一轮好成绩会把三关一口气全清掉,后两关连提示都来不及显示,
@@ -240,14 +244,19 @@ export function mount(root, H) {
     if (acc === null || acc < L.acc || P[0].best < L.best) return;
     clearedThisRun = true;
     var o = levelsRead(); o[t.id] = done + 1; levelsWrite(o);
-    var nx = done + 1 < LEVELS.length ? ('解锁 ' + LEVELS[done + 1].name + ':' + LEVELS[done + 1].tip) : '这套鼓点三关都过了';
+    var nx = done + 1 < LEVELS.length
+      ? ('解锁 ' + LEVELS[done + 1].name + ':' + LEVELS[done + 1].tip + ';速度提到 ' + effBpm(t) + ' BPM')
+      : '这套鼓点三关都过了(已是最快)';
     H.toast('「' + t.name + '」' + L.name + ' 通过 · ' + nx, { ms: 6000 });
+    if (started && mode === 'beat' && !duo) startLoop();   // 立刻用新速度继续,不用等下一次开始
     paintStats();
   }
   function paintLevelLine() {
     var t = TEMPLATES[tmplIdx], done = levelsDone(t);
     if (done >= LEVELS.length) return '<span style="color:var(--c-ok)">关卡:<b>' + H.esc(t.name) + '</b> 三关全部通过 ✓</span>';
-    return '<span style="color:#6e6e73">关卡:<b>' + H.esc(t.name) + '</b> 第 ' + (done + 1) + '/' + LEVELS.length + ' 关 · 目标 ' + H.esc(LEVELS[done].tip) + '</span>';
+    var sp = levelSpeedPct(t);
+    return '<span style="color:#6e6e73">关卡:<b>' + H.esc(t.name) + '</b> 第 ' + (done + 1) + '/' + LEVELS.length + ' 关 · 目标 ' + H.esc(LEVELS[done].tip)
+      + ' · 速度 ' + effBpm(t) + ' BPM' + (sp ? '(比原速快 ' + sp + '%)' : '(原速)') + '</span>';
   }
   function avgOf(st) { return st.offsets.length ? Math.round(st.offsets.reduce(function (a, b) { return a + b; }, 0) / st.offsets.length) : null; }
   // 准确率与评级:全部本地算、口径写在界面上("偏差 ≤120ms 的敲击占比"),不做玄学分数。
@@ -354,7 +363,7 @@ export function mount(root, H) {
     stopLoop();
     ensureAudio();
     var t = TEMPLATES[tmplIdx];
-    bpm = t.bpm;
+    bpm = effBpm(t);   // 按当前关卡难度取速度(过一关 +8%)
     var stepMs = (60000 / bpm) / 4;   // 十六分音符
     var stepIdx = 0;
     nextBeatAt = timeNow();
@@ -418,6 +427,7 @@ export function mount(root, H) {
     root.querySelectorAll('.bt-chip[data-m]').forEach(function (x) { x.classList.toggle('active', x.dataset.m === 'beat'); });
     resetStats(); paintStats(); paintKbd();
     if (!started) start();
+    else if (mode === 'beat') startLoop();   // 已经在跑就用当日模板重起循环(原来只改了状态,bpm 还是旧的)
     H.toast('今日挑战:' + t.name + ' · ' + bpm + ' BPM —— 打满 ' + DAILY_GOAL + ' 下看评级', { ms: 5200 });
   }
   if (dailyBtn) dailyBtn.addEventListener('click', startDaily);
