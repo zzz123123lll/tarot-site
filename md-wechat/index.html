@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231d1d1f'/%3E%3Cpath d='M50 16L59 41L84 50L59 59L50 84L41 59L16 50L41 41Z' fill='%23e6c784'/%3E%3C/svg%3E">
+<title>Markdown 转公众号排版 - 内联样式,一键复制不变形 · 工具盒</title>
+<meta name="description" content="把 Markdown 转成微信公众号排版:全部用内联样式,一键复制富文本粘进公众号编辑器不会变形;提供三套风格与 HTML 导出。纯本地处理,不上传。">
+<link rel="canonical" href="https://gongjuhe.top/md-wechat/">
+<meta property="og:title" content="Markdown 转公众号排版 - 一键复制不变形 · 工具盒">
+<meta property="og:description" content="Markdown → 公众号排版:内联样式,复制粘贴不变形。本机处理,不上传。">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://gongjuhe.top/og.png">
+<meta property="og:url" content="https://gongjuhe.top/md-wechat/">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="工具盒">
+<link rel="preload" href="/vendor/fonts/Geist-sub.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts.css?v=4">
+<link rel="stylesheet" href="/base.css?v=7">
+<link rel="stylesheet" href="/tool.css?v=36">
+</head>
+<body>
+<nav class="tool-nav">
+  <a class="tool-nav-brand" href="/"><span class="nav-mark"><svg class="nav-star" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.4l2.55 7.05L21.6 12l-7.05 2.55L12 21.6l-2.55-7.05L2.4 12l7.05-2.55z" fill="currentColor"/></svg></span>工具盒</a>
+  <span class="tool-nav-title" id="toolTitle"></span>
+</nav>
+<div class="tool-container" id="toolRoot"><div class="tool-static"><h1 class="tool-h1">Markdown → 公众号排版</h1><p class="tool-sub">把 Markdown 粘进来，右边直接是公众号里该有的样子：字体、行距、引用、代码、列表都用内联样式写好，一键复制即可粘进公众号编辑器——不会像普通网页那样“看着好看，粘过去就变形”。</p><p class="tool-static-note">这个工具在你的浏览器里本地运行，内容不会上传到任何服务器；加载完成后下方即可直接使用。</p></div></div>
+<script type="module">
+import { mountTool } from '/shared/toolkit.js?v=37';
+function slugFromPath() {
+  var p = (location.pathname || '').replace(/^\/+|\/+$/g, '');
+  if (p.indexOf('tools/') === 0) p = p.slice(6);
+  return p;
+}
+mountTool(slugFromPath(), document.getElementById('toolRoot'), document.getElementById('toolTitle'));
+</script>
+<script>
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=20'); });
+}
+</script>
+  <footer class="tool-foot"><h2 class="tool-more-title">接着可以做什么</h2><div class="tool-more-grid"><a class="tool-more-card" data-fx="spotlight" href="/text-clean/"><span class="tmc-name">文本整理与对比</span><span class="tmc-desc">清理换行 + 逐字比对。</span></a><a class="tool-more-card" data-fx="spotlight" href="/cover-gen/"><span class="tmc-name">封面图生成</span><span class="tmc-desc">输入标题，出平台尺寸封面。</span></a><a class="tool-more-card" data-fx="spotlight" href="/img-compress/"><span class="tmc-name">图片压缩</span><span class="tmc-desc">公众号配图压到能上传。</span></a></div><p class="tool-foot-line">小工具 · 全部工具本地运行，文件不上传</p><nav class="tool-foot-links" aria-label="相关页面"><a href="/text-clean/">文本整理与对比</a><a href="/cover-gen/">封面图生成</a><a href="/watermark/">批量加水印</a><a href="/verify/">怎么验证不上传</a><a href="/">全部工具</a></nav></footer>
+  <script defer src="/assets/pointer-fx.js?v=1"></script>
+</body>
+</html>

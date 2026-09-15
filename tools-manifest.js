@@ -25,6 +25,7 @@ window.TOOLS = {
     { slug: 'invoice-check', name: '发票查重', desc: '本地读电子发票 PDF 的号码/日期/金额，标出重复提交并导出报销清单。', section: 'pdf', icon: 'receipt-search', url: '/invoice-check/', status: 'live' },
     { slug: 'json', name: 'JSON 格式化', desc: '美化、校验、压缩 JSON。', section: 'utility', icon: 'braces', url: '/tools/json/', status: 'live' },
     { slug: 'text-clean', name: '文本整理与对比', desc: '清理复制来的多余换行与空格;两份文本逐字符比对。', section: 'utility', icon: 'code', url: '/text-clean/', status: 'live' },
+    { slug: 'md-wechat', name: '公众号排版', desc: 'Markdown 转公众号排版,内联样式一键复制不变形。', section: 'utility', icon: 'code', url: '/md-wechat/', status: 'live' },
     { slug: 'base64', name: 'Base64 编解码', desc: '文本与 Base64 互转。', section: 'utility', icon: 'binary', url: '/tools/base64/', status: 'live' },
     { slug: 'regex', name: '正则测试', desc: '正则表达式实时匹配。', section: 'utility', icon: 'regex', url: '/tools/regex/', status: 'live' },
     { slug: 'color', name: '颜色工具', desc: 'RGB / HEX / HSL 互转。', section: 'utility', icon: 'palette', url: '/tools/color/', status: 'live' },

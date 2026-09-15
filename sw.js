@@ -11,7 +11,7 @@
 //      断网时用户看到的是"工具打不开",而不是一个可用的降级页面;
 //   3) 工具页要能离线**处理文件**,除 HTML 与工具模块外还需要 /shared/encoders.js、
 //      encoder-worker.js、encoder-core.js 与 /vendor/encoders/* —— 这些在"第一次成功处理"时才进缓存。
-const CACHE = 'gongjuhe-v26';
+const CACHE = 'gongjuhe-v27';
 // 兜底说明页(断网打开一个确实没缓存过的地址时用,塔罗页也走这条路径)。
 // 注意必须写**最终地址** /offline:Cloudflare Pages 会把 /offline.html 用 308 跳到 /offline,
 // 而"带 redirect 标记的缓存响应"在导航时会被 Chromium 直接拒绝(ERR_FAILED)——
@@ -28,6 +28,7 @@ const OFFLINE_PAGE_ALT = '/offline.html';
 // 只缓存它的 HTML 会得到一个没样式、点不动的页面 —— 那比"老实告诉你这一页还没缓存"更糟;
 // 全量缓存又等于让每个只想来格式化 JSON 的人多下 305KB。它仍然按老规则工作:在线访问过一次,之后断网可用。
 const TOOL_PAGES = [
+  '/md-wechat/',
   '/text-clean/',
   '/watermark/',
   '/star-map/',
@@ -41,6 +42,7 @@ const TOOL_PAGES = [
 // 不会挂载 —— 用户看到的是空壳,这属于假承诺。模块很小,直接全带上。
 // 台账必须与 shared/toolkit.js 的 REGISTRY 一致,一致性自检会核对。
 const MODULES = [
+  '/tools/md-wechat.mjs',
   '/tools/text-clean.mjs',
   '/tools/watermark.mjs',
   '/tools/star-map.mjs',

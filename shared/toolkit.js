@@ -454,6 +454,7 @@ const REGISTRY = {
   'pdf-render': { title: 'PDF 转图片', module: '/tools/pdf-render.mjs', v: 6 },
   'invoice-check': { title: '发票查重', module: '/tools/invoice-check.mjs', v: 3 },
   'pdf-compress': { title: 'PDF 压缩', module: '/tools/pdf-compress.mjs', v: 9 },
+  'md-wechat': { title: 'Markdown 转公众号', module: '/tools/md-wechat.mjs', v: 1 },
   'text-clean': { title: '文本整理与对比', module: '/tools/text-clean.mjs', v: 1 },
   'json': { title: 'JSON 格式化', module: '/tools/json.mjs', v: 6 },
   'base64': { title: 'Base64 编解码', module: '/tools/base64.mjs', v: 5 },
