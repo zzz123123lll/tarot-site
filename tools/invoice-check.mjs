@@ -185,7 +185,11 @@ export function mount(root, H) {
       H.downloadBlob(new Blob([csvFor(dup)], { type: 'text/csv;charset=utf-8' }), '发票重复清单.csv');
     });
     var c3 = root.querySelector('#clr');
-    if (c3) c3.addEventListener('click', function () { rows = []; render(); say('已清空。'); });
+    if (c3) c3.addEventListener('click', function () {
+      var snap = rows.slice();
+      rows = []; render(); say('已清空。');
+      if (snap.length) H.toast('已清空 ' + snap.length + ' 张', { action: '撤销', onAction: function () { rows = snap; render(); say('已恢复 ' + snap.length + ' 张。'); } });
+    });
   }
 
   async function analyze(files) {

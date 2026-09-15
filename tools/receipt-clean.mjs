@@ -363,5 +363,9 @@ export function mount(root, H) {
     var list = items.filter(function (i) { return i.status === 'ok'; }).map(function (i) { return { name: i.outName, blob: i.blob }; });
     if (list.length) H.downloadZip(list, 'clean.zip');
   });
-  root.querySelector('#clr').addEventListener('click', function () { releaseUrls(); items = []; render(); say('已清空。'); });
+  root.querySelector('#clr').addEventListener('click', function () {
+    var snap = items.slice();
+    releaseUrls(); items = []; render(); say('已清空。');
+    if (snap.length) H.toast('已清空 ' + snap.length + ' 张', { action: '撤销', onAction: function () { items = snap; render(); say('已恢复 ' + snap.length + ' 张。'); } });
+  });
 }

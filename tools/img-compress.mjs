@@ -105,7 +105,16 @@ export function mount(root, H) {
   H.makeDropZone(root.querySelector('#dz'), addFiles, 'image/*');
   root.querySelector('#dlAll').addEventListener('click', downloadAll);
   root.querySelector('#retryAll').addEventListener('click', retryFailed);
-  root.querySelector('#clr').addEventListener('click', clearAll);
+  // 清空可撤销:结果区里是用户的整批工作(还带着编码器降级状态),点错了不该只能重来
+  root.querySelector('#clr').addEventListener('click', function () {
+    var snapItems = items.slice(), snapOriginals = originals.slice(), snapTarget = appliedTarget;
+    clearAll();
+    if (snapItems.length) {
+      H.toast('已清空 ' + snapItems.length + ' 张', { action: '撤销', onAction: function () {
+        items = snapItems; originals = snapOriginals; appliedTarget = snapTarget; render();
+      } });
+    }
+  });
 
   async function addFiles(files) {
     var added = [];

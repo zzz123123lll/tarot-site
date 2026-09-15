@@ -57,7 +57,9 @@ export function mount(root, H) {
   H.makeDropZone(dz, addFiles, null, { multiple: true });
   root.querySelector('#go').addEventListener('click', generate);
   root.querySelector('#clr').addEventListener('click', function () {
+    var snapSources = state.sources.slice(), snapOut = state.out;
     state.sources = []; state.out = null; out.innerHTML = ''; renderList();
+    if (snapSources.length) H.toast('已清空 ' + snapSources.length + ' 张', { action: '撤销', onAction: function () { state.sources = snapSources; state.out = snapOut; renderList(); } });
   });
 
   async function addFiles(files) {
