@@ -510,7 +510,7 @@ const REGISTRY = {
   'pdf-merge': { title: 'PDF 合并', module: '/tools/pdf-merge.mjs', v: 7 },
   'pdf-split': { title: 'PDF 拆分/旋转', module: '/tools/pdf-split.mjs', v: 7 },
   'pdf-render': { title: 'PDF 转图片', module: '/tools/pdf-render.mjs', v: 7 },
-  'invoice-check': { title: '发票查重', module: '/tools/invoice-check.mjs', v: 3 },
+  'invoice-check': { title: '发票查重', module: '/tools/invoice-check.mjs', v: 4 },
   'pdf-compress': { title: 'PDF 压缩', module: '/tools/pdf-compress.mjs', v: 9 },
   'md-wechat': { title: 'Markdown 转公众号', module: '/tools/md-wechat.mjs', v: 1 },
   'text-clean': { title: '文本整理与对比', module: '/tools/text-clean.mjs', v: 1 },

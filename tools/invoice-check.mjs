@@ -1,6 +1,6 @@
 // tools/invoice-check.mjs — 发票查重 + 报销清单(本地读文本型 PDF,不上传、不做 OCR)
 export function mount(root, H) {
-  H.injectCss(".inv-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}"
+  H.injectCss('.inv-src{font-size:13px;color:#6e6e73;line-height:1.5;margin-top:2px}' + ".inv-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}"
     + ".inv-row label{font-size:14px;color:#6e6e73;white-space:nowrap}"
     + ".inv-warn{font-size:14px;color:#a1500a;background:rgba(191,72,0,.08);border:1px solid rgba(191,72,0,.18);border-radius:12px;padding:12px 14px;margin-bottom:14px;line-height:1.5}"
     + ".inv-tbl{width:100%;border-collapse:collapse;margin-top:14px;font-size:14px}"
@@ -72,7 +72,10 @@ export function mount(root, H) {
   // 从一页文字里抠字段。数电票是 20 位发票号码;老票是 12 位发票代码 + 8 位号码。
   function parseInvoice(rawText) {
     var t = normText(rawText);
-    var out = { number: '', code: '', date: '', total: null, seller: '', raw: t.length, text: t.slice(0, 400) };
+    var out = { number: '', code: '', date: '', total: null, seller: '', raw: t.length, text: t.slice(0, 400), totalFrom: '', numberCount: 0 };
+    // 一个 PDF 里塞两张发票很常见(尤其是合并打印的)。以前只读第一个号码,第二张就被**静默吞掉**——
+    // 报销时少报一张是要出事的,所以这里数一下出现了几次,读到一个以上就在表里点名。
+    out.numberCount = (t.match(/(发\s*票\s*号\s*码|invoice\s*(?:no|number|#))/gi) || []).length;
     var m;
     // 允许数字之间有空格(最多 40 个字符宽),再拼回连续数字
     if ((m = t.match(/发\s*票\s*号\s*码\s*[:：]?\s*([0-9O][0-9O\s]{6,44})/))) out.number = pickNum(m[1], 8, 25);
@@ -85,12 +88,14 @@ export function mount(root, H) {
     } else if ((m = t.match(/(\d{4})[-/](\d{1,2})[-/](\d{1,2})/))) {
       out.date = m[1] + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[3]).slice(-2);
     }
-    if ((m = t.match(/价\s*税\s*合\s*计[^0-9¥￥]{0,24}[¥￥]?\s*([0-9][0-9,\s]*\.[0-9]{2})/))) out.total = money(m[1]);
-    if (out.total === null && (m = t.match(/\(?\s*小\s*写\s*\)?[^0-9¥￥]{0,12}[¥￥]?\s*([0-9][0-9,\s]*\.[0-9]{2})/))) out.total = money(m[1]);
+    // 金额的"来源"要记下来:从「价税合计」读到的是可信的,用宽泛兜底读到的可能是税额、单价或合计里的某一个数。
+    // 报销金额错了是大事,所以弱来源的在表格里要标出来,让人自己去核对。
+    if ((m = t.match(/价\s*税\s*合\s*计[^0-9¥￥]{0,24}[¥￥]?\s*([0-9][0-9,\s]*\.[0-9]{2})/))) { out.total = money(m[1]); out.totalFrom = '价税合计'; }
+    if (out.total === null && (m = t.match(/\(?\s*小\s*写\s*\)?[^0-9¥￥]{0,12}[¥￥]?\s*([0-9][0-9,\s]*\.[0-9]{2})/))) { out.total = money(m[1]); out.totalFrom = '小写金额'; }
     // 英文/通用兜底:价税合计 / total / amount,以及单独的 ¥￥ 金额
-    if (out.total === null && (m = t.match(/(?:total|amount|jia\s*shui\s*he\s*ji)[^0-9]{0,24}([0-9][0-9,\s]*\.[0-9]{2})/i))) out.total = money(m[1]);
-    if (out.total === null && (m = t.match(/(?:CNY|RMB)\s*([0-9][0-9,\s]*\.[0-9]{2})/i))) out.total = money(m[1]);
-    if (out.total === null && (m = t.match(/[¥￥]\s*([0-9][0-9,\s]*\.[0-9]{2})/))) out.total = money(m[1]);
+    if (out.total === null && (m = t.match(/(?:total|amount|jia\s*shui\s*he\s*ji)[^0-9]{0,24}([0-9][0-9,\s]*\.[0-9]{2})/i))) { out.total = money(m[1]); out.totalFrom = 'total / amount'; }
+    if (out.total === null && (m = t.match(/(?:CNY|RMB)\s*([0-9][0-9,\s]*\.[0-9]{2})/i))) { out.total = money(m[1]); out.totalFrom = 'CNY / RMB'; }
+    if (out.total === null && (m = t.match(/[¥￥]\s*([0-9][0-9,\s]*\.[0-9]{2})/))) { out.total = money(m[1]); out.totalFrom = '¥ 后面的第一个数'; }
     if ((m = t.match(/销\s*售\s*方[^名]{0,6}名\s*称\s*[:：]?\s*([^\s]{2,40})/))) out.seller = m[1];
     // 英文兜底要"非贪婪 + 遇到下一个标签就停",否则会把下一行的 Total 也吞进销售方
     if (!out.seller && (m = t.match(/(?:seller|xiaoshoufang)[^:：A-Za-z0-9]{0,12}[:：]?\s*([A-Za-z0-9 \-]{2,40}?)(?=\s+(?:Total|Amount|Date|Invoice|No)\b|$)/i))) out.seller = m[1].trim();
@@ -119,11 +124,16 @@ export function mount(root, H) {
         : '<span class="inv-ok">唯一</span>';
       // 版式千差万别:把"我们到底读到了什么"摊开给用户,读不到时也能自己判断要不要人工核对
       var peek = r.text ? '<details class="inv-peek"><summary>看我们读到的文字</summary><div>' + esc(r.text) + '</div></details>' : '';
+      // 金额来源是弱兜底时标出来;一个 PDF 里读到多个发票号码时点名 —— 这两条都是"别让用户拿到一个看起来很整齐、
+      // 其实少了一张或金额取错的结果"。
+      var weak = r.total !== null && ['CNY / RMB', '¥ 后面的第一个数'].indexOf(r.totalFrom) >= 0;
+      var amountNote = (r.total !== null && r.totalFrom ? '<div class="inv-src">金额来源:' + esc(r.totalFrom) + (weak ? ' —— 弱匹配,请核对这一项' : '') + '</div>' : '')
+        + (r.numberCount > 1 ? '<div class="inv-sus">这一份里读到 ' + r.numberCount + ' 个发票号码(一个文件可能含多张发票);查重与金额只取了第一张,请拆开再传一次</div>' : '');
       html += '<tr><td class="num">' + (i + 1) + '</td><td>' + esc(r.file) + '</td>'
         + '<td class="num">' + (r.number ? esc(r.number) : '<span class="inv-none">—</span>') + '</td>'
         + '<td class="num">' + (r.date || '<span class="inv-none">—</span>') + '</td>'
         + '<td class="num">' + (r.total === null ? '<span class="inv-none">—</span>' : fmtMoney(r.total)) + '</td>'
-        + '<td>' + st + peek + '</td></tr>';
+        + '<td>' + st + amountNote + peek + '</td></tr>';
     });
     html += '</tbody></table>';
 
@@ -216,6 +226,9 @@ export function mount(root, H) {
               var parsed = parseInvoice(text);
               row.number = parsed.number; row.code = parsed.code; row.date = parsed.date; row.total = parsed.total; row.seller = parsed.seller;
               row.text = parsed.text;
+              // 这两个字段是"证据":金额从哪儿读到的、这份里出现了几次发票号码。
+              // 第一版漏了这一步赋值,表格里就永远不显示来源 —— 加了新字段却忘了搬到 row 上,是这类"多一层映射"代码的经典漏法。
+              row.totalFrom = parsed.totalFrom; row.numberCount = parsed.numberCount;
             }
           }
         } catch (e) {
