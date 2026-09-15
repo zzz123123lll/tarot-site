@@ -30,7 +30,7 @@
 </nav>
 <div class="tool-container" id="toolRoot"><div class="tool-static"><h1 class="tool-h1">照片去信息</h1><p class="tool-sub">删掉照片里带的拍摄时间、设备型号、机身序列号和 GPS 位置。默认走无损路线:只摘掉信息段,图像的压缩数据逐字节保留,不重新编码、不掉画质；删完会当场再扫一遍、逐字节比对、再解码一次,三条自检结果都摆在卡片上。</p><p class="tool-static-note">这个工具在你的浏览器里本地运行,照片不会上传到任何服务器；加载完成后下方即可直接使用。</p></div></div>
 <script type="module">
-import { mountTool } from '/shared/toolkit.js?v=40';
+import { mountTool } from '/shared/toolkit.js?v=41';
 function slugFromPath() {
   var p = (location.pathname || '').replace(/^\/+|\/+$/g, '');
   if (p.indexOf('tools/') === 0) p = p.slice(6);

@@ -38,6 +38,7 @@ export function mount(root, H) {
       note.textContent = '正在转出 第 1/' + doc.numPages + ' 页…'; note.className = 'note'; note.style.display = 'block';
       blobs = [];
       var ext = fmt === 'image/jpeg' ? '.jpg' : '.png';
+      var failedPages = [], totalBytes = 0, pageDims = [];
       for (var p = 1; p <= doc.numPages; p++) {
         var page = await doc.getPage(p);
         var scale = dpi / 72;
@@ -50,14 +51,37 @@ export function mount(root, H) {
         if (fmt === 'image/jpeg') { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height); }
         await page.render({ canvasContext: ctx, viewport: vp }).promise;
         var blob = await new Promise(function (r) { c.toBlob(r, fmt, 0.92); });
-        blobs.push({ blob: blob, name: 'page-' + p + ext });
+        // 每页都要读回来验:能不能解码、像素是不是这一页该有的大小。
+        // 以前只数循环次数就宣布"已转出 N 页" —— toBlob 返回 null 或画布被悄悄缩放都不会被发现,
+        // 下载包里的空文件和少页要等用户打开才发现。
+        var v = null;
+        if (blob) { try { v = await H.checkImage(blob, { width: c.width, height: c.height }); } catch (e2) { v = null; } }
+        if (!blob || !v || !v.ok) {
+          failedPages.push(p);
+        } else {
+          blobs.push({ blob: blob, name: 'page-' + p + ext });
+          totalBytes += blob.size;
+          pageDims.push(v.width + '×' + v.height);
+        }
         fill.style.width = (p / doc.numPages * 100) + '%';
         note.textContent = '正在转出 第 ' + p + '/' + doc.numPages + ' 页…';
       }
       pg.style.display = 'none';
       if (dl) dl.disabled = false;
-      root.querySelector('#gen').style.display = 'block';
-      note.textContent = '已转出 ' + doc.numPages + ' 页，点「全部下载」。'; note.className = 'note ok'; note.style.display = 'block';
+      if (blobs.length) root.querySelector('#gen').style.display = 'block';
+      var uniq = [];
+      pageDims.forEach(function (d) { if (uniq.indexOf(d) < 0) uniq.push(d); });
+      var dimText = uniq.slice(0, 3).join('、') + (uniq.length > 3 ? ' 等' + uniq.length + ' 种尺寸' : '');
+      if (failedPages.length) {
+        note.textContent = '有 ' + failedPages.length + ' 页没转成功(第 ' + failedPages.slice(0, 8).join('、') + ' 页)——这几页没有放进下载包,'
+          + '其余 ' + blobs.length + ' 页已逐页读回校验通过,可以先下载。';
+        note.className = 'note err';
+      } else {
+        note.textContent = '已转出 ' + doc.numPages + ' 页,逐页读回校验通过(' + dimText + '),合计 ' + H.fmt(totalBytes) + ',点「全部下载」。';
+        note.className = 'note ok';
+      }
+      note.style.display = 'block';
+      if (!blobs.length) root.querySelector('#gen').style.display = 'none';
     } catch (e) {
       var pg2 = root.querySelector('#pg');
       if (pg2) pg2.style.display = 'none';
