@@ -459,11 +459,28 @@ export function mount(root, H) {
       ? ('跟拍 · ' + TEMPLATES[tmplIdx].name + ' ' + bpm + ' BPM · 最长连击 ' + (duo ? (P[0].best + ' / ' + P[1].best) : P[0].best))
       : ('自由敲 · ' + TEMPLATES[tmplIdx].name + ' · 怎么敲都不会难听');
     pg.fillText(subLine, 80, 280);
+    // 双人打拍子:分享图上给"左右对比 + 胜负",而不只是两个连击数字(调研:分享要能讲故事、能炫)
+    if (duo && mode === 'beat') {
+      var a0 = accOf(P[0]), a1 = accOf(P[1]);
+      if (a0 !== null && a1 !== null) {
+        var gg0 = gradeOf(P[0]), gg1 = gradeOf(P[1]);
+        pg.font = '600 46px "Geist", -apple-system, "PingFang SC", sans-serif';
+        pg.fillStyle = '#8cc0ff';
+        pg.fillText('左手 ' + (gg0 ? gg0.g : '—') + ' · 准确率 ' + a0 + '%', 80, 352);
+        pg.fillStyle = '#e8a06a';
+        pg.fillText('右手 ' + (gg1 ? gg1.g : '—') + ' · 准确率 ' + a1 + '%', 80, 414);
+        pg.fillStyle = 'rgba(255,255,255,.92)';
+        pg.font = '700 44px "Geist", -apple-system, "PingFang SC", sans-serif';
+        pg.fillText(a0 === a1 ? '打平' : (a0 > a1 ? '左边更稳' : '右边更稳'), 80, 486);
+      }
+    }
     pg.fillStyle = 'rgba(255,255,255,.55)';
     pg.font = '500 34px "Geist", -apple-system, "PingFang SC", sans-serif';
     pg.fillText('gongjuhe.top/beat-toy · 声音与画面全部在本机生成', 80, ph - 120);
     if (qrImg) {
-      var qs = qrImg.width, qx = pw - qs - 88, qy = ph - qs - 150;
+      // 二维码往上挪 60px:原来它和底部落款在同一水平线上,"扫码玩一个你的"和落款挤在一起/相互压字
+      // (导出图里一眼看出来的排版缺陷 —— 分享图是拉新入口,不能糊)
+      var qs = qrImg.width, qx = pw - qs - 88, qy = ph - qs - 210;
       pg.fillStyle = '#fff';
       pg.beginPath();
       var rr = 14, qw = qs + 24;
