@@ -30,7 +30,7 @@
 </nav>
 <div class="tool-container" id="toolRoot"><div class="tool-static"><h1 class="tool-h1">文本整理与对比</h1><p class="tool-sub">两件常被卡住的小事：<b>整理</b>（把从 PDF / 网页复制出来的多余换行、空格、全角字符收拾干净）与 <b>对比</b>（两份文本逐字符比出改了哪里）。纯文本处理，不上传、不联网。</p><p class="tool-static-note">这个工具在你的浏览器里本地运行，文件不会上传到任何服务器；加载完成后下方即可直接使用。</p></div></div>
 <script type="module">
-import { mountTool } from '/shared/toolkit.js?v=38';
+import { mountTool } from '/shared/toolkit.js?v=40';
 function slugFromPath() {
   var p = (location.pathname || '').replace(/^\/+|\/+$/g, '');
   if (p.indexOf('tools/') === 0) p = p.slice(6);

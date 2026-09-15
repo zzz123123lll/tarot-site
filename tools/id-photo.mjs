@@ -474,8 +474,16 @@ export function mount(root, H) {
         codecOk = q.codec !== false;
       }
       var finalBlob = bytes ? new Blob([setJpegDpi(bytes, dpi)], { type: 'image/jpeg' }) : null;
-      var back = finalBlob ? await createImageBitmap(finalBlob) : null;
-      var okW = back && back.width === t.w, okH = back && back.height === t.h;
+      // 交付前自检:① 用全站统一的 H.checkImage 读回产物(像素 + 体积上限);② 把写进文件的 DPI 再读回来核对。
+      // 第 ② 项以前是"只写不读" —— 这个工具的卖点就是精确 DPI,却从不验证自己有没有写对(审计点名的缺口)。
+      var chk = finalBlob
+        ? await H.checkImage(finalBlob, cap > 0 ? { width: t.w, height: t.h, maxBytes: cap } : { width: t.w, height: t.h })
+        : { ok: false, width: 0, height: 0, bytes: 0, error: '没生成出文件' };
+      var outDpi = null;
+      try { if (finalBlob) outDpi = readJpegDpi(await finalBlob.arrayBuffer()); } catch (e) { outDpi = null; }
+      var dpiOk = !!(outDpi && Math.abs(outDpi.x - dpi) <= 1 && Math.abs(outDpi.y - dpi) <= 1);
+      var back = { width: chk.width, height: chk.height };
+      var okW = chk.width === t.w, okH = chk.height === t.h;
       state.out = finalBlob;
       var sizeOk = finalBlob ? (!cap || finalBlob.size <= cap) : false;
       var loads = 0;
@@ -489,7 +497,8 @@ export function mount(root, H) {
             '<div class="' + (sizeOk ? 'idp-ok' : 'idp-bad') + '">' + (finalBlob
               ? (sizeOk ? '体积达标' + (reason === 'already' ? '(原片本来就在上限内,没有重压)' : '') : '体积仍超过上限:这已是这张图能给出的最小体积,建议换一张细节更少的照片,或按对方要求放宽上限')
               : '没生成出文件') + '</div>' +
-            '<div class="' + (okW && okH ? 'idp-ok' : 'idp-bad') + '">像素核对:' + (back ? back.width + '×' + back.height : '读不回来') + (okW && okH ? '(与要求一致)' : '(与要求不一致,请把这个情况告诉我们)') + '</div>' +
+            '<div class="' + (okW && okH ? 'idp-ok' : 'idp-bad') + '">像素核对(读回产物):' + (chk.width ? chk.width + '×' + chk.height : '读不回来') + (okW && okH ? '(与要求一致)' : '(与要求不一致,请把这个情况告诉我们)') + '</div>' +
+            '<div class="' + (dpiOk ? 'idp-ok' : 'idp-bad') + '">DPI 核对(从文件里读回):' + (outDpi ? outDpi.x : '读不到') + (dpiOk ? '(与要求一致)' : ' —— 要求 ' + dpi + ',这项没写对,请把这张图的情况告诉我们') + '</div>' +
             '<div class="' + (bg.ok === null ? '' : bg.ok ? 'idp-ok' : 'idp-bad') + '">底色:' + H.esc(bg.text)
               + (preset.id === 'custom' ? '' : ';该用途要求「' + H.esc(preset.bgName) + '」')
               + (bg.ok === false ? ' —— 我们不会替你换底色,请换一张底色合规的照片' : '') + '</div>' +
@@ -508,7 +517,6 @@ export function mount(root, H) {
         if (!state.out) return;
         H.downloadBlob(state.out, '证件照-' + preset.id + '-' + t.w + 'x' + t.h + '-' + dpi + 'dpi.jpg');
       });
-      if (back && back.close) back.close();
     } catch (e) {
       out.setAttribute('aria-busy', 'false');
       var msg = (e && String(e.message) === 'encoder-load-failed')

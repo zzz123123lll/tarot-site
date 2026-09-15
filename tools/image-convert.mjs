@@ -26,6 +26,14 @@ export function mount(root, H) {
     if (files.length) processAll();
   });
 
+  // 实测发现的缺陷:目标宽度填了以后不生效 —— 只有"换格式"或重新拖文件才会重跑,
+  // 用户填 200 再点下载,拿到的还是原尺寸。改成输入后防抖重跑(与换格式后的行为一致)。
+  var _wTimer = null;
+  root.querySelector('#w').addEventListener('input', function () {
+    if (_wTimer) clearTimeout(_wTimer);
+    _wTimer = setTimeout(function () { if (files.length) processAll(); }, 350);
+  });
+
   H.makeDropZone(root.querySelector('#dz'), addFiles, 'image/*');
   root.querySelector('#dlAll').addEventListener('click', downloadAll);
   root.querySelector('#clr').addEventListener('click', function () { files = []; items = []; render(); });
@@ -73,10 +81,26 @@ export function mount(root, H) {
       if (mime === 'image/jpeg') { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, nw, nh); }
       ctx.drawImage(img, 0, 0, nw, nh);
       img.close();
-      c.toBlob(function (blob) {
-        if (!blob) { items.push({ name: file.name, status: 'fail' }); cb(); return; }
-        var ext = mime === 'image/jpeg' ? '.jpg' : (mime === 'image/webp' ? '.webp' : '.png');
-        items.push({ name: file.name, blob: blob, status: 'ok', outName: file.name.replace(/\.[^.]+$/, '') + ext, size: blob.size, w: nw, h: nh, mime: mime });
+      c.toBlob(async function (blob) {
+        if (!blob) { items.push({ name: file.name, status: 'fail', why: '浏览器没能导出这个格式' }); cb(); return; }
+        // 坑:canvas.toBlob 遇到浏览器不支持的格式会静默退回 PNG(规范如此)。
+        // 那样文件名写着 .webp、内容却是 PNG —— 用户以为转了格式,交上去才发现不对。
+        // 所以产物必须读回来看:类型对不对、能不能解码、尺寸是不是我们要的。
+        var actual = blob.type || '';
+        var fallback = !!(actual && mime && actual !== mime);
+        var useMime = fallback ? actual : (actual || mime);
+        var ext = useMime === 'image/jpeg' ? '.jpg' : useMime === 'image/webp' ? '.webp' : useMime === 'image/png' ? '.png' : useMime === 'image/gif' ? '.gif' : '.bin';
+        var chk = await H.checkImage(blob, { width: nw, height: nh });
+        if (!chk.ok) {
+          items.push({ name: file.name, status: 'fail', why: '产物读不回来或不符:' + (chk.error || '解码失败') });
+          cb(); return;
+        }
+        items.push({
+          name: file.name, blob: blob, status: 'ok',
+          outName: file.name.replace(/\.[^.]+$/, '') + ext,
+          size: blob.size, w: chk.width, h: chk.height, mime: useMime, wantMime: mime,
+          fallback: fallback, check: chk
+        });
         cb();
       }, mime, 0.92);
     }).catch(async function () {
@@ -99,7 +123,8 @@ export function mount(root, H) {
         html += '<div class="result-card">'
           + '<img class="preview" src="' + urlFor(f.blob) + '" alt="">'
           + '<div class="info"><div class="name">' + H.esc(f.outName) + '</div>'
-          + '<div class="meta">' + f.w + '×' + f.h + ' · ' + H.fmt(f.size) + '</div></div>'
+          + '<div class="meta">' + f.w + '×' + f.h + ' · ' + H.fmt(f.size) + ' · 自检 ✓ 读回 ' + f.check.width + '×' + f.check.height + '</div>'
+          + (f.fallback ? '<div class="meta" style="color:var(--c-warn)">这个浏览器没能导出 ' + H.esc((f.wantMime || '').replace('image/', '').toUpperCase()) + ',产物实际是 ' + H.esc(f.mime.replace('image/', '').toUpperCase()) + ' —— 文件名已按实际格式改;想要那个格式请换 Chrome / Edge 较新版本再试。</div>' : '') + '</div>'
           + '<button class="download-btn" data-i="' + i + '">下载</button></div>';
       } else {
         html += '<div class="result-card result-fail"><div class="info"><div class="name">' + H.esc(f.name) + '</div>'
@@ -113,6 +138,7 @@ export function mount(root, H) {
               var w = parseInt(root.querySelector('#w').value, 10) || 0;
               convertOne(jpgFile, w, function () { render(); });
             }) : '<div class="meta">处理失败</div>') + '</div><span class="status-tag">' + (f.heic ? '需先转 JPG' : '失败') + '</span></div>';
+        if (!f.heic && f.why) html = html.replace('<div class="meta">处理失败</div>', '<div class="meta">' + H.esc(f.why) + '</div>');
       }
     });
     res.innerHTML = html;
