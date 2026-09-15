@@ -3,7 +3,7 @@
   # CSP 里的 sha256 都是本仓库内联脚本的真实哈希。改了内联脚本或版本号之后必须重跑:
   #   node "工具盒-内部/构建脚本/update-csp-hash.mjs" "<仓库路径>"
   # 一致性自检会核对哈希是否最新;过期会让页面在浏览器里报 CSP 违规、脚本不执行。
-  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'none'; script-src 'self' 'wasm-unsafe-eval' 'sha256-NFjz3LbK9kpXgdQGcXYMRyWcn1nDdJKVs5FyLD+jiao=' 'sha256-Xo0k+XLYhQXZU+KW8U1Ob693shGsdwTpooBmBcuZ3Cw=' 'sha256-Zu1ZcY8XgP9353SzNTmTtpttjJ31EeXDPy4cyZHK2DE=' 'sha256-x8ALIWMDV97JnzfVv1BM0X/IiOtiYanbB2mUvRcm4ZA=' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' blob: data: https://cloudflareinsights.com https://static.cloudflareinsights.com; media-src 'self' blob:; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'none'; script-src 'self' 'wasm-unsafe-eval' 'sha256-CesD+5xCvgrSn4WgfHzIBJ8VyM6BWz01q8XTOu69iJs=' 'sha256-VUC/+2yXW8iuEP+1yCE90/uD8aYFe5Po1eDh3x27jNY=' 'sha256-Zu1ZcY8XgP9353SzNTmTtpttjJ31EeXDPy4cyZHK2DE=' 'sha256-x8ALIWMDV97JnzfVv1BM0X/IiOtiYanbB2mUvRcm4ZA=' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' blob: data: https://cloudflareinsights.com https://static.cloudflareinsights.com; media-src 'self' blob:; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: DENY

@@ -11,7 +11,7 @@
 //      断网时用户看到的是"工具打不开",而不是一个可用的降级页面;
 //   3) 工具页要能离线**处理文件**,除 HTML 与工具模块外还需要 /shared/encoders.js、
 //      encoder-worker.js、encoder-core.js 与 /vendor/encoders/* —— 这些在"第一次成功处理"时才进缓存。
-const CACHE = 'gongjuhe-v29';
+const CACHE = 'gongjuhe-v30';
 // 兜底说明页(断网打开一个确实没缓存过的地址时用,塔罗页也走这条路径)。
 // 注意必须写**最终地址** /offline:Cloudflare Pages 会把 /offline.html 用 308 跳到 /offline,
 // 而"带 redirect 标记的缓存响应"在导航时会被 Chromium 直接拒绝(ERR_FAILED)——
@@ -37,7 +37,7 @@ const TOOL_PAGES = [
   '/cover-gen/',
   '/receipt-clean/',
   '/invoice-check/',
-  '/img-compress/',   '/id-photo/',   '/image-convert/',   '/images-to-pdf/',   '/invoice-nup/',   '/pdf-merge/',   '/pdf-split/',   '/pdf-render/',   '/pdf-compress/',   '/tools/json/',   '/tools/base64/',   '/tools/regex/',   '/tools/color/',   '/tools/qr/',   '/tools/jwt/',   '/tools/hash/',   '/tools/url/',   '/tools/uuid/',   '/tools/date/'
+  '/img-compress/',   '/id-photo/',   '/image-convert/',   '/images-to-pdf/',   '/invoice-nup/',   '/pdf-merge/',   '/pdf-split/',   '/pdf-render/',   '/pdf-compress/',   '/json/',   '/base64/',   '/regex/',   '/color/',   '/qr/',   '/jwt/',   '/hash/',   '/url/',   '/uuid/',   '/date/'
 ];
 // 19 个工具模块也一并预缓存(合计 134KB):只缓存页面的话,断网能"打开"工具页但工具本身
 // 不会挂载 —— 用户看到的是空壳,这属于假承诺。模块很小,直接全带上。

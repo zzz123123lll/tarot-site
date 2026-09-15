@@ -276,10 +276,11 @@ body.page-home .group a.app:hover { border-color: var(--g-line, rgba(0,0,0,.14))
 body.page-home .feature-list li::before { background: var(--acc-ink, var(--c-accent)); }
 body.page-home .feature-title::after { content: ""; display: block; width: 34px; height: 3px; border-radius: 999px; margin: 14px 0 0; background: var(--acc-ink, var(--c-accent)); opacity: .9; }
 /* 分区修饰符:把 --g-* / --acc-* 绑到各自的实测色 */
-body.page-home .group--divination { --g-ink: var(--a-tarot-ink); --g-tint: var(--a-tarot-tint); --g-tint-2: var(--a-tarot-tint-2); --g-line: var(--a-tarot-line); }
+body.page-home .group--fun { --g-ink: var(--a-tarot-ink); --g-tint: var(--a-tarot-tint); --g-tint-2: var(--a-tarot-tint-2); --g-line: var(--a-tarot-line); }
 body.page-home .group--image { --g-ink: var(--a-image-ink); --g-tint: var(--a-image-tint); --g-tint-2: var(--a-image-tint-2); --g-line: var(--a-image-line); --g-glow: var(--a-image-glow); }
 body.page-home .group--pdf { --g-ink: var(--a-pdf-ink); --g-tint: var(--a-pdf-tint); --g-tint-2: var(--a-pdf-tint-2); --g-line: var(--a-pdf-line); --g-glow: var(--a-pdf-glow); }
-body.page-home .group--utility { --g-ink: var(--a-util-ink); --g-tint: var(--a-util-tint); --g-tint-2: var(--a-util-tint-2); --g-line: var(--a-util-line); --g-glow: var(--a-util-glow); }
+body.page-home .group--text { --g-ink: var(--a-util-ink); --g-tint: var(--a-util-tint); --g-tint-2: var(--a-util-tint-2); --g-line: var(--a-util-line); --g-glow: var(--a-util-glow); }
+body.page-home .group--data { --g-ink: var(--a-id-ink); --g-tint: var(--a-id-tint); --g-tint-2: var(--a-id-tint-2); --g-line: var(--a-id-line); --g-glow: var(--a-id-glow); }
 body.page-home .feature-row--id { --acc: var(--a-id); --acc-ink: var(--a-id-ink); --acc-tint: var(--a-id-tint); --acc-line: var(--a-id-line); --acc-glow: var(--a-id-glow); }
 body.page-home .feature-row--invoice { --acc: var(--a-pdf); --acc-ink: var(--a-pdf-ink); --acc-tint: var(--a-pdf-tint); --acc-line: var(--a-pdf-line); --acc-glow: var(--a-pdf-glow); }
 body.page-home .feature-row--util { --acc: var(--a-util); --acc-ink: var(--a-util-ink); --acc-tint: var(--a-util-tint); --acc-line: var(--a-util-line); --acc-glow: var(--a-util-glow); }
@@ -358,11 +359,12 @@ html.js-motion body.page-home .group-head.is-in .group-title::before { transform
 
 /* ===== 工具页:卡片聚光 + 实心按钮的光扫(GlareHover 的位移做法,白色高光扫过按钮)===== */
 
-/* 聚光的颜色跟随分区:图片=蓝、PDF=粉、小工具=橄榄、占卜=鎏金 */
-body.page-home .group--divination { --fx-spot: var(--a-tarot-tint-2); }
+/* 聚光的颜色跟随分区:图片=蓝、PDF=粉、文字=橄榄、编码=靛蓝、生成=鎏金(五个色都是已有的 DESIGN.md 令牌,没有新造色) */
 body.page-home .group--image { --fx-spot: var(--a-image-tint-2); }
 body.page-home .group--pdf { --fx-spot: var(--a-pdf-tint-2); }
-body.page-home .group--utility { --fx-spot: var(--a-util-tint-2); }
+body.page-home .group--text { --fx-spot: var(--a-util-tint-2); }
+body.page-home .group--data { --fx-spot: var(--a-id-tint-2); }
+body.page-home .group--fun { --fx-spot: var(--a-tarot-tint-2); }
 
 /* ===== 粘贴/拖拽即识别(解决"工具太多找不到") ===== */
 .sniff { max-width: 560px; margin: 18px 0 0; border: 1px dashed var(--c-line-strong, #d2d2d7); border-radius: 14px; padding: 14px 16px; background: #fff; transition: border-color 240ms var(--ease-primary, cubic-bezier(.22,1,.36,1)), background 240ms var(--ease-primary, cubic-bezier(.22,1,.36,1)); }

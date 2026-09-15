@@ -1,2 +1,27 @@
 # 各工具均为真实静态页(每个 URL 一个 index.html),无需重写。
 # 404 由 Cloudflare Pages 自动使用 404.html。
+
+# 工具页 URL 扁平化:10 个原本挂在 /tools/ 下的页面搬到根级。
+# 为什么:同层两套命名(/xxx/ 与 /tools/xxx/)、且 /tools/ 本身是 404 的空父级(NNG「URL as UI」+ W3C「不要把实现机制写进 URI」)。
+# 老地址一律 301 到新地址,不留下死链。
+/tools/json/ /json/ 301
+/tools/json /json/ 301
+/tools/base64/ /base64/ 301
+/tools/base64 /base64/ 301
+/tools/regex/ /regex/ 301
+/tools/regex /regex/ 301
+/tools/color/ /color/ 301
+/tools/color /color/ 301
+/tools/qr/ /qr/ 301
+/tools/qr /qr/ 301
+/tools/jwt/ /jwt/ 301
+/tools/jwt /jwt/ 301
+/tools/hash/ /hash/ 301
+/tools/hash /hash/ 301
+/tools/url/ /url/ 301
+/tools/url /url/ 301
+/tools/uuid/ /uuid/ 301
+/tools/uuid /uuid/ 301
+/tools/date/ /date/ 301
+/tools/date /date/ 301
+/tools/ / 301
