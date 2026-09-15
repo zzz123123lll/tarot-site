@@ -64,6 +64,9 @@ export function mount(root, H) {
   var drag = null, guides = [];   // 拖动/缩放的临时状态与吸附参考线
   // 撤销/重做:元素层的每次改动前都留一份快照(纯 JSON,元素很少,60 步足够用)。
   // 依据:同类编辑器把撤销列为标配(avnac README 的交互清单),而"手滑删错一个元素"是真实痛点。
+  // 图片元素不能进 JSON 快照(Image 对象没法序列化)—— 单独一张表按 key 存,
+  // 快照里只留 key;不这样做的话,撤销一步回来图就变空白。
+  var imgStore = {};
   var history = [], hIdx = -1, HIST_MAX = 60;
   function snapShot() { return JSON.stringify({ elements: elements, selId: selId }); }
   function pushHistory() {
@@ -77,6 +80,7 @@ export function mount(root, H) {
     if (i < 0 || i >= history.length) return;
     var s = JSON.parse(history[i]);
     elements = s.elements; selId = s.selId; hIdx = i;
+    elements.forEach(function (el) { if (el.imgKey && imgStore[el.imgKey]) el.img = imgStore[el.imgKey].img; });
     writeEls(); render(); paintHist(); updateTouch();
   }
   function undo() { if (hIdx > 0) { applyHistory(hIdx - 1); H.toast('已撤销', { ms: 2600 }); } }
@@ -109,6 +113,7 @@ export function mount(root, H) {
         '<div class="cv-field"><label>叠加元素(模板之上的文字/色块,可增删、调序)</label>' +
           '<div class="tool-row" style="margin-bottom:8px"><button class="tool-btn tool-btn--ghost" id="addText">+ 文字</button>' +
           '<button class="tool-btn tool-btn--ghost" id="addBlock">+ 色块</button>' +
+          '<button class="tool-btn tool-btn--ghost" id="addPic">+ 图片</button>' +
           '<button class="tool-btn tool-btn--ghost" id="undo">撤销</button>' +
           '<button class="tool-btn tool-btn--ghost" id="redo">重做</button></div>' +
           '<div class="cv-elprops" id="elprops" style="display:none"></div>' +
@@ -165,6 +170,7 @@ export function mount(root, H) {
   });
   root.querySelector('#addText').addEventListener('click', function () { addElement('text'); });
   root.querySelector('#addBlock').addEventListener('click', function () { addElement('block'); });
+  root.querySelector('#addPic').addEventListener('click', pickImage);
   root.querySelector('#els').addEventListener('click', function (ev) {
     var row = ev.target.closest('.cv-el');
     var btn = ev.target.closest('button');
@@ -177,7 +183,9 @@ export function mount(root, H) {
     if (row) { selId = parseInt(row.dataset.id, 10); writeEls(); render(); }
   });
   // 自测钩子:端到端脚本要能读到元素真实坐标(不然只能靠像素猜) —— 只读,不参与渲染
-  root.__cvState = function () { return { elements: elements, selId: selId, guides: guides.length }; };
+  root.__cvState = function () {
+    return { elements: elements.map(function (e) { return { id: e.id, type: e.type, x: e.x, y: e.y, w: e.w, h: e.h, imgKey: e.imgKey || null, hasImg: !!(e.img && e.img.width) }; }), selId: selId, guides: guides.length, imgs: Object.keys(imgStore).length };
+  };
   updateTouch();
   writeEls(); pushHistory();   // 初始状态也进历史:撤销按钮一开始是禁用的
   paintHist();
@@ -210,7 +218,7 @@ export function mount(root, H) {
   // ---------- 叠加元素(编辑器第一步:图层模型 + 增删 + 选中 + 调序) ----------
   // 为什么用"叠在模板之上"而不是推翻模板:模板渲染已经过端到端验证,推翻它风险大;
   // 元素层是加法 —— 每个元素用**相对坐标**(0~1),所以换尺寸/一稿多尺寸导出时自动按比例缩放。
-  var EL_NAME = { text: '文字', block: '色块' };
+  var EL_NAME = { text: '文字', block: '色块', image: '图片' };
   function selEl() { return elements.filter(function (e) { return e.id === selId; })[0] || null; }
   function addElement(type) {
     var n = elements.length;
@@ -224,6 +232,36 @@ export function mount(root, H) {
     selId = elements[elements.length - 1].id;
     writeEls(); render(); pushHistory();
     H.toast('已加一个' + EL_NAME[type] + '元素 —— 在下面改文字、字号、颜色与对齐', { ms: 4200 });
+  }
+  // 图片元素:读进来后按原比例摆好(不拉伸变形),之后可以拖动/缩放/吸附
+  var imgInput = null;
+  function addImageElement(file) {
+    if (!file) return;
+    var url = URL.createObjectURL(file);
+    var im = new Image();
+    im.onload = function () {
+      var id = ++elSeq, key = 'img' + id;
+      imgStore[key] = { img: im, name: file.name || '图片', url: url };
+      var boxW = 0.40, boxH = boxW * (im.height / im.width) * (cv.width / cv.height);
+      boxH = Math.max(0.06, Math.min(0.6, boxH));
+      elements.push({ id: id, type: 'image', imgKey: key, img: im, name: imgStore[key].name, x: 0.30, y: 0.16, w: boxW, h: boxH, fs: 0.05, color: '#111114', align: 'left' });
+      selId = id;
+      writeEls(); render(); pushHistory();
+      H.toast('已加图片元素:' + imgStore[key].name + ' —— 可拖动、拖角缩放', { ms: 4200 });
+    };
+    im.onerror = function () { H.toast('这张图读不了,换一张试试', { ms: 4200 }); URL.revokeObjectURL(url); };
+    im.src = url;
+  }
+  function pickImage() {
+    if (!imgInput) {
+      imgInput = document.createElement('input');
+      imgInput.type = 'file';
+      imgInput.accept = 'image/*';
+      imgInput.style.display = 'none';
+      document.body.appendChild(imgInput);
+      imgInput.addEventListener('change', function () { addImageElement(imgInput.files && imgInput.files[0]); imgInput.value = ''; });
+    }
+    imgInput.click();
   }
   function moveEl(id, dir) {
     var i = -1;
@@ -245,7 +283,7 @@ export function mount(root, H) {
     var box = root.querySelector('#els'); if (!box) return;
     box.innerHTML = elements.length ? elements.map(function (e, i) {
       return '<div class="cv-el' + (e.id === selId ? ' active' : '') + '" data-id="' + e.id + '">'
-        + '<span class="t" data-pick="1">' + (i + 1) + '. ' + EL_NAME[e.type] + (e.text ? ' · ' + H.esc(e.text.slice(0, 10)) : '') + '</span>'
+        + '<span class="t" data-pick="1">' + (i + 1) + '. ' + EL_NAME[e.type] + (e.text ? ' · ' + H.esc(e.text.slice(0, 10)) : (e.type === 'image' && e.name ? ' · ' + H.esc(e.name.slice(0, 12)) : '')) + '</span>'
         + '<button data-act="up" aria-label="上移">↑</button><button data-act="down" aria-label="下移">↓</button><button data-act="del" aria-label="删除">×</button></div>';
     }).join('') : '<div class="cv-elhint">还没有叠加元素。模板是底子,这里可以再叠文字或色块(点上面的按钮)。</div>';
     var box2 = root.querySelector('#elprops');
@@ -256,7 +294,10 @@ export function mount(root, H) {
     box2.innerHTML = (e.type === 'text'
         ? '<div class="cv-field" style="margin-bottom:8px"><label for="elText">元素文字</label><input class="cv-input" id="elText" value="' + H.esc(e.text) + '"></div>'
         : '')
-      + '<div class="cv-field" style="margin-bottom:8px"><label for="elFs">字号(相对画布宽度)<span id="elFsV"> ' + Math.round(e.fs * 100) + '%</span></label>'
+      + (e.type === 'image'
+          ? '<div class="cv-field" style="margin-bottom:8px"><label>图片:' + H.esc(e.name || '') + '</label><div class="tool-row"><button class="tool-btn tool-btn--ghost" id="elSwap">换一张</button></div></div>'
+          : '')
+      + '<div class="cv-field" style="margin-bottom:8px"><label for="elFs">' + (e.type === 'image' ? '（图片不用字号,拖角缩放）' : '字号(相对画布宽度)') + '<span id="elFsV"> ' + Math.round(e.fs * 100) + '%</span></label>'
       + '<input class="cv-input" id="elFs" type="range" min="1.5" max="12" step="0.5" value="' + (e.fs * 100) + '"></div>'
       + '<div class="cv-field" style="margin-bottom:8px"><label for="elColor">颜色</label><input class="cv-input" id="elColor" type="color" value="' + e.color + '" style="height:44px;padding:4px"></div>'
       + '<div class="cv-field" style="margin-bottom:8px"><label>图层顺序</label><div class="tool-row">' +
@@ -270,6 +311,26 @@ export function mount(root, H) {
     // 文字用 change 而不是 input 记历史:否则每敲一个字都进历史,撤销要按很多次才回到上一步
     if (t) t.addEventListener('input', function () { e.text = t.value; writeEls(); render(); });
     if (t) t.addEventListener('change', function () { pushHistory(); });
+    var sw = box2.querySelector('#elSwap');
+    if (sw) sw.addEventListener('click', function () {
+      // 换图:替换同一元素的图片,历史里也换掉(否则撤销会回到旧图)
+      var old = e.imgKey;
+      var pick = document.createElement('input');
+      pick.type = 'file'; pick.accept = 'image/*';
+      pick.addEventListener('change', function () {
+        var file = pick.files && pick.files[0]; if (!file) return;
+        var url = URL.createObjectURL(file), nim = new Image();
+        nim.onload = function () {
+          var key = 'img' + e.id + '-' + Date.now();
+          imgStore[key] = { img: nim, name: file.name || '图片', url: url };
+          e.imgKey = key; e.img = nim; e.name = imgStore[key].name;
+          if (old && imgStore[old]) { try { URL.revokeObjectURL(imgStore[old].url); } catch (err) {} }
+          writeEls(); render(); pushHistory();
+        };
+        nim.src = url;
+      });
+      pick.click();
+    });
     var zb = box2.querySelector('#elTop'), zb2 = box2.querySelector('#elBottom');
     if (zb) zb.addEventListener('click', function () { zOrder(e.id, true); });
     if (zb2) zb2.addEventListener('click', function () { zOrder(e.id, false); });
@@ -366,7 +427,15 @@ export function mount(root, H) {
   function drawElements(g2, W2, H2) {
     elements.forEach(function (e) {
       var x = e.x * W2, y = e.y * H2, w = e.w * W2, h = e.h * H2;
-      if (e.type === 'block') {
+      if (e.type === 'image') {
+        var rec = e.imgKey ? imgStore[e.imgKey] : null;
+        var im2 = e.img || (rec && rec.img);
+        if (im2 && im2.width) {
+          var ir = im2.width / im2.height, br = w / h;   // 等比适配:contain,不拉伸
+          var dw = ir > br ? w : h * ir, dh = ir > br ? w / ir : h;
+          g2.drawImage(im2, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
+        }
+      } else if (e.type === 'block') {
         g2.fillStyle = e.color;
         var r = Math.min(18, h / 2);
         g2.beginPath();
