@@ -34,13 +34,15 @@ export function mount(root, H) {
           '<button class="bt-chip" id="tmpl">伴奏:简单四拍</button>' +
           '<button class="bt-chip" id="duo">双人模式:关</button>' +
           '<button class="bt-chip" id="poster">导出分享图</button>' +
+      '<button class="bt-chip" id="daily">今日挑战</button>' +
         '</div>' +
       '</div>' +
       '<div>' +
         '<div class="bt-stats" id="stats"></div>' +
         '<p class="idp-hint" style="margin-top:10px">不用先点开始:直接敲 <b>A W S E D F T G Y H U J</b> 任意一个键就进入(键位会跟着亮);空格重敲当前音;Esc 停。打拍子模式下会给<b>准确率与评级</b>(准确率 = 偏差 ≤120ms 的敲击占比)。</p>' +
         '<div class="bt-kbd" id="kbd"></div>' +
-        '<p class="idp-hint" style="margin-top:10px">所有声音都是浏览器现场合成的正弦/三角波,没有任何音频文件;画面也是 Canvas 画的。</p>' +
+        '<p class="idp-hint" style="margin-top:10px">想每天来一次就点「今日挑战」:当天模板固定,打满 20 下给评级,连续来练的天数只存在你自己的浏览器里(localStorage),不上传。</p>' +
+    '<p class="idp-hint" style="margin-top:10px">所有声音都是浏览器现场合成的正弦/三角波,没有任何音频文件;画面也是 Canvas 画的。</p>' +
       '</div>' +
     '</div>' +
     '<div id="out"></div>';
@@ -161,6 +163,34 @@ export function mount(root, H) {
 
   // ---------- 交互 ----------
   var mode = 'free', started = false, bpm = 100, duo = false;
+  // 每日挑战:当天固定模板 + 打满 20 下出评级,记录存在本机(localStorage),算"连续来练几天"。
+  // 依据:Wordle 的"每日同题"(内部文档/计划-作品线成熟化.md 第 8 节)+ Monkeytype 的"秒重开"。
+  var dailyOn = false, DAILY_GOAL = 20;
+  function todayKey(d) { d = d || new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+  function dailyIdx() {
+    var d = new Date();
+    var days = Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
+    return ((days % TEMPLATES.length) + TEMPLATES.length) % TEMPLATES.length;
+  }
+  function dailyRead() { try { return JSON.parse(localStorage.getItem('tb-daily') || 'null'); } catch (e) { return null; } }
+  function dailyStreak(st) {
+    if (!st || !st.days) return 0;
+    var n = 0, d = new Date();
+    for (var i = 0; i < 400; i++) {
+      if (st.days.indexOf(todayKey(d)) < 0) break;
+      n++; d.setDate(d.getDate() - 1);
+    }
+    return n;
+  }
+  function dailyRecord(g, acc) {
+    var st = dailyRead() || { days: [] };
+    if (!st.days) st.days = [];
+    var k = todayKey();
+    if (st.days.indexOf(k) < 0) st.days.push(k);
+    if (st.days.length > 90) st.days = st.days.slice(-90);
+    try { localStorage.setItem('tb-daily', JSON.stringify(st)); } catch (e) { /* 隐私模式下写不了就只当次有效 */ }
+    return dailyStreak(st);
+  }
   // 两位玩家各自计数:双人模式下左右半区各算各的
   var P = [{ hits: 0, combo: 0, best: 0, offsets: [] }, { hits: 0, combo: 0, best: 0, offsets: [] }];
   var lastBeat = 0, loopTimer = null, nextBeatAt = 0, noteIdx = 0, lastHitAt = 0;
@@ -245,9 +275,25 @@ export function mount(root, H) {
           + ' · ' + (accOf(P[0]) === accOf(P[1]) ? '平手' : (accOf(P[0]) > accOf(P[1]) ? '左边更稳' : '右边更稳')) + '</div>');
       }
     }
+    // 常驻显示(不只点了才显示):用户一进页面就该看到"今天有挑战、我连了几天" ——
+    // 第一版只在 dailyOn 时显示,于是没点过的人完全不知道有这回事(端到端测试抓到的)。
+    lines.push(paintDailyLine());
     lines.push('伴奏:<b>' + t.name + '</b> · ' + bpm + ' BPM' + (t.id === 'none' ? '(可以自己敲节奏)' : ''));
     lines.push('<span style="color:#6e6e73">声音全部由浏览器现场合成,没有音频文件,也没有任何请求。</span>');
     statsEl.innerHTML = lines.map(function (l) { return '<div>' + l + '</div>'; }).join('');
+    // 打满目标就结算一次,并把"今天来过了"记在本机;结果卡给"再来一次"
+    if (dailyOn && mode === 'beat' && P[0].hits === DAILY_GOAL) {
+      var gr = gradeOf(P[0]), acc = accOf(P[0]);
+      if (gr) {
+        var streak = dailyRecord(gr, acc);
+        out.innerHTML = '<div class="note ok" style="display:block"><b>今日挑战完成</b> · 评级 <b>' + gr.g + '</b>(' + H.esc(gr.t) + ')'
+          + ' · 准确率 <b>' + acc + '%</b> · 最长连击 <b>' + P[0].best + '</b>'
+          + (streak > 1 ? ' · 已连续来练 <b>' + streak + '</b> 天' : '')
+          + '</div><div class="tool-row"><button class="tool-btn" id="againD">再来一次(当日最高分不会覆盖记录)</button></div>';
+        var ab = root.querySelector('#againD');
+        if (ab) ab.addEventListener('click', function () { out.innerHTML = ''; resetStats(); paintStats(); });
+      }
+    }
   }
   function paintKbd() {
     var keys = duo ? KEYMAP_L.concat(['|']).concat(KEYMAP_R) : KEYMAP;
@@ -298,6 +344,25 @@ export function mount(root, H) {
     hitAt(null, null);
   }
   root.querySelector('#start').addEventListener('click', start);
+  var dailyBtn = root.querySelector('#daily');
+  function startDaily() {
+    var t = TEMPLATES[dailyIdx()];
+    var ti = TEMPLATES.indexOf(t);
+    if (ti >= 0) { tmplIdx = ti; bpm = t.bpm; var tb = root.querySelector('#tmpl'); if (tb) tb.textContent = '伴奏:' + t.name; }
+    mode = 'beat'; dailyOn = true; duo = false;
+    root.querySelectorAll('.bt-chip[data-m]').forEach(function (x) { x.classList.toggle('active', x.dataset.m === 'beat'); });
+    resetStats(); paintStats(); paintKbd();
+    if (!started) start();
+    H.toast('今日挑战:' + t.name + ' · ' + bpm + ' BPM —— 打满 ' + DAILY_GOAL + ' 下看评级', { ms: 5200 });
+  }
+  if (dailyBtn) dailyBtn.addEventListener('click', startDaily);
+  function paintDailyLine() {
+    var st = dailyRead();
+    var n = dailyStreak(st);
+    var t = TEMPLATES[dailyIdx()];
+    return '<span style="color:#6e6e73">今日挑战模板:<b>' + H.esc(t.name) + '</b> · ' + t.bpm + ' BPM · 打满 ' + DAILY_GOAL + ' 下出评级'
+      + (n ? ' · 已连续来练 <b>' + n + '</b> 天' : '') + '</span>';
+  }
   cv.addEventListener('pointerdown', function (e) { if (!started) { start(); return; } hitAt(e.clientX, e.clientY); });
   // 键盘:单人时 A W S E D F T G Y H U J;双人时左边 A S D F、右边 J K L ; 各管一半画面
   function keyPlayer(k) {
