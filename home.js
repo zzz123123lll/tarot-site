@@ -94,7 +94,7 @@
       return;
     }
 
-    // 分区渲染成"组":首页的分区标题(全部 20 个工具)与带底色的目录区在 HTML 里,
+    // 分区渲染成"组":首页的分区标题(全部 29 个工具)与带底色的目录区在 HTML 里,
     // 这里只负责按分区吐出组,保证"静态预渲染"与"运行时渲染"是同一份结构。
     data.sections.forEach(function (sec) {
       var list = data.tools.filter(function (t) { return t.section === sec.id; });
