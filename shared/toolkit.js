@@ -363,17 +363,15 @@ export function makeDropZone(el, onFiles, accept, opts) {
     setDropState(dragAcceptable(e.dataTransfer, accept), true);
   });
   el.addEventListener('dragleave', function () { setDropState(true, false); });
-  el.addEventListener('drop', function (e) {
-    e.preventDefault(); setDropState(true, false);
-    if (!e.dataTransfer || !e.dataTransfer.files || !e.dataTransfer.files.length) return;
-    var all = Array.from(e.dataTransfer.files);
+  // 拖进来、粘进来都走这里:格式过滤 → 提示 → 骨架 → 交给工具
+  function acceptFiles(all) {
     var okFiles = all.filter(function (f) { return matchesAccept(f, accept); });
     if (!okFiles.length) {
-      warnBelow(el, '这个格式不支持' + (accept ? '，请拖入 ' + acceptLabel(accept) + '。' : '。'));
+      warnBelow(el, '这个格式不支持' + (accept ? ',请拖入 ' + acceptLabel(accept) + '。' : '。'));
       return;
     }
     if (okFiles.length < all.length) {
-      warnBelow(el, '已忽略 ' + (all.length - okFiles.length) + ' 个不支持的文件，只处理了 ' + okFiles.length + ' 个。');
+      warnBelow(el, '已忽略 ' + (all.length - okFiles.length) + ' 个不支持的文件,只处理了 ' + okFiles.length + ' 个。');
     } else {
       clearWarn(el);
     }
@@ -381,7 +379,43 @@ export function makeDropZone(el, onFiles, accept, opts) {
     // 立刻插进去会被它自己清掉 —— 那样骨架等于没做。
     try { var _r = el.closest ? (el.closest('#toolRoot') || document) : document; setTimeout(function () { showSkeletons(_r); }, 60); } catch (e) {}
     onFiles(okFiles);
+  }
+  el.addEventListener('drop', function (e) {
+    e.preventDefault(); setDropState(true, false);
+    if (!e.dataTransfer || !e.dataTransfer.files || !e.dataTransfer.files.length) return;
+    acceptFiles(Array.from(e.dataTransfer.files));
   });
+
+  // 粘贴即用:首页早就写着"粘进来我告诉你该用哪个工具",可进了工具页反而只能拖文件 ——
+  // 截图之后最顺的动作是 Ctrl+V,不该逼用户先存盘再拖。(参照 Squoosh 首屏的 Drop OR Paste)
+  if (bindPasteToPage(el, accept, acceptFiles, opts)) {
+    var pasteTip = document.createElement('div');
+    pasteTip.className = 'tool-drop-paste';
+    pasteTip.textContent = '也可以直接按 Ctrl / ⌘ + V 粘贴' + (/image\//.test(accept || '') ? '截图' : '复制进来的文件');
+    el.appendChild(pasteTip);
+  }
+}
+
+// 每页只绑一次,而且只绑**主**拖拽区:一个页面可能有多个拖拽区(加水印页还有一个 logo 框)。
+// 实测踩到的坑:按"第一次调用 makeDropZone"来判定主区是错的 —— 加水印页先建 logo 框,结果粘贴的图片
+// 进了 logo 而不是主区。判据改成"带大标题(.title)的那个",并允许工具用 { paste: true / false } 显式指定。
+var _pasteBound = false;
+function bindPasteToPage(el, accept, acceptFiles, opts) {
+  if (_pasteBound || typeof document === 'undefined') return false;
+  var wantPaste = opts && opts.paste === true ? true : (opts && opts.paste === false ? false : !!el.querySelector('.title'));
+  if (!wantPaste) return false;   // 从属拖拽区不绑,也不占坑
+  _pasteBound = true;
+  document.addEventListener('paste', function (e) {
+    var dt = e.clipboardData;
+    if (!dt || !dt.files || !dt.files.length) return; // 纯文字粘贴不抢,照旧交给输入框
+    var all = Array.prototype.slice.call(dt.files);
+    var ok = all.filter(function (f) { return matchesAccept(f, accept); });
+    if (!ok.length) return;
+    e.preventDefault();
+    clearWarn(el);
+    acceptFiles(ok);
+  });
+  return true;
 }
 
 // ---------- HEIC/HEIF 识别与说明 ----------

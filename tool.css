@@ -85,6 +85,7 @@ body {
 .tool-drop .icon { font-size: 40px; margin-bottom: 12px; }
 .tool-drop .title { font-size: var(--t-fs-body); color: var(--t-text); margin-bottom: 6px; }
 .tool-drop .hint { font-size: var(--t-fs-small); color: var(--t-muted); line-height: var(--lh-small); }
+.tool-drop-paste { font-size: var(--t-fs-small); color: var(--t-muted); line-height: var(--lh-small); margin-top: 8px; }
 
 /* —— 说明条 —— */
 .tool-note { font-size: var(--t-fs-small); color: var(--t-muted); margin: 12px 0 0; line-height: var(--lh-small); }
