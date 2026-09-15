@@ -15,7 +15,7 @@ export function mount(root, H) {
     + ".sm-chip{min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--c-line-strong);background:#fff;font-size:14px;cursor:pointer}"
     + ".sm-chip.active{background:var(--c-accent);border-color:var(--c-accent);color:#fff}"
     + ".sm-score{margin-top:12px;border:1px solid var(--c-hairline);border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.7}"
-    + ".sm-score .st{font-size:20px;color:#e8a33d;letter-spacing:2px}"
+    + ".sm-score .st{font-size:20px;color:#8a5a00;letter-spacing:2px}"
     + ".sm-score .lb{font-weight:600;margin-left:8px}"
     + ".sm-score .why{color:#6e6e73;margin-top:4px}"
     + ".sm-score .mx{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;color:#3a3a3c}"

@@ -17,7 +17,14 @@ export function mount(root, H) {
     + ".cv-tpl b{display:block;font-size:13px;color:#1d1d1f;font-weight:600}"
     + ".cv-tpl span{display:block;font-size:11px;color:#6e6e73;line-height:1.4;margin-top:2px}"
     + ".cv-tpl.active{border-color:var(--c-accent);box-shadow:0 0 0 2px rgba(0,113,227,.18)}"
-    + ".cv-tpl i{display:block;font-size:11px;color:var(--c-accent-text);font-style:normal;margin-top:4px}");
+    + ".cv-tpl i{display:block;font-size:11px;color:var(--c-accent-text);font-style:normal;margin-top:4px}"
+    + ".cv-el{display:flex;align-items:center;gap:6px;border:1px solid var(--c-line-strong);border-radius:10px;padding:5px 6px;margin-bottom:6px;background:#fff;font-size:13px}"
+    + ".cv-el.active{border-color:var(--c-accent);box-shadow:0 0 0 2px rgba(0,113,227,.18)}"
+    + ".cv-el .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}"
+    + ".cv-el button{min-width:44px;min-height:44px;border:1px solid var(--c-line-strong);background:#fff;border-radius:9px;cursor:pointer;font-family:inherit;font-size:14px}"
+    + ".cv-el button:hover{background:#f5f5f7}"
+    + ".cv-elhint{font-size:13px;color:#6e6e73;line-height:1.55}"
+    + ".cv-elprops{border:1px dashed var(--c-line-strong);border-radius:10px;padding:8px 10px;margin:8px 0}");
 
   // 规格与安全区(依据见 内部文档/计划-作品线成熟化.md 第 1 节):
   // 除 YouTube 外,各平台官方页是 JS 渲染/反爬,拿到的是第三方汇总,且小红书像素三源不一致 ——
@@ -49,6 +56,11 @@ export function mount(root, H) {
     { id: 'paper', name: '纸感' }, { id: 'outline', name: '描边' }
   ];
   var COLORS = ['#0071e3', '#F2416B', '#8AA169', '#6467E6', '#B6975A', '#1d1d1f'];
+  // 叠加元素的状态必须在这里声明:writeEls() 在 mount 早期就会被调用一次,
+  // 而 var 是"提升声明、不提升赋值" —— 声明写在后面的话,那一刻 elements 还是 undefined(实测报错)。
+  var elements = [], selId = null, elSeq = 0;
+  // 导出时不能把"选中框"画进去:导出走的就是预览那块画布,不区分的话虚线框会被烙进成品
+  var exporting = false;
   var state = { tpl: 'xhs-bold', size: 'xhs', style: 'bold', color: '#0071e3', align: 'left', title: '把文件改到能通过为止', sub: '22 个本地小工具 · 不上传不注册', tag: '' };
 
   root.innerHTML =
@@ -69,6 +81,11 @@ export function mount(root, H) {
         '<div class="cv-field"><label>风格</label><div class="cv-chips" id="st"></div></div>' +
         '<div class="cv-field"><label>强调色</label><div class="cv-swatches" id="co"></div></div>' +
         '<div class="cv-field"><label>对齐</label><div class="cv-chips" id="al"><button class="cv-chip active" data-a="left">左对齐</button><button class="cv-chip" data-a="center">居中</button></div></div>' +
+        '<div class="cv-field"><label>叠加元素(模板之上的文字/色块,可增删、调序)</label>' +
+          '<div class="tool-row" style="margin-bottom:8px"><button class="tool-btn tool-btn--ghost" id="addText">+ 文字</button>' +
+          '<button class="tool-btn tool-btn--ghost" id="addBlock">+ 色块</button></div>' +
+          '<div class="cv-elprops" id="elprops" style="display:none"></div>' +
+          '<div id="els"></div></div>' +
         '<div class="cv-field"><label><input type="checkbox" id="safe"> 显示安全区(不会被平台裁掉的范围)</label></div>' +
         '<div class="idp-hint">提示:标题越短字越大;所有文字按最大可用字号自动排版,不会溢出画布。规格来自公开汇总、平台会调整,' +
         '所以导出前建议对照平台后台确认;安全区内的内容不会在列表/分享里被裁。</div>' +
@@ -110,6 +127,20 @@ export function mount(root, H) {
     drawTpls(); render();
   });
   root.querySelector('#safe').addEventListener('change', function () { render(); });
+  root.querySelector('#addText').addEventListener('click', function () { addElement('text'); });
+  root.querySelector('#addBlock').addEventListener('click', function () { addElement('block'); });
+  root.querySelector('#els').addEventListener('click', function (ev) {
+    var row = ev.target.closest('.cv-el');
+    var btn = ev.target.closest('button');
+    if (btn && row) {
+      var id = parseInt(row.dataset.id, 10);
+      if (btn.dataset.act === 'del') delEl(id);
+      else moveEl(id, btn.dataset.act === 'up' ? -1 : 1);
+      return;
+    }
+    if (row) { selId = parseInt(row.dataset.id, 10); writeEls(); render(); }
+  });
+  writeEls();
   drawTpls(); // 首屏就要把模板列出来 —— 第一版漏了这一次调用,模板区是空的(端到端测试当场抓到)
   chips(root.querySelector('#st'), STYLES, 'style', function (x) { return x.name; });
   root.querySelector('#co').innerHTML = COLORS.map(function (c) {
@@ -135,6 +166,113 @@ export function mount(root, H) {
       render();
     });
   });
+
+  // ---------- 叠加元素(编辑器第一步:图层模型 + 增删 + 选中 + 调序) ----------
+  // 为什么用"叠在模板之上"而不是推翻模板:模板渲染已经过端到端验证,推翻它风险大;
+  // 元素层是加法 —— 每个元素用**相对坐标**(0~1),所以换尺寸/一稿多尺寸导出时自动按比例缩放。
+  var EL_NAME = { text: '文字', block: '色块' };
+  function selEl() { return elements.filter(function (e) { return e.id === selId; })[0] || null; }
+  function addElement(type) {
+    var n = elements.length;
+    elements.push({
+      id: ++elSeq, type: type, text: type === 'text' ? '一行文字' : '',
+      // 默认落在下半部空白处(第一版放在 0.62,正好压在模板副标题上 —— 导出图里一眼看出来)
+      x: 0.10, y: 0.70 + (n % 3) * 0.08, w: type === 'block' ? 0.34 : 0.62, h: type === 'block' ? 0.10 : 0.14,
+      fs: type === 'block' ? 0.035 : 0.05, color: type === 'block' ? state.color : (state.style === 'dark' || state.style === 'gradient' ? '#ffffff' : '#111114'),
+      align: 'left'
+    });
+    selId = elements[elements.length - 1].id;
+    writeEls(); render();
+    H.toast('已加一个' + EL_NAME[type] + '元素 —— 在下面改文字、字号、颜色与对齐', { ms: 4200 });
+  }
+  function moveEl(id, dir) {
+    var i = -1;
+    elements.forEach(function (e, k) { if (e.id === id) i = k; });
+    var j = i + dir;
+    if (i < 0 || j < 0 || j >= elements.length) return;
+    var tmp = elements[i]; elements[i] = elements[j]; elements[j] = tmp;
+    writeEls(); render();
+  }
+  function delEl(id) { elements = elements.filter(function (e) { return e.id !== id; }); if (selId === id) selId = null; writeEls(); render(); }
+  function writeEls() {
+    var box = root.querySelector('#els'); if (!box) return;
+    box.innerHTML = elements.length ? elements.map(function (e, i) {
+      return '<div class="cv-el' + (e.id === selId ? ' active' : '') + '" data-id="' + e.id + '">'
+        + '<span class="t" data-pick="1">' + (i + 1) + '. ' + EL_NAME[e.type] + (e.text ? ' · ' + H.esc(e.text.slice(0, 10)) : '') + '</span>'
+        + '<button data-act="up" aria-label="上移">↑</button><button data-act="down" aria-label="下移">↓</button><button data-act="del" aria-label="删除">×</button></div>';
+    }).join('') : '<div class="cv-elhint">还没有叠加元素。模板是底子,这里可以再叠文字或色块(点上面的按钮)。</div>';
+    var box2 = root.querySelector('#elprops');
+    var e = selEl();
+    if (!box2) return;
+    if (!e) { box2.style.display = 'none'; return; }
+    box2.style.display = 'block';
+    box2.innerHTML = (e.type === 'text'
+        ? '<div class="cv-field" style="margin-bottom:8px"><label for="elText">元素文字</label><input class="cv-input" id="elText" value="' + H.esc(e.text) + '"></div>'
+        : '')
+      + '<div class="cv-field" style="margin-bottom:8px"><label for="elFs">字号(相对画布宽度)<span id="elFsV"> ' + Math.round(e.fs * 100) + '%</span></label>'
+      + '<input class="cv-input" id="elFs" type="range" min="1.5" max="12" step="0.5" value="' + (e.fs * 100) + '"></div>'
+      + '<div class="cv-field" style="margin-bottom:8px"><label for="elColor">颜色</label><input class="cv-input" id="elColor" type="color" value="' + e.color + '" style="height:44px;padding:4px"></div>'
+      + '<div class="cv-field" style="margin-bottom:0"><label>对齐</label><div class="cv-chips" id="elAlign">'
+      + ['left:左', 'center:中', 'right:右'].map(function (x) {
+          var v = x.split(':');
+          return '<button class="cv-chip' + (e.align === v[0] ? ' active' : '') + '" data-a="' + v[0] + '">' + v[1] + '</button>';
+        }).join('') + '</div></div>';
+    var t = box2.querySelector('#elText');
+    if (t) t.addEventListener('input', function () { e.text = t.value; writeEls(); render(); });
+    var fs = box2.querySelector('#elFs');
+    if (fs) fs.addEventListener('input', function () { e.fs = parseFloat(fs.value) / 100; box2.querySelector('#elFsV').textContent = ' ' + Math.round(e.fs * 100) + '%'; render(); });
+    var co = box2.querySelector('#elColor');
+    if (co) co.addEventListener('input', function () { e.color = co.value; render(); });
+    var al = box2.querySelector('#elAlign');
+    if (al) al.addEventListener('click', function (ev) {
+      var b = ev.target.closest('.cv-chip'); if (!b) return;
+      e.align = b.dataset.a; al.querySelectorAll('.cv-chip').forEach(function (x) { x.classList.toggle('active', x === b); }); render();
+    });
+  }
+  function drawElements(g2, W2, H2) {
+    elements.forEach(function (e) {
+      var x = e.x * W2, y = e.y * H2, w = e.w * W2, h = e.h * H2;
+      if (e.type === 'block') {
+        g2.fillStyle = e.color;
+        var r = Math.min(18, h / 2);
+        g2.beginPath();
+        g2.moveTo(x + r, y); g2.arcTo(x + w, y, x + w, y + h, r); g2.arcTo(x + w, y + h, x, y + h, r);
+        g2.arcTo(x, y + h, x, y, r); g2.arcTo(x, y, x + w, y, r); g2.closePath(); g2.fill();
+      } else {
+        var fs2 = Math.max(10, Math.round(e.fs * W2));
+        var font2 = '700 ' + fs2 + 'px ' + FONT();
+        g2.font = font2; g2.fillStyle = e.color; g2.textBaseline = 'top';
+        var ls2 = wrapSize(e.text || ' ', font2, w).slice(0, 4);
+        ls2.forEach(function (ln, k) {
+          var yy = y + k * fs2 * 1.2;
+          if (e.align === 'center') { g2.textAlign = 'center'; g2.fillText(ln, x + w / 2, yy); }
+          else if (e.align === 'right') { g2.textAlign = 'right'; g2.fillText(ln, x + w, yy); }
+          else { g2.textAlign = 'left'; g2.fillText(ln, x, yy); }
+        });
+        g2.textAlign = 'left';
+      }
+      if (e.id === selId && !exporting) {   // 选中框只在编辑时画,导出必须干净
+        g2.save();
+        g2.strokeStyle = 'rgba(0,113,227,.95)'; g2.lineWidth = 3; g2.setLineDash([10, 7]);
+        g2.strokeRect(x - 4, y - 4, w + 8, h + 8); g2.setLineDash([]);
+        g2.restore();
+      }
+    });
+  }
+  // 元素换行要用"独立度量",不能借用主画布的 g(多尺寸导出时字号不同,复用会错行)
+  var _mc = document.createElement('canvas'), _mg = _mc.getContext('2d');
+  function wrapSize(text, font, maxW) {
+    _mg.font = font;
+    var out = [], cur = '';
+    for (var i = 0; i < text.length; i++) {
+      var ch = text[i];
+      if (ch === '\n') { out.push(cur); cur = ''; continue; }
+      var test = cur + ch;
+      if (_mg.measureText(test).width > maxW && cur) { out.push(cur); cur = ch; } else { cur = test; }
+    }
+    if (cur) out.push(cur);
+    return out;
+  }
 
   function sizeOf() { return SIZES.filter(function (s) { return s.id === state.size; })[0]; }
   function FONT(w) { return '"Geist", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif'; }
@@ -231,6 +369,7 @@ export function mount(root, H) {
     g.fillStyle = dark ? 'rgba(255,255,255,.72)' : '#6e6e73';
     g.textAlign = 'left';
     g.fillText('gongjuhe.top · 本地生成', pad, Hh - pad * 0.68);
+    drawElements(g, W, Hh);   // 叠加元素:模板之上,导出与多尺寸都会带上
     // 安全区预览:把"会被平台裁掉"的区域压暗 —— 只画在画布预览上,导出时不会带上
     var showSafe = root.querySelector('#safe') && root.querySelector('#safe').checked;
     if (showSafe) {
@@ -247,8 +386,11 @@ export function mount(root, H) {
   }
 
   var out = root.querySelector('#out');
-  root.querySelector('#dl').addEventListener('click', function () {
+  root.querySelector('#dl').addEventListener('click', async function () {
+    exporting = true; render();
+    await new Promise(function (r) { requestAnimationFrame(function () { requestAnimationFrame(r); }); });
     cv.toBlob(async function (blob) {
+      exporting = false; render();
       if (!blob) { out.innerHTML = '<div class="note err" style="display:block">导出失败,请重试。</div>'; return; }
       var chk = await H.checkImage(blob);
       var s = sizeOf();
@@ -274,7 +416,7 @@ export function mount(root, H) {
         var id = SET_SIZES[i];
         var s = SIZES.filter(function (z) { return z.id === id; })[0];
         if (!s) continue;
-        state.size = id; render();
+        state.size = id; exporting = true; render();
         await new Promise(function (r) { requestAnimationFrame(function () { requestAnimationFrame(r); }); });
         var blob = await new Promise(function (r) { cv.toBlob(r, 'image/png'); });
         if (blob) files.push({ name: 'cover-' + id + '-' + s.w + 'x' + s.h + '.png', blob: blob });
@@ -282,7 +424,7 @@ export function mount(root, H) {
     } catch (e) {
       out.innerHTML = '<div class="note err" style="display:block">导出这套尺寸时出错:' + H.esc(H.friendlyError(e, '导出失败')) + '</div>';
     }
-    state.size = orig; render();
+    exporting = false; state.size = orig; render();
     root.querySelectorAll('#sz .cv-chip').forEach(function (x) { x.classList.toggle('active', x.dataset.v === orig); });
     btn.disabled = false; btn.textContent = '导出一套尺寸(ZIP)';
     if (!files.length) { out.innerHTML = '<div class="note err" style="display:block">没有可导出的尺寸。</div>'; return; }
