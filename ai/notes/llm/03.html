@@ -57,7 +57,8 @@
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>LoRA</dt><dd>冻结原权重，只训练旁路低秩矩阵。</dd></div><div><dt>QLoRA</dt><dd>把冻结基座量化到 4-bit，再挂 LoRA。</dd></div><div><dt>gradient checkpointing</dt><dd>用重算换显存，降低训练占用。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源：全量微调 8B 需要 60–80GB 显存；LoRA/QLoRA 把可训练参数和基座占用降下来。</p><h3>结构长什么样</h3><pre class="explain-structure">r=16/32 / alpha=2r / target_modules=7 层\nbatch=1 + grad_accum=16 → 等效 16</pre></div>
+        <div><h3>为什么有效</h3><p>来源：全量微调 8B 需要 60–80GB 显存；LoRA/QLoRA 把可训练参数和基座占用降下来。</p><h3>结构长什么样</h3><pre class="explain-structure">r=16/32 / alpha=2r / target_modules=7 层
+batch=1 + grad_accum=16 → 等效 16</pre></div>
       </div>
       <p class="explain-check">lora_alpha 和 r 的关系为什么会影响更新幅度？</p>
     </div>

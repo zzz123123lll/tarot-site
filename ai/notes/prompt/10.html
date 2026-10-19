@@ -57,7 +57,9 @@
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Prompt Chaining</dt><dd>把任务拆成多个前后衔接的提示词。</dd></div><div><dt>中间产物</dt><dd>下一步要读取的初稿、审查清单等。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源指出让模型再检查/改进回答常能提高准确性，也可以把多个步骤串起来。</p><h3>结构长什么样</h3><pre class="explain-structure">Step1 → draft_v1\nStep2(draft_v1) → critique_list\nStep3(draft_v1 + critique_list) → final</pre></div>
+        <div><h3>为什么有效</h3><p>来源指出让模型再检查/改进回答常能提高准确性，也可以把多个步骤串起来。</p><h3>结构长什么样</h3><pre class="explain-structure">Step1 → draft_v1
+Step2(draft_v1) → critique_list
+Step3(draft_v1 + critique_list) → final</pre></div>
       </div>
       <p class="explain-check">为什么审查和定稿不能塞进同一个 Prompt？</p>
     </div>

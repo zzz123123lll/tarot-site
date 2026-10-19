@@ -183,7 +183,7 @@
       }
     ],
     "why": "来源 PDF 把两类指标分开，避免不知道修检索还是修生成。",
-    "structure": "Recall 低 → 修分块/检索\\nFaithfulness 低 → 修引用/拒答/生成约束",
+    "structure": "Recall 低 → 修分块/检索\nFaithfulness 低 → 修引用/拒答/生成约束",
     "check": "召回很好但回答瞎编，应该先修哪个指标？"
   }
 }

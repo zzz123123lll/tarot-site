@@ -57,7 +57,9 @@
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>GGUF</dt><dd>配合 llama.cpp/Ollama 的本地量化格式。</dd></div><div><dt>AWQ</dt><dd>保护显著权重的 4-bit GPU 量化方法。</dd></div><div><dt>Calibration Dataset</dt><dd>用于观察激活分布、指导量化的样本集。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源：量化能在几乎不损失精度的情况下降显存；格式选择取决于 CPU/GPU 和并发。</p><h3>结构长什么样</h3><pre class="explain-structure">weights = params × bytes\nFP16: 2B/param\n4-bit: ~0.5B/param</pre></div>
+        <div><h3>为什么有效</h3><p>来源：量化能在几乎不损失精度的情况下降显存；格式选择取决于 CPU/GPU 和并发。</p><h3>结构长什么样</h3><pre class="explain-structure">weights = params × bytes
+FP16: 2B/param
+4-bit: ~0.5B/param</pre></div>
       </div>
       <p class="explain-check">为什么 4-bit 量化仍需要校准集？</p>
     </div>

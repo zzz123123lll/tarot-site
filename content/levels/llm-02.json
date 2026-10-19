@@ -187,7 +187,7 @@
       }
     ],
     "why": "来源强调数据质量优先，模板错配和 EOS 丢失是微调最常见的大坑。",
-    "structure": "messages: system→user→assistant\\nChatML: <|im_start|>role ... <|im_end|>",
+    "structure": "messages: system→user→assistant\nChatML: <|im_start|>role ... <|im_end|>",
     "check": "如果漏掉 assistant 末尾的 EOS，推理时会发生什么？",
     "example": {
       "label": "PDF 本关任务（来源）",

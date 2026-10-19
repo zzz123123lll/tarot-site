@@ -57,7 +57,9 @@
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Embedding</dt><dd>把文本映射成数值向量。</dd></div><div><dt>L2 范数</dt><dd>向量的长度，用于归一化。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源 CosineExplorer 用二维向量演示：余弦值从 -1 到 1，衡量方向相似，不看向量长度。</p><h3>结构长什么样</h3><pre class="explain-structure">score = dot(q,d) / (||q||·||d||)\nif score &lt; min_score: 丢弃\n按 score 降序取 top_k</pre></div>
+        <div><h3>为什么有效</h3><p>来源 CosineExplorer 用二维向量演示：余弦值从 -1 到 1，衡量方向相似，不看向量长度。</p><h3>结构长什么样</h3><pre class="explain-structure">score = dot(q,d) / (||q||·||d||)
+if score &lt; min_score: 丢弃
+按 score 降序取 top_k</pre></div>
       </div>
       <p class="explain-check">余弦相似度为什么与向量长度无关？</p>
     </div>

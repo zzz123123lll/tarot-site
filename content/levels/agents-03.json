@@ -187,7 +187,7 @@
       }
     ],
     "why": "来源 Microsoft 第 7 课 Planning 讲任务拆解与依赖；复杂任务不能一步硬做。",
-    "structure": "step1 → parallel(step2,step3) → step4\\n异常 → 终止/重规划",
+    "structure": "step1 → parallel(step2,step3) → step4\n异常 → 终止/重规划",
     "check": "depends_on 为空和不为空分别意味着什么？"
   }
 }

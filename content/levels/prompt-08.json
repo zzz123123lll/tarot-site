@@ -158,7 +158,7 @@
       }
     ],
     "why": "来源指出可以给模型“说不知道”的退路，并要求先找证据再回答。",
-    "structure": "<contract_text>合同</contract_text>\\n<evidence_quotes>原句</evidence_quotes>\\n结论：有证据/未包含",
+    "structure": "<contract_text>合同</contract_text>\n<evidence_quotes>原句</evidence_quotes>\n结论：有证据/未包含",
     "check": "为什么“给模型一个退路”能减少编造？"
   }
 }

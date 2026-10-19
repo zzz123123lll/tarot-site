@@ -201,7 +201,7 @@
       }
     ],
     "why": "来源：原生 generate+FastAPI 并发差；vLLM 用分页、连续批处理和前缀缓存提升吞吐。",
-    "structure": "vllm serve → AWQ + max-model-len + gpu-memory-utilization\\n+ prefix-caching + lora-modules",
+    "structure": "vllm serve → AWQ + max-model-len + gpu-memory-utilization\n+ prefix-caching + lora-modules",
     "check": "压测时 TTFT、TPOT/ITL、Throughput 分别衡量什么？",
     "example": {
       "label": "PDF 本关任务（来源）",

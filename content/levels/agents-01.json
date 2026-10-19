@@ -183,7 +183,7 @@
       }
     ],
     "why": "来源 Microsoft 第 1 课指出 Agent 是让 LLM 真正做事的环境+工具+记忆系统，不是单次回答。",
-    "structure": "Thought → Action → Observation → … → Final Decision\\nmax_steps / failure_limit",
+    "structure": "Thought → Action → Observation → … → Final Decision\nmax_steps / failure_limit",
     "check": "为什么 Agent 必须设置停止条件？"
   }
 }

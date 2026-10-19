@@ -57,7 +57,9 @@
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>chunk</dt><dd>检索时使用的一段文本。</dd></div><div><dt>overlap</dt><dd>相邻块之间保留的重叠内容，用来保住边界上下文。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源 RAGStream 会把文档处理成带重叠的 chunk，以保留上下文。</p><h3>结构长什么样</h3><pre class="explain-structure">标题 → 段落 → 句子\n每块 400–600 字 / 重叠 60–80 字\n块头注入来源+章节</pre></div>
+        <div><h3>为什么有效</h3><p>来源 RAGStream 会把文档处理成带重叠的 chunk，以保留上下文。</p><h3>结构长什么样</h3><pre class="explain-structure">标题 → 段落 → 句子
+每块 400–600 字 / 重叠 60–80 字
+块头注入来源+章节</pre></div>
       </div>
       <p class="explain-check">chunk 太小和太大分别会损失什么？</p>
     </div>

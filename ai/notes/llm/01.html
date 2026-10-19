@@ -57,7 +57,9 @@
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Temperature</dt><dd>控制概率分布平滑度，越低越确定。</dd></div><div><dt>Top-p</dt><dd>动态截取累积概率达到 p 的候选词集合。</dd></div><div><dt>GQA</dt><dd>多个 Query 头共享一组 K/V 头，降低 KV Cache。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源指出 Temperature 与 Top-p 都作用于采样分布，同时极端收紧可能导致截断和逻辑问题。</p><h3>结构长什么样</h3><pre class="explain-structure">医疗：T=0.0 / top_p=1.0\n小说：T=0.85 / top_p=0.92\n算法：T=0.6 / n=5</pre></div>
+        <div><h3>为什么有效</h3><p>来源指出 Temperature 与 Top-p 都作用于采样分布，同时极端收紧可能导致截断和逻辑问题。</p><h3>结构长什么样</h3><pre class="explain-structure">医疗：T=0.0 / top_p=1.0
+小说：T=0.85 / top_p=0.92
+算法：T=0.6 / n=5</pre></div>
       </div>
       <p class="explain-check">为什么医疗提取不建议同时把 temperature 和 top_p 都压到极端？</p>
     </div>

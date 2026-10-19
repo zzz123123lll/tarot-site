@@ -57,7 +57,8 @@
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>元数据</dt><dd>描述文档版本、部门、状态等信息。</dd></div><div><dt>Upsert</dt><dd>插入或更新文档记录。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源 SemanticSeek 用 embedding + 余弦相似度做语义检索；加入元数据可先排除不适用的文档。</p><h3>结构长什么样</h3><pre class="explain-structure">入库：id/text/embedding/metadata\n查询：where 过滤 → 余弦 → Top-K</pre></div>
+        <div><h3>为什么有效</h3><p>来源 SemanticSeek 用 embedding + 余弦相似度做语义检索；加入元数据可先排除不适用的文档。</p><h3>结构长什么样</h3><pre class="explain-structure">入库：id/text/embedding/metadata
+查询：where 过滤 → 余弦 → Top-K</pre></div>
       </div>
       <p class="explain-check">为什么过滤要发生在相似度计算之前？</p>
     </div>

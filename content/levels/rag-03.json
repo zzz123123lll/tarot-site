@@ -171,7 +171,7 @@
       }
     ],
     "why": "来源 SemanticSeek 用 embedding + 余弦相似度做语义检索；加入元数据可先排除不适用的文档。",
-    "structure": "入库：id/text/embedding/metadata\\n查询：where 过滤 → 余弦 → Top-K",
+    "structure": "入库：id/text/embedding/metadata\n查询：where 过滤 → 余弦 → Top-K",
     "check": "为什么过滤要发生在相似度计算之前？"
   }
 }

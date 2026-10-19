@@ -194,7 +194,7 @@
       }
     ],
     "why": "来源指出公开基准易污染，Judge 有系统性偏见，需要盲测和私有测试集。",
-    "structure": "YAML: base + models + density/weight\\n评测: AB 交换 + 字数归一 + 私有黄金集",
+    "structure": "YAML: base + models + density/weight\n评测: AB 交换 + 字数归一 + 私有黄金集",
     "check": "为什么只看公开榜单分数不足以判断模型好坏？",
     "example": {
       "label": "PDF 本关任务（来源）",

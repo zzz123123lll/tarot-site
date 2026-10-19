@@ -148,7 +148,7 @@
       }
     ],
     "why": "来源指出让模型再检查/改进回答常能提高准确性，也可以把多个步骤串起来。",
-    "structure": "Step1 → draft_v1\\nStep2(draft_v1) → critique_list\\nStep3(draft_v1 + critique_list) → final",
+    "structure": "Step1 → draft_v1\nStep2(draft_v1) → critique_list\nStep3(draft_v1 + critique_list) → final",
     "check": "为什么审查和定稿不能塞进同一个 Prompt？"
   }
 }

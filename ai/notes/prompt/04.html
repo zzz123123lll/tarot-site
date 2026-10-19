@@ -57,7 +57,9 @@
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>XML 标签</dt><dd>成对的开始/结束标签，用来包住一段内容。</dd></div><div><dt>提示词模板</dt><dd>固定骨架加可替换变量，变量要能被清楚界定。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源指出不分隔变量时，模型可能把模板说明误认为输入，或把输入误认为指令。</p><h3>结构长什么样</h3><pre class="explain-structure">&lt;return_policy&gt;规则&lt;/return_policy&gt;\n&lt;buyer_message&gt;原话&lt;/buyer_message&gt;\n指令：只依据这两个标签比对</pre></div>
+        <div><h3>为什么有效</h3><p>来源指出不分隔变量时，模型可能把模板说明误认为输入，或把输入误认为指令。</p><h3>结构长什么样</h3><pre class="explain-structure">&lt;return_policy&gt;规则&lt;/return_policy&gt;
+&lt;buyer_message&gt;原话&lt;/buyer_message&gt;
+指令：只依据这两个标签比对</pre></div>
       </div>
       <p class="explain-check">如果只包原话、不在指令里引用标签名，会缺什么？</p>
     </div>

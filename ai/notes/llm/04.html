@@ -57,7 +57,9 @@
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Overfitting</dt><dd>训练集损失下降但验证集损失上升。</dd></div><div><dt>Gradient Norm</dt><dd>梯度范数，异常飙升可能是梯度爆炸。</dd></div><div><dt>SFT 边界</dt><dd>SFT 主要教格式和风格，不擅长灌输实时新事实。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源把三种异常分开：过拟合看 Eval Loss，NaN 看梯度/学习率，记不住价格表看 SFT 与 RAG 边界。</p><h3>结构长什么样</h3><pre class="explain-structure">Train ↓ + Eval ↑ → 过拟合\nLoss=NaN → warmup/裁剪/脏数据\n新事实 → RAG</pre></div>
+        <div><h3>为什么有效</h3><p>来源把三种异常分开：过拟合看 Eval Loss，NaN 看梯度/学习率，记不住价格表看 SFT 与 RAG 边界。</p><h3>结构长什么样</h3><pre class="explain-structure">Train ↓ + Eval ↑ → 过拟合
+Loss=NaN → warmup/裁剪/脏数据
+新事实 → RAG</pre></div>
       </div>
       <p class="explain-check">验证集 Loss 反弹通常说明什么？</p>
     </div>

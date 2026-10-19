@@ -154,7 +154,7 @@
       }
     ],
     "why": "来源指出不分隔变量时，模型可能把模板说明误认为输入，或把输入误认为指令。",
-    "structure": "<return_policy>规则</return_policy>\\n<buyer_message>原话</buyer_message>\\n指令：只依据这两个标签比对",
+    "structure": "<return_policy>规则</return_policy>\n<buyer_message>原话</buyer_message>\n指令：只依据这两个标签比对",
     "check": "如果只包原话、不在指令里引用标签名，会缺什么？"
   }
 }

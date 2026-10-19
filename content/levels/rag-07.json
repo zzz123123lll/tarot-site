@@ -183,7 +183,7 @@
       }
     ],
     "why": "来源 PDF 指出向量擅长局部细节查找，GraphRAG 的 Global Search 适合跨文档宏观归纳。",
-    "structure": "实体/关系 → 社区摘要 → Query Router\\n局部→向量 / 全局→Global",
+    "structure": "实体/关系 → 社区摘要 → Query Router\n局部→向量 / 全局→Global",
     "check": "什么类型的问题不适合只走向量检索？"
   }
 }

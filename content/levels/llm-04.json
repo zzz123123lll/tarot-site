@@ -185,7 +185,7 @@
       }
     ],
     "why": "来源把三种异常分开：过拟合看 Eval Loss，NaN 看梯度/学习率，记不住价格表看 SFT 与 RAG 边界。",
-    "structure": "Train ↓ + Eval ↑ → 过拟合\\nLoss=NaN → warmup/裁剪/脏数据\\n新事实 → RAG",
+    "structure": "Train ↓ + Eval ↑ → 过拟合\nLoss=NaN → warmup/裁剪/脏数据\n新事实 → RAG",
     "check": "验证集 Loss 反弹通常说明什么？",
     "example": {
       "label": "PDF 本关任务（来源）",

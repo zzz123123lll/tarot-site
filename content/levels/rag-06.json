@@ -173,7 +173,7 @@
       }
     ],
     "why": "来源 ConvoRAG 用对话历史、查询分类和查询上下文化来提升多轮回答相关性。",
-    "structure": "history + latest → rewritten query\\n对比题 → sub_query_A / sub_query_B",
+    "structure": "history + latest → rewritten query\n对比题 → sub_query_A / sub_query_B",
     "check": "用户只说“它”时，为什么不能直接拿原话检索？"
   }
 }

@@ -186,7 +186,7 @@
       }
     ],
     "why": "来源：全量微调 8B 需要 60–80GB 显存；LoRA/QLoRA 把可训练参数和基座占用降下来。",
-    "structure": "r=16/32 / alpha=2r / target_modules=7 层\\nbatch=1 + grad_accum=16 → 等效 16",
+    "structure": "r=16/32 / alpha=2r / target_modules=7 层\nbatch=1 + grad_accum=16 → 等效 16",
     "check": "lora_alpha 和 r 的关系为什么会影响更新幅度？",
     "example": {
       "label": "PDF 本关任务（来源）",

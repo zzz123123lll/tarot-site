@@ -169,7 +169,7 @@
       }
     ],
     "why": "来源指出思考只有在“说出来”时才真正发生；只要求结论，模型没有完成推理。",
-    "structure": "<thinking>步骤1→步骤2→步骤3</thinking>\\n<final_plan>结论</final_plan>",
+    "structure": "<thinking>步骤1→步骤2→步骤3</thinking>\n<final_plan>结论</final_plan>",
     "check": "为什么“请思考但只输出答案”不等于分步推演？"
   }
 }

@@ -57,7 +57,8 @@
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>MergeKit</dt><dd>零训练融合模型权重的工具。</dd></div><div><dt>LLM-as-a-Judge</dt><dd>用大模型给模型输出打分的评测方式。</dd></div><div><dt>Data Contamination</dt><dd>评测数据混入训练数据，导致分数虚高。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源指出公开基准易污染，Judge 有系统性偏见，需要盲测和私有测试集。</p><h3>结构长什么样</h3><pre class="explain-structure">YAML: base + models + density/weight\n评测: AB 交换 + 字数归一 + 私有黄金集</pre></div>
+        <div><h3>为什么有效</h3><p>来源指出公开基准易污染，Judge 有系统性偏见，需要盲测和私有测试集。</p><h3>结构长什么样</h3><pre class="explain-structure">YAML: base + models + density/weight
+评测: AB 交换 + 字数归一 + 私有黄金集</pre></div>
       </div>
       <p class="explain-check">为什么只看公开榜单分数不足以判断模型好坏？</p>
     </div>

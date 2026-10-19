@@ -173,7 +173,7 @@
       }
     ],
     "why": "来源：DPO 显存小、稳定，适合打磨文风；GRPO 用可验证奖励激发长思维链。",
-    "structure": "DPO: prompt + chosen + rejected\\nGRPO: 同一题采样一组 → 规则打分 → 组内相对优势",
+    "structure": "DPO: prompt + chosen + rejected\nGRPO: 同一题采样一组 → 规则打分 → 组内相对优势",
     "check": "什么场景更适合 GRPO 而不是 DPO？",
     "example": {
       "label": "PDF 本关任务（来源）",

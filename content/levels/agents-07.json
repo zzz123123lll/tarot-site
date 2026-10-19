@@ -186,7 +186,7 @@
       }
     ],
     "why": "来源 Microsoft 第 12 课 Context Engineering 把上下文视为需要选择和组织的预算。",
-    "structure": "工具返回 → 截断/摘要\\n历史 → 窗口/压缩\\n子 Agent → 只回传结论",
+    "structure": "工具返回 → 截断/摘要\n历史 → 窗口/压缩\n子 Agent → 只回传结论",
     "check": "为什么不能把全部历史都塞进上下文？"
   }
 }

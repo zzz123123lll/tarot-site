@@ -205,7 +205,7 @@
       }
     ],
     "why": "来源指出 Temperature 与 Top-p 都作用于采样分布，同时极端收紧可能导致截断和逻辑问题。",
-    "structure": "医疗：T=0.0 / top_p=1.0\\n小说：T=0.85 / top_p=0.92\\n算法：T=0.6 / n=5",
+    "structure": "医疗：T=0.0 / top_p=1.0\n小说：T=0.85 / top_p=0.92\n算法：T=0.6 / n=5",
     "check": "为什么医疗提取不建议同时把 temperature 和 top_p 都压到极端？",
     "example": {
       "label": "PDF 本关任务（来源）",

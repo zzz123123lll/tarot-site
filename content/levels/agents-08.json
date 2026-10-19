@@ -199,7 +199,7 @@
       }
     ],
     "why": "来源 Microsoft 第 18 课 Securing AI Agents 与第 6 课讲提示词注入、数据泄露和人类监督。",
-    "structure": "L1 auto / L2 HITL / L3 block\\n出站白名单 + 审批卡片",
+    "structure": "L1 auto / L2 HITL / L3 block\n出站白名单 + 审批卡片",
     "check": "为什么外部邮件内容不能直接当作 Agent 指令？"
   }
 }

@@ -194,7 +194,7 @@
       }
     ],
     "why": "来源 CosineExplorer 用二维向量演示：余弦值从 -1 到 1，衡量方向相似，不看向量长度。",
-    "structure": "score = dot(q,d) / (||q||·||d||)\\nif score < min_score: 丢弃\\n按 score 降序取 top_k",
+    "structure": "score = dot(q,d) / (||q||·||d||)\nif score < min_score: 丢弃\n按 score 降序取 top_k",
     "check": "余弦相似度为什么与向量长度无关？"
   }
 }

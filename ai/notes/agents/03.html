@@ -57,7 +57,8 @@
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>DAG</dt><dd>有向无环图，用来表达任务依赖。</dd></div><div><dt>重规划</dt><dd>前置结果异常时改变后续计划。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源 Microsoft 第 7 课 Planning 讲任务拆解与依赖；复杂任务不能一步硬做。</p><h3>结构长什么样</h3><pre class="explain-structure">step1 → parallel(step2,step3) → step4\n异常 → 终止/重规划</pre></div>
+        <div><h3>为什么有效</h3><p>来源 Microsoft 第 7 课 Planning 讲任务拆解与依赖；复杂任务不能一步硬做。</p><h3>结构长什么样</h3><pre class="explain-structure">step1 → parallel(step2,step3) → step4
+异常 → 终止/重规划</pre></div>
       </div>
       <p class="explain-check">depends_on 为空和不为空分别意味着什么？</p>
     </div>
