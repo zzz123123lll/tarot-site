@@ -169,5 +169,32 @@
         ""
       ]
     ]
+  },
+  "explain": {
+    "summary": "这一关只解决一件事：把“语义接近”变成可计算的余弦相似度，并处理阈值和空结果。",
+    "bullets": [
+      "向量先算 L2 模长并归一化",
+      "相似度为点积除以模长乘积",
+      "低分过滤，空结果返回空列表"
+    ],
+    "example": {
+      "label": "PDF 本关实操题",
+      "input": "本关题目：编写零第三方框架依赖的余弦相似度检索函数。",
+      "walkthrough": "来源要求公式含 L2 范数、防除零、min_score=0.75 过滤，并按相似度降序返回 doc_id/score/text。",
+      "output": "参考答案是完整的余弦检索函数（见本关原文）。"
+    },
+    "terms": [
+      {
+        "term": "Embedding",
+        "plain": "把文本映射成数值向量。"
+      },
+      {
+        "term": "L2 范数",
+        "plain": "向量的长度，用于归一化。"
+      }
+    ],
+    "why": "来源 CosineExplorer 用二维向量演示：余弦值从 -1 到 1，衡量方向相似，不看向量长度。",
+    "structure": "score = dot(q,d) / (||q||·||d||)\\nif score < min_score: 丢弃\\n按 score 降序取 top_k",
+    "check": "余弦相似度为什么与向量长度无关？"
   }
 }

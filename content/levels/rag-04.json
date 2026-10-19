@@ -144,5 +144,32 @@
         ""
       ]
     ]
+  },
+  "explain": {
+    "summary": "这一关只解决一件事：两阶段检索——先扩大召回，再融合和精排。",
+    "bullets": [
+      "向量和 BM25 各召回 Top-20",
+      "RRF 用排名融合",
+      "Cross-Encoder 只对少量候选精排"
+    ],
+    "example": {
+      "label": "PDF 本关实操题",
+      "input": "本关题目：手写 RRF 倒数排名融合算法与两阶段重排流水线。",
+      "walkthrough": "来源要求写出含 k=60 的 RRF 公式，设计粗排 Top-20→精排 Top-4，并解释不能对全库跑 Cross-Encoder。",
+      "output": "参考答案是 RRF 融合和两阶段精排流程（见本关原文）。"
+    },
+    "terms": [
+      {
+        "term": "BM25",
+        "plain": "基于关键词的经典检索算法。"
+      },
+      {
+        "term": "RRF",
+        "plain": "用排名而不是原始分数融合多路结果。"
+      }
+    ],
+    "why": "来源指出向量擅长语义、BM25 擅长字面；Cross-Encoder 计算重，只适合少量候选。",
+    "structure": "vector Top-20 + BM25 Top-20 → RRF → Cross-Encoder Top-4",
+    "check": "为什么不能对 10 万篇文档全部跑 Cross-Encoder？"
   }
 }

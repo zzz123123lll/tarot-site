@@ -42,7 +42,26 @@
     <h1>专家角色赋予</h1>
     <p class="lede">本关练习：用三维角色法改写简历诊断指令。</p>
     <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
-    
+    <section class="explain" id="understand">
+    <div class="explain-fast">
+      <p class="label">30 SECONDS / 30 秒看懂</p>
+      <p class="explain-summary">这一关只解决一件事：把“你是专家”改写成有职级、立场和评价标准的角色。</p>
+      <ul class="explain-bullets"><li>角色要带具体职级/身份</li><li>角色要带立场和受众</li><li>角色要带目标岗位的评价标准</li></ul>
+    </div>
+    <div class="explain-deep">
+      <p class="label">3 MINUTES / 3 分钟拆解</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本关实操题</p>
+      <div class="explain-example">
+        <div class="explain-code"><span>输入</span><pre>来源劣质示例：你是一个HR,帮我改改这段简历经历：负责公司公众号运营，发布过30篇推文，提升了粉丝活跃度。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求先挑 3 处空话/缺量化数据，再按 STAR 给 2 个改写版本；角色标准必须能支持这两类输出。</p><h3>输出</h3><p>参考答案把职级、挑剔立场和岗位标准写进角色设定（见本关原文）。</p></div>
+      </div>
+      <div class="explain-two">
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>角色提示</dt><dd>让模型进入具体角色并带上必要上下文。</dd></div><div><dt>STAR</dt><dd>情境、任务、行动、结果四段式表达。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源指出角色上下文越详细，角色提示越能改变视角、语气、风格和内容深度。</p><h3>结构长什么样</h3><pre class="explain-structure">角色 = 职级身份 + 严苛立场 + 目标岗位标准</pre></div>
+      </div>
+      <p class="explain-check">为什么只写“你是专家”不够？</p>
+    </div>
+  </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
     <p class="reading-quote">角色提示（role prompting）是让 Claude 进入一个具体角色并带上必要上下文；角色上下文越详细，效果通常越好。角色可以放在 system prompt，也可以放在 user turn。</p>

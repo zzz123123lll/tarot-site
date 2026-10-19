@@ -159,5 +159,32 @@
         ""
       ]
     ]
+  },
+  "explain": {
+    "summary": "这一关只解决一件事：生成之后加 Validator 质检，再让 Refiner 按错误修复。",
+    "bullets": [
+      "Generator 产出草稿",
+      "Validator 做硬规则 + 语义检查",
+      "Refiner 按报错修复，重试有上限"
+    ],
+    "example": {
+      "label": "PDF 本关实操题",
+      "input": "本关题目：构建“自然语言转 SQL 报表 Agent”的自检自愈闭环。",
+      "walkthrough": "来源要求拦截 DROP/DELETE、检查 LIMIT 和分区日期、核对业务口径；报错回传 Refiner，最多重试。",
+      "output": "参考答案是三步自愈循环（见本关原文）。"
+    },
+    "terms": [
+      {
+        "term": "Metacognition",
+        "plain": "Agent 观察、评估并修正自己的推理。"
+      },
+      {
+        "term": "Refiner",
+        "plain": "根据错误反馈修复结果的组件。"
+      }
+    ],
+    "why": "来源 Microsoft 第 9 课讲元认知设计模式；本关把它工程化为三步。",
+    "structure": "Generator → Validator（规则+语义） → Refiner → 重试/转人工",
+    "check": "为什么校验要同时包含硬规则和语义核对？"
   }
 }

@@ -42,7 +42,26 @@
     <h1>智能体检索与分层记忆管理</h1>
     <p class="lede">本关练习：设计私人理财顾问 Agent 的记忆读写与主动检索策略。</p>
     <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Microsoft AI Agents for Beginners (77.2k Stars)</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
-    
+    <section class="explain" id="understand">
+    <div class="explain-fast">
+      <p class="label">30 SECONDS / 30 秒看懂</p>
+      <p class="explain-summary">这一关只解决一件事：区分长期记忆和短期记忆，并让 Agent 自检何时二次检索。</p>
+      <ul class="explain-bullets"><li>长期存偏好/风险等级，短期存本轮对话</li><li>首次检索缺关键字段时二次检索</li><li>对话结束后判断是否写回记忆</li></ul>
+    </div>
+    <div class="explain-deep">
+      <p class="label">3 MINUTES / 3 分钟拆解</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本关实操题</p>
+      <div class="explain-example">
+        <div class="explain-code"><span>输入</span><pre>本关题目：设计私人理财顾问 Agent 的记忆读写与主动检索策略。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求读长期画像 + 查今日招募说明书；缺最大回撤/久期/信用评级时二次检索；结束后写回新信息。</p><h3>输出</h3><p>参考答案是记忆读写和检索分流流程（见本关原文）。</p></div>
+      </div>
+      <div class="explain-two">
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Agentic RAG</dt><dd>Agent 自己判断何时检索、检索什么。</dd></div><div><dt>Memory Write-back</dt><dd>对话结束后把重要信息写回长期记忆。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源 Microsoft 第 5/13 课讲 Agentic RAG 与短期/长期记忆。</p><h3>结构长什么样</h3><pre class="explain-structure">长期画像 + 本轮对话 → 检索 → 自检 → 二次检索 → 写回</pre></div>
+      </div>
+      <p class="explain-check">什么信息该进长期记忆，什么只留本轮？</p>
+    </div>
+  </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
     <p class="reading-quote">Microsoft 第 5 课 Agentic RAG 与第 13 课 Agentic Memory：Agent 需要短期会话记忆、长期用户记忆，并能在需要时自主检索和改写查询。</p>

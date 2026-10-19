@@ -171,7 +171,7 @@
     ],
     "example": {
       "label": "Anthropic 第 1 章官方例子",
-      "input": "system: Your answer should always be a series of critical thinking questions that further the conversation (do not provide answers to your questions).\nuser: Why is the sky blue?",
+      "input": "来源劣质示例：写个邮件邀请记者下周五下午两点来参加我们的智能戒指发布会，地点在深圳市南山区科技园A座3楼，会发伴手礼，快点写。",
       "walkthrough": "system 规定“只输出追问、不直接回答”；user 提出“天空为什么蓝”。模型的行为被 system 约束，而不是直接解释天空颜色。",
       "output": "模型按 system 输出一组推动对话的追问；官方用它展示 system prompt 如何改变回答行为。"
     },

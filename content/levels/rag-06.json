@@ -148,5 +148,32 @@
         ""
       ]
     ]
+  },
+  "explain": {
+    "summary": "这一关只解决一件事：把多轮追问改写成可独立检索的问题，并拆开对比题。",
+    "bullets": [
+      "结合历史补全代词",
+      "对比题拆成两个子查询",
+      "闲聊/致谢可跳过检索"
+    ],
+    "example": {
+      "label": "PDF 本关实操题",
+      "input": "本关题目：编写多轮对话指代消解与复杂对比问题拆解器。",
+      "walkthrough": "来源要求 Query Rewriter 读取 chat_history 和 latest_question；对比题输出两个独立子查询；纯致谢跳过向量库。",
+      "output": "参考答案是改写器和子查询 JSON（见本关原文）。"
+    },
+    "terms": [
+      {
+        "term": "Query Rewriting",
+        "plain": "把口语追问改写成可检索的完整问题。"
+      },
+      {
+        "term": "子查询",
+        "plain": "从复杂问题拆出的独立检索问题。"
+      }
+    ],
+    "why": "来源 ConvoRAG 用对话历史、查询分类和查询上下文化来提升多轮回答相关性。",
+    "structure": "history + latest → rewritten query\\n对比题 → sub_query_A / sub_query_B",
+    "check": "用户只说“它”时，为什么不能直接拿原话检索？"
   }
 }

@@ -158,5 +158,32 @@
         "https://microsoft.github.io/graphrag/"
       ]
     ]
+  },
+  "explain": {
+    "summary": "这一关只解决一件事：局部细节走向量，跨文档全局问题走 GraphRAG。",
+    "bullets": [
+      "抽取实体/关系/三元组",
+      "区分 Local Search 与 Global Search",
+      "成本高，只对高价值文档建图"
+    ],
+    "example": {
+      "label": "PDF 本关实操题",
+      "input": "本关题目：设计行业研报知识库的实体关系抽取与 Local/Global 路由策略。",
+      "walkthrough": "来源要求定义实体与关系三元组、设计 Query Router，并说明图谱索引成本高、只对核心文档启用。",
+      "output": "参考答案是实体关系 JSON 和路由规则（见本关原文）。"
+    },
+    "terms": [
+      {
+        "term": "GraphRAG",
+        "plain": "用实体关系图增强检索的方法。"
+      },
+      {
+        "term": "社区摘要",
+        "plain": "把图谱中的相关实体聚成主题摘要。"
+      }
+    ],
+    "why": "来源 PDF 指出向量擅长局部细节查找，GraphRAG 的 Global Search 适合跨文档宏观归纳。",
+    "structure": "实体/关系 → 社区摘要 → Query Router\\n局部→向量 / 全局→Global",
+    "check": "什么类型的问题不适合只走向量检索？"
   }
 }

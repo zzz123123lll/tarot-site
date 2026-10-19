@@ -123,5 +123,32 @@
         ""
       ]
     ]
+  },
+  "explain": {
+    "summary": "这一关只解决一件事：把一次做不完的任务拆成“初稿→审查→定稿”的提示链。",
+    "bullets": [
+      "每一步只做一件事",
+      "上一步产物作为下一步输入",
+      "审查和定稿要分开"
+    ],
+    "example": {
+      "label": "PDF 本关实操题",
+      "input": "本关题目：第 10 关实操练习（多 Prompt 流程）。",
+      "walkthrough": "来源要求 Step1 生成 draft_v1、Step2 审查并输出 critique_list、Step3 同时读 draft 和 critique 输出 final_post。",
+      "output": "参考答案是三步提示链（见本关原文）。"
+    },
+    "terms": [
+      {
+        "term": "Prompt Chaining",
+        "plain": "把任务拆成多个前后衔接的提示词。"
+      },
+      {
+        "term": "中间产物",
+        "plain": "下一步要读取的初稿、审查清单等。"
+      }
+    ],
+    "why": "来源指出让模型再检查/改进回答常能提高准确性，也可以把多个步骤串起来。",
+    "structure": "Step1 → draft_v1\\nStep2(draft_v1) → critique_list\\nStep3(draft_v1 + critique_list) → final",
+    "check": "为什么审查和定稿不能塞进同一个 Prompt？"
   }
 }

@@ -42,7 +42,26 @@
     <h1>语义检索引擎构建</h1>
     <p class="lede">本关练习：构建带元数据预过滤的本地 Chroma/Qdrant 语义检索管道。</p>
     <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 StepByStep-RAG / GraphRAG / RAG 评估实践</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
-    
+    <section class="explain" id="understand">
+    <div class="explain-fast">
+      <p class="label">30 SECONDS / 30 秒看懂</p>
+      <p class="explain-summary">这一关只解决一件事：检索前先用元数据过滤，再做向量相似度。</p>
+      <ul class="explain-bullets"><li>入库保存文本、embedding 和元数据</li><li>查询先按 is_active/版本/部门过滤</li><li>再做向量相似度取 Top-K</li></ul>
+    </div>
+    <div class="explain-deep">
+      <p class="label">3 MINUTES / 3 分钟拆解</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本关实操题</p>
+      <div class="explain-example">
+        <div class="explain-code"><span>输入</span><pre>本关题目：构建带元数据预过滤的本地 Chroma/Qdrant 语义检索管道。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求 upsert 保存版本和 is_active，查询时先 where 过滤再算相似度，并说明查询与文档必须用同一 Embedding 模型。</p><h3>输出</h3><p>参考答案是入库+过滤检索流程（见本关原文）。</p></div>
+      </div>
+      <div class="explain-two">
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>元数据</dt><dd>描述文档版本、部门、状态等信息。</dd></div><div><dt>Upsert</dt><dd>插入或更新文档记录。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源 SemanticSeek 用 embedding + 余弦相似度做语义检索；加入元数据可先排除不适用的文档。</p><h3>结构长什么样</h3><pre class="explain-structure">入库：id/text/embedding/metadata\n查询：where 过滤 → 余弦 → Top-K</pre></div>
+      </div>
+      <p class="explain-check">为什么过滤要发生在相似度计算之前？</p>
+    </div>
+  </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
     <p class="reading-quote">SemanticSeek 用 Embedding 把查询和文档转成向量，再用余弦相似度计算相关性，并按 Top-K 返回最相关文档。</p>

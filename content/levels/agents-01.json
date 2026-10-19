@@ -158,5 +158,32 @@
         ""
       ]
     ]
+  },
+  "explain": {
+    "summary": "这一关只解决一件事：把 Agent 写成“想—做—看—再想”的受控循环。",
+    "bullets": [
+      "明确 Thought/Action/Observation/Final 四步",
+      "写清触发条件",
+      "设置最大步数与失败熔断"
+    ],
+    "example": {
+      "label": "PDF 本关实操题",
+      "input": "来源劣质示例：你是一个机票助手，帮我查一下用户买的航班现在多少钱，如果便宜了就帮他改签。",
+      "walkthrough": "来源要求差价≥200 且净省>0 才改签；失败 2 次或总步数 4 步立即停止告警。",
+      "output": "参考答案是带状态和熔断的 ReAct 规范（见本关原文）。"
+    },
+    "terms": [
+      {
+        "term": "ReAct",
+        "plain": "推理与行动交替的 Agent 循环。"
+      },
+      {
+        "term": "Observation",
+        "plain": "工具执行后返回的真实结果。"
+      }
+    ],
+    "why": "来源 Microsoft 第 1 课指出 Agent 是让 LLM 真正做事的环境+工具+记忆系统，不是单次回答。",
+    "structure": "Thought → Action → Observation → … → Final Decision\\nmax_steps / failure_limit",
+    "check": "为什么 Agent 必须设置停止条件？"
   }
 }

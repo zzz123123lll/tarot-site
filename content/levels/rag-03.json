@@ -146,5 +146,32 @@
         ""
       ]
     ]
+  },
+  "explain": {
+    "summary": "这一关只解决一件事：检索前先用元数据过滤，再做向量相似度。",
+    "bullets": [
+      "入库保存文本、embedding 和元数据",
+      "查询先按 is_active/版本/部门过滤",
+      "再做向量相似度取 Top-K"
+    ],
+    "example": {
+      "label": "PDF 本关实操题",
+      "input": "本关题目：构建带元数据预过滤的本地 Chroma/Qdrant 语义检索管道。",
+      "walkthrough": "来源要求 upsert 保存版本和 is_active，查询时先 where 过滤再算相似度，并说明查询与文档必须用同一 Embedding 模型。",
+      "output": "参考答案是入库+过滤检索流程（见本关原文）。"
+    },
+    "terms": [
+      {
+        "term": "元数据",
+        "plain": "描述文档版本、部门、状态等信息。"
+      },
+      {
+        "term": "Upsert",
+        "plain": "插入或更新文档记录。"
+      }
+    ],
+    "why": "来源 SemanticSeek 用 embedding + 余弦相似度做语义检索；加入元数据可先排除不适用的文档。",
+    "structure": "入库：id/text/embedding/metadata\\n查询：where 过滤 → 余弦 → Top-K",
+    "check": "为什么过滤要发生在相似度计算之前？"
   }
 }

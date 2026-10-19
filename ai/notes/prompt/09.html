@@ -42,7 +42,26 @@
     <h1>构建工业级复杂提示词</h1>
     <p class="lede">本关练习：组装金融/商业尽调报告智能审阅官。</p>
     <div class="meta"><span>约 5 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
-    
+    <section class="explain" id="understand">
+    <div class="explain-fast">
+      <p class="label">30 SECONDS / 30 秒看懂</p>
+      <p class="explain-summary">这一关只解决一件事：把复杂任务拆成有顺序的模块，而不是堆成一段超长提示。</p>
+      <ul class="explain-bullets"><li>先角色和目标</li><li>资料在前，具体指令在后</li><li>把思考、输出格式和退路都写清楚</li></ul>
+    </div>
+    <div class="explain-deep">
+      <p class="label">3 MINUTES / 3 分钟拆解</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本关实操题</p>
+      <div class="explain-example">
+        <div class="explain-code"><span>输入</span><pre>来源劣质示例：你是个投资人，帮我看看这份项目介绍，分析一下它的商业模式、财务风险，再给创业者提几个尖锐的尽调问题。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求至少整合 7 个十要素模块，并明确长文本在前、指令在后，输出固定三段结构。</p><h3>输出</h3><p>参考答案按模块组装完整提示词（见本关原文）。</p></div>
+      </div>
+      <div class="explain-two">
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>复杂提示词结构</dt><dd>角色、资料、指令、思考、输出等模块的组合。</dd></div><div><dt>十要素</dt><dd>本关列出的十个可组合模块。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源建议先用较多元素让提示词跑通，再逐步精简；部分元素顺序会影响效果。</p><h3>结构长什么样</h3><pre class="explain-structure">角色 → 背景资料 → 任务指令 → 思考要求 → 输出结构 → 退路</pre></div>
+      </div>
+      <p class="explain-check">为什么长文档要放在具体指令之前？</p>
+    </div>
+  </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
     <p class="reading-quote">复杂提示词有一个推荐的组合结构；不是所有提示词都需要每个元素。通常先用较多元素让提示词跑通，再逐步精简。部分元素的顺序很重要，按官方推荐顺序是较好的起点。</p>

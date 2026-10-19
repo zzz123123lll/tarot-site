@@ -26,6 +26,9 @@ for (const tf of trackFiles) {
     seen.add(level.id);
     assert(level.trackId === track.id, level.id + ' track');
     assert(level.title && level.summary && level.lessonHtml && level.referenceAnswerHtml, level.id + ' content');
+    assert(level.explain && level.explain.summary && level.explain.example, level.id + ' explain');
+    assert(Array.isArray(level.explain.bullets) && level.explain.bullets.length >= 3, level.id + ' explain bullets');
+    assert(Array.isArray(level.explain.terms) && level.explain.terms.length >= 2, level.id + ' explain terms');
     assert(level.reading && level.reading.quote && level.reading.guide, level.id + ' reading');
     assert(Array.isArray(level.reading.points) && level.reading.points.length >= 3, level.id + ' reading points');
     assert(Array.isArray(level.reading.refs) && level.reading.refs.length >= 1, level.id + ' reading refs');
@@ -73,11 +76,9 @@ for (const tf of trackFiles) {
     assert(html.includes('data-objective'), level.id + ' page objective container');
     assert(html.includes('class="source-reading"'), level.id + ' page source reading');
     assert(html.includes('SOURCE READING'), level.id + ' page source reading label');
-    if (level.id === 'prompt-01') {
-      assert(html.includes('30 SECONDS'), 'prompt-01 30s layer');
-      assert(html.includes('3 MINUTES'), 'prompt-01 3min layer');
-      assert(html.includes('explain-summary'), 'prompt-01 summary');
-    }
+    assert(html.includes('30 SECONDS'), level.id + ' 30s layer');
+    assert(html.includes('3 MINUTES'), level.id + ' 3min layer');
+    assert(html.includes('explain-summary'), level.id + ' explain summary');
   }
 }
 

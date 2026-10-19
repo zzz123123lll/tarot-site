@@ -42,7 +42,26 @@
     <h1>输出格式化与预填充引导</h1>
     <p class="lede">本关练习：批量商品评价结构化抽取器。</p>
     <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
-    
+    <section class="explain" id="understand">
+    <div class="explain-fast">
+      <p class="label">30 SECONDS / 30 秒看懂</p>
+      <p class="explain-summary">这一关只解决一件事：把“输出 JSON”写成键名、类型、枚举和边界都可检查的格式合同。</p>
+      <ul class="explain-bullets"><li>用 XML 包住待分析评论</li><li>定义精确键名、类型和枚举</li><li>用首尾约束防多余前言后缀</li></ul>
+    </div>
+    <div class="explain-deep">
+      <p class="label">3 MINUTES / 3 分钟拆解</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本关实操题</p>
+      <div class="explain-example">
+        <div class="explain-code"><span>输入</span><pre>来源劣质示例：分析这条评论：吸尘器吸力很大，地毯上的猫毛吸得很干净，就是电池太不耐用了，开强档15分钟就没电了，而且充电器还很烫。帮我整理出情感、痛点和建议。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求 sentiment 只取枚举值、pain_points 为字符串数组，并用首尾约束保证零多余文本。</p><h3>输出</h3><p>参考答案给出完整 JSON 抽取模板（见本关原文）。</p></div>
+      </div>
+      <div class="explain-two">
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>JSON</dt><dd>由键值对组成的结构化数据格式。</dd></div><div><dt>枚举</dt><dd>字段只能取预设的几个值。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源指出可以用 XML 包输出、用 assistant 预填充开头；格式越明确，程序提取越可靠。</p><h3>结构长什么样</h3><pre class="explain-structure">{ &quot;sentiment&quot;: &quot;positive|negative|mixed&quot;, &quot;pain_points&quot;: [&quot;...&quot;], &quot;suggestion&quot;: &quot;...&quot; }</pre></div>
+      </div>
+      <p class="explain-check">为什么只说“输出 JSON”不够？</p>
+    </div>
+  </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
     <p class="reading-quote">Claude 可以按要求输出多种格式；可以用 XML 标签把回答包起来，便于程序提取；把第一个 XML 标签放进 assistant turn，就是“替 Claude 开头”的预填充技术。</p>

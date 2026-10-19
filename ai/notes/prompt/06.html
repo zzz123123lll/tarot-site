@@ -42,7 +42,26 @@
     <h1>先思后答与思维链</h1>
     <p class="lede">本关练习：设计促销满减凑单最优解提示词。</p>
     <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
-    
+    <section class="explain" id="understand">
+    <div class="explain-fast">
+      <p class="label">30 SECONDS / 30 秒看懂</p>
+      <p class="explain-summary">这一关只解决一件事：让模型先在 thinking 里推演，再在 answer 里给结论。</p>
+      <ul class="explain-bullets"><li>禁止开头直接报答案</li><li>明确分步推演的步骤</li><li>最终结论单独放 answer/final 标签</li></ul>
+    </div>
+    <div class="explain-deep">
+      <p class="label">3 MINUTES / 3 分钟拆解</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本关实操题</p>
+      <div class="explain-example">
+        <div class="explain-code"><span>输入</span><pre>来源劣质示例：A是220元，B是190元，C是160元，D是110元，满300减50,满500还能再减40,告诉我买哪几样刚好过500元且最划算，直接给我答案。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求先枚举组合、再核算优惠券和实付价、最后比对最低价；这三步必须显式写出，不能只要求“思考一下”。</p><h3>输出</h3><p>参考答案把 thinking 和 final_plan 分开（见本关原文）。</p></div>
+      </div>
+      <div class="explain-two">
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>CoT</dt><dd>把推理步骤显式写出来，而不是只给结论。</dd></div><div><dt>预填充</dt><dd>替模型写好开头，让它从指定位置继续。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源指出思考只有在“说出来”时才真正发生；只要求结论，模型没有完成推理。</p><h3>结构长什么样</h3><pre class="explain-structure">&lt;thinking&gt;步骤1→步骤2→步骤3&lt;/thinking&gt;\n&lt;final_plan&gt;结论&lt;/final_plan&gt;</pre></div>
+      </div>
+      <p class="explain-check">为什么“请思考但只输出答案”不等于分步推演？</p>
+    </div>
+  </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
     <p class="reading-quote">给 Claude 时间逐步思考，通常能让它在复杂任务上更准确；但思考只有在“说出来”时才真正发生。只要求“思考但只输出答案”，模型实际上没有完成推理。</p>

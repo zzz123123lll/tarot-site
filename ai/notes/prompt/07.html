@@ -42,7 +42,26 @@
     <h1>少样本示例教学</h1>
     <p class="lede">本关练习：训练小红书爆款标题与情绪钩子生成器。</p>
     <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
-    
+    <section class="explain" id="understand">
+    <div class="explain-fast">
+      <p class="label">30 SECONDS / 30 秒看懂</p>
+      <p class="explain-summary">这一关只解决一件事：用完整的输入输出示例，教会模型标题的格式和钩子结构。</p>
+      <ul class="explain-bullets"><li>至少 2 组完整示例</li><li>每组展示人群、痛点、收益公式</li><li>最后再给待转换主题和输出数量</li></ul>
+    </div>
+    <div class="explain-deep">
+      <p class="label">3 MINUTES / 3 分钟拆解</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本关实操题</p>
+      <div class="explain-example">
+        <div class="explain-code"><span>输入</span><pre>来源劣质示例：帮我把‘如何用Excel做个人记账’改写成3个吸引人的小红书爆款标题，要有痛点，有数字。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求 examples 标签里放完整“原始主题→爆款标题”样本，并固定人群/痛点/收益公式。</p><h3>输出</h3><p>参考答案给出示例区块和新主题输入（见本关原文）。</p></div>
+      </div>
+      <div class="explain-two">
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Few-shot</dt><dd>用几个示例教会模型期望的行为和格式。</dd></div><div><dt>输入输出对</dt><dd>一组完整的示例输入和标准输出。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源指出给示例对得到正确答案和正确格式都极其有效。</p><h3>结构长什么样</h3><pre class="explain-structure">&lt;examples&gt;样本1（输入→输出）样本2（输入→输出）&lt;/examples&gt;\n新主题 + 输出 5 条</pre></div>
+      </div>
+      <p class="explain-check">示例数量重要，还是示例完整和对齐目标格式重要？</p>
+    </div>
+  </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
     <p class="reading-quote">给 Claude 示例——你希望它怎样做，或明确不希望它怎样做——对得到正确答案和正确格式都极其有效；这就是 few-shot prompting，示例数量用 shot 表示。</p>

@@ -158,5 +158,32 @@
         "https://github.com/gurucharanmk/StepByStep-RAG/blob/main/RAGStream/README.md"
       ]
     ]
+  },
+  "explain": {
+    "summary": "这一关只解决一件事：把 RAG 质量问题拆成“召回不全”和“回答不忠实”两类。",
+    "bullets": [
+      "Context Recall 看证据是否召回",
+      "Faithfulness 看回答是否忠于上下文",
+      "两类低分对应不同修法"
+    ],
+    "example": {
+      "label": "PDF 本关实操题",
+      "input": "本关题目：设计 RAG 线上质量诊断矩阵与 Streamlit 调试面板。",
+      "walkthrough": "来源要求构建 Recall/Faithfulness 四类故障矩阵，并列出 Streamlit 侧边栏要展示的调试信息。",
+      "output": "参考答案是诊断矩阵和调试字段（见本关原文）。"
+    },
+    "terms": [
+      {
+        "term": "Context Recall",
+        "plain": "该找到的证据有没有被召回。"
+      },
+      {
+        "term": "Faithfulness",
+        "plain": "回答是否忠实于检索上下文。"
+      }
+    ],
+    "why": "来源 PDF 把两类指标分开，避免不知道修检索还是修生成。",
+    "structure": "Recall 低 → 修分块/检索\\nFaithfulness 低 → 修引用/拒答/生成约束",
+    "check": "召回很好但回答瞎编，应该先修哪个指标？"
   }
 }

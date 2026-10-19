@@ -42,7 +42,26 @@
     <h1>超越单次提问</h1>
     <p class="lede">本关练习：第 10 关实操练习。</p>
     <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
-    
+    <section class="explain" id="understand">
+    <div class="explain-fast">
+      <p class="label">30 SECONDS / 30 秒看懂</p>
+      <p class="explain-summary">这一关只解决一件事：把一次做不完的任务拆成“初稿→审查→定稿”的提示链。</p>
+      <ul class="explain-bullets"><li>每一步只做一件事</li><li>上一步产物作为下一步输入</li><li>审查和定稿要分开</li></ul>
+    </div>
+    <div class="explain-deep">
+      <p class="label">3 MINUTES / 3 分钟拆解</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本关实操题</p>
+      <div class="explain-example">
+        <div class="explain-code"><span>输入</span><pre>本关题目：第 10 关实操练习（多 Prompt 流程）。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求 Step1 生成 draft_v1、Step2 审查并输出 critique_list、Step3 同时读 draft 和 critique 输出 final_post。</p><h3>输出</h3><p>参考答案是三步提示链（见本关原文）。</p></div>
+      </div>
+      <div class="explain-two">
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Prompt Chaining</dt><dd>把任务拆成多个前后衔接的提示词。</dd></div><div><dt>中间产物</dt><dd>下一步要读取的初稿、审查清单等。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源指出让模型再检查/改进回答常能提高准确性，也可以把多个步骤串起来。</p><h3>结构长什么样</h3><pre class="explain-structure">Step1 → draft_v1\nStep2(draft_v1) → critique_list\nStep3(draft_v1 + critique_list) → final</pre></div>
+      </div>
+      <p class="explain-check">为什么审查和定稿不能塞进同一个 Prompt？</p>
+    </div>
+  </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
     <p class="reading-quote">“写作就是重写”：让 Claude 再检查或改进回答，常常能提高准确性；提示链（prompt chaining）可以把多个步骤串起来，比如先写一版，再让模型改进。</p>

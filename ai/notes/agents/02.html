@@ -42,7 +42,26 @@
     <h1>工具调用设计模式</h1>
     <p class="lede">本关练习：为售后退款智能体编写严谨的 Tool JSON Schema。</p>
     <div class="meta"><span>约 5 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Microsoft AI Agents for Beginners (77.2k Stars)</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
-    
+    <section class="explain" id="understand">
+    <div class="explain-fast">
+      <p class="label">30 SECONDS / 30 秒看懂</p>
+      <p class="explain-summary">这一关只解决一件事：把工具参数写成可验证的 schema，并让校验失败可追问。</p>
+      <ul class="explain-bullets"><li>工具名 + description 写调用前提</li><li>参数类型、required、枚举</li><li>失败返回结构化错误</li></ul>
+    </div>
+    <div class="explain-deep">
+      <p class="label">3 MINUTES / 3 分钟拆解</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本关实操题</p>
+      <div class="explain-example">
+        <div class="explain-code"><span>输入</span><pre>本关题目：为售后退款智能体编写严谨的 Tool JSON Schema。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求 order_id、refund_amount_cny、reason_category 均有类型/约束，并设计校验失败的错误格式。</p><h3>输出</h3><p>参考答案是完整工具 schema（见本关原文）。</p></div>
+      </div>
+      <div class="explain-two">
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>JSON Schema</dt><dd>描述工具参数结构和约束的格式。</dd></div><div><dt>required</dt><dd>调用时必须提供的参数。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源 Microsoft 第 4 课 Tool Use 强调工具定义与参数处理是 Agent 可靠性的基础。</p><h3>结构长什么样</h3><pre class="explain-structure">{ name, description, parameters{ type, properties, required } }</pre></div>
+      </div>
+      <p class="explain-check">为什么 description 和 required 会直接影响工具调用？</p>
+    </div>
+  </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
     <p class="reading-quote">本关 PDF 要求编写完整的 OpenAI/Pydantic 兼容 JSON Schema：工具名、调用前提说明（description）与 required 必填字段；参数校验失败要返回结构化错误，引导 Agent 追问。</p>

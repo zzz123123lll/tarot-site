@@ -174,5 +174,32 @@
         ""
       ]
     ]
+  },
+  "explain": {
+    "summary": "这一关只解决一件事：给 Agent 的工具和数据流分级、加闸门。",
+    "bullets": [
+      "工具分 L1 自动 / L2 人工确认 / L3 禁止",
+      "外部内容与指令隔离 + 出站白名单",
+      "审批卡片写清操作、对象、影响"
+    ],
+    "example": {
+      "label": "PDF 本关实操题",
+      "input": "本关题目：为“智能邮箱助理 Agent”设计防注入与分级审批护栏。",
+      "walkthrough": "来源要求 L1/L2/L3 分层，外部邮件只当数据，出站白名单校验，L2 展示确认卡片。",
+      "output": "参考答案是分级审批和防注入设计（见本关原文）。"
+    },
+    "terms": [
+      {
+        "term": "HITL",
+        "plain": "Human-in-the-loop，关键操作由人确认。"
+      },
+      {
+        "term": "提示词注入",
+        "plain": "外部内容里夹带指令，诱导 Agent 改任务。"
+      }
+    ],
+    "why": "来源 Microsoft 第 18 课 Securing AI Agents 与第 6 课讲提示词注入、数据泄露和人类监督。",
+    "structure": "L1 auto / L2 HITL / L3 block\\n出站白名单 + 审批卡片",
+    "check": "为什么外部邮件内容不能直接当作 Agent 指令？"
   }
 }

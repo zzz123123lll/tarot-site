@@ -42,7 +42,26 @@
     <h1>清晰直接原则</h1>
     <p class="lede">本关练习：消除 AI 的“端水大师”废话与多余寒暄。</p>
     <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
-    
+    <section class="explain" id="understand">
+    <div class="explain-fast">
+      <p class="label">30 SECONDS / 30 秒看懂</p>
+      <p class="explain-summary">这一关只解决一件事：把“专业、简洁、直接”改写成模型能检查的具体条件。</p>
+      <ul class="explain-bullets"><li>明确第一行给什么、禁止什么开场</li><li>明确条数、每条字数</li><li>明确评判维度和输出边界</li></ul>
+    </div>
+    <div class="explain-deep">
+      <p class="label">3 MINUTES / 3 分钟拆解</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本关实操题</p>
+      <div class="explain-example">
+        <div class="explain-code"><span>输入</span><pre>来源劣质示例：便携式咖啡机和智能保温杯哪个更适合做跨境电商新手选品？帮我分析一下。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求跳过寒暄、第一行给二选一结论，并限定 3 条理由、每条 40 字；这些要求分别对应开头、结论和长度三个可检查点。</p><h3>输出</h3><p>参考答案按这些硬性要求组织 Prompt（见本关原文）。</p></div>
+      </div>
+      <div class="explain-two">
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>黄金法则</dt><dd>把提示词给同事看，如果同事会困惑，模型也会困惑。</dd></div><div><dt>可验收条件</dt><dd>条数、字数、第一行、禁止词等能直接判断是否满足的条件。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源指出 Claude 除你明确告诉它的内容外没有上下文；越直接清楚，回答越准确。</p><h3>结构长什么样</h3><pre class="explain-structure">输出要求：第一行=结论 / 条数=3 / 每条≤40 字 / 禁止开场寒暄</pre></div>
+      </div>
+      <p class="explain-check">本关的三个要求分别限制了输出的哪个部分？</p>
+    </div>
+  </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
     <p class="reading-quote">Claude 除了你明确告诉它的内容之外没有上下文；越直接、越清楚地说明要什么，回答越准确。黄金法则：把提示词给同事看，如果同事会困惑，Claude 也会困惑。</p>

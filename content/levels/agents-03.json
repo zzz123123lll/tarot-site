@@ -162,5 +162,32 @@
         "https://github.com/microsoft/ai-agents-for-beginners/blob/main/07-planning-design/README.md"
       ]
     ]
+  },
+  "explain": {
+    "summary": "这一关只解决一件事：把大目标拆成带依赖关系的子任务，并允许重规划。",
+    "bullets": [
+      "每个子任务有 step_id/tool_name/expected_output",
+      "depends_on 决定串行/并行",
+      "异常时终止或重规划"
+    ],
+    "example": {
+      "label": "PDF 本关实操题",
+      "input": "本关题目：设计“企业新客户背景尽调 Agent”的分步规划器。",
+      "walkthrough": "来源要求工商核查后新闻/官网可并行，汇总依赖前两步；若发现注销/失信立即终止。",
+      "output": "参考答案是结构化计划表和重规划分支（见本关原文）。"
+    },
+    "terms": [
+      {
+        "term": "DAG",
+        "plain": "有向无环图，用来表达任务依赖。"
+      },
+      {
+        "term": "重规划",
+        "plain": "前置结果异常时改变后续计划。"
+      }
+    ],
+    "why": "来源 Microsoft 第 7 课 Planning 讲任务拆解与依赖；复杂任务不能一步硬做。",
+    "structure": "step1 → parallel(step2,step3) → step4\\n异常 → 终止/重规划",
+    "check": "depends_on 为空和不为空分别意味着什么？"
   }
 }

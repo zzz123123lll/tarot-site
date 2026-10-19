@@ -42,7 +42,26 @@
     <h1>Agent 核心循环与框架选型</h1>
     <p class="lede">先把 Agent 的循环、触发条件和熔断规则写完整。</p>
     <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Microsoft AI Agents for Beginners (77.2k Stars)</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
-    
+    <section class="explain" id="understand">
+    <div class="explain-fast">
+      <p class="label">30 SECONDS / 30 秒看懂</p>
+      <p class="explain-summary">这一关只解决一件事：把 Agent 写成“想—做—看—再想”的受控循环。</p>
+      <ul class="explain-bullets"><li>明确 Thought/Action/Observation/Final 四步</li><li>写清触发条件</li><li>设置最大步数与失败熔断</li></ul>
+    </div>
+    <div class="explain-deep">
+      <p class="label">3 MINUTES / 3 分钟拆解</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本关实操题</p>
+      <div class="explain-example">
+        <div class="explain-code"><span>输入</span><pre>来源劣质示例：你是一个机票助手，帮我查一下用户买的航班现在多少钱，如果便宜了就帮他改签。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求差价≥200 且净省&gt;0 才改签；失败 2 次或总步数 4 步立即停止告警。</p><h3>输出</h3><p>参考答案是带状态和熔断的 ReAct 规范（见本关原文）。</p></div>
+      </div>
+      <div class="explain-two">
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>ReAct</dt><dd>推理与行动交替的 Agent 循环。</dd></div><div><dt>Observation</dt><dd>工具执行后返回的真实结果。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源 Microsoft 第 1 课指出 Agent 是让 LLM 真正做事的环境+工具+记忆系统，不是单次回答。</p><h3>结构长什么样</h3><pre class="explain-structure">Thought → Action → Observation → … → Final Decision\nmax_steps / failure_limit</pre></div>
+      </div>
+      <p class="explain-check">为什么 Agent 必须设置停止条件？</p>
+    </div>
+  </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
     <p class="reading-quote">Microsoft AI Agents for Beginners 第 1 课：Agent 是让 LLM 真正“做事”的系统，由环境、传感器、执行器以及工具和记忆等部分组成；它不同于只生成文本的普通 LLM。</p>

@@ -42,7 +42,28 @@
     <h1>核心 RAG 闭环与引用溯源控制</h1>
     <p class="lede">本关练习：设计带强制角标溯源与防脑补护栏的 SimpleRAG 生成模板。</p>
     <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 StepByStep-RAG / GraphRAG / RAG 评估实践</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
-    
+    <section class="explain" id="understand">
+    <div class="explain-fast">
+      <p class="label">30 SECONDS / 30 秒看懂</p>
+      <p class="explain-summary">这一关只解决一件事：让回答的每个事实都带来源角标；没有证据就拒答。</p>
+      <ul class="explain-bullets"><li>context 标签带 id 和 source</li><li>事实断言后加 [来源X]</li><li>无相关片段固定拒答</li></ul>
+    </div>
+    <div class="explain-deep">
+      <p class="label">3 MINUTES / 3 分钟拆解</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本关实操题</p>
+      <div class="explain-example">
+        <div class="explain-code"><span>输入</span><pre>本关题目：设计带强制角标溯源与防脑补护栏的 SimpleRAG 生成模板。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求每个事实断言末尾加 [来源X]；所有片段都不相关时输出固定拒答，不带虚假引用。</p><h3>输出</h3><p>参考答案是带来源角标的生成模板（见本关原文）。</p></div>
+      </div>
+      <div class="explain-two">
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>引用溯源</dt><dd>把回答绑定到具体检索片段。</dd></div><div><dt>拒答</dt><dd>证据不足时明确说无法回答。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源 SimpleRAG 强调基于检索上下文回答；无法从上下文生成时给出回退路径。</p><h3>结构长什么样</h3><pre class="explain-structure">&lt;context id=&quot;1&quot; source=&quot;...&quot;&gt;片段&lt;/context&gt;
+断言 [来源1]
+无证据 → 固定拒答</pre></div>
+      </div>
+      <p class="explain-check">为什么没有证据时不能随便引用一个最像的片段？</p>
+    </div>
+  </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
     <p class="reading-quote">SimpleRAG 把语义检索与生成结合：先检索相关文档，再让模型基于检索到的上下文回答；如果上下文中没有答案，系统会引导用户联系 helpdesk。</p>
