@@ -99,5 +99,16 @@
       }
     ]
   },
-  "next": "agents-07"
+  "next": "agents-07",
+  "knowledgeCheck": {
+    "question": "多智能体交接时 Handoff Schema 的作用是？",
+    "options": [
+      "结构化传递状态与结果",
+      "增加工具数量",
+      "加密消息",
+      "生成图片"
+    ],
+    "answer": 0,
+    "explanation": "结构化交接包让下游只接收必要状态，避免把冗长思考过程传过去。"
+  }
 }

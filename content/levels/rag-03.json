@@ -86,5 +86,16 @@
       }
     ]
   },
-  "next": "rag-04"
+  "next": "rag-04",
+  "knowledgeCheck": {
+    "question": "检索前先按 is_active 过滤，主要目的是？",
+    "options": [
+      "排除已废止文档",
+      "增加召回数量",
+      "降低向量维度",
+      "自动生成引用"
+    ],
+    "answer": 0,
+    "explanation": "先做元数据过滤可以避免历史版本或失效制度进入候选集。"
+  }
 }

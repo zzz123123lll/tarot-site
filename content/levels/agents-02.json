@@ -95,5 +95,16 @@
       }
     ]
   },
-  "next": "agents-03"
+  "next": "agents-03",
+  "knowledgeCheck": {
+    "question": "工具 JSON Schema 中 description 的核心作用是？",
+    "options": [
+      "说明何时、如何调用以及调用前提",
+      "装饰界面",
+      "加密参数",
+      "提升接口速度"
+    ],
+    "answer": 0,
+    "explanation": "模型靠 description 判断工具适用条件和调用方式；它直接影响选错率。"
+  }
 }

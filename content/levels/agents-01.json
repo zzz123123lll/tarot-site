@@ -98,5 +98,16 @@
       }
     ]
   },
-  "next": "agents-02"
+  "next": "agents-02",
+  "knowledgeCheck": {
+    "question": "ReAct 循环的正确顺序是？",
+    "options": [
+      "Thought → Action → Observation → Final Decision",
+      "Action → Thought → Final → Observation",
+      "Observation → Final → Action → Thought",
+      "Thought → Final → Action → Observation"
+    ],
+    "answer": 0,
+    "explanation": "先推理、再调用工具、读取观察结果，最后给出决定。"
+  }
 }

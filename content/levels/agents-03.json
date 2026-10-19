@@ -102,5 +102,16 @@
       }
     ]
   },
-  "next": "agents-04"
+  "next": "agents-04",
+  "knowledgeCheck": {
+    "question": "Planner 输出中的 depends_on 字段表示？",
+    "options": [
+      "子任务之间的依赖与执行顺序",
+      "工具名称",
+      "输出格式",
+      "权限等级"
+    ],
+    "answer": 0,
+    "explanation": "依赖数组决定哪些步骤可并行、哪些必须等待前置结果。"
+  }
 }

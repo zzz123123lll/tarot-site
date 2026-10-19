@@ -27,6 +27,9 @@ function validate(track, level) {
   assert(track.id === level.trackId, 'track id');
   assert(level.id === track.id + '-' + String(level.level).padStart(2, '0'), 'level id');
   assert(level.title && level.summary && level.lessonHtml && level.referenceAnswerHtml, 'required content');
+  assert(level.knowledgeCheck && Array.isArray(level.knowledgeCheck.options) && level.knowledgeCheck.options.length === 4, 'knowledgeCheck options');
+  assert(Number.isInteger(level.knowledgeCheck.answer) && level.knowledgeCheck.answer >= 0 && level.knowledgeCheck.answer < 4, 'knowledgeCheck answer');
+  assert(level.knowledgeCheck.explanation, 'knowledgeCheck explanation');
   assert(level.exercise && Array.isArray(level.exercise.criteria), 'exercise criteria');
   assert(level.exercise.minLength >= 0, 'minLength');
   assert(level.exercise.criteria.length > 0, 'criteria empty');
@@ -84,9 +87,9 @@ export function renderLevel(trackId, levelId) {
 <meta property="og:description" content="${esc(level.summary)}">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=3">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=4">
 <script src="/ai/notes/notes.js?v=5" defer></script>
-<script type="module" src="/ai/notes/practice.mjs?v=1"></script>
+<script type="module" src="/ai/notes/practice.mjs?v=2"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>
@@ -121,6 +124,7 @@ export function renderLevel(trackId, levelId) {
         <h2>${esc(level.exercise.title)}</h2>
         <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
       </div>
+      <div class="knowledge-check" data-objective></div>
       <div class="practice-grid">
         <div class="practice-write">
           <label for="practice-answer">我的答案</label>

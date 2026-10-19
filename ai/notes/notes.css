@@ -177,3 +177,18 @@ footer a:hover{color:var(--ink)}
   .hero h1{font-size:44px}
   .level-nav{grid-template-columns:1fr}
 }
+
+.knowledge-check{border:1px solid var(--line);background:var(--card);padding:22px;margin:0 0 22px}
+.knowledge-check[hidden]{display:none}
+.objective-question{font-size:17px;line-height:1.65;font-weight:650;margin:12px 0 14px;max-width:680px}
+.objective-options{display:grid;gap:8px;max-width:760px}
+.objective-option{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);padding:10px 12px;cursor:pointer;font-size:14px;line-height:1.6;background:var(--bg)}
+.objective-option:hover{border-color:var(--ink)}
+.objective-option input{margin-top:3px;accent-color:var(--accent)}
+.objective-option b{font-family:var(--mono);font-size:11px;color:var(--muted);margin-right:4px}
+.objective-option.is-correct{border-color:#9BC7A7;background:#F3FAF4}
+.objective-option.is-wrong{border-color:#E6B8AA;background:#FFF5F1}
+.objective-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:14px}
+.objective-result{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.objective-explanation{font-size:12px;line-height:1.75;color:var(--muted);margin-top:10px;max-width:760px}
+@media(max-width:700px){.knowledge-check{padding:16px}.objective-question{font-size:15px}.objective-option{font-size:13px}}

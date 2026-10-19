@@ -88,5 +88,16 @@
       }
     ]
   },
-  "next": "rag-07"
+  "next": "rag-07",
+  "knowledgeCheck": {
+    "question": "多轮对话中 Query Rewriter 主要解决什么？",
+    "options": [
+      "指代和上下文缺失导致的检索失败",
+      "向量加密",
+      "文档分块",
+      "结果排序"
+    ],
+    "answer": 0,
+    "explanation": "“它/这个”等追问需要补全主语，才能独立检索。"
+  }
 }

@@ -63,5 +63,16 @@
       }
     ]
   },
-  "next": ""
+  "next": "",
+  "knowledgeCheck": {
+    "question": "把复杂任务拆成多个 Prompt 的主要好处是？",
+    "options": [
+      "每一步可检查、可修正",
+      "一定增加 token",
+      "让模型更累",
+      "减少约束"
+    ],
+    "answer": 0,
+    "explanation": "多步流程把生成、审查、定稿拆开，便于中间校验和返工。"
+  }
 }

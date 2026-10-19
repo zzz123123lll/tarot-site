@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { grade, normalize, ENGINE_VERSION } from '../shared/grading-engine.mjs';
+import { grade, gradeObjective, normalize, ENGINE_VERSION } from '../shared/grading-engine.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
@@ -62,3 +62,9 @@ assert.equal(normalize('  System   Prompt '), 'system prompt');
 assert.equal(ENGINE_VERSION, '1.0.0');
 console.log('PASS normalize/version');
 console.log('ALL GRADING TESTS PASSED');
+
+const objective = { question: 'q', options: ['a', 'b', 'c', 'd'], answer: 2, explanation: 'c is right' };
+assert.equal(gradeObjective(objective, 2).status, 'correct');
+assert.equal(gradeObjective(objective, 1).status, 'incorrect');
+assert.equal(gradeObjective(objective, null).status, 'unanswered');
+console.log('PASS objective');

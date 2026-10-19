@@ -88,5 +88,16 @@
       }
     ]
   },
-  "next": "rag-05"
+  "next": "rag-05",
+  "knowledgeCheck": {
+    "question": "RRF（Reciprocal Rank Fusion）的作用是？",
+    "options": [
+      "融合多路检索的排名结果",
+      "替代 Embedding 模型",
+      "生成最终答案",
+      "压缩文档"
+    ],
+    "answer": 0,
+    "explanation": "RRF 只使用排名做融合，不需要不同检索器的分数完全可比。"
+  }
 }

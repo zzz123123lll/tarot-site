@@ -3,43 +3,119 @@
   "$id": "https://gongjuhe.top/content/schema.json",
   "title": "LevelContent",
   "type": "object",
-  "required": ["id", "trackId", "level", "title", "summary", "lessonHtml", "referenceAnswerHtml", "exercise", "next"],
+  "required": [
+    "id",
+    "trackId",
+    "level",
+    "title",
+    "summary",
+    "lessonHtml",
+    "referenceAnswerHtml",
+    "exercise",
+    "next",
+    "knowledgeCheck"
+  ],
   "properties": {
-    "id": { "type": "string", "pattern": "^[a-z]+-[0-9]{2}$" },
-    "trackId": { "type": "string" },
-    "level": { "type": "integer", "minimum": 1 },
-    "title": { "type": "string", "minLength": 1 },
-    "summary": { "type": "string" },
-    "source": { "type": "string" },
-    "readMinutes": { "type": "integer", "minimum": 1 },
-    "lessonHtml": { "type": "string", "minLength": 1 },
-    "referenceAnswerHtml": { "type": "string", "minLength": 1 },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z]+-[0-9]{2}$"
+    },
+    "trackId": {
+      "type": "string"
+    },
+    "level": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "summary": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    },
+    "readMinutes": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "lessonHtml": {
+      "type": "string",
+      "minLength": 1
+    },
+    "referenceAnswerHtml": {
+      "type": "string",
+      "minLength": 1
+    },
     "exercise": {
       "type": "object",
-      "required": ["id", "title", "minLength", "criteria"],
+      "required": [
+        "id",
+        "title",
+        "minLength",
+        "criteria"
+      ],
       "properties": {
-        "id": { "type": "string" },
-        "title": { "type": "string" },
-        "minLength": { "type": "integer", "minimum": 0 },
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "minLength": {
+          "type": "integer",
+          "minimum": 0
+        },
         "criteria": {
           "type": "array",
           "minItems": 1,
           "items": {
             "type": "object",
-            "required": ["id", "label", "weight", "type"],
+            "required": [
+              "id",
+              "label",
+              "weight",
+              "type"
+            ],
             "properties": {
-              "id": { "type": "string" },
-              "label": { "type": "string" },
-              "weight": { "type": "number", "minimum": 0 },
-              "type": { "enum": ["term_groups", "min_length", "manual"] },
+              "id": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "weight": {
+                "type": "number",
+                "minimum": 0
+              },
+              "type": {
+                "enum": [
+                  "term_groups",
+                  "min_length",
+                  "manual"
+                ]
+              },
               "groups": {
                 "type": "array",
                 "items": {
                   "type": "object",
-                  "required": ["label", "terms"],
+                  "required": [
+                    "label",
+                    "terms"
+                  ],
                   "properties": {
-                    "label": { "type": "string" },
-                    "terms": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+                    "label": {
+                      "type": "string"
+                    },
+                    "terms": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
                   },
                   "additionalProperties": false
                 }
@@ -51,7 +127,42 @@
       },
       "additionalProperties": true
     },
-    "next": { "type": "string" }
+    "next": {
+      "type": "string"
+    },
+    "knowledgeCheck": {
+      "type": "object",
+      "required": [
+        "question",
+        "options",
+        "answer",
+        "explanation"
+      ],
+      "properties": {
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "options": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 4,
+          "items": {
+            "type": "string"
+          }
+        },
+        "answer": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "explanation": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
   },
   "additionalProperties": true
 }

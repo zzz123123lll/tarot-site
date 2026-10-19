@@ -84,5 +84,16 @@
       }
     ]
   },
-  "next": "agents-05"
+  "next": "agents-05",
+  "knowledgeCheck": {
+    "question": "Agentic RAG 触发二次检索的合理条件是？",
+    "options": [
+      "首次结果缺少关键字段",
+      "用户说谢谢",
+      "模型随机决定",
+      "为了增加延迟"
+    ],
+    "answer": 0,
+    "explanation": "自检发现关键字段缺失时，才生成更精准的二次检索，而不是盲目重试。"
+  }
 }

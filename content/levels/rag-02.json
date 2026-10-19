@@ -79,5 +79,16 @@
       }
     ]
   },
-  "next": "rag-03"
+  "next": "rag-03",
+  "knowledgeCheck": {
+    "question": "chunk_overlap 的主要作用是？",
+    "options": [
+      "让相邻分块保留边界上下文",
+      "增加存储成本",
+      "自动去重",
+      "加密文本"
+    ],
+    "answer": 0,
+    "explanation": "重叠窗口能降低句子或表格在边界被切断造成的信息损失。"
+  }
 }

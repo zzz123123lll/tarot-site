@@ -84,5 +84,16 @@
       }
     ]
   },
-  "next": "prompt-07"
+  "next": "prompt-07",
+  "knowledgeCheck": {
+    "question": "“先思后答”的核心要求是？",
+    "options": [
+      "先在 thinking 中推演，再在 answer 中给结论",
+      "先给答案再解释",
+      "不限制思考过程",
+      "只输出步骤"
+    ],
+    "answer": 0,
+    "explanation": "把推理区和结论区分开，能减少模型直接猜答案。"
+  }
 }

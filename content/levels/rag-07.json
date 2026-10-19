@@ -98,5 +98,16 @@
       }
     ]
   },
-  "next": "rag-08"
+  "next": "rag-08",
+  "knowledgeCheck": {
+    "question": "GraphRAG 更适合哪类问题？",
+    "options": [
+      "跨文档实体关系与全局归纳",
+      "精确错误码查找",
+      "图片生成",
+      "低延迟闲聊"
+    ],
+    "answer": 0,
+    "explanation": "图谱擅长多跳关系与全局主题归纳，局部细节仍可用向量检索。"
+  }
 }

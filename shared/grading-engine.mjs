@@ -142,3 +142,22 @@ export function grade(exercise, answer) {
     gradable: !hasUngradable
   };
 }
+
+/**
+ * 客观题判分：有唯一答案，直接判断对错。
+ * @param {{options:string[], answer:number, explanation?:string}} question
+ * @param {number|null} selected
+ */
+export function gradeObjective(question, selected) {
+  const answer = Number(question && question.answer);
+  const picked = selected == null || selected === '' ? null : Number(selected);
+  const correct = picked !== null && picked === answer;
+  return {
+    status: picked === null ? 'unanswered' : (correct ? 'correct' : 'incorrect'),
+    correct,
+    selected: picked,
+    answer,
+    explanation: (question && question.explanation) || '',
+    optionCount: Array.isArray(question && question.options) ? question.options.length : 0
+  };
+}

@@ -1,4 +1,4 @@
-import { grade } from '/shared/grading-engine.mjs';
+import { grade, gradeObjective } from '/shared/grading-engine.mjs';
 
 const practice = document.querySelector('.practice[data-engine="v2"]');
 if (practice) init(practice);
@@ -14,9 +14,11 @@ function init(root) {
   const statusEl = root.querySelector('[data-status]');
   const feedback = root.querySelector('[data-feedback]');
   const criteriaBox = root.querySelector('[data-criteria]');
+  const objectiveBox = root.querySelector('[data-objective]');
   const checkBtn = root.querySelector('[data-check]');
   const answerBox = document.querySelector('.answer');
   let exercise = null;
+  let knowledgeCheck = null;
   let saveTimer = 0;
   let state = read();
 
@@ -32,6 +34,7 @@ function init(root) {
   function save() {
     state.answer = answer.value;
     state.done = doneEl.checked;
+    state.objective = selectedObjective();
     state.at = Date.now();
     write();
     setStatus('已保存');
@@ -48,6 +51,7 @@ function init(root) {
 
   if (!state.answer) state.answer = '';
   if (typeof state.done !== 'boolean') state.done = false;
+  if (typeof state.objective !== 'number') state.objective = null;
   answer.value = state.answer;
   doneEl.checked = state.done;
   count();
@@ -90,6 +94,62 @@ function init(root) {
       const s = item.querySelector('[data-state]');
       if (s) s.textContent = '待检查';
     });
+  }
+
+  function selectedObjective() {
+    if (!objectiveBox) return null;
+    const checked = objectiveBox.querySelector('input[type="radio"]:checked');
+    return checked ? Number(checked.value) : null;
+  }
+
+  function renderObjective() {
+    if (!objectiveBox || !knowledgeCheck) {
+      if (objectiveBox) objectiveBox.hidden = true;
+      return;
+    }
+    const selected = typeof state.objective === 'number' ? state.objective : null;
+    objectiveBox.innerHTML = `
+      <p class="label">KNOWLEDGE CHECK / 客观题 · 1 题</p>
+      <p class="objective-question">${esc(knowledgeCheck.question)}</p>
+      <div class="objective-options">${knowledgeCheck.options.map((opt, i) => (
+        `<label class="objective-option"><input type="radio" name="objective-${esc(key)}" value="${i}"${selected === i ? ' checked' : ''}><span><b>${String.fromCharCode(65 + i)}</b> ${esc(opt)}</span></label>`
+      )).join('')}</div>
+      <div class="objective-actions"><button type="button" class="check-answer" data-objective-check>检查这道题</button><span class="objective-result" data-objective-result></span></div>
+      <p class="objective-explanation" data-objective-explanation></p>`;
+    objectiveBox.querySelectorAll('input[type="radio"]').forEach((input) => {
+      input.addEventListener('change', () => {
+        state.objective = selectedObjective();
+        write();
+        setStatus('已保存');
+        objectiveBox.querySelectorAll('.objective-option').forEach((el) => el.classList.remove('is-correct', 'is-wrong'));
+        if (objectiveBox.querySelector('[data-objective-result]')) objectiveBox.querySelector('[data-objective-result]').textContent = '';
+        if (objectiveBox.querySelector('[data-objective-explanation]')) objectiveBox.querySelector('[data-objective-explanation]').textContent = '';
+      });
+    });
+    objectiveBox.querySelector('[data-objective-check]').addEventListener('click', checkObjective);
+  }
+
+  function checkObjective() {
+    const selected = selectedObjective();
+    const resultEl = objectiveBox.querySelector('[data-objective-result]');
+    const explanationEl = objectiveBox.querySelector('[data-objective-explanation]');
+    if (selected === null) {
+      if (resultEl) resultEl.textContent = '先选一个答案。';
+      return;
+    }
+    const result = gradeObjective(knowledgeCheck, selected);
+    state.objective = selected;
+    save();
+    objectiveBox.querySelectorAll('.objective-option').forEach((el) => {
+      const input = el.querySelector('input');
+      el.classList.remove('is-correct', 'is-wrong');
+      if (input && Number(input.value) === result.answer) el.classList.add('is-correct');
+      if (input && Number(input.value) === selected && !result.correct) el.classList.add('is-wrong');
+    });
+    if (resultEl) resultEl.textContent = result.correct ? '回答正确' : '回答错误';
+    if (explanationEl) {
+      explanationEl.textContent = (result.correct ? '' : '正确答案：' + String.fromCharCode(65 + result.answer) + '. ' + knowledgeCheck.options[result.answer] + '。') + knowledgeCheck.explanation;
+    }
   }
 
   function renderCriteria() {
@@ -140,7 +200,9 @@ function init(root) {
     })
     .then((data) => {
       exercise = data.exercise;
+      knowledgeCheck = data.knowledgeCheck;
       renderCriteria();
+      renderObjective();
       reset();
       setStatus(state.at ? '已从本机恢复' : '草稿保存在本机浏览器');
     })

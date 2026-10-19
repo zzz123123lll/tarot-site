@@ -98,5 +98,16 @@
       }
     ]
   },
-  "next": ""
+  "next": "",
+  "knowledgeCheck": {
+    "question": "Faithfulness 指标衡量的是？",
+    "options": [
+      "回答是否忠实于检索上下文",
+      "召回文档数量",
+      "首字延迟",
+      "索引成本"
+    ],
+    "answer": 0,
+    "explanation": "Faithfulness 看回答中的断言能否被上下文支持，而不是回答是否流畅。"
+  }
 }

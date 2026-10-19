@@ -101,5 +101,16 @@
       }
     ]
   },
-  "next": "prompt-02"
+  "next": "prompt-02",
+  "knowledgeCheck": {
+    "question": "在提示词结构中，System 最主要负责什么？",
+    "options": [
+      "定义全局身份、规则与边界",
+      "列出本次任务的时间地点",
+      "限制输出字数",
+      "存放用户原话"
+    ],
+    "answer": 0,
+    "explanation": "System 是全局规范；具体事实、约束和任务放在 User 指令里。"
+  }
 }
