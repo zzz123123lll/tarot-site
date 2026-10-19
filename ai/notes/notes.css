@@ -139,6 +139,10 @@ footer a:hover{color:var(--ink)}
 .check-state{font-family:var(--mono);font-size:9px;letter-spacing:.04em;color:var(--muted);border:1px solid var(--line);padding:3px 5px;text-align:center;margin-top:1px}
 .check-item.is-pass .check-state{color:#1F7A3D;border-color:#9CCBA8;background:#F1FAF3}
 .check-item.is-fail .check-state{color:#B04A2E;border-color:#E6B8AA;background:#FFF5F1}
+.check-item{grid-template-columns:60px minmax(0,1fr) auto}
+.criterion-weight{font-family:var(--mono);font-size:9px;color:var(--muted);white-space:nowrap}
+.check-item.is-partial .check-state{color:#7A5A00;border-color:#E1C781;background:#FFF9E8}
+
 .check-answer{width:100%;margin-top:14px;border:1px solid var(--accent);background:var(--accent);color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:.04em;padding:9px 10px;cursor:pointer}
 .check-answer:hover{opacity:.88}
 .practice-feedback{font-size:12px;line-height:1.65;color:var(--muted);margin:10px 0 0;min-height:18px}

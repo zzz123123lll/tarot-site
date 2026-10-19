@@ -1,0 +1,154 @@
+// 单关渲染器：内容只从 content/ 读取，页面 HTML 是构建产物。
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(__dirname, '..');
+const levelPath = path.join(root, 'content/levels/prompt-01.json');
+const trackPath = path.join(root, 'content/tracks/prompt.json');
+const outPath = path.join(root, 'ai/notes/prompt/01.html');
+
+function fail(msg) {
+  console.error('CONTENT VALIDATION FAILED:', msg);
+  process.exit(1);
+}
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function assert(cond, msg) { if (!cond) fail(msg); }
+
+const track = JSON.parse(fs.readFileSync(trackPath, 'utf8'));
+const level = JSON.parse(fs.readFileSync(levelPath, 'utf8'));
+
+assert(track.id && Array.isArray(track.levels) && track.levels.length === 10, 'track levels');
+assert(level.id === 'prompt-01', 'level id');
+assert(level.trackId === track.id, 'track id');
+assert(level.title && level.summary && level.lessonHtml && level.referenceAnswerHtml, 'required content');
+assert(level.exercise && Array.isArray(level.exercise.criteria), 'exercise criteria');
+assert(level.exercise.minLength >= 0, 'minLength');
+assert(level.exercise.criteria.length > 0, 'criteria empty');
+let total = 0;
+level.exercise.criteria.forEach((c, i) => {
+  assert(c.id && c.label, `criterion ${i} id/label`);
+  assert(Number(c.weight) > 0, `criterion ${i} weight`);
+  total += Number(c.weight);
+  assert(c.type === 'term_groups', `criterion ${i} type`);
+  assert(Array.isArray(c.groups) && c.groups.length > 0, `criterion ${i} groups`);
+  c.groups.forEach((g, j) => {
+    assert(g.label, `criterion ${i} group ${j} label`);
+    assert(Array.isArray(g.terms) && g.terms.length > 0, `criterion ${i} group ${j} terms`);
+  });
+});
+assert(level.id !== level.next, 'next self');
+const trackLevel = track.levels.find((l) => l.id === level.id);
+assert(trackLevel, 'level missing from track');
+assert(trackLevel.href === '/ai/notes/prompt/01', 'level href');
+
+const currentIndex = track.levels.findIndex((l) => l.id === level.id);
+const prev = currentIndex > 0 ? track.levels[currentIndex - 1] : null;
+const next = currentIndex >= 0 && currentIndex + 1 < track.levels.length ? track.levels[currentIndex + 1] : null;
+
+const side = track.levels.map((l) => {
+  const current = l.id === level.id ? ' class="current"' : '';
+  return `<li><a href="${esc(l.href)}"${current}><span class="num">${String(l.level).padStart(2, '0')}</span><span>${esc(l.title)}</span></a></li>`;
+}).join('');
+
+const prevLink = prev
+  ? `<a href="${esc(prev.href)}"><small>上一关</small>${esc(prev.title)}</a>`
+  : `<a href="/ai/notes/prompt/"><small>返回系列</small>${esc(track.title)}</a>`;
+const nextLink = next
+  ? `<a class="right" href="${esc(next.href)}"><small>下一关</small>${esc(next.title)}</a>`
+  : `<a class="right" href="/ai/notes/"><small>读完这一套</small>全部笔记 →</a>`;
+
+const pdf = 'mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF';
+const page = `<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(level.title)} · 第 ${String(level.level).padStart(2, '0')} 关 — ${esc(track.title)}</title>
+<meta name="description" content="${esc(level.summary)}">
+<link rel="canonical" href="https://gongjuhe.top/ai/notes/prompt/01">
+<meta property="og:type" content="article">
+<meta property="og:title" content="${esc(level.title)} — ${esc(track.title)}">
+<meta property="og:description" content="${esc(level.summary)}">
+<meta property="og:image" content="/og-knowledge.png">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=3">
+<script src="/ai/notes/notes.js?v=4" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=1"></script>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<div class="read-progress"></div>
+<header class="wrap top">
+  <a class="brand" href="/">AI 实战通关 <small>KNOWLEDGE BASE</small></a>
+  <nav class="nav" aria-label="主导航">
+    <a href="/ai/notes/">全部课程</a>
+    <a href="/">知识库首页</a>
+    <a class="cta" href="${pdf}">获取 PDF</a>
+  </nav>
+</header>
+<main id="main">
+<nav class="breadcrumb wrap" aria-label="面包屑">
+  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/prompt/">${esc(track.title)}</a><span class="sep">/</span><span>第 ${String(level.level).padStart(2, '0')} 关</span>
+</nav>
+<div class="wrap article-shell">
+  <aside class="side">
+    <p class="side-label">${esc(track.title.split('：')[0])}</p>
+    <ol class="level-nav">${side}</ol>
+    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="${pdf}">获取 PDF ↗</a></div>
+  </aside>
+  <article class="article">
+    <p class="kicker">PROMPT ENGINEERING / 01 · ENGINE v1</p>
+    <h1>${esc(level.title)}</h1>
+    <p class="lede">${esc(level.summary)}</p>
+    <div class="meta"><span>约 ${level.readMinutes} 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 ${esc(level.source)}</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <section class="lesson">${level.lessonHtml}</section>
+    <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/prompt/01" data-exercise="/content/levels/prompt-01.json">
+      <div class="practice-head">
+        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <h2>${esc(level.exercise.title)}</h2>
+        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+      </div>
+      <div class="practice-grid">
+        <div class="practice-write">
+          <label for="practice-answer">我的答案</label>
+          <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案写在这里…"></textarea>
+          <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
+        </div>
+        <div class="practice-check">
+          <p class="practice-label">评分项</p>
+          <div class="check-list" data-criteria></div>
+          <button type="button" class="check-answer" data-check>检查我的答案</button>
+          <div class="practice-feedback" data-feedback></div>
+          <p class="practice-score">结构分 <b data-score>—</b> / ${total} 分</p>
+        </div>
+      </div>
+      <div class="practice-actions">
+        <button type="button" data-reveal>对照参考答案 ↓</button>
+        <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
+      </div>
+    </section>
+    <details class="answer">
+      <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
+      <div class="answer-body">${level.referenceAnswerHtml}</div>
+    </details>
+    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="${pdf}">留邮箱，获取完整 PDF ↗</a></div>
+    <div class="nextprev">${prevLink}${nextLink}</div>
+  </article>
+</div>
+</main>
+<footer class="wrap">
+  <span>AI 实战通关 · 2026</span>
+  <span>免费 · 不登录 · 不卖 API</span>
+</footer>
+</body>
+</html>
+`;
+
+fs.writeFileSync(outPath, page, 'utf8');
+console.log('BUILT', path.relative(root, outPath), 'chars=', page.length, 'rubricTotal=', total);

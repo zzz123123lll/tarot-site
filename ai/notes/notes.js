@@ -82,7 +82,7 @@
 
   /* ---------- in-article practice + rule checker ---------- */
   var practice = document.querySelector('.practice');
-  if (practice) {
+  if (practice && practice.dataset.engine !== 'v2') {
     var key = practice.dataset.key;
     var answer = practice.querySelector('[data-answer]');
     var countEl = practice.querySelector('[data-count]');

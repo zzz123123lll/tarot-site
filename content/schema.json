@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gongjuhe.top/content/schema.json",
+  "title": "LevelContent",
+  "type": "object",
+  "required": ["id", "trackId", "level", "title", "summary", "lessonHtml", "referenceAnswerHtml", "exercise", "next"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z]+-[0-9]{2}$" },
+    "trackId": { "type": "string" },
+    "level": { "type": "integer", "minimum": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "summary": { "type": "string" },
+    "source": { "type": "string" },
+    "readMinutes": { "type": "integer", "minimum": 1 },
+    "lessonHtml": { "type": "string", "minLength": 1 },
+    "referenceAnswerHtml": { "type": "string", "minLength": 1 },
+    "exercise": {
+      "type": "object",
+      "required": ["id", "title", "minLength", "criteria"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "minLength": { "type": "integer", "minimum": 0 },
+        "criteria": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "label", "weight", "type"],
+            "properties": {
+              "id": { "type": "string" },
+              "label": { "type": "string" },
+              "weight": { "type": "number", "minimum": 0 },
+              "type": { "enum": ["term_groups", "min_length", "manual"] },
+              "groups": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["label", "terms"],
+                  "properties": {
+                    "label": { "type": "string" },
+                    "terms": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "next": { "type": "string" }
+  },
+  "additionalProperties": true
+}
