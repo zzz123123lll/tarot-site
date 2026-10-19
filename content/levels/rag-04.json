@@ -89,15 +89,42 @@
     ]
   },
   "next": "rag-05",
-  "knowledgeCheck": {
-    "question": "RRF（Reciprocal Rank Fusion）的作用是？",
-    "options": [
-      "融合多路检索的排名结果",
-      "替代 Embedding 模型",
-      "生成最终答案",
-      "压缩文档"
-    ],
-    "answer": 0,
-    "explanation": "RRF 只使用排名做融合，不需要不同检索器的分数完全可比。"
-  }
+  "knowledgeChecks": [
+    {
+      "question": "RRF（Reciprocal Rank Fusion）的作用是？",
+      "options": [
+        "融合多路检索的排名结果",
+        "替代 Embedding 模型",
+        "生成最终答案",
+        "压缩文档"
+      ],
+      "answer": 0,
+      "explanation": "RRF 只使用排名做融合，不需要不同检索器的分数完全可比。",
+      "id": "q1"
+    },
+    {
+      "question": "RRF 用排名而不是原始分数，主要因为？",
+      "options": [
+        "不同检索器的分数不可直接比较",
+        "排名计算更慢",
+        "排名更准确",
+        "可以去掉向量检索"
+      ],
+      "answer": 0,
+      "explanation": "稠密与稀疏检索的分数分布不同，排名是更稳定的融合信号。",
+      "id": "q2"
+    },
+    {
+      "question": "Cross-Encoder Reranker 应放在哪一步？",
+      "options": [
+        "粗排候选之后做精排",
+        "对所有文档做第一阶段检索",
+        "替代 Embedding",
+        "生成答案之后"
+      ],
+      "answer": 0,
+      "explanation": "Cross-Encoder 计算重，适合对少量候选精排，不适合全库暴力检索。",
+      "id": "q3"
+    }
+  ]
 }

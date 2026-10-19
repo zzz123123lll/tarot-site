@@ -18,7 +18,7 @@ function init(root) {
   const checkBtn = root.querySelector('[data-check]');
   const answerBox = document.querySelector('.answer');
   let exercise = null;
-  let knowledgeCheck = null;
+  let knowledgeChecks = [];
   let saveTimer = 0;
   let state = read();
 
@@ -31,10 +31,19 @@ function init(root) {
   }
   function setStatus(text) { if (statusEl) statusEl.textContent = text; }
   function count() { if (countEl) countEl.textContent = answer.value.length + ' 字'; }
+  function collectObjectives() {
+    var out = {};
+    if (!objectiveBox) return out;
+    objectiveBox.querySelectorAll('.objective-card').forEach(function (card) {
+      var checked = card.querySelector('input[type="radio"]:checked');
+      if (checked) out[card.dataset.checkId] = Number(checked.value);
+    });
+    return out;
+  }
   function save() {
     state.answer = answer.value;
     state.done = doneEl.checked;
-    state.objective = selectedObjective();
+    state.objectives = collectObjectives();
     state.at = Date.now();
     write();
     setStatus('已保存');
@@ -46,12 +55,16 @@ function init(root) {
   }
   function esc(s) {
     return String(s == null ? '' : s)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
   }
 
   if (!state.answer) state.answer = '';
   if (typeof state.done !== 'boolean') state.done = false;
-  if (typeof state.objective !== 'number') state.objective = null;
+  if (!state.objectives || typeof state.objectives !== 'object') {
+    state.objectives = {};
+    if (typeof state.objective === 'number') state.objectives.q1 = state.objective;
+  }
   answer.value = state.answer;
   doneEl.checked = state.done;
   count();
@@ -96,83 +109,90 @@ function init(root) {
     });
   }
 
-  function selectedObjective() {
-    if (!objectiveBox) return null;
-    const checked = objectiveBox.querySelector('input[type="radio"]:checked');
-    return checked ? Number(checked.value) : null;
-  }
-
   function renderObjective() {
-    if (!objectiveBox || !knowledgeCheck) {
+    if (!objectiveBox || !knowledgeChecks.length) {
       if (objectiveBox) objectiveBox.hidden = true;
       return;
     }
-    const selected = typeof state.objective === 'number' ? state.objective : null;
-    objectiveBox.innerHTML = `
-      <p class="label">KNOWLEDGE CHECK / 客观题 · 1 题</p>
-      <p class="objective-question">${esc(knowledgeCheck.question)}</p>
-      <div class="objective-options">${knowledgeCheck.options.map((opt, i) => (
-        `<label class="objective-option"><input type="radio" name="objective-${esc(key)}" value="${i}"${selected === i ? ' checked' : ''}><span><b>${String.fromCharCode(65 + i)}</b> ${esc(opt)}</span></label>`
-      )).join('')}</div>
-      <div class="objective-actions"><button type="button" class="check-answer" data-objective-check>检查这道题</button><span class="objective-result" data-objective-result></span></div>
-      <p class="objective-explanation" data-objective-explanation></p>`;
-    objectiveBox.querySelectorAll('input[type="radio"]').forEach((input) => {
-      input.addEventListener('change', () => {
-        state.objective = selectedObjective();
-        write();
-        setStatus('已保存');
-        objectiveBox.querySelectorAll('.objective-option').forEach((el) => el.classList.remove('is-correct', 'is-wrong'));
-        if (objectiveBox.querySelector('[data-objective-result]')) objectiveBox.querySelector('[data-objective-result]').textContent = '';
-        if (objectiveBox.querySelector('[data-objective-explanation]')) objectiveBox.querySelector('[data-objective-explanation]').textContent = '';
+    objectiveBox.innerHTML = `<p class="label">KNOWLEDGE CHECK / 客观题 · ${knowledgeChecks.length} 题</p>` +
+      knowledgeChecks.map((q, index) => {
+        const selected = state.objectives[q.id];
+        const options = q.options.map((opt, i) => (
+          `<label class="objective-option"><input type="radio" name="objective-${esc(q.id)}-${index}" value="${i}"${selected === i ? ' checked' : ''}><span><b>${String.fromCharCode(65 + i)}</b> ${esc(opt)}</span></label>`
+        )).join('');
+        return `<div class="objective-card" data-check-id="${esc(q.id)}">
+          <p class="objective-index">0${index + 1} / ${esc(q.question)}</p>
+          <div class="objective-options">${options}</div>
+          <div class="objective-actions"><button type="button" class="check-answer" data-objective-check>检查这道题</button><span class="objective-result" data-objective-result></span></div>
+          <p class="objective-explanation" data-objective-explanation></p>
+        </div>`;
+      }).join('');
+    objectiveBox.querySelectorAll('.objective-card').forEach((card) => {
+      card.querySelectorAll('input[type="radio"]').forEach((input) => {
+        input.addEventListener('change', () => {
+          state.objectives[card.dataset.checkId] = Number(input.value);
+          write();
+          setStatus('已保存');
+          card.querySelectorAll('.objective-option').forEach((el) => el.classList.remove('is-correct', 'is-wrong'));
+          const resultEl = card.querySelector('[data-objective-result]');
+          const explanationEl = card.querySelector('[data-objective-explanation]');
+          if (resultEl) resultEl.textContent = '';
+          if (explanationEl) explanationEl.textContent = '';
+        });
       });
+      card.querySelector('[data-objective-check]').addEventListener('click', () => checkObjective(card));
     });
-    objectiveBox.querySelector('[data-objective-check]').addEventListener('click', checkObjective);
   }
 
-  function recordMistake(selected, result) {
+  function recordMistake(q, selected, result) {
     var storeKey = 'gjh-mistakes';
     var store = {};
     try { store = JSON.parse(localStorage.getItem(storeKey) || '{}') || {}; } catch (e) { store = {}; }
+    var mk = key + '::' + q.id;
     if (result.correct) {
+      delete store[mk];
       delete store[key];
     } else {
       var titleEl = document.querySelector('h1');
-      store[key] = {
-        key: key,
+      store[mk] = {
+        key: mk,
         title: titleEl ? titleEl.textContent.trim() : key,
         href: location.pathname.replace(/\.html$/, ''),
-        question: knowledgeCheck.question,
-        options: knowledgeCheck.options,
+        question: q.question,
+        options: q.options,
         selected: selected,
         answer: result.answer,
-        explanation: knowledgeCheck.explanation,
+        explanation: q.explanation,
         at: Date.now()
       };
     }
     try { localStorage.setItem(storeKey, JSON.stringify(store)); } catch (e) {}
   }
 
-  function checkObjective() {
-    const selected = selectedObjective();
-    const resultEl = objectiveBox.querySelector('[data-objective-result]');
-    const explanationEl = objectiveBox.querySelector('[data-objective-explanation]');
+  function checkObjective(card) {
+    var q = knowledgeChecks.find((item) => item.id === card.dataset.checkId);
+    if (!q) return;
+    var checked = card.querySelector('input[type="radio"]:checked');
+    var selected = checked ? Number(checked.value) : null;
+    var resultEl = card.querySelector('[data-objective-result]');
+    var explanationEl = card.querySelector('[data-objective-explanation]');
     if (selected === null) {
       if (resultEl) resultEl.textContent = '先选一个答案。';
       return;
     }
-    const result = gradeObjective(knowledgeCheck, selected);
-    state.objective = selected;
+    var result = gradeObjective(q, selected);
+    state.objectives[q.id] = selected;
     save();
-    recordMistake(selected, result);
-    objectiveBox.querySelectorAll('.objective-option').forEach((el) => {
-      const input = el.querySelector('input');
+    recordMistake(q, selected, result);
+    card.querySelectorAll('.objective-option').forEach((el) => {
+      var input = el.querySelector('input');
       el.classList.remove('is-correct', 'is-wrong');
       if (input && Number(input.value) === result.answer) el.classList.add('is-correct');
       if (input && Number(input.value) === selected && !result.correct) el.classList.add('is-wrong');
     });
     if (resultEl) resultEl.textContent = result.correct ? '回答正确' : '回答错误';
     if (explanationEl) {
-      explanationEl.textContent = (result.correct ? '' : '正确答案：' + String.fromCharCode(65 + result.answer) + '. ' + knowledgeCheck.options[result.answer] + '。') + knowledgeCheck.explanation;
+      explanationEl.textContent = (result.correct ? '' : '正确答案：' + String.fromCharCode(65 + result.answer) + '. ' + q.options[result.answer] + '。') + q.explanation;
     }
   }
 
@@ -224,7 +244,7 @@ function init(root) {
     })
     .then((data) => {
       exercise = data.exercise;
-      knowledgeCheck = data.knowledgeCheck;
+      knowledgeChecks = Array.isArray(data.knowledgeChecks) ? data.knowledgeChecks : [];
       renderCriteria();
       renderObjective();
       reset();

@@ -102,15 +102,42 @@
     ]
   },
   "next": "prompt-02",
-  "knowledgeCheck": {
-    "question": "在提示词结构中，System 最主要负责什么？",
-    "options": [
-      "定义全局身份、规则与边界",
-      "列出本次任务的时间地点",
-      "限制输出字数",
-      "存放用户原话"
-    ],
-    "answer": 0,
-    "explanation": "System 是全局规范；具体事实、约束和任务放在 User 指令里。"
-  }
+  "knowledgeChecks": [
+    {
+      "question": "在提示词结构中，System 最主要负责什么？",
+      "options": [
+        "定义全局身份、规则与边界",
+        "列出本次任务的时间地点",
+        "限制输出字数",
+        "存放用户原话"
+      ],
+      "answer": 0,
+      "explanation": "System 是全局规范；具体事实、约束和任务放在 User 指令里。",
+      "id": "q1"
+    },
+    {
+      "question": "任务的时间、地点、媒体权益这些事实，放在哪里更合适？",
+      "options": [
+        "User 任务指令",
+        "System 全局规范",
+        "放哪都一样",
+        "只放在标题里"
+      ],
+      "answer": 0,
+      "explanation": "System 放全局规则；本次任务的时间、地点、对象等事实放 User 指令。",
+      "id": "q2"
+    },
+    {
+      "question": "把 System 与 User 分开的核心目的是什么？",
+      "options": [
+        "让模型区分全局规则和本次任务",
+        "增加提示词字数",
+        "方便复制粘贴",
+        "减少 token"
+      ],
+      "answer": 0,
+      "explanation": "分离后模型更容易知道哪些是长期规则，哪些是这一次要处理的任务。",
+      "id": "q3"
+    }
+  ]
 }

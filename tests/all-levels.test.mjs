@@ -26,12 +26,14 @@ for (const tf of trackFiles) {
     seen.add(level.id);
     assert(level.trackId === track.id, level.id + ' track');
     assert(level.title && level.summary && level.lessonHtml && level.referenceAnswerHtml, level.id + ' content');
-    assert(level.knowledgeCheck && level.knowledgeCheck.options.length === 4, level.id + ' knowledgeCheck options');
-    assert(Number.isInteger(level.knowledgeCheck.answer) && level.knowledgeCheck.answer >= 0 && level.knowledgeCheck.answer < 4, level.id + ' knowledgeCheck answer');
-    assert(level.knowledgeCheck.explanation, level.id + ' knowledgeCheck explanation');
-    assert.equal(gradeObjective(level.knowledgeCheck, level.knowledgeCheck.answer).status, 'correct', level.id + ' objective correct');
-    const wrong = (level.knowledgeCheck.answer + 1) % 4;
-    assert.equal(gradeObjective(level.knowledgeCheck, wrong).status, 'incorrect', level.id + ' objective incorrect');
+    assert(Array.isArray(level.knowledgeChecks) && level.knowledgeChecks.length === 3, level.id + ' knowledgeChecks');
+    level.knowledgeChecks.forEach((q) => {
+      assert(q.id && q.question && q.explanation, level.id + ' knowledgeCheck fields');
+      assert(Array.isArray(q.options) && q.options.length === 4, level.id + ' knowledgeCheck options');
+      assert(Number.isInteger(q.answer) && q.answer >= 0 && q.answer < 4, level.id + ' knowledgeCheck answer');
+      assert.equal(gradeObjective(q, q.answer).status, 'correct', level.id + ' objective correct');
+      assert.equal(gradeObjective(q, (q.answer + 1) % 4).status, 'incorrect', level.id + ' objective incorrect');
+    });
     assert(level.exercise && level.exercise.minLength > 0, level.id + ' exercise');
     assert(level.exercise.criteria.length === 3, level.id + ' criteria count');
 

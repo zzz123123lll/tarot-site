@@ -99,15 +99,42 @@
     ]
   },
   "next": "",
-  "knowledgeCheck": {
-    "question": "Faithfulness 指标衡量的是？",
-    "options": [
-      "回答是否忠实于检索上下文",
-      "召回文档数量",
-      "首字延迟",
-      "索引成本"
-    ],
-    "answer": 0,
-    "explanation": "Faithfulness 看回答中的断言能否被上下文支持，而不是回答是否流畅。"
-  }
+  "knowledgeChecks": [
+    {
+      "question": "Faithfulness 指标衡量的是？",
+      "options": [
+        "回答是否忠实于检索上下文",
+        "召回文档数量",
+        "首字延迟",
+        "索引成本"
+      ],
+      "answer": 0,
+      "explanation": "Faithfulness 看回答中的断言能否被上下文支持，而不是回答是否流畅。",
+      "id": "q1"
+    },
+    {
+      "question": "Context Recall 低通常说明？",
+      "options": [
+        "相关文档没有被召回",
+        "召回文档太多",
+        "回答太长",
+        "首字延迟高"
+      ],
+      "answer": 0,
+      "explanation": "Recall 衡量该找到的证据是否被找回来；低表示漏召回。",
+      "id": "q2"
+    },
+    {
+      "question": "Faithfulness 低通常说明？",
+      "options": [
+        "回答超出上下文、存在编造",
+        "召回数量不足",
+        "延迟太高",
+        "索引成本高"
+      ],
+      "answer": 0,
+      "explanation": "Faithfulness 看回答中的断言能否被检索上下文支持。",
+      "id": "q3"
+    }
+  ]
 }

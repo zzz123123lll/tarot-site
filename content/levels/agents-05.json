@@ -100,15 +100,42 @@
     ]
   },
   "next": "agents-06",
-  "knowledgeCheck": {
-    "question": "Generator → Validator → Refiner 中 Validator 主要做什么？",
-    "options": [
-      "确定性规则检查与语义对齐检查",
-      "生成 SQL",
-      "压缩上下文",
-      "写入长期记忆"
-    ],
-    "answer": 0,
-    "explanation": "Validator 拦截危险 SQL、检查日期/LIMIT 等硬规则，并核对业务口径。"
-  }
+  "knowledgeChecks": [
+    {
+      "question": "Generator → Validator → Refiner 中 Validator 主要做什么？",
+      "options": [
+        "确定性规则检查与语义对齐检查",
+        "生成 SQL",
+        "压缩上下文",
+        "写入长期记忆"
+      ],
+      "answer": 0,
+      "explanation": "Validator 拦截危险 SQL、检查日期/LIMIT 等硬规则，并核对业务口径。",
+      "id": "q1"
+    },
+    {
+      "question": "Generator → Validator → Refiner 中，确定性规则检查的例子是？",
+      "options": [
+        "拦截 DROP/DELETE 等危险 SQL",
+        "判断业务语义",
+        "生成 SQL",
+        "写入记忆"
+      ],
+      "answer": 0,
+      "explanation": "危险语句、LIMIT、分区过滤等可以靠硬规则检查。",
+      "id": "q2"
+    },
+    {
+      "question": "数据库报错堆栈应该怎么处理？",
+      "options": [
+        "回传给 Refiner 定向修复",
+        "直接丢弃",
+        "转给用户",
+        "忽略"
+      ],
+      "answer": 0,
+      "explanation": "真实报错是修复 SQL 的关键反馈，应进入下一轮修复。",
+      "id": "q3"
+    }
+  ]
 }

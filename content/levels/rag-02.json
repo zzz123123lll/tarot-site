@@ -80,15 +80,42 @@
     ]
   },
   "next": "rag-03",
-  "knowledgeCheck": {
-    "question": "chunk_overlap 的主要作用是？",
-    "options": [
-      "让相邻分块保留边界上下文",
-      "增加存储成本",
-      "自动去重",
-      "加密文本"
-    ],
-    "answer": 0,
-    "explanation": "重叠窗口能降低句子或表格在边界被切断造成的信息损失。"
-  }
+  "knowledgeChecks": [
+    {
+      "question": "chunk_overlap 的主要作用是？",
+      "options": [
+        "让相邻分块保留边界上下文",
+        "增加存储成本",
+        "自动去重",
+        "加密文本"
+      ],
+      "answer": 0,
+      "explanation": "重叠窗口能降低句子或表格在边界被切断造成的信息损失。",
+      "id": "q1"
+    },
+    {
+      "question": "chunk_size 设置得太小，主要风险是？",
+      "options": [
+        "语义被切碎，上下文不完整",
+        "上下文太长",
+        "Embedding 变慢",
+        "元数据丢失"
+      ],
+      "answer": 0,
+      "explanation": "块太小会把完整句子或论证切断，检索到的片段缺少上下文。",
+      "id": "q2"
+    },
+    {
+      "question": "表格要尽量整体保留，原因是？",
+      "options": [
+        "避免表格结构在分块处断裂",
+        "压缩存储",
+        "加密数据",
+        "方便排序"
+      ],
+      "answer": 0,
+      "explanation": "表格的列头与数据行被拆开后，语义会严重受损。",
+      "id": "q3"
+    }
+  ]
 }

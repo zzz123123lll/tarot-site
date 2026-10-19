@@ -85,15 +85,42 @@
     ]
   },
   "next": "prompt-07",
-  "knowledgeCheck": {
-    "question": "“先思后答”的核心要求是？",
-    "options": [
-      "先在 thinking 中推演，再在 answer 中给结论",
-      "先给答案再解释",
-      "不限制思考过程",
-      "只输出步骤"
-    ],
-    "answer": 0,
-    "explanation": "把推理区和结论区分开，能减少模型直接猜答案。"
-  }
+  "knowledgeChecks": [
+    {
+      "question": "“先思后答”的核心要求是？",
+      "options": [
+        "先在 thinking 中推演，再在 answer 中给结论",
+        "先给答案再解释",
+        "不限制思考过程",
+        "只输出步骤"
+      ],
+      "answer": 0,
+      "explanation": "把推理区和结论区分开，能减少模型直接猜答案。",
+      "id": "q1"
+    },
+    {
+      "question": "把 thinking 与 answer 分开，主要好处是？",
+      "options": [
+        "先完成推演，再给结论",
+        "先给答案再补推演",
+        "增加 token",
+        "降低准确率"
+      ],
+      "answer": 0,
+      "explanation": "推理区和结论区分开，模型有空间完成多步计算。",
+      "id": "q2"
+    },
+    {
+      "question": "只要求模型回答 True/False，可能带来什么问题？",
+      "options": [
+        "没有推理空间，模型容易猜",
+        "输出太慢",
+        "字数太多",
+        "语气不礼貌"
+      ],
+      "answer": 0,
+      "explanation": "强制只输出结论会跳过推理过程，复杂题准确率下降。",
+      "id": "q3"
+    }
+  ]
 }

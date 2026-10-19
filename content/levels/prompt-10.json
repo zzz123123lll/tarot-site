@@ -64,15 +64,42 @@
     ]
   },
   "next": "",
-  "knowledgeCheck": {
-    "question": "把复杂任务拆成多个 Prompt 的主要好处是？",
-    "options": [
-      "每一步可检查、可修正",
-      "一定增加 token",
-      "让模型更累",
-      "减少约束"
-    ],
-    "answer": 0,
-    "explanation": "多步流程把生成、审查、定稿拆开，便于中间校验和返工。"
-  }
+  "knowledgeChecks": [
+    {
+      "question": "把复杂任务拆成多个 Prompt 的主要好处是？",
+      "options": [
+        "每一步可检查、可修正",
+        "一定增加 token",
+        "让模型更累",
+        "减少约束"
+      ],
+      "answer": 0,
+      "explanation": "多步流程把生成、审查、定稿拆开，便于中间校验和返工。",
+      "id": "q1"
+    },
+    {
+      "question": "多步 Prompt 中 Validator 的职责是？",
+      "options": [
+        "检查上一步产物是否合格",
+        "生成初稿",
+        "直接发布",
+        "压缩上下文"
+      ],
+      "answer": 0,
+      "explanation": "Validator 在生成与定稿之间做质量闸门，拦截不合格内容。",
+      "id": "q2"
+    },
+    {
+      "question": "先生成、再审查、最后定稿的主要好处是？",
+      "options": [
+        "每一步都可检查、可修正",
+        "一定更快",
+        "一定更短",
+        "不需要人工"
+      ],
+      "answer": 0,
+      "explanation": "拆成多个阶段后，中间产物可验证，问题不会一路带到最终结果。",
+      "id": "q3"
+    }
+  ]
 }

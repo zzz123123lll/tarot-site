@@ -96,15 +96,42 @@
     ]
   },
   "next": "agents-03",
-  "knowledgeCheck": {
-    "question": "工具 JSON Schema 中 description 的核心作用是？",
-    "options": [
-      "说明何时、如何调用以及调用前提",
-      "装饰界面",
-      "加密参数",
-      "提升接口速度"
-    ],
-    "answer": 0,
-    "explanation": "模型靠 description 判断工具适用条件和调用方式；它直接影响选错率。"
-  }
+  "knowledgeChecks": [
+    {
+      "question": "工具 JSON Schema 中 description 的核心作用是？",
+      "options": [
+        "说明何时、如何调用以及调用前提",
+        "装饰界面",
+        "加密参数",
+        "提升接口速度"
+      ],
+      "answer": 0,
+      "explanation": "模型靠 description 判断工具适用条件和调用方式；它直接影响选错率。",
+      "id": "q1"
+    },
+    {
+      "question": "JSON Schema 中 required 字段表示？",
+      "options": [
+        "调用时必须提供的参数",
+        "可选参数",
+        "参数说明",
+        "返回值类型"
+      ],
+      "answer": 0,
+      "explanation": "required 明确哪些参数不能缺失。",
+      "id": "q2"
+    },
+    {
+      "question": "参数校验失败时，Agent 应该？",
+      "options": [
+        "返回结构化错误并追问缺失信息",
+        "盲目重试",
+        "编造参数",
+        "忽略错误"
+      ],
+      "answer": 0,
+      "explanation": "结构化错误能引导 Agent 向用户追问，而不是乱填参数。",
+      "id": "q3"
+    }
+  ]
 }

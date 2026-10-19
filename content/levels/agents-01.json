@@ -99,15 +99,42 @@
     ]
   },
   "next": "agents-02",
-  "knowledgeCheck": {
-    "question": "ReAct 循环的正确顺序是？",
-    "options": [
-      "Thought → Action → Observation → Final Decision",
-      "Action → Thought → Final → Observation",
-      "Observation → Final → Action → Thought",
-      "Thought → Final → Action → Observation"
-    ],
-    "answer": 0,
-    "explanation": "先推理、再调用工具、读取观察结果，最后给出决定。"
-  }
+  "knowledgeChecks": [
+    {
+      "question": "ReAct 循环的正确顺序是？",
+      "options": [
+        "Thought → Action → Observation → Final Decision",
+        "Action → Thought → Final → Observation",
+        "Observation → Final → Action → Thought",
+        "Thought → Final → Action → Observation"
+      ],
+      "answer": 0,
+      "explanation": "先推理、再调用工具、读取观察结果，最后给出决定。",
+      "id": "q1"
+    },
+    {
+      "question": "ReAct 中执行 Action 之后，下一步应该？",
+      "options": [
+        "读取 Observation",
+        "直接 Final Decision",
+        "重新 Thought",
+        "停止"
+      ],
+      "answer": 0,
+      "explanation": "工具返回的 Observation 是下一步推理的依据。",
+      "id": "q2"
+    },
+    {
+      "question": "设置最大步数和熔断的主要目的是？",
+      "options": [
+        "防止死循环和异常重试",
+        "增加调用成本",
+        "让模型更慢",
+        "提高温度"
+      ],
+      "answer": 0,
+      "explanation": "步数上限、失败阈值和告警能防止 Agent 无限循环。",
+      "id": "q3"
+    }
+  ]
 }

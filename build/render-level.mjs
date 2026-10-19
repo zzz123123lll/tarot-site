@@ -27,9 +27,12 @@ function validate(track, level) {
   assert(track.id === level.trackId, 'track id');
   assert(level.id === track.id + '-' + String(level.level).padStart(2, '0'), 'level id');
   assert(level.title && level.summary && level.lessonHtml && level.referenceAnswerHtml, 'required content');
-  assert(level.knowledgeCheck && Array.isArray(level.knowledgeCheck.options) && level.knowledgeCheck.options.length === 4, 'knowledgeCheck options');
-  assert(Number.isInteger(level.knowledgeCheck.answer) && level.knowledgeCheck.answer >= 0 && level.knowledgeCheck.answer < 4, 'knowledgeCheck answer');
-  assert(level.knowledgeCheck.explanation, 'knowledgeCheck explanation');
+  assert(Array.isArray(level.knowledgeChecks) && level.knowledgeChecks.length === 3, 'knowledgeChecks length');
+  level.knowledgeChecks.forEach((q) => {
+    assert(q.id && q.question && q.explanation, 'knowledgeCheck fields');
+    assert(Array.isArray(q.options) && q.options.length === 4, 'knowledgeCheck options');
+    assert(Number.isInteger(q.answer) && q.answer >= 0 && q.answer < 4, 'knowledgeCheck answer');
+  });
   assert(level.exercise && Array.isArray(level.exercise.criteria), 'exercise criteria');
   assert(level.exercise.minLength >= 0, 'minLength');
   assert(level.exercise.criteria.length > 0, 'criteria empty');
@@ -87,9 +90,9 @@ export function renderLevel(trackId, levelId) {
 <meta property="og:description" content="${esc(level.summary)}">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=5">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=6">
 <script src="/ai/notes/notes.js?v=5" defer></script>
-<script type="module" src="/ai/notes/practice.mjs?v=3"></script>
+<script type="module" src="/ai/notes/practice.mjs?v=4"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>

@@ -103,15 +103,42 @@
     ]
   },
   "next": "agents-04",
-  "knowledgeCheck": {
-    "question": "Planner 输出中的 depends_on 字段表示？",
-    "options": [
-      "子任务之间的依赖与执行顺序",
-      "工具名称",
-      "输出格式",
-      "权限等级"
-    ],
-    "answer": 0,
-    "explanation": "依赖数组决定哪些步骤可并行、哪些必须等待前置结果。"
-  }
+  "knowledgeChecks": [
+    {
+      "question": "Planner 输出中的 depends_on 字段表示？",
+      "options": [
+        "子任务之间的依赖与执行顺序",
+        "工具名称",
+        "输出格式",
+        "权限等级"
+      ],
+      "answer": 0,
+      "explanation": "依赖数组决定哪些步骤可并行、哪些必须等待前置结果。",
+      "id": "q1"
+    },
+    {
+      "question": "Planner 中 depends_on 为空表示？",
+      "options": [
+        "没有前置依赖，可先执行",
+        "任务失败",
+        "必须并行",
+        "最终步骤"
+      ],
+      "answer": 0,
+      "explanation": "依赖数组为空表示该步骤不依赖其他子任务。",
+      "id": "q2"
+    },
+    {
+      "question": "哪些步骤可以并行执行？",
+      "options": [
+        "互不依赖的步骤",
+        "有依赖关系的步骤",
+        "使用同一工具的步骤",
+        "耗时最长的步骤"
+      ],
+      "answer": 0,
+      "explanation": "并行前提是步骤之间没有数据或顺序依赖。",
+      "id": "q3"
+    }
+  ]
 }
