@@ -1,13 +1,13 @@
 {
-  "name": "Alex · 独立开发者",
-  "short_name": "Alex",
-  "description": "Alex 的个人主页：作品、关于与联系；以及一个本地运行的 29 件工具箱。",
+  "name": "AI 实战通关 — 提示词 / RAG / Agent",
+  "short_name": "AI 通关",
+  "description": "提示词、RAG、Agent 三套实战练习册，26 关免费阅读与自动得分点检查。",
   "id": "/",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#E7EBE1",
-  "theme_color": "#E7EBE1",
+  "background_color": "#F5F7FA",
+  "theme_color": "#1E5BFF",
   "lang": "zh-CN",
   "icons": [
     {

@@ -53,7 +53,7 @@
 <p>1. 明确写出 Agent 的四步 ReAct 推理轨迹模板：Thought → Action → Observation → Final Decision（4.5 分）；</p>
 <p>2. 定义清晰的触发条件（差价 ≥ 200 元且扣除改签手续费后净省 &gt; 0 元）（4 分）；</p>
 <p>3. 设置防死循环与异常熔断规则（如查询接口连续失败 2 次或总步数达 4 步立即停止并告警）（4 分）。</p></section>
-    <section class="practice" id="practice" data-key="/ai/notes/agents/01" data-total="12.5" data-rules="[{&quot;text&quot;: &quot;1. 明确写出 Agent 的四步 ReAct 推理轨迹模板：Thought → Action → Observation → Final Decision（4.5 分）；&quot;, &quot;weight&quot;: 4.5, &quot;groups&quot;: []}, {&quot;text&quot;: &quot;2. 定义清晰的触发条件（差价 ≥ 200 元且扣除改签手续费后净省 &gt; 0 元）（4 分）；&quot;, &quot;weight&quot;: 4, &quot;groups&quot;: []}, {&quot;text&quot;: &quot;3. 设置防死循环与异常熔断规则（如查询接口连续失败 2 次或总步数达 4 步立即停止并告警）（4 分）。&quot;, &quot;weight&quot;: 4, &quot;groups&quot;: [[&quot;熔断&quot;, &quot;死循环&quot;, &quot;停止&quot;, &quot;重试&quot;]]}]">
+    <section class="practice" id="practice" data-key="/ai/notes/agents/01" data-total="12.5" data-rules="[{&quot;text&quot;: &quot;1. 明确写出 Agent 的四步 ReAct 推理轨迹模板：Thought → Action → Observation → Final Decision（4.5 分）；&quot;, &quot;weight&quot;: 4.5, &quot;groups&quot;: [[&quot;thought&quot;], [&quot;action&quot;], [&quot;observation&quot;], [&quot;final decision&quot;]]}, {&quot;text&quot;: &quot;2. 定义清晰的触发条件（差价 ≥ 200 元且扣除改签手续费后净省 &gt; 0 元）（4 分）；&quot;, &quot;weight&quot;: 4, &quot;groups&quot;: [[&quot;差价&quot;, &quot;200&quot;], [&quot;净省&quot;, &quot;手续费&quot;]]}, {&quot;text&quot;: &quot;3. 设置防死循环与异常熔断规则（如查询接口连续失败 2 次或总步数达 4 步立即停止并告警）（4 分）。&quot;, &quot;weight&quot;: 4, &quot;groups&quot;: [[&quot;死循环&quot;, &quot;熔断&quot;], [&quot;失败&quot;, &quot;2 次&quot;], [&quot;停止&quot;, &quot;告警&quot;]]}]">
   <div class="practice-head">
     <p class="label">PRACTICE / 本关练习</p>
     <h2>先写你的答案，再对参考。</h2>

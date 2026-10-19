@@ -11,7 +11,7 @@
 //      断网时用户看到的是"工具打不开",而不是一个可用的降级页面;
 //   3) 工具页要能离线**处理文件**,除 HTML 与工具模块外还需要 /shared/encoders.js、
 //      encoder-worker.js、encoder-core.js 与 /vendor/encoders/* —— 这些在"第一次成功处理"时才进缓存。
-const CACHE = 'gongjuhe-v45';
+const CACHE = 'gongjuhe-v46';
 // 兜底说明页(断网打开一个确实没缓存过的地址时用,塔罗页也走这条路径)。
 // 注意必须写**最终地址** /offline:Cloudflare Pages 会把 /offline.html 用 308 跳到 /offline,
 // 而"带 redirect 标记的缓存响应"在导航时会被 Chromium 直接拒绝(ERR_FAILED)——
@@ -68,11 +68,9 @@ const VENDOR_SMALL = [
   '/vendor/fonts/GeistMono-sub.woff2', '/vendor/fonts/Geist-sub.woff2'
 ];
 const SHARED_FILES = ['/shared/toolkit.js', '/shared/encoders.js', '/shared/encoder-core.js', '/shared/encoder-worker.js'];
-const SHELL = ['/', OFFLINE_PAGE, OFFLINE_PAGE_ALT, '/verify/', '/about/', '/work/', '/contact/', '/tools/', '/ai/', '/ai/notes/', '/ai/notes/prompt/', '/ai/notes/rag/', '/ai/notes/agents/'].concat(TOOL_PAGES, MODULES, SHARED_FILES, VENDOR_SMALL, ['/base.css', '/site.css', '/tool.css', '/fonts.css', '/home.js', '/tools-manifest.js', '/personal.css', '/personal.js', '/tools-hub.js', '/ai/ai.css', '/ai/notes/notes.css', '/ai/notes/notes.js', '/manifest.webmanifest', '/icons/icon-192.png']);
-// CACHEABLE = 首次访问时页面就会去取的静态资源(缓存优先,取一次之后离线也有)。
-// /assets/ 放首页的产品截图:首页一打开就会请求它们,所以这里列上就等于"看过首页就能离线看到截图"。
-const CACHEABLE = ['/vendor/', '/icons/', '/assets/', '/tool.css', '/base.css', '/fonts.css', '/site.css', '/home.js', '/tools-manifest.js', '/personal.css', '/personal.js', '/tools-hub.js', '/ai/ai.css', '/ai/notes/notes.css', '/ai/notes/notes.js'];
-const SHARED = ['/shared/', '/tools/'];
+const SHELL = ['/', OFFLINE_PAGE, OFFLINE_PAGE_ALT, '/ai/notes/', '/ai/notes/prompt/', '/ai/notes/rag/', '/ai/notes/agents/', '/ai/notes/notes.css', '/ai/notes/notes.js', '/manifest.webmanifest', '/icons/icon-192.png'];
+const CACHEABLE = ['/ai/notes/notes.css', '/ai/notes/notes.js', '/icons/', '/assets/'];
+const SHARED = [];
 
 // 缓存查找:先精确匹配;带 ?v= 的请求**不回退**到无版本的旧缓存。
 // 为什么(真事故):页面请求 /site.css?v=39,而缓存里有安装期存的 /site.css(v34 的字节),
