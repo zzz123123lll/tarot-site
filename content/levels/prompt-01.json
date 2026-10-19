@@ -161,5 +161,40 @@
         ""
       ]
     ]
+  },
+  "explain": {
+    "summary": "这一关只解决一件事：把发给模型的内容拆成 system 和 user 两个通道，并保证消息结构正确。",
+    "bullets": [
+      "system 放全局规则、身份和边界，不放进 messages 数组。",
+      "user 放本次任务、事实和具体约束。",
+      "每条消息必须有 role 和 content；user/assistant 必须交替，第一条必须是 user。"
+    ],
+    "example": {
+      "label": "Anthropic 第 1 章官方例子",
+      "input": "system: Your answer should always be a series of critical thinking questions that further the conversation (do not provide answers to your questions).\nuser: Why is the sky blue?",
+      "walkthrough": "system 规定“只输出追问、不直接回答”；user 提出“天空为什么蓝”。模型的行为被 system 约束，而不是直接解释天空颜色。",
+      "output": "模型按 system 输出一组推动对话的追问；官方用它展示 system prompt 如何改变回答行为。"
+    },
+    "terms": [
+      {
+        "term": "Messages API",
+        "plain": "Anthropic 当前的消息接口；一次调用至少传 model、max_tokens、messages。"
+      },
+      {
+        "term": "message",
+        "plain": "messages 数组里的一条消息，包含 role 和 content 两个字段。"
+      },
+      {
+        "term": "role",
+        "plain": "消息角色；本关涉及 user 和 assistant，且必须交替。"
+      },
+      {
+        "term": "system prompt",
+        "plain": "独立于 messages 的全局上下文/指令，在用户问题之前提供给模型。"
+      }
+    ],
+    "why": "官方说明：system prompt 用来在用户问题前提供 context、instructions、guidelines；写得好的 system prompt 可以提升模型遵循规则的能力。",
+    "structure": "messages: [ { role: \"user\", content: \"...\" } ]\nsystem: \"...\"",
+    "check": "看完后回答：任务事实放 system 还是 user？为什么 messages 的 role 必须交替？"
   }
 }

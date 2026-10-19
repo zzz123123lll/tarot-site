@@ -33,6 +33,12 @@ function validate(track, level) {
     assert(Array.isArray(q.options) && q.options.length === 4, 'knowledgeCheck options');
     assert(Number.isInteger(q.answer) && q.answer >= 0 && q.answer < 4, 'knowledgeCheck answer');
   });
+  if (level.explain) {
+    assert(level.explain.summary && Array.isArray(level.explain.bullets), 'explain summary');
+    assert(level.explain.example && level.explain.example.input && level.explain.example.walkthrough, 'explain example');
+    assert(Array.isArray(level.explain.terms) && level.explain.terms.length >= 2, 'explain terms');
+    assert(level.explain.why && level.explain.structure && level.explain.check, 'explain fields');
+  }
   assert(level.reading && level.reading.quote && level.reading.guide && level.reading.example && level.reading.takeaway, 'reading fields');
   assert(Array.isArray(level.reading.points) && level.reading.points.length >= 3, 'reading points');
   assert(Array.isArray(level.reading.refs) && level.reading.refs.length >= 1, 'reading refs');
@@ -98,6 +104,27 @@ export function renderLevel(trackId, levelId) {
     <div class="reading-refs"><span class="label">SOURCES</span>${sourceLinks}</div>
   </section>`;
 
+  const explain = level.explain ? `<section class="explain" id="understand">
+    <div class="explain-fast">
+      <p class="label">30 SECONDS / 30 秒看懂</p>
+      <p class="explain-summary">${esc(level.explain.summary)}</p>
+      <ul class="explain-bullets">${level.explain.bullets.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
+    </div>
+    <div class="explain-deep">
+      <p class="label">3 MINUTES / 3 分钟拆解</p>
+      <p class="explain-example-title">先看来源里的例子：${esc(level.explain.example.label)}</p>
+      <div class="explain-example">
+        <div class="explain-code"><span>输入</span><pre>${esc(level.explain.example.input)}</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>${esc(level.explain.example.walkthrough)}</p><h3>输出</h3><p>${esc(level.explain.example.output)}</p></div>
+      </div>
+      <div class="explain-two">
+        <div><h3>术语拆开</h3><dl class="explain-terms">${level.explain.terms.map((x) => `<div><dt>${esc(x.term)}</dt><dd>${esc(x.plain)}</dd></div>`).join('')}</dl></div>
+        <div><h3>为什么有效</h3><p>${esc(level.explain.why)}</p><h3>结构长什么样</h3><pre class="explain-structure">${esc(level.explain.structure)}</pre></div>
+      </div>
+      <p class="explain-check">${esc(level.explain.check)}</p>
+    </div>
+  </section>` : '';
+
   const page = `<!doctype html>
 <html lang="zh-CN">
 <head>
@@ -111,7 +138,7 @@ export function renderLevel(trackId, levelId) {
 <meta property="og:description" content="${esc(level.summary)}">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=7">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=8">
 <script src="/ai/notes/notes.js?v=5" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=4"></script>
 </head>
@@ -142,6 +169,7 @@ export function renderLevel(trackId, levelId) {
     <h1>${esc(level.title)}</h1>
     <p class="lede">${esc(level.summary)}</p>
     <div class="meta"><span>约 ${level.readMinutes} 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 ${esc(level.source)}</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    ${explain}
     ${reading}
     <section class="lesson">${level.lessonHtml}</section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/${esc(track.id)}/${String(level.level).padStart(2, '0')}" data-exercise="/content/levels/${esc(level.id)}.json">

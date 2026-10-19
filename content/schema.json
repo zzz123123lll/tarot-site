@@ -221,6 +221,19 @@
         }
       },
       "additionalProperties": false
+    },
+    "explain": {
+      "type": "object",
+      "required": [
+        "summary",
+        "bullets",
+        "example",
+        "terms",
+        "why",
+        "structure",
+        "check"
+      ],
+      "additionalProperties": true
     }
   },
   "additionalProperties": true

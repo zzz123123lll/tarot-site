@@ -73,6 +73,11 @@ for (const tf of trackFiles) {
     assert(html.includes('data-objective'), level.id + ' page objective container');
     assert(html.includes('class="source-reading"'), level.id + ' page source reading');
     assert(html.includes('SOURCE READING'), level.id + ' page source reading label');
+    if (level.id === 'prompt-01') {
+      assert(html.includes('30 SECONDS'), 'prompt-01 30s layer');
+      assert(html.includes('3 MINUTES'), 'prompt-01 3min layer');
+      assert(html.includes('explain-summary'), 'prompt-01 summary');
+    }
   }
 }
 

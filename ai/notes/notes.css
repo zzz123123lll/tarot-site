@@ -231,3 +231,27 @@ footer a:hover{color:var(--ink)}
 .reading-refs a,.reading-refs span{font-family:var(--mono);font-size:10px;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:2px}
 .reading-refs a:hover{color:var(--accent);border-color:var(--accent)}
 @media(max-width:800px){.reading-grid{grid-template-columns:1fr;gap:22px}.reading-quote{font-size:18px}}
+
+/* 三层教学：30 秒看懂 + 3 分钟拆解 + 来源精读 */
+.explain{margin:26px 0 10px}
+.explain-fast{border:1px solid var(--line);background:var(--surface);padding:26px}
+.explain-summary{font-size:clamp(24px,3vw,32px);line-height:1.45;letter-spacing:-.04em;font-weight:700;color:var(--ink);margin:10px 0 18px;max-width:900px}
+.explain-bullets{display:grid;gap:8px;margin:0;padding-left:18px}
+.explain-bullets li{font-size:15px;line-height:1.8;color:var(--ink-2)}
+.explain-deep{border:1px solid var(--line);border-top:0;padding:24px 26px 26px;background:#FAFBFD}
+.explain-example-title{font-size:15px;font-weight:650;margin:8px 0 12px}
+.explain-example{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
+.explain-code,.explain-walk{background:var(--surface);padding:16px}
+.explain-code span,.explain-walk h3{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--muted);margin:0 0 8px;font-weight:500;text-transform:uppercase}
+.explain-code pre,.explain-structure{margin:0;white-space:pre-wrap;word-break:break-word;font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--ink-2);background:var(--bg);border:1px solid var(--line);padding:12px}
+.explain-walk p{font-size:13px;line-height:1.8;color:var(--ink-2);margin:0 0 14px}
+.explain-walk p:last-child{margin-bottom:0}
+.explain-two{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:24px}
+.explain-two h3{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);margin:0 0 10px;font-weight:500;text-transform:uppercase}
+.explain-two p{font-size:14px;line-height:1.85;color:var(--ink-2)}
+.explain-terms{margin:0;display:grid;gap:10px}
+.explain-terms dt{font-family:var(--mono);font-size:10px;color:var(--accent);margin-bottom:2px}
+.explain-terms dd{margin:0;font-size:13px;line-height:1.75;color:var(--ink-2)}
+.explain-structure{margin-top:8px}
+.explain-check{margin:24px 0 0!important;border-left:2px solid var(--accent);padding-left:12px;font-size:14px!important;line-height:1.8!important;font-weight:600;color:var(--ink)!important}
+@media(max-width:800px){.explain-fast,.explain-deep{padding:18px}.explain-example,.explain-two{grid-template-columns:1fr}.explain-summary{font-size:24px}}
