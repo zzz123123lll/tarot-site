@@ -78,21 +78,22 @@
     </section>
     <details class="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
-      <div class="answer-body"><div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code># 1. 结构化入库结构(绑定版本与生效状态元数据)
+      <div class="answer-body"><div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code># 1. 结构化入库结构（绑定版本与生效状态元数据）
 collection.upsert(
-ids=["policy_2026_chunk_01", "policy_2023_chunk_01"],
-embeddings=[embed_model.encode(text_2026), embed_model.encode(text_2023)],
-documents=[text_2026, text_2023],
-metadatas=[
-{"doc_name": "差旅制度", "effective_year": 2026, "is_active": True, "dept": "ALL"},
-{"doc_name": "差旅制度", "effective_year": 2023, "is_active": False, "dept": "ALL"}
-]
+    ids=["policy_2026_chunk_01", "policy_2023_chunk_01"],
+    embeddings=[embed_model.encode(text_2026), embed_model.encode(text_2023)],
+    documents=[text_2026, text_2023],
+    metadatas=[
+        {"doc_name": "差旅制度", "effective_year": 2026, "is_active": True, "dept": "ALL"},
+        {"doc_name": "差旅制度", "effective_year": 2023, "is_active": False, "dept": "ALL"},
+    ],
 )
-# 2. 检索时强制前置过滤 is_active == True,彻底屏蔽废止旧制度
+
+# 2. 检索时强制前置过滤 is_active == True，彻底屏蔽废止旧制度
 results = collection.query(
-query_embeddings=[embed_model.encode("一线城市出差住宿报销上限是多少?")],
-n_results=3,
-where={"$and": [{"is_active": {"$eq": True}}, {"effective_year": {"$gte": 2026}}]}
+    query_embeddings=[embed_model.encode("一线城市出差住宿报销上限是多少？")],
+    n_results=3,
+    where={"$and": [{"is_active": {"$eq": True}}, {"effective_year": {"$gte": 2026}}]},
 )</code></pre></div>
 <h3>得分要点拆解</h3>
 <p>完整定义四维入库结构与 `is_active` 元数据（4.5 分）；使用 `where` 过滤器在向量比对前剔除失效旧文档（5 分）；说明不同 Embedding 模型向量空间正交不可混用、必须保持同一模型与归一化标准（3 分）。</p></div>

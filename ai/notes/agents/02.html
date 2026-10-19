@@ -86,37 +86,34 @@
     <details class="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
       <div class="answer-body"><div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code>{
-"name": "initiate_partial_refund",
-"description": "向买家发起订单部分退款。调用前提:必须先调用 get_logistics_status 确认包裹已签收
-或存在核实的物流异常,严禁在未查询订单状态前直接调用本工具。单笔自动退款上限为 200 元人民币。",
-"parameters": {
-"type": "object",
-"properties": {
-"order_id": {
-"type": "string",
-"pattern": "^ORD-[0-9]{8}$",
-"description": "标准 12 位订单编号,必须以 'ORD-' 开头后跟 8 位数字(如 ORD-20261015)。若用
-户未提供,请先向用户追问。"
-},
-"refund_amount_cny": {
-"type": "number",
-"minimum": 0.01,
-"maximum": 200.00,
-"description": "退款金额(人民币元),保留两位小数,不得超过 200.00 元。"
-},
-"reason_category": {
-"type": "string",
-"enum": ["DELAYED_SHIPPING", "MINOR_DEFECT", "PRICE_MATCH", "MISSING_ACCESSORY"],
-"description": "退款原因分类枚举值,必须严格从四个预设枚举项中选择。"
+  "name": "initiate_partial_refund",
+  "description": "向买家发起订单部分退款。调用前提：必须先调用 get_logistics_status 确认包裹已签收或存在核实的物流异常，严禁在未查询订单状态前直接调用本工具。单笔自动退款上限为 200 元人民币。",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "order_id": {
+        "type": "string",
+        "pattern": "^ORD-[0-9]{8}$",
+        "description": "标准 12 位订单编号，必须以 ORD- 开头后跟 8 位数字（如 ORD-20261015）。若用户未提供，请先向用户追问。"
+      },
+      "refund_amount_cny": {
+        "type": "number",
+        "minimum": 0.01,
+        "maximum": 200.00,
+        "description": "退款金额（人民币元），保留两位小数，不得超过 200.00 元。"
+      },
+      "reason_category": {
+        "type": "string",
+        "enum": ["DELAYED_SHIPPING", "MINOR_DEFECT", "PRICE_MATCH", "MISSING_ACCESSORY"],
+        "description": "退款原因分类枚举值，必须严格从四个预设枚举项中选择。"
+      }
+    },
+    "required": ["order_id", "refund_amount_cny", "reason_category"],
+    "additionalProperties": false
+  }
 }
-},
-"required": ["order_id", "refund_amount_cny", "reason_category"],
-"additionalProperties": false
-}
-}
-// 参数校验失败时的结构化回退返回示例:
-{"status": "validation_error", "error_field": "order_id", "agent_instruction": "订单号格式不合法或
-缺失,请礼貌询问买家提供以 ORD- 开头的 12 位订单号,切勿自行编造参数重试。"}</code></pre></div>
+// 参数校验失败时的结构化回退返回示例：
+{"status": "validation_error", "error_field": "order_id", "agent_instruction": "订单号格式不合法或缺失，请礼貌询问买家提供以 ORD- 开头的 12 位订单号，切勿自行编造参数重试。"}</code></pre></div>
 <h3>得分要点拆解</h3>
 <p>完整声明 JSON Schema 与前置调用约束（4.5 分）；对订单号正则、金额上下限、原因枚举进行强类型锁定（5 分）；提供面向 Agent 的结构化错误回退指引（3 分）。</p></div>
     </details>

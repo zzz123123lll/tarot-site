@@ -79,29 +79,36 @@
     <details class="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
       <div class="answer-body"><div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code>def run_self_healing_sql_agent(user_query: str, max_retries: int = 3):
-draft_sql = sql_generator_agent.run(user_query)
-for attempt in range(1, max_retries + 1):
-# 1. 确定性安全与性能护栏检查 (Deterministic Hook)
-if any(bad in draft_sql.upper() for bad in ["DROP ", "DELETE ", "UPDATE ", "TRUNCATE "]):
-return {"error": "安全拦截:禁止执行非只读 SQL 语句"}
-if "LIMIT" not in draft_sql.upper() or "dt &gt;=" not in draft_sql:
-feedback = "缺少分区字段 dt 过滤或未添加 LIMIT 限制,存在全表扫描风险,请修正。"
-draft_sql = sql_refiner_agent.run(query=user_query, bad_sql=draft_sql, error=feedback)
-continue
-# 2. 沙盒 EXPLAIN 语法与字段验证 + Critic 语义核对
-exec_result = db_sandbox.explain_and_validate(draft_sql)
-if not exec_result.is_valid:
-# 将真实数据库报错堆栈喂回 Refiner 定向修复
-draft_sql = sql_refiner_agent.run(
-query=user_query, bad_sql=draft_sql, error=exec_result.traceback
-)
-continue
-critic_Check = sql_critic_agent.verify_business_logic(user_query, draft_sql)
-if critic_Check.passed:
-return db_sandbox.execute_readonly(draft_sql)
-draft_sql = sql_refiner_agent.run(query=user_query, bad_sql=draft_sql,
-error=critic_Check.reason)
-return {"error": "超过最大自愈重试次数,已转人工数据工程师处理"}</code></pre></div>
+    draft_sql = sql_generator_agent.run(user_query)
+    for attempt in range(1, max_retries + 1):
+        # 1. 确定性安全与性能护栏检查（Deterministic Hook）
+        if any(bad in draft_sql.upper() for bad in ["DROP ", "DELETE ", "UPDATE ", "TRUNCATE "]):
+            return {"error": "安全拦截：禁止执行非只读 SQL 语句"}
+        if "LIMIT" not in draft_sql.upper() or "dt &gt;=" not in draft_sql:
+            feedback = "缺少分区字段 dt 过滤或未添加 LIMIT 限制，存在全表扫描风险，请修正。"
+            draft_sql = sql_refiner_agent.run(query=user_query, bad_sql=draft_sql, error=feedback)
+            continue
+
+        # 2. 沙盒 EXPLAIN 语法与字段验证 + Critic 语义核对
+        exec_result = db_sandbox.explain_and_validate(draft_sql)
+        if not exec_result.is_valid:
+            # 将真实数据库报错堆栈喂回 Refiner 定向修复
+            draft_sql = sql_refiner_agent.run(
+                query=user_query,
+                bad_sql=draft_sql,
+                error=exec_result.traceback,
+            )
+            continue
+
+        critic_check = sql_critic_agent.verify_business_logic(user_query, draft_sql)
+        if critic_check.passed:
+            return db_sandbox.execute_readonly(draft_sql)
+        draft_sql = sql_refiner_agent.run(
+            query=user_query,
+            bad_sql=draft_sql,
+            error=critic_check.reason,
+        )
+    return {"error": "超过最大自愈重试次数，已转人工数据工程师处理"}</code></pre></div>
 <h3>得分要点拆解</h3>
 <p>清晰实现 Generator → Validator → Refiner 循环（4 分）；结合确定性正则/分区拦截与 Critic业务逻辑核验（5.5 分）；将真实 Traceback 注入修复提示并限制最大重试次数（3 分）。</p></div>
     </details>

@@ -81,24 +81,20 @@
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
       <div class="answer-body"><p>// 1. 产业链研报图谱抽取 Schema 示例</p>
 <div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code>{
-"entities": [
-{"name": "宁德时代", "type": "COMPANY", "summary": "全球动力电池龙头企业,主营磷酸铁锂与三元锂
-电池"},
-{"name": "麒麟电池", "type": "PRODUCT_TECH", "summary": "第三代 CTP 无模组技术,体积利用率突破
-72%"},
-{"name": "碳酸锂", "type": "RAW_MATERIAL", "summary": "锂电池正极核心原材料"}
-],
-"relationships": [
-{"head": "宁德时代", "relation": "DEVELOPED_TECH", "tail": "麒麟电池", "weight": 0.95},
-{"head": "碳酸锂价格下跌", "relation": "REDUCES_COST_OF", "tail": "宁德时代", "weight": 0.88}
-]
+  "entities": [
+    {"name": "宁德时代", "type": "COMPANY", "summary": "全球动力电池龙头企业，主营磷酸铁锂与三元锂电池"},
+    {"name": "麒麟电池", "type": "PRODUCT_TECH", "summary": "第三代 CTP 无模组技术，体积利用率突破 72%"},
+    {"name": "碳酸锂", "type": "RAW_MATERIAL", "summary": "锂电池正极核心原材料"}
+  ],
+  "relationships": [
+    {"head": "宁德时代", "relation": "DEVELOPED_TECH", "tail": "麒麟电池", "weight": 0.95},
+    {"head": "碳酸锂价格下跌", "relation": "REDUCES_COST_OF", "tail": "宁德时代", "weight": 0.88}
+  ]
 }
-// 2. 查询路由判定规则(Query Router)
-- 路由至 Local Search(向量 + 实体一跳邻域):针对特定实体或具体数值的微观问题(如“麒麟电池的体积利
-用率是多少?”)。
-- 路由至 GraphRAG Global Search(社区摘要 Map-Reduce):针对跨多篇研报的宏观趋势、主题归纳与全集统计
-问题(如“总结这 200 份研报中提到的固态电池量产三大共性技术瓶颈”)。
-- 成本优化方案:仅对核心深度研报与长周期规范文档启用 LLM 图谱抽取,日常短资讯仍采用轻量向量索引。</code></pre></div>
+// 2. 查询路由判定规则（Query Router）
+- 路由至 Local Search（向量 + 实体一跳邻域）：针对特定实体或具体数值的微观问题，如“麒麟电池的体积利用率是多少？”
+- 路由至 GraphRAG Global Search（社区摘要 Map-Reduce）：针对跨多篇研报的宏观趋势、主题归纳与全集统计问题，如“总结这 200 份研报中提到的固态电池量产三大共性技术瓶颈”。
+- 成本优化方案：仅对核心深度研报与长周期规范文档启用 LLM 图谱抽取，日常短资讯仍采用轻量向量索引。</code></pre></div>
 <h3>得分要点拆解</h3>
 <p>规范定义产业链实体与三元组关系 Schema（5 分）；清晰区分微观细节查询(Local Search)与跨全库全局归纳查询(Global Search)（4.5 分）；给出混合索引控本策略（3 分）。</p></div>
     </details>

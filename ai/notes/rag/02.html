@@ -81,18 +81,22 @@
     <details class="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
       <div class="answer-body"><div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code>CHUNK_CONFIG = {
-"separators": ["\n## ", "\n### ", "\n\n", "。", ";", " "],
-"chunk_size": 500,
-"chunk_overlap": 75, # 15% 滑动重叠,确保跨块句子语义不断裂
-"keep_tables_intact": True # 检测 Markdown 表格语法 |---| 时整体保留不拆行
+    "separators": ["\n## ", "\n### ", "\n\n", "。", ";", " "],
+    "chunk_size": 500,
+    "chunk_overlap": 75,  # 15% 滑动重叠，确保跨块句子语义不断裂
+    "keep_tables_intact": True,  # 检测 Markdown 表格语法 |---| 时整体保留不拆行
 }
+
+
 def inject_breadcrumb_header(doc_title: str, section_path: str, raw_chunk: str) -&gt; str:
-"""在每个分块头部注入文档与章节层级上下文,再送入 Embedding 模型编码"""
-header = f"【来源文档:{doc_title} | 所属章节:{section_path}】\n"
-return header + raw_chunk.strip()
-# 注入后效果示例:
-# 【来源文档:员工手册2026版.pdf | 所属章节:第四章考勤与休假 &gt; 4.2 病假薪资发放标准】
-# 员工连续司龄满 5 年不满 10 年的,病假期间基础工资按本人标准薪资的 80% 计发。</code></pre></div>
+    """在每个分块头部注入文档与章节层级上下文，再送入 Embedding 模型编码"""
+    header = f"【来源文档：{doc_title} | 所属章节：{section_path}】\n"
+    return header + raw_chunk.strip()
+
+
+# 注入后效果示例：
+# 【来源文档：员工手册2026版.pdf | 所属章节：第四章考勤与休假 &gt; 4.2 病假薪资发放标准】
+# 员工连续司龄满 5 年不满 10 年的，病假期间基础工资按本人标准薪资的 80% 计发。</code></pre></div>
 <h3>得分要点拆解</h3>
 <p>按标题、段落、句号层级递归切分且不拆散表格（4.5 分）；设置 `chunk_size=500` 与 `15%overlap`（4 分）；在文本块头部显式拼接文档名与章节路径（4 分）。</p></div>
     </details>

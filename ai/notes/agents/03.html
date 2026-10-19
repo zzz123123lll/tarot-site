@@ -79,39 +79,38 @@
     <details class="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
       <div class="answer-body"><div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code>{
-"goal": "对目标企业【星云智造科技有限公司】进行销售前背景尽调并生成拜访简报",
-"execution_plan": [
-{
-"step_id": "step_1",
-"task": "核查工商注册状态、行政处罚与失信被执行人记录",
-"tool_name": "verify_business_registration",
-"depends_on": [],
-"execution_mode": "gatekeeper_first",
-"short_circuit_rule": "若返回 status 为 CANCELLED(已注销)或 DISHONEST_DEBTOR(失信被执行
-人),立即取消 step_2 至 step_4,直接跳至风险拦截总结。"
-},
-{
-"step_id": "step_2",
-"task": "检索最近 90 天公司高管公开发言、融资与业务扩张新闻",
-"tool_name": "search_company_news",
-"depends_on": ["step_1"],
-"execution_mode": "parallel_group_A"
-},
-{
-"step_id": "step_3",
-"task": "抓取企业官网核心产品线与技术栈介绍",
-"tool_name": "scrape_product_catalog",
-"depends_on": ["step_1"],
-"execution_mode": "parallel_group_A"
-},
-{
-"step_id": "step_4",
-"task": "结合我方产品矩阵,汇总生成定制化销售拜访破冰简报",
-"tool_name": "synthesize_sales_brief",
-"depends_on": ["step_2", "step_3"],
-"execution_mode": "sequential_final"
-}
-]
+  "goal": "对目标企业【星云智造科技有限公司】进行销售前背景尽调并生成拜访简报",
+  "execution_plan": [
+    {
+      "step_id": "step_1",
+      "task": "核查工商注册状态、行政处罚与失信被执行人记录",
+      "tool_name": "verify_business_registration",
+      "depends_on": [],
+      "execution_mode": "gatekeeper_first",
+      "short_circuit_rule": "若返回 status 为 CANCELLED（已注销）或 DISHONEST_DEBTOR（失信被执行人），立即取消 step_2 至 step_4，直接跳至风险拦截总结。"
+    },
+    {
+      "step_id": "step_2",
+      "task": "检索最近 90 天公司高管公开发言、融资与业务扩张新闻",
+      "tool_name": "search_company_news",
+      "depends_on": ["step_1"],
+      "execution_mode": "parallel_group_A"
+    },
+    {
+      "step_id": "step_3",
+      "task": "抓取企业官网核心产品线与技术栈介绍",
+      "tool_name": "scrape_product_catalog",
+      "depends_on": ["step_1"],
+      "execution_mode": "parallel_group_A"
+    },
+    {
+      "step_id": "step_4",
+      "task": "结合我方产品矩阵，汇总生成定制化销售拜访破冰简报",
+      "tool_name": "synthesize_sales_brief",
+      "depends_on": ["step_2", "step_3"],
+      "execution_mode": "sequential_final"
+    }
+  ]
 }</code></pre></div>
 <h3>得分要点拆解</h3>
 <p>规范包含 `step_id`、`tool_name`、`depends_on` 的 DAG 结构（5 分）；先执行守门任务`step_1`,再并行执行 `step_2` 与 `step_3`,最后串行汇总 `step_4`（4.5 分）；具备失信/注销一键短路终止机制（3 分）。</p></div>
