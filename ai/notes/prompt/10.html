@@ -53,7 +53,7 @@
       </div>
     </div>
     <p class="reading-takeaway">多 Prompt 的本质是让每一步有可验证的中间产物。</p>
-    <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/anthropics/courses/blob/master/prompt_engineering_interactive_tutorial/AmazonBedrock/anthropic/10.1_Appendix_Chaining%20Prompts.ipynb" target="_blank" rel="noopener">Anthropic Appendix: Chaining Prompts ↗</a><span>PDF 附录/第 10 关</span></div>
+    <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/anthropics/courses/blob/master/prompt_engineering_interactive_tutorial/AmazonBedrock/anthropic/10_1_Appendix_Chaining_Prompts.ipynb" target="_blank" rel="noopener">Anthropic Appendix: Chaining Prompts ↗</a><span>PDF 附录/第 10 关</span></div>
   </section>
     <section class="lesson"><h3>核心原理</h3>
 <p>在 Anthropic 教程附录(Appendix: Beyond Standard Prompting) 与 DAIR.AI 高级指南中，当一个任务过于庞大（例如：先从长篇访谈录中提炼痛点 → 再根据痛点撰写 5 篇不同角度的种草文案 → 最后审查文案是否包含违禁词并润色），哪怕写再长的单条 Prompt,模型也会顾此失彼。此时应当采用提示词链(Chaining Prompts)：将任务拆解为 2‒3 个串行的独立 Prompt,把上一步的输出标签（如 &lt;draft_copy&gt;）作为下一步的输入变量，形成自我纠错流水线(Generator → Critic → Refiner)。同时，针对实时计算或私有数据，应结合工具调用(Tool Use) 与检索增强生成(Search &amp; Retrieval / RAG)。</p>
