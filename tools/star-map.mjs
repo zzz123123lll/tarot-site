@@ -1,139 +1,147 @@
-// tools/star-map.mjs — 文字星图:把一段文字变成一片可分享的星空(纯本地、确定性)
-// 为什么做:抖音/B站爆款里播放最高的一类是"把文字/数据变成好看的可视化"(如《诗云》135 万点赞)。
-// 那类作品最核心、且不需要任何模型与数据源的部分就是"排版 + 可视化";这里只做真正确定的那一半:
-// 同一段文字永远得到同一片星空(用文本哈希做种子),可导出分享图。
+// tools/star-map.mjs — 纪念星图:把想留住的字,放回天上。
+// 一段话 / 一列名字 / 一封信 → 一张可分享、可打印的私人星图(纯本地、确定性)。
 export function mount(root, H) {
-  H.injectCss(".sm-wrap{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:22px;align-items:start}"
-    + "@media (max-width:900px){.sm-wrap{grid-template-columns:1fr}}"
-    + ".sm-stage{border-radius:18px;overflow:hidden;background:#07080d;box-shadow:var(--sh-3)}"
-    + ".sm-stage canvas{display:block;width:100%;height:auto}"
-    + ".sm-field{margin-bottom:14px}.sm-field label{display:block;font-size:14px;color:#6e6e73;margin-bottom:6px}"
-    + ".sm-input{width:100%;padding:10px 12px;border:1px solid var(--c-line-strong);border-radius:10px;font-size:16px;font-family:inherit;background:#fff}"
-    + ".sm-legend{margin-top:12px;background:var(--t-surface);border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.7;min-height:76px}"
-    + ".sm-oneline{font-size:14px;color:#6e6e73;margin-top:8px}"
-    + ".sm-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}"
-    + ".sm-chip{min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--c-line-strong);background:#fff;font-size:14px;cursor:pointer}"
-    + ".sm-chip.active{background:var(--c-accent);border-color:var(--c-accent);color:#fff}"
-    + ".sm-score{margin-top:12px;border:1px solid var(--c-hairline);border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.7}"
-    + ".sm-score .st{font-size:20px;color:#8a5a00;letter-spacing:2px}"
-    + ".sm-score .lb{font-weight:600;margin-left:8px}"
-    + ".sm-score .why{color:#6e6e73;margin-top:4px}"
-    + ".sm-score .mx{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;color:#3a3a3c}"
-    + ".sm-score .mx b{font-variant-numeric:tabular-nums}");
+  H.injectCss(
+    ".sm2-wrap{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start}"
+    + "@media (max-width:980px){.sm2-wrap{grid-template-columns:1fr}}"
+    + ".sm2-stage{position:relative;border-radius:18px;overflow:hidden;background:#070a18;box-shadow:var(--sh-3)}"
+    + ".sm2-stage canvas{display:block;width:100%;height:auto;touch-action:manipulation}"
+    + ".sm2-tip{position:absolute;left:0;top:0;transform:translate(-50%,-120%);pointer-events:none;background:rgba(247,246,239,.96);color:#1e2a22;border:1px solid rgba(30,42,34,.18);border-radius:10px;padding:6px 10px;font-size:13px;white-space:nowrap;opacity:0;transition:opacity .15s ease;z-index:3}"
+    + ".sm2-tip.on{opacity:1}"
+    + ".sm2-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}"
+    + ".sm2-templates{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 2px}"
+    + ".sm2-chip--tpl{min-height:34px;padding:0 10px;font-size:12px;border-style:dashed}"
+    + ".sm2-error{margin:8px 0 0;font-size:13px;line-height:1.6;color:#bf4800;min-height:18px}"
+    + ".tool-btn:disabled{opacity:.42;cursor:not-allowed}"
+    + ".sm2-sharehint{font-size:12px;color:#86868b;margin-top:6px;line-height:1.6}"
+    + ".sm2-side{background:var(--t-surface);border-radius:16px;padding:16px}"
+    + ".sm2-label{display:block;font-size:13px;color:#6e6e73;margin:12px 0 6px}"
+    + ".sm2-input{width:100%;padding:10px 12px;border:1px solid var(--c-line-strong);border-radius:10px;font-size:15px;font-family:inherit;background:#fff;color:#1d1d1f}"
+    + ".sm2-input:focus{outline:2px solid var(--c-accent);outline-offset:1px}"
+    + "textarea.sm2-input{resize:vertical;min-height:150px;line-height:1.7}"
+    + ".sm2-tabs,.sm2-styles{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 2px}"
+    + ".sm2-chip{min-height:40px;padding:0 12px;border-radius:999px;border:1px solid var(--c-line-strong);background:#fff;font-size:13px;cursor:pointer;color:#1d1d1f}"
+    + ".sm2-chip.active{background:var(--c-accent);border-color:var(--c-accent);color:#fff}"
+    + ".sm2-note{font-size:13px;line-height:1.7;color:#6e6e73;margin-top:12px}"
+    + ".sm2-count{font-size:12px;color:#86868b;margin-top:8px}"
+    + ".sm2-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}"
+    + "@media (max-width:520px){.sm2-row{grid-template-columns:1fr}}"
+  );
 
-  // 引导:不知道写什么是最常见的卡点(NN/g 渐进披露:首屏给能直接用的例子,别弹教程)
-  var EXAMPLES = [
-    { name: '古诗', text: '床前明月光\n疑是地上霜\n举头望明月\n低头思故乡', title: '静夜思' },
-    { name: '名单', text: '张伟\n王芳\n李娜\n张伟\n刘洋\n王芳\n陈静\n张伟', title: '点名册' },
-    { name: '金句', text: '慢慢来\n比较快\n把一件小事\n做到不需要解释', title: '慢慢来' },
-    { name: '说明文', text: '全部在浏览器里完成\n文件不会离开这台电脑\n不联网\n不上传\n不用注册', title: '为什么本地' }
-  ];
-  var SAMPLE = EXAMPLES[0].text;
-  // 今日星图:每天固定一篇,所有人当天看到同一片星空 —— 复玩理由来自"每天只有一篇"
-  // (Wordle 的每日同题做法,见 内部文档/计划-作品线成熟化.md 第 8 节 The Verge 的分析)
-  var DAILY = [
-    { t: '静夜思', x: '床前明月光\n疑是地上霜\n举头望明月\n低头思故乡' },
-    { t: '登鹳雀楼', x: '白日依山尽\n黄河入海流\n欲穷千里目\n更上一层楼' },
-    { t: '春晓', x: '春眠不觉晓\n处处闻啼鸟\n夜来风雨声\n花落知多少' },
-    { t: '江雪', x: '千山鸟飞绝\n万径人踪灭\n孤舟蓑笠翁\n独钓寒江雪' },
-    { t: '相思', x: '红豆生南国\n春来发几枝\n愿君多采撷\n此物最相思' },
-    { t: '赋得古原草送别', x: '离离原上草\n一岁一枯荣\n野火烧不尽\n春风吹又生' },
-    { t: '悯农', x: '锄禾日当午\n汗滴禾下土\n谁知盘中餐\n粒粒皆辛苦' }
-  ];
-  function dailyIndex() {
-    var d = new Date();
-    var days = Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
-    return ((days % DAILY.length) + DAILY.length) % DAILY.length;
-  }
-  function dailyLabel() {
-    var d = new Date();
-    return (d.getMonth() + 1) + ' 月 ' + d.getDate() + ' 日';
-  }
   root.innerHTML =
-    '<h1 class="tool-h1">文字星图</h1>' +
-    '<p class="tool-sub">写下一段文字,它会变成一片星空:<b>每个字是一颗星</b>,字与字之间的连线就是句子的走向。同一段文字永远是同一片星空,可以导出成分享图。</p>' +
-    '<div class="sm-wrap">' +
-      '<div>' +
-        '<div class="sm-stage"><canvas id="cv" width="1000" height="1250" aria-label="文字星图预览"></canvas></div>' +
-        '<div class="tool-row" style="margin-top:14px">' +
-          '<button class="tool-btn" id="poster">导出分享图(PNG)</button>' +
-          '<button class="tool-btn tool-btn--ghost" id="again">换一片星空</button>' +
-          '<button class="tool-btn" id="daily">今日星图</button>' +
-          '<button class="tool-btn tool-btn--ghost" id="eg">换个例子</button>' +
-          '<span class="idp-hint" id="info"></span>' +
-        '</div>' +
-        '<div id="out"></div>' +
-      '</div>' +
-      '<div>' +
-        '<div class="sm-chips" id="mode"><button class="sm-chip active" data-m="char">按字(每字一颗星)</button><button class="sm-chip" data-m="phrase">按词句(重复的更大)</button><button class="sm-chip" data-m="line">按行(每行一颗星)</button></div>'
-        + '<div class="sm-field"><label for="title">标题(可留空)</label><input class="sm-input" id="title" value="静夜思"></div>' +
-        '<div class="sm-field"><label for="body">文字(每换行一句,逗号句号也算断开)</label><textarea class="sm-input" id="body" rows="7" spellcheck="false"></textarea></div>' +
-        '<div class="sm-legend" id="legend" role="status" aria-live="polite"></div>' +
-        '<div class="sm-score" id="score" role="status" aria-live="polite"></div>' +
-        '<p class="sm-oneline" id="dailyline"></p>' +
-        '<p class="sm-oneline">把鼠标放到星星上(手机点一下),能看到它是哪个字。</p>' +
-        '<p class="sm-oneline">全部在浏览器里算:不联网、不上传、不用 AI。同一段文字 + 同一个种子 → 同一片星空。</p>' +
-      '</div>' +
-    '</div>';
+    '<h1 class="tool-h1">纪念星图</h1>'
+    + '<p class="tool-sub">把想留住的字，放回天上。一段话、一列名字、一封信，都会变成只属于你们的星空；可导出分享卡，也可以打印成 A4 海报。</p>'
+    + '<div class="sm2-wrap">'
+    + '  <div>'
+    + '    <div class="sm2-stage"><canvas id="sm2cv" width="1000" height="1250" aria-label="纪念星图预览"></canvas><div class="sm2-tip" id="sm2tip" role="status"></div></div>'
+    + '    <div class="sm2-actions">'
+    + '      <button class="tool-btn" id="sm2card">导出分享卡</button>'
+    + '      <button class="tool-btn tool-btn--ghost" id="sm2poster">导出 A4 海报</button>'
+    + '      <button class="tool-btn tool-btn--ghost" id="sm2share">复制分享链接</button>'
+    + '      <button class="tool-btn tool-btn--ghost" id="sm2shuffle">换一片星空</button>'
+    + '      <button class="tool-btn tool-btn--ghost" id="sm2example">换个例子</button>'
+    + '    </div>'
+    + '    <p class="sm2-sharehint">分享链接只包含文字与样式，不包含图片；对方打开后看到同一片星空。</p>'
+    + '    <p class="sm2-note">同一段文字 + 同一个标题，永远得到同一片星空；「换一片星空」只改种子，不改文字。手机点一下任意一颗星，能看到它是哪个字。</p>'
+    + '  </div>'
+    + '  <aside class="sm2-side">'
+    + '    <div class="sm2-tabs" id="sm2mode" role="group" aria-label="内容类型">'
+    + '      <button class="sm2-chip active" type="button" data-mode="words">一段话</button>'
+    + '      <button class="sm2-chip" type="button" data-mode="names">一列名字</button>'
+    + '      <button class="sm2-chip" type="button" data-mode="letter">一封信</button>'
+    + '    </div>'
+    + '    <span class="sm2-label">从模板开始</span>'
+    + '    <div class="sm2-templates" id="sm2templates" role="group" aria-label="模板">'
+    + '      <button class="sm2-chip sm2-chip--tpl" type="button" data-tpl="birthday">生日</button>'
+    + '      <button class="sm2-chip sm2-chip--tpl" type="button" data-tpl="wedding">婚礼</button>'
+    + '      <button class="sm2-chip sm2-chip--tpl" type="button" data-tpl="graduation">毕业</button>'
+    + '      <button class="sm2-chip sm2-chip--tpl" type="button" data-tpl="memorial">纪念</button>'
+    + '      <button class="sm2-chip sm2-chip--tpl" type="button" data-tpl="team">团队</button>'
+    + '    </div>'
+    + '    <label class="sm2-label" for="sm2title">标题</label>'
+    + '    <input class="sm2-input" id="sm2title" maxlength="40" placeholder="给未来的你">'
+    + '    <div class="sm2-row">'
+    + '      <div><label class="sm2-label" for="sm2date">日期</label><input class="sm2-input" id="sm2date" type="date"></div>'
+    + '      <div><label class="sm2-label" for="sm2occasion">场合</label><select class="sm2-input" id="sm2occasion">'
+    + '        <option>生日</option><option>毕业</option><option>婚礼</option><option>纪念日</option><option>团队</option><option>其他</option>'
+    + '      </select></div>'
+    + '    </div>'
+    + '    <label class="sm2-label" for="sm2sign">署名（可留空）</label>'
+    + '    <input class="sm2-input" id="sm2sign" maxlength="30" placeholder="Alex">'
+    + '    <label class="sm2-label" for="sm2body">文字（每行一句；名字一行一个）</label>'
+    + '    <textarea class="sm2-input" id="sm2body" spellcheck="false"></textarea>'
+    + '    <span class="sm2-label">星空风格</span>'
+    + '    <div class="sm2-styles" id="sm2style" role="group" aria-label="星空风格">'
+    + '      <button class="sm2-chip active" type="button" data-style="classic">古典星图</button>'
+    + '      <button class="sm2-chip" type="button" data-style="herbarium">标本室</button>'
+    + '      <button class="sm2-chip" type="button" data-style="minimal">极简</button>'
+    + '    </div>'
+    + '    <p class="sm2-count" id="sm2count"></p>'
+    + '    <p class="sm2-error" id="sm2error" role="status"></p>'
+    + '    <p class="sm2-note">全部在浏览器里生成：不上传、不联网、不用 AI。A4 海报为 300dpi，可直接打印。</p>'
+    + '  </aside>'
+    + '</div>';
 
-  var cv = root.querySelector('#cv'), g = cv.getContext('2d');
-  var body = root.querySelector('#body'), titleEl = root.querySelector('#title');
-  var legend = root.querySelector('#legend'), info = root.querySelector('#info'), out = root.querySelector('#out');
-  body.value = SAMPLE;
-  var _dailyLine = root.querySelector('#dailyline');
-  if (_dailyLine) _dailyLine.textContent = '今日星图(' + dailyLabel() + '):《' + DAILY[dailyIndex()].t + '》—— 点上面的按钮就能载入。';
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var salt = 0, mode = 'char';
-  var stars = [], lines = [], hoverIdx = -1;
-  // 超长文本降级:一份几千字的稿子硬画会糊成一片、还会卡。这里设上限并**如实告诉用户少画了多少**,
-  // 而不是默默吞掉后半段(调研清单第 5 条:就地提示并降级)。
-  var MAX_UNITS = 600, truncatedFrom = 0;
-  // 分享图要能"讲故事":把指标与星等带到图上(调研:分享图只给结论没人转,要带过程/指标)
-  var meta = { stars: 0, sentences: 0, units: 0, longest: 0, dupKinds: 0, maxCount: 0, rating: '', label: '' };
-  root.querySelector('#mode').addEventListener('click', function (e) {
-    var b = e.target.closest('.sm-chip'); if (!b) return;
-    mode = b.dataset.m;
-    root.querySelectorAll('#mode .sm-chip').forEach(function (x) { x.classList.toggle('active', x === b); });
-    build();
-  });
-  var W = cv.width, Hh = cv.height;
-  var scoreEl = root.querySelector('#score');
-  var egBtn = root.querySelector('#eg'), egIdx = 0;
-  egBtn.addEventListener('click', function () {
-    egIdx = (egIdx + 1) % EXAMPLES.length;
-    body.value = EXAMPLES[egIdx].text;
-    titleEl.value = EXAMPLES[egIdx].title;
-    salt = 0; build();          // 换例子要看到立刻出图,不需要用户再点别的(NN/g:首屏可试)
-    H.toast('例子:' + EXAMPLES[egIdx].name + '(再点一次换下一个)', { ms: 4000 });
-  });
+  var cv = root.querySelector('#sm2cv');
+  var g = cv.getContext('2d');
+  var tip = root.querySelector('#sm2tip');
+  var bodyEl = root.querySelector('#sm2body');
+  var titleEl = root.querySelector('#sm2title');
+  var dateEl = root.querySelector('#sm2date');
+  var occasionEl = root.querySelector('#sm2occasion');
+  var signEl = root.querySelector('#sm2sign');
+  var countEl = root.querySelector('#sm2count');
+  var errorEl = root.querySelector('#sm2error');
+  var templatesEl = root.querySelector('#sm2templates');
+  var cardBtn = root.querySelector('#sm2card');
+  var posterBtn = root.querySelector('#sm2poster');
+  var shareBtn = root.querySelector('#sm2share');
 
-  var dailyBtn = root.querySelector('#daily');
-  function loadDaily(announce) {
-    var it = DAILY[dailyIndex()];
-    body.value = it.x; titleEl.value = it.t; salt = 0;
-    build();
-    var line = root.querySelector('#dailyline');
-    if (line) line.textContent = '今日星图(' + dailyLabel() + '):《' + it.t + '》—— 每天换一篇,当天所有人看到的是同一片星空。';
-    if (announce) H.toast('今日星图:《' + it.t + '》', { ms: 4500 });
-  }
-  dailyBtn.addEventListener('click', function () { loadDaily(true); });
+  var state = { mode: 'words', style: 'classic', salt: 0, stars: [], lines: [], truncated: 0, total: 0, hash: '' };
+  var styles = {
+    classic: { bg: '#070A18', ink: '#EDE3CE', muted: 'rgba(237,227,206,.62)', accent: '#D9A441', line: 'rgba(217,164,65,.34)', grid: 'rgba(255,255,255,.07)', star: '#F3E9D8' },
+    herbarium: { bg: '#E7EBE1', ink: '#1E2A22', muted: '#5F6B5F', accent: '#2F4B7C', line: 'rgba(47,75,124,.30)', grid: 'rgba(30,42,34,.08)', star: '#2F4B7C' },
+    minimal: { bg: '#F7F6EF', ink: '#111111', muted: '#6E6A5F', accent: '#B24E2C', line: 'rgba(17,17,17,.22)', grid: 'rgba(17,17,17,.06)', star: '#111111' }
+  };
 
-  // 目标与计分:先给可核对的反馈,再折算成"星等"(NN/g 游戏化:以学习者为中心、先反馈后计分)
-  function gradeUnits(n, dupKinds, maxCount, sentenceCount) {
-    // 文案里不写"几颗星":星星本身已经画出来了,而"重复"会再加一颗 ——
-    // 第一版把星数写进 label,于出现过 ★★★★★ 旁边写着"四颗星"的自相矛盾(自己读出来的)。
-    var stars = 1, label = '太短了', why = '';
-    if (n >= 60) { stars = 5; label = '一片完整的星空'; }
-    else if (n >= 20) { stars = 4; label = '够铺开一片天'; }
-    else if (n >= 6) { stars = 3; label = '能连成星座了'; }
-    else if (n >= 3) { stars = 2; label = '再写一句'; }
-    if (dupKinds > 0 && stars < 5) { stars += 1; why = '有 ' + dupKinds + ' 个单位重复出现,星星更大更亮,加一颗。'; }
-    else if (dupKinds === 0 && stars >= 3) { why = '没有重复的单位,星空比较均匀。'; }
-    else if (n < 6) { why = '单位太少,连不成星座 —— 多写几行就好看多了。'; }
-    return { stars: stars, label: label, why: why, sentenceCount: sentenceCount, maxCount: maxCount };
-  }
+  var EXAMPLES = {
+    words: {
+      title: '给未来的你', occasion: '生日', sign: 'Alex',
+      text: '愿你所求皆如愿\n所行化坦途\n多喜乐\n长安宁'
+    },
+    names: {
+      title: '我们的名字', occasion: '团队', sign: '',
+      text: '张伟\n王芳\n李娜\n刘洋\n陈静\n周明'
+    },
+    letter: {
+      title: '一封没有寄出的信', occasion: '纪念日', sign: 'Alex',
+      text: '谢谢你出现在我的生活里。\n我们一起走过很多地方。\n有些话不必说完，星星会记得。\n愿你一切都好。'
+    }
+  };
+  var exampleIndex = 0;
+  var TEMPLATES = {
+    birthday: {
+      mode: 'words', title: '给 [名字] 的生日星图', occasion: '生日', sign: '',
+      text: '愿你新的一岁\n所求皆如愿\n所行化坦途\n多喜乐\n长安宁'
+    },
+    wedding: {
+      mode: 'names', title: '我们的婚礼', occasion: '婚礼', sign: '',
+      text: '你的名字\nTA 的名字'
+    },
+    graduation: {
+      mode: 'words', title: '毕业快乐', occasion: '毕业', sign: '',
+      text: '此去山高水长\n愿你仍有少年气\n在更大的世界里\n继续发光'
+    },
+    memorial: {
+      mode: 'letter', title: '写给想念的人', occasion: '纪念日', sign: '',
+      text: '有些话没有说完。\n有些日子一直记得。\n如果你也在看星星，\n就知道我在想你。'
+    },
+    team: {
+      mode: 'names', title: '我们的名字', occasion: '团队', sign: '',
+      text: '张伟\n王芳\n李娜\n刘洋\n陈静\n周明'
+    }
+  };
 
-  // ---------- 确定性随机:同一段文字必须得到同一片星空 ----------
   function hashStr(s) {
     var h = 2166136261;
     for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
@@ -141,260 +149,410 @@ export function mount(root, H) {
   }
   function rng(seed) {
     var a = seed >>> 0;
-    return function () { a += 0x6D2B79F5; var t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
   }
-  // 三种"星"的单位:按字 / 按词句(按标点断开)/ 按行(每行一颗,适合同名、名单)
-  function tokensFor(text, mode) {
-    var out2 = [];
-    if (mode === 'line') {
-      text.split(/\n/).forEach(function (line) {
-        var t = line.trim();
-        if (t) out2.push({ ch: t, line: 0 });
-      });
-      return out2;
-    }
-    if (mode === 'phrase') {
-      text.split(/[，。！？；：、,.!?;:\s"'“”‘’()（）【】《》〈〉…—\-]+/).forEach(function (t) {
-        if (t) out2.push({ ch: t, line: 0 });
-      });
-      return out2;
-    }
-    text.split(/\n/).forEach(function (line, li) {
-      var seg = line.replace(/[\s]+/g, '');
-      for (var i = 0; i < seg.length; i++) out2.push({ ch: seg[i], line: li });
-      out2.push({ ch: '\u3000', line: li, br: true });   // 句末断开,保证连线不跨句
+  function todayISO() {
+    var d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function cnDate(iso) {
+    if (!iso) return '';
+    var p = iso.split('-');
+    if (p.length !== 3) return iso;
+    return p[0] + ' 年 ' + Number(p[1]) + ' 月 ' + Number(p[2]) + ' 日';
+  }
+  function cleanChar(ch) { return /[\s，。！？、；：,.!?;:"“”‘’（）()\[\]【】《》—\-…]/.test(ch); }
+
+  function b64urlEncode(str) {
+    var bytes = new TextEncoder().encode(str), bin = '';
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function b64urlDecode(str) {
+    var s = str.replace(/-/g, '+').replace(/_/g, '/');
+    while (s.length % 4) s += '=';
+    var bin = atob(s), bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+  function collectState() {
+    return {
+      m: state.mode, st: state.style, t: titleEl.value, d: dateEl.value,
+      o: occasionEl.value, s: signEl.value, x: bodyEl.value, salt: state.salt
+    };
+  }
+  function applyData(data) {
+    if (!data) return false;
+    state.mode = ['words', 'names', 'letter'].indexOf(data.m) >= 0 ? data.m : 'words';
+    state.style = styles[data.st] ? data.st : 'classic';
+    state.salt = Number(data.salt) || 0;
+    titleEl.value = data.t || '';
+    dateEl.value = data.d || todayISO();
+    occasionEl.value = data.o || '生日';
+    signEl.value = data.s || '';
+    bodyEl.value = data.x || '';
+    updateModeUI();
+    root.querySelectorAll('#sm2style .sm2-chip').forEach(function (x) {
+      x.classList.toggle('active', x.dataset.style === state.style);
     });
-    return out2;
+    return true;
+  }
+  function readShare() {
+    try {
+      if (location.hash.indexOf('#s=') === 0) {
+        return JSON.parse(b64urlDecode(location.hash.slice(3)));
+      }
+    } catch (e) { /* 坏链接就当没有 */ }
+    return null;
+  }
+  function encodeShare() { return b64urlEncode(JSON.stringify(collectState())); }
+  function draftKey() { return 'gjh-memorial-draft-v1'; }
+  function saveDraft() {
+    try { localStorage.setItem(draftKey(), JSON.stringify(collectState())); } catch (e) {}
+  }
+  function readDraft() {
+    try {
+      var raw = localStorage.getItem(draftKey());
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+  function updateModeUI() {
+    root.querySelectorAll('#sm2mode .sm2-chip').forEach(function (x) {
+      x.classList.toggle('active', x.dataset.mode === state.mode);
+    });
+    bodyEl.placeholder = state.mode === 'names'
+      ? '张伟\n王芳\n李娜（一行一个）'
+      : state.mode === 'letter'
+        ? '写一封信，每行一句…'
+        : '每行一句，逗号句号也算断开…';
+  }
+  function updateStatus() {
+    var ok = state.stars.length > 0;
+    cardBtn.disabled = !ok;
+    posterBtn.disabled = !ok;
+    shareBtn.disabled = !ok;
+    if (ok) {
+      errorEl.textContent = '';
+    } else {
+      errorEl.textContent = '先写一点文字，才能生成星空。';
+    }
+  }
+
+  function parseGroups() {
+    var text = bodyEl.value || '';
+    var mode = state.mode;
+    var groups = [];
+    if (mode === 'names') {
+      var names = text.split(/[\n,，、;；]+/).map(function (s) { return s.trim(); }).filter(Boolean);
+      if (names.length) groups.push(names);
+    } else if (mode === 'letter') {
+      text.split(/\n+/).forEach(function (line) {
+        var t = line.trim();
+        if (!t) return;
+        var sentences = t.split(/[。！？!?]/).map(function (s) { return s.trim(); }).filter(Boolean);
+        sentences.forEach(function (s) {
+          var chars = Array.from(s).filter(function (ch) { return !cleanChar(ch); });
+          if (chars.length) groups.push(chars);
+        });
+      });
+    } else {
+      text.split(/\n+/).forEach(function (line) {
+        var chars = Array.from(line.trim()).filter(function (ch) { return !cleanChar(ch); });
+        if (chars.length) groups.push(chars);
+      });
+    }
+    return groups;
   }
 
   function build() {
-    var text = body.value || '';
-    var cs = tokensFor(text, mode);
-    truncatedFrom = 0;
-    if (cs.length > MAX_UNITS) {
-      truncatedFrom = cs.length;
-      cs = cs.slice(0, MAX_UNITS);
+    var groups = parseGroups();
+    var flat = [];
+    var counts = {};
+    groups.forEach(function (group, gi) {
+      group.forEach(function (label) {
+        var item = { label: label, group: gi, count: 1 };
+        counts[label] = (counts[label] || 0) + 1;
+        flat.push(item);
+      });
+    });
+    flat.forEach(function (s) { s.count = counts[s.label]; });
+    var total = flat.length;
+    var truncated = 0;
+    if (flat.length > 420) {
+      truncated = flat.length - 420;
+      flat = flat.slice(0, 420);
+      groups = [];
+      flat.forEach(function (s) {
+        if (!groups[s.group]) groups[s.group] = [];
+        groups[s.group].push(s);
+      });
     }
-    // 词频:重复出现的单位要更大更亮(同一句话里重复的名字/词,一眼能看出来)
-    var freq = {};
-    cs.forEach(function (c) { if (c.br) return; freq[c.ch] = (freq[c.ch] || 0) + 1; });
-    var maxCount = 1, dupKinds = 0;
-    Object.keys(freq).forEach(function (k) { if (freq[k] > maxCount) maxCount = freq[k]; if (freq[k] > 1) dupKinds++; });
-    var seed = hashStr(text + '|' + salt + '|' + mode);
+
+    var seed = hashStr((titleEl.value || '') + '|' + bodyEl.value + '|' + state.style + '|' + state.salt);
     var rnd = rng(seed);
-    var padX = W * 0.14, padY = Hh * 0.16;
-    var innerW = W - padX * 2, innerH = Hh * 0.6;
-    stars = []; lines = [];
-    var cx = W / 2, cy = padY + innerH / 2;
-    cs.forEach(function (c, i) {
-      if (c.br) { lines.push(null); return; }
-      // 椭圆内分布 + 轻微的螺旋,让星图"有形状"而不是随机撒点
-      var t = i / Math.max(1, cs.length - 1);
-      var ang = t * Math.PI * 3.1 + rnd() * 0.9;
-      var rad = Math.sqrt(rnd()) * 0.92;
-      var x = cx + Math.cos(ang) * (innerW / 2) * rad * (0.75 + 0.35 * t);
-      var y = cy + Math.sin(ang) * (innerH / 2) * rad * (0.55 + 0.45 * t);
-      var cnt = freq[c.ch] || 1;
-      var big = rnd() > 0.86 || cnt > 1;
-      var boost = cnt > 1 ? (1 + Math.min(2.2, Math.log2(cnt) * 0.9)) : 1;
-      stars.push({ ch: c.ch, x: x, y: y, r: (big ? 3.4 + rnd() * 2.6 : 1.5 + rnd() * 1.9) * boost, count: cnt, hue: 200 + rnd() * 120 + (cnt > 1 ? 40 : 0), tw: rnd() * Math.PI * 2, big: big });
-      lines.push(stars.length - 1);
+    var stars = [];
+    var minDist = Math.sqrt((0.78 * 0.56) / Math.max(flat.length, 1)) * 0.52;
+    flat.forEach(function (s) {
+      var placed = false;
+      for (var attempt = 0; attempt < 30; attempt++) {
+        var x = 0.06 + rnd() * 0.88;
+        var y = 0.21 + rnd() * 0.55;
+        var ok = true;
+        for (var i = 0; i < stars.length; i++) {
+          var dx = stars[i].x - x, dy = stars[i].y - y;
+          if (dx * dx + dy * dy < minDist * minDist) { ok = false; break; }
+        }
+        if (ok || attempt === 29) {
+          var size = 1.4 + (s.count > 1 ? Math.min(3.2, 1.4 + Math.log(s.count + 1) * 1.1) : 0) + rnd() * 0.7;
+          stars.push({ x: x, y: y, label: s.label, group: s.group, count: s.count, size: size });
+          placed = true;
+          break;
+        }
+      }
+      if (!placed) stars.push({ x: 0.5, y: 0.5, label: s.label, group: s.group, count: s.count, size: 1.4 });
     });
-    // 把上一句的最后一个字连到下一句的第一个字
-    var seq = [];
-    lines.forEach(function (idx) { if (idx !== null) seq.push(idx); });
-    lines = seq;
-    hoverIdx = -1;
-    var unit = mode === 'char' ? '个字符' : (mode === 'phrase' ? '个词句' : '行');
-    // 指标条 + 星等:都是本地能核对出来的数,不编造
-    var units = text.replace(/[\s\u3000]/g, '').length;
-    var uniqChars = Object.keys(freq).length;
-    var sentenceCount = text.split(/\n/).filter(function (x) { return x.trim(); }).length;
-    var longest = text.split(/\n/).reduce(function (a, x) { return Math.max(a, x.replace(/[\s\u3000]/g, '').length); }, 0);
-    var gr = gradeUnits(stars.length, dupKinds, maxCount, sentenceCount);
-    var stTxt = '';
-    for (var si = 0; si < 5; si++) stTxt += (si < gr.stars ? '★' : '☆');
-    scoreEl.innerHTML = '<div><span class="st">' + stTxt + '</span><span class="lb">' + H.esc(gr.label) + '</span></div>'
-      + '<div class="why">' + H.esc(gr.why) + '</div>'
-      + '<div class="mx"><span>星 <b>' + stars.length + '</b></span><span>句 <b>' + sentenceCount + '</b></span>'
-      + '<span>不重复单位 <b>' + uniqChars + '</b></span><span>最长句 <b>' + longest + '</b> 字符</span>'
-      + (dupKinds ? '<span>重复 <b>' + dupKinds + '</b> 种,最多 <b>' + maxCount + '</b> 次</span>' : '') + '</div>';
-    meta.stars = stars.length; meta.sentences = sentenceCount; meta.units = uniqChars; meta.longest = longest;
-    meta.dupKinds = dupKinds; meta.maxCount = maxCount; meta.rating = stTxt; meta.label = gr.label;
-    if (truncatedFrom) {
-      // 说明白:省掉了多少、怎么才能全画完
-      // 文案里的数字必须与画面一致:按字模式的"每行末尾分隔记号"不画成星,
-      // 所以"只画了前 600 个"会和"共 575 颗星"对不上 —— 直接用真实星数说。
-      scoreEl.innerHTML += '<div class="why" style="color:#a1500a;margin-top:6px">这段共 <b>' + truncatedFrom
-        + '</b> 个单位,超过上限 <b>' + MAX_UNITS + '</b> —— 现在画面里是前 <b>' + stars.length
-        + '</b> 个(星空再密就糊成一片、也会卡)。想全画完:按段落分成几次,或切到「按行」模式(每行一颗星)。</div>';
-    }
-    info.textContent = '共 ' + stars.length + ' 颗星(按' + unit + '计)'
-      + (dupKinds ? ' · ' + dupKinds + ' 个重复出现,最多 ' + maxCount + ' 次(重复的星更大更亮)' : '');
-    paintLegend();
+
+    var lines = [];
+    var byGroup = {};
+    stars.forEach(function (s) { (byGroup[s.group] = byGroup[s.group] || []).push(s); });
+    Object.keys(byGroup).forEach(function (k) {
+      var arr = byGroup[k];
+      for (var i = 1; i < arr.length; i++) lines.push([arr[i - 1], arr[i]]);
+    });
+
+    state.stars = stars;
+    state.lines = lines;
+    state.truncated = truncated;
+    state.total = total;
+    state.hash = seed.toString(36);
+    countEl.textContent = total + ' 颗星' + (truncated ? '（已省略 ' + truncated + ' 颗，避免糊成一片）' : '') + ' · 同一段文字永远同一片星空';
+    updateStatus();
+    saveDraft();
+    draw();
   }
-  // 如实说明为什么换了格式(深色噪点图 PNG 天然大)
-  function fmtNote(png, jpg, useJpg) {
-    if (!png || !jpg) return '';
-    return useJpg
-      ? '(深色星空用 PNG 要 ' + H.fmt(png.size) + ',JPG 更小,已自动输出 JPG)'
-      : '(JPG 是 ' + H.fmt(jpg.size) + ',PNG 更小,已输出 PNG)';
+
+  function draw() {
+    var W = cv.width, Hh = cv.height;
+    drawScene(g, W, Hh, false);
   }
-  function paintLegend() {
-    if (hoverIdx >= 0) {
-      var s = stars[hoverIdx];
-      legend.innerHTML = '<div style="font-size:22px">' + H.esc(s.ch) + '</div><div style="color:#6e6e73">第 ' + (hoverIdx + 1) + ' 颗' + (s.count > 1 ? ' · <b>重复出现 ' + s.count + ' 次</b>' : '') + ' · ' + (s.big ? '亮星' : '常星') + '</div>';
+
+  function drawScene(ctx, W, Hh, exporting) {
+    var st = styles[state.style];
+    var fs = W / 1000;
+    ctx.clearRect(0, 0, W, Hh);
+    ctx.fillStyle = st.bg;
+    ctx.fillRect(0, 0, W, Hh);
+
+    if (state.style === 'classic') {
+      for (var i = 0; i < 90; i++) {
+        var rx = (i * 73 % 100) / 100, ry = (i * 37 % 100) / 100;
+        ctx.fillStyle = 'rgba(255,255,255,' + (0.05 + (i % 5) * 0.02) + ')';
+        ctx.beginPath(); ctx.arc(rx * W, ry * Hh, (i % 3) * 0.7 + 0.4, 0, Math.PI * 2); ctx.fill();
+      }
     } else {
-      legend.innerHTML = '<div style="color:#6e6e73">把鼠标放到星星上(手机点一下),这里会显示它是哪个字。</div>';
+      ctx.strokeStyle = st.grid;
+      ctx.lineWidth = 1;
+      for (var x = 0; x < W; x += 40 * fs) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, Hh); ctx.stroke(); }
+      for (var y = 0; y < Hh; y += 40 * fs) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
     }
-  }
 
-  // 分享图上带二维码:产物本身就能拉人(调研结论:传播发生在外部分享,不在平台画廊)
-  async function makeQr(text, size) {
-    if (!window.qrcode) await H.loadScript('/vendor/qrcode.min.js?v=1');
-    var qr = window.qrcode(0, 'M');
-    qr.addData(text); qr.make();
-    var n = qr.getModuleCount();
-    var cell = Math.max(2, Math.floor(size / (n + 4)));
-    var pad = 2 * cell;
-    var c = document.createElement('canvas');
-    c.width = c.height = n * cell + pad * 2;
-    var g2 = c.getContext('2d');
-    g2.fillStyle = '#fff'; g2.fillRect(0, 0, c.width, c.height);
-    g2.fillStyle = '#000';
-    for (var r = 0; r < n; r++) for (var col = 0; col < n; col++) if (qr.isDark(r, col)) g2.fillRect(pad + col * cell, pad + r * cell, cell, cell);
-    return c;
-  }
+    var margin = W * 0.055;
+    ctx.strokeStyle = st.line;
+    ctx.lineWidth = 1.2;
+    ctx.strokeRect(margin, margin, W - margin * 2, Hh - margin * 2);
 
-  function draw(t, qrImg) {
-    var grad = g.createLinearGradient(0, 0, W, Hh);
-    grad.addColorStop(0, '#070a12'); grad.addColorStop(0.55, '#0a0e1a'); grad.addColorStop(1, '#06070c');
-    g.fillStyle = grad; g.fillRect(0, 0, W, Hh);
-    // 星云:几团很淡的径向渐变
-    var neb = [[0.28, 0.30, '#2b4a8b'], [0.72, 0.62, '#6a3f6b'], [0.48, 0.84, '#1f5c58']];
-    g.globalCompositeOperation = 'lighter';
-    neb.forEach(function (n) {
-      var rg = g.createRadialGradient(W * n[0], Hh * n[1], 10, W * n[0], Hh * n[1], W * 0.5);
-      rg.addColorStop(0, n[2] + '55'); rg.addColorStop(1, 'transparent');
-      g.fillStyle = rg; g.fillRect(0, 0, W, Hh);
+    // header
+    ctx.fillStyle = st.muted;
+    ctx.font = (13 * fs) + 'px "Segoe UI","PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText('纪念星图 / CONSTELLATION', margin + 10 * fs, margin + 30 * fs);
+    ctx.textAlign = 'right';
+    ctx.fillText(cnDate(dateEl.value), W - margin - 10 * fs, margin + 30 * fs);
+    ctx.textAlign = 'left';
+
+    ctx.fillStyle = st.ink;
+    ctx.font = '600 ' + (46 * fs) + 'px Georgia,"Songti SC","SimSun",serif';
+    var title = titleEl.value.trim() || '未命名星图';
+    ctx.fillText(title, margin + 10 * fs, margin + 92 * fs);
+
+    ctx.fillStyle = st.muted;
+    ctx.font = (14 * fs) + 'px "Segoe UI","PingFang SC","Microsoft YaHei",sans-serif';
+    var occasion = occasionEl.value || '纪念';
+    ctx.fillText(occasion + ' · ' + (state.total || 0) + ' 颗星', margin + 12 * fs, margin + 122 * fs);
+
+    // constellation lines
+    ctx.strokeStyle = st.line;
+    ctx.lineWidth = 1.1 * fs;
+    state.lines.forEach(function (pair) {
+      var a = pair[0], b = pair[1];
+      var ax = margin + a.x * (W - margin * 2), ay = margin + a.y * (Hh - margin * 2);
+      var bx = margin + b.x * (W - margin * 2), by = margin + b.y * (Hh - margin * 2);
+      ctx.beginPath();
+      ctx.moveTo(ax, ay);
+      ctx.quadraticCurveTo((ax + bx) / 2 + (by - ay) * 0.03, (ay + by) / 2 + (bx - ax) * 0.03, bx, by);
+      ctx.stroke();
     });
-    // 背景细星(固定由 seed 决定,不闪烁)
-    var bg = rng(hashStr(body.value) ^ 0x9e3779b9);
-    g.fillStyle = 'rgba(255,255,255,.35)';
-    for (var i = 0; i < 160; i++) { var bx = bg() * W, by = bg() * Hh; g.fillRect(bx, by, 1.2, 1.2); }
-    // 连线(星座)
-    g.strokeStyle = 'rgba(140,190,255,.28)'; g.lineWidth = 1.2;
-    g.beginPath();
-    for (var k = 1; k < lines.length; k++) {
-      var a = stars[lines[k - 1]], b = stars[lines[k]];
-      if (!a || !b) continue;
-      g.moveTo(a.x, a.y); g.lineTo(b.x, b.y);
-    }
-    g.stroke();
-    // 星星
-    stars.forEach(function (s, idx) {
-      var tw = reduce ? 1 : (0.72 + 0.28 * Math.sin(t / 900 + s.tw));
-      var hot = idx === hoverIdx;
-      var r = s.r * (hot ? 2.1 : 1) * tw;
-      var rg2 = g.createRadialGradient(s.x, s.y, 0, s.x, s.y, r * 5);
-      rg2.addColorStop(0, 'hsla(' + s.hue + ',95%,' + (hot ? 92 : 82) + '%,' + (hot ? 0.95 : 0.8) + ')');
-      rg2.addColorStop(1, 'transparent');
-      g.fillStyle = rg2; g.beginPath(); g.arc(s.x, s.y, r * 5, 0, Math.PI * 2); g.fill();
-      g.fillStyle = '#fff'; g.beginPath(); g.arc(s.x, s.y, Math.max(1, r * 0.7), 0, Math.PI * 2); g.fill();
-      if (hot) {
-        g.strokeStyle = 'rgba(255,255,255,.7)'; g.lineWidth = 1.4;
-        g.beginPath(); g.arc(s.x, s.y, r * 6, 0, Math.PI * 2); g.stroke();
+
+    // stars
+    state.stars.forEach(function (s) {
+      var x = margin + s.x * (W - margin * 2);
+      var y = margin + s.y * (Hh - margin * 2);
+      var r = s.size * fs;
+      if (state.style === 'classic') {
+        var grd = ctx.createRadialGradient(x, y, 0, x, y, r * 4);
+        grd.addColorStop(0, 'rgba(243,233,216,.95)');
+        grd.addColorStop(0.35, 'rgba(217,164,65,.35)');
+        grd.addColorStop(1, 'rgba(217,164,65,0)');
+        ctx.fillStyle = grd;
+        ctx.beginPath(); ctx.arc(x, y, r * 4, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.fillStyle = st.star;
+      ctx.beginPath(); ctx.arc(x, y, Math.max(1.1, r), 0, Math.PI * 2); ctx.fill();
+      if (s.count > 1) {
+        ctx.strokeStyle = st.accent;
+        ctx.lineWidth = 0.9 * fs;
+        ctx.beginPath(); ctx.arc(x, y, Math.max(1.1, r) + 2.6 * fs, 0, Math.PI * 2); ctx.stroke();
       }
     });
-    g.globalCompositeOperation = 'source-over';
-    // 标题与落款
-    g.fillStyle = '#fff'; g.textBaseline = 'top';
-    g.font = '700 58px "Geist", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
-    var tt = (titleEl.value || '').trim();
-    if (tt) g.fillText(tt, W * 0.08, Hh * 0.07);
-    g.font = '500 26px "Geist", -apple-system, "PingFang SC", sans-serif';
-    g.fillStyle = 'rgba(255,255,255,.62)';
-    g.fillText('每个字是一颗星 · 共 ' + stars.length + ' 颗', W * 0.08, Hh * 0.07 + 70);
-    // 指标条 + 星等:分享图上直接写清"这片星空是什么样",而不是只给一句结论
-    if (meta.stars) {
-      g.font = '600 30px "Geist", -apple-system, "PingFang SC", sans-serif';
-      g.fillStyle = '#e8c37a';
-      g.fillText(meta.rating + '  ' + meta.label, W * 0.08, Hh * 0.07 + 116);
-      g.font = '500 24px "Geist", -apple-system, "PingFang SC", sans-serif';
-      g.fillStyle = 'rgba(255,255,255,.72)';
-      var mx = ['星 ' + meta.stars, '句 ' + meta.sentences, '不重复 ' + meta.units, '最长句 ' + meta.longest + ' 字'];
-      if (meta.dupKinds) mx.push('重复 ' + meta.dupKinds + ' 种/最多 ' + meta.maxCount + ' 次');
-      g.fillText(mx.join('   ·   '), W * 0.08, Hh * 0.07 + 160);
+
+    // footer
+    var footY = Hh - margin - 46 * fs;
+    ctx.fillStyle = st.muted;
+    ctx.font = (13 * fs) + 'px "Segoe UI","PingFang SC","Microsoft YaHei",sans-serif';
+    var sign = signEl.value.trim();
+    if (sign) ctx.fillText('—— ' + sign, margin + 10 * fs, footY);
+    ctx.textAlign = 'right';
+    ctx.fillText('gongjuhe.top · 本图在本地生成', W - margin - 10 * fs, footY);
+    ctx.textAlign = 'left';
+
+    if (state.style === 'herbarium') {
+      ctx.strokeStyle = st.accent;
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(W - margin - 52 * fs, margin + 66 * fs, 30 * fs, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = st.accent;
+      ctx.font = (10 * fs) + 'px "Segoe UI","PingFang SC","Microsoft YaHei",sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('纪念', W - margin - 52 * fs, margin + 62 * fs);
+      ctx.fillText('星图', W - margin - 52 * fs, margin + 74 * fs);
+      ctx.textAlign = 'left';
     }
-    g.font = '500 24px "Geist", -apple-system, "PingFang SC", sans-serif';
-    g.fillStyle = 'rgba(255,255,255,.42)';
-    g.fillText('gongjuhe.top/star-map · 本机生成', W * 0.08, Hh - 70);
-    if (qrImg) {
-      var qs = qrImg.width, qx = W - qs - 68, qy = Hh - qs - 116;
-      g.fillStyle = '#fff';
-      g.beginPath();
-      var rr = 14, qw = qs + 24;
-      g.moveTo(qx - 12 + rr, qy - 12);
-      g.arcTo(qx - 12 + qw, qy - 12, qx - 12 + qw, qy - 12 + qw, rr);
-      g.arcTo(qx - 12 + qw, qy - 12 + qw, qx - 12, qy - 12 + qw, rr);
-      g.arcTo(qx - 12, qy - 12 + qw, qx - 12, qy - 12, rr);
-      g.arcTo(qx - 12, qy - 12, qx - 12 + qw, qy - 12, rr);
-      g.closePath(); g.fill();
-      g.drawImage(qrImg, qx, qy);
-      g.fillStyle = 'rgba(255,255,255,.75)';
-      g.font = '500 22px "Geist", -apple-system, "PingFang SC", sans-serif';
-      g.textAlign = 'center';
-      g.fillText('扫码做一张你的', qx + qs / 2, qy + qs + 16);
-      g.textAlign = 'left';
+    if (state.truncated) {
+      ctx.fillStyle = st.muted;
+      ctx.font = (11 * fs) + 'px "Segoe UI","PingFang SC","Microsoft YaHei",sans-serif';
+      ctx.fillText('已省略 ' + state.truncated + ' 颗星，避免画面过密', margin + 10 * fs, Hh - margin - 22 * fs);
     }
   }
-  var raf = null;
-  function loop(t) { draw(t || 0); raf = requestAnimationFrame(loop); }
-  function start() { if (!raf) raf = requestAnimationFrame(loop); }
-  function stop() { if (raf) { cancelAnimationFrame(raf); raf = null; } }
-  start();
-  document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else start(); });
 
-  // 悬停 / 触摸看字
-  function pick(clientX, clientY) {
-    var rect = cv.getBoundingClientRect();
-    var x = (clientX - rect.left) / rect.width * W, y = (clientY - rect.top) / rect.height * Hh;
-    var best = -1, bestD = 22 * 22;
-    stars.forEach(function (s, i) { var d = (s.x - x) * (s.x - x) + (s.y - y) * (s.y - y); if (d < bestD) { bestD = d; best = i; } });
-    if (best !== hoverIdx) { hoverIdx = best; paintLegend(); }
+  function exportPng(w, h, name) {
+    var c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    var ctx = c.getContext('2d');
+    drawScene(ctx, w, h, true);
+    c.toBlob(function (blob) {
+      if (blob) H.downloadBlob(blob, name);
+    }, 'image/png');
+    H.toast('正在生成 ' + name);
   }
-  cv.addEventListener('pointermove', function (e) { pick(e.clientX, e.clientY); });
-  cv.addEventListener('pointerleave', function () { hoverIdx = -1; paintLegend(); });
-  cv.addEventListener('pointerdown', function (e) { pick(e.clientX, e.clientY); });
-  cv.setAttribute('tabindex', '0');
-  cv.setAttribute('role', 'img');
-  cv.setAttribute('aria-label', '文字星图:每个字一颗星,鼠标悬停可看字');
 
-  body.addEventListener('input', build);
-  titleEl.addEventListener('input', function () { /* 下一帧就会画上 */ });
-  root.querySelector('#again').addEventListener('click', function () { salt++; build(); out.innerHTML = ''; });
-  // 星空是深色噪点图:PNG 会很大(实测 1.5MB),JPG 小得多。两种都编一份,谁小用谁,并如实说明。
-  async function encode() {
-    var toB = function (type, q) { return new Promise(function (r) { cv.toBlob(r, type, q); }); };
-    var arr = await Promise.all([toB('image/png'), toB('image/jpeg', 0.92)]);
-    start();
-    var png = arr[0], jpg = arr[1];
-    var useJpg = !!(png && jpg && jpg.size < png.size);
-    var blob = useJpg ? jpg : png;
-    if (!blob) { out.innerHTML = '<div class="note err" style="display:block">导出失败,请重试。</div>'; return; }
-    var chk = await H.checkImage(blob);
-    var base = '文字星图-' + (titleEl.value.trim() || '未命名');
-    if (chk.ok) H.downloadBlob(blob, base + (useJpg ? '.jpg' : '.png'));
-    out.innerHTML = '<div class="note ' + (chk.ok ? 'ok' : 'err') + '" style="display:block">'
-      + (chk.ok ? '已导出 ' + chk.width + ' × ' + chk.height + ' · ' + H.fmt(chk.bytes) + '(自检 ✓ 尺寸与预览一致)' + fmtNote(png, jpg, useJpg) + ' · 右下角是扫码入口' : '自检没通过:' + H.esc(chk.error)) + '</div>';
-  }
-  root.querySelector('#poster').addEventListener('click', function () {
-    stop();
-    makeQr('https://gongjuhe.top/star-map/', 210)
-      .then(function (qr) { draw(0, qr); return encode(); })
-      .catch(function (e) { draw(0); out.innerHTML = '<div class="note err" style="display:block">二维码画不出来(不影响星图):' + H.esc(H.friendlyError(e, 'QR 失败')) + '</div>'; return encode(); });
+  /* interactions */
+  root.querySelector('#sm2mode').addEventListener('click', function (e) {
+    var b = e.target.closest('.sm2-chip'); if (!b) return;
+    state.mode = b.dataset.mode;
+    updateModeUI();
+    build();
+  });
+  root.querySelector('#sm2style').addEventListener('click', function (e) {
+    var b = e.target.closest('.sm2-chip'); if (!b) return;
+    state.style = b.dataset.style;
+    root.querySelectorAll('#sm2style .sm2-chip').forEach(function (x) { x.classList.toggle('active', x === b); });
+    build();
+  });
+  templatesEl.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-tpl]'); if (!b) return;
+    var tpl = TEMPLATES[b.dataset.tpl];
+    if (!tpl) return;
+    state.mode = tpl.mode;
+    state.salt = 0;
+    titleEl.value = tpl.title;
+    dateEl.value = todayISO();
+    occasionEl.value = tpl.occasion;
+    signEl.value = tpl.sign;
+    bodyEl.value = tpl.text;
+    updateModeUI();
+    build();
+    H.toast('已套用模板：' + b.textContent);
+  });
+  [bodyEl, titleEl, dateEl, occasionEl, signEl].forEach(function (el) {
+    el.addEventListener('input', build);
+    el.addEventListener('change', build);
+  });
+  root.querySelector('#sm2shuffle').addEventListener('click', function () { state.salt++; build(); H.toast('换了一片星空'); });
+  root.querySelector('#sm2example').addEventListener('click', function () {
+    var keys = ['words', 'names', 'letter'];
+    exampleIndex = (exampleIndex + 1) % keys.length;
+    var k = keys[exampleIndex];
+    state.mode = k;
+    var ex = EXAMPLES[k];
+    titleEl.value = ex.title; dateEl.value = todayISO(); occasionEl.value = ex.occasion; signEl.value = ex.sign; bodyEl.value = ex.text;
+    root.querySelectorAll('#sm2mode .sm2-chip').forEach(function (x) { x.classList.toggle('active', x.dataset.mode === k); });
+    build();
+    H.toast('例子：' + (k === 'words' ? '生日寄语' : k === 'names' ? '团队名单' : '一封短信'));
+  });
+  root.querySelector('#sm2card').addEventListener('click', function () { exportPng(1080, 1920, '纪念星图-分享卡.png'); });
+  root.querySelector('#sm2poster').addEventListener('click', function () { exportPng(2480, 3508, '纪念星图-A4海报.png'); });
+  shareBtn.addEventListener('click', function () {
+    var url = location.origin + location.pathname + '#s=' + encodeShare();
+    if (H.copyText) H.copyText(url, shareBtn);
+    else if (navigator.clipboard) navigator.clipboard.writeText(url);
+    H.toast('分享链接已复制（不含图片，只含文字与样式）');
   });
 
+  // hover/tap label
+  function findStar(e) {
+    var r = cv.getBoundingClientRect();
+    var mx = (e.clientX - r.left) / r.width * cv.width;
+    var my = (e.clientY - r.top) / r.height * cv.height;
+    var margin = cv.width * 0.055;
+    var best = null, bestD = 1e9;
+    state.stars.forEach(function (s) {
+      var x = margin + s.x * (cv.width - margin * 2);
+      var y = margin + s.y * (cv.height - margin * 2);
+      var d = (x - mx) * (x - mx) + (y - my) * (y - my);
+      if (d < bestD) { bestD = d; best = s; }
+    });
+    if (best && bestD < 18 * 18) return best;
+    return null;
+  }
+  function showTip(e) {
+    var s = findStar(e);
+    if (!s) { tip.classList.remove('on'); return; }
+    var r = cv.getBoundingClientRect();
+    var margin = cv.width * 0.055;
+    var x = (margin + s.x * (cv.width - margin * 2)) / cv.width * r.width;
+    var y = (margin + s.y * (cv.height - margin * 2)) / cv.height * r.height;
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+    tip.textContent = s.label + (s.count > 1 ? ' ×' + s.count : '');
+    tip.classList.add('on');
+  }
+  cv.addEventListener('mousemove', showTip);
+  cv.addEventListener('mouseleave', function () { tip.classList.remove('on'); });
+  cv.addEventListener('click', function (e) { showTip(e); });
+
+  // init: 分享链接优先，其次草稿，最后默认例子
+  var shared = readShare();
+  var draft = readDraft();
+  if (!applyData(shared) && !applyData(draft)) {
+    state.mode = 'words';
+    bodyEl.value = EXAMPLES.words.text;
+    titleEl.value = EXAMPLES.words.title;
+    occasionEl.value = EXAMPLES.words.occasion;
+    signEl.value = EXAMPLES.words.sign;
+    updateModeUI();
+  }
+  if (!dateEl.value) dateEl.value = todayISO();
   build();
-  if (reduce) out.innerHTML = '<div class="note" style="display:block">系统开启了「减少动态效果」:星星不再闪烁,画面是静态的。</div>';
 }

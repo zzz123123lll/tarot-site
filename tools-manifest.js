@@ -45,7 +45,7 @@ window.TOOLS = {
     // ---- 生成与好玩 ----
     { slug: 'tarot', name: '塔罗占卜', desc: '78 张韦特牌，一次有依据、不套话的解读。', section: 'fun', icon: 'tarot', url: '/tarot/', status: 'live', dark: true },
     { slug: 'cover-gen', name: '封面图生成', desc: '输入标题，一键出小红书/公众号/视频封面，本机排版。', section: 'fun', icon: 'image-down', url: '/cover-gen/', status: 'live' },
-    { slug: 'star-map', name: '文字星图', desc: '把一段文字变成星空，每个字一颗星，可导出分享图。', section: 'fun', icon: 'play', url: '/star-map/', status: 'live' },
-    { slug: 'beat-toy', name: '节奏玩具', desc: '点开即玩：敲击发声、画面留痕，可导出分享图。', section: 'fun', icon: 'play', url: '/beat-toy/', status: 'live' }
+    { slug: 'star-map', name: '纪念星图', desc: '一段话、一列名字或一封信，变成可打印的私人星图。', section: 'fun', icon: 'play', url: '/star-map/', status: 'live' },
+    { slug: 'beat-toy', name: '节奏标本', desc: '上传自己的歌，自动生成四轨谱面；本地分析、可换皮肤。', section: 'fun', icon: 'play', url: '/beat-toy/', status: 'live' }
   ]
 };

@@ -1,588 +1,971 @@
-// tools/beat-toy.mjs — 节奏玩具:点开即玩,敲出声音与画面,还能导出分享图
-// 为什么做:调研(抖音/B站 + HN)显示,这一波真正跑出来的是"点开即玩、能被分享"的轻作品,
-// 而不是又一个工具页。这里完全用 Web Audio 合成 + Canvas 画,零采样、零版权、零上传。
+// tools/beat-toy.mjs — 节奏标本:上传自己的歌,本地测速/找点,自动生成四轨谱面。
+// 纯本地:音频不离开浏览器;无后端、无版权曲库;可换皮肤、可导出标本卡。
 export function mount(root, H) {
-  H.injectCss(".bt-wrap{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:22px;align-items:start}"
-    + "@media (max-width:900px){.bt-wrap{grid-template-columns:1fr}}"
-    + ".bt-stage{position:relative;border-radius:18px;overflow:hidden;background:#0b0d12;box-shadow:var(--sh-3)}"
-    + ".bt-stage canvas{display:block;width:100%;height:auto;touch-action:manipulation}"
-    + ".bt-veil{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;background:rgba(8,10,16,.72);color:#fff;backdrop-filter:blur(6px)}"
-    + ".bt-veil button{min-height:52px;padding:0 26px;border-radius:999px;border:none;background:#fff;color:#111;font-size:17px;font-weight:600;cursor:pointer}"
-    + ".bt-veil p{margin:12px 0 0;font-size:14px;color:rgba(255,255,255,.72)}"
-    + ".bt-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}"
-    + ".bt-chip{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--c-line-strong);background:#fff;font-size:14px;cursor:pointer}"
-    + ".bt-chip.active{background:var(--c-accent);border-color:var(--c-accent);color:#fff}"
-    + ".bt-stats{margin-top:14px;background:var(--t-surface);border-radius:14px;padding:14px 16px;font-size:14px;line-height:1.8}"
-    + ".bt-stats b{font-variant-numeric:tabular-nums}"
-    + ".bt-kbd span.on{background:var(--c-accent);border-color:var(--c-accent);color:#fff;transform:translateY(1px)}"
-    + ".bt-grade{margin-top:8px;border-top:1px solid var(--c-hairline);padding-top:8px}"
-    + ".bt-grade .g{font-size:22px;font-weight:700;letter-spacing:1px;color:var(--c-accent)}"
-    + ".bt-kbd{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}"
-    + ".bt-kbd span{min-width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;background:#f2f2f4;font-size:13px;color:#6e6e73}");
+  H.injectCss(`
+    .tool-container{max-width:1080px}
+    .bs-wrap{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px;align-items:start}
+    .bs-wrap [hidden]{display:none !important}
+    @media (max-width:980px){.bs-wrap{grid-template-columns:1fr}}
+    .bs-stage{position:relative;border-radius:18px;overflow:hidden;background:#0b0d12;box-shadow:var(--sh-3);aspect-ratio:3/2}
+    .bs-stage canvas{display:block;width:100%;height:100%;touch-action:none}
+    .bs-hud{position:absolute;left:0;right:0;top:0;display:flex;gap:18px;align-items:center;padding:12px 16px;color:#fff;font-size:13px;background:rgba(0,0,0,.28);backdrop-filter:blur(4px);pointer-events:none}
+    .bs-hud b{font-variant-numeric:tabular-nums;font-size:18px;font-weight:700}
+    .bs-hud .bs-combo{color:#ffd447}
+    .bs-hud .bs-right{margin-left:auto;opacity:.8}
+    .bs-veil{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;background:rgba(8,10,16,.74);color:#fff;backdrop-filter:blur(6px);z-index:2}
+    .bs-veil[hidden]{display:none}
+    .bs-veil-inner{max-width:440px}
+    .bs-veil h2{margin:0 0 10px;font-size:clamp(22px,3vw,34px);letter-spacing:-.02em}
+    .bs-veil p{margin:0 0 18px;color:rgba(255,255,255,.74);font-size:14px;line-height:1.7}
+    .bs-veil .bs-big{min-height:52px;padding:0 26px;border:0;border-radius:999px;background:#fff;color:#111;font-size:16px;font-weight:700;cursor:pointer}
+    .bs-count{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:4;pointer-events:none;color:#fff;font-size:clamp(72px,12vw,150px);font-weight:800;letter-spacing:-.06em;text-shadow:0 8px 40px rgba(0,0,0,.55)}
+    .bs-count[hidden]{display:none}
+    .bs-settings{display:grid;gap:10px;margin-top:14px;padding:12px 14px;background:#fff;border:1px solid var(--c-hairline);border-radius:12px}
+    .bs-setrow{display:grid;grid-template-columns:64px minmax(0,1fr) 48px;gap:8px;align-items:center;font-size:12px;color:#6e6e73}
+    .bs-setrow input[type=range]{width:100%;accent-color:var(--c-accent)}
+    .bs-setrow b{text-align:right;font-variant-numeric:tabular-nums;color:#1d1d1f}
+    .bs-best{margin-top:10px;font-size:12px;color:#6e6e73;line-height:1.6}
+    .bs-best b{color:var(--c-accent)}
+    .bs-side{background:var(--t-surface);border-radius:16px;padding:16px}
+    .bs-side h3{margin:0 0 8px;font-size:16px}
+    .bs-side p{margin:0 0 10px;color:#6e6e73;font-size:13px;line-height:1.65}
+    .bs-drop{border:1.5px dashed var(--c-line-strong);border-radius:14px;padding:18px 14px;text-align:center;background:#fff}
+    .bs-drop strong{display:block;font-size:15px;margin-bottom:6px}
+    .bs-drop span{display:block;color:#86868b;font-size:12px;line-height:1.6}
+    .bs-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .bs-chip{min-height:40px;padding:0 13px;border-radius:999px;border:1px solid var(--c-line-strong);background:#fff;color:#1d1d1f;font-size:13px;cursor:pointer}
+    .bs-chip.active{background:var(--c-accent);border-color:var(--c-accent);color:#fff}
+    .bs-chip:disabled{opacity:.45;cursor:not-allowed}
+    .bs-btn{min-height:46px;padding:0 18px;border:0;border-radius:10px;background:var(--c-accent);color:#fff;font-size:15px;font-weight:600;cursor:pointer}
+    .bs-btn--ghost{background:#fff;color:#1d1d1f;border:1px solid var(--c-line-strong)}
+    .bs-btn:disabled{opacity:.45;cursor:not-allowed}
+    .bs-meta{margin-top:12px;padding:12px 14px;border-radius:12px;background:#fff;border:1px solid var(--c-hairline);font-size:13px;line-height:1.85}
+    .bs-meta b{font-variant-numeric:tabular-nums}
+    .bs-label{display:block;font-size:12px;color:#86868b;margin:10px 0 6px}
+    .bs-file{display:none}
+    .bs-status{font-size:12px;color:#6e6e73;margin-top:8px;line-height:1.6;min-height:16px}
+    .bs-result{text-align:center}
+    .bs-grade{font-size:64px;line-height:1;font-weight:800;letter-spacing:-.06em;color:var(--c-accent);margin:6px 0 8px}
+    .bs-stat{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin:12px 0;font-size:13px;text-align:left}
+    .bs-stat span{color:#6e6e73}
+    .bs-stat b{float:right;font-variant-numeric:tabular-nums}
+    .bs-tip{font-size:12px;color:#86868b;line-height:1.7;margin-top:10px}
+    .bs-keys{display:flex;gap:6px;justify-content:center;margin-top:10px}
+    .bs-keys kbd{min-width:40px;min-height:40px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--c-line-strong);border-radius:8px;background:#fff;font-size:13px;color:#6e6e73}
+    .bs-keys kbd.on{background:var(--c-accent);border-color:var(--c-accent);color:#fff}
+  `);
 
-  root.innerHTML =
-    '<h1 class="tool-h1">节奏玩具</h1>' +
-    '<p class="tool-sub">点一下就开始:每次敲击都会发声、也会在画面上留下东西。<b>纯本地合成</b>——没有采样文件、没有上传、不用登录;玩完可以导出一张分享图。</p>' +
-    '<div class="bt-wrap">' +
-      '<div>' +
-        '<div class="bt-stage"><canvas id="cv" width="960" height="600" aria-label="节奏玩具画布"></canvas>' +
-          '<div class="bt-veil" id="veil"><div><button id="start">点一下开始</button><p>也可以按空格开始。之后用点击 / 触摸 / 键盘都能敲。</p></div></div>' +
-        '</div>' +
-        '<div class="bt-row">' +
-          '<button class="bt-chip active" data-m="free">自由敲</button>' +
-          '<button class="bt-chip" data-m="beat">跟拍</button>' +
-          '<button class="bt-chip" id="tmpl">伴奏:简单四拍</button>' +
-          '<button class="bt-chip" id="duo">双人模式:关</button>' +
-          '<button class="bt-chip" id="poster">导出分享图</button>' +
-      '<button class="bt-chip" id="daily">今日挑战</button>' +
-        '</div>' +
-      '</div>' +
-      '<div>' +
-        '<div class="bt-stats" id="stats"></div>' +
-        '<p class="idp-hint" style="margin-top:10px">不用先点开始:直接敲 <b>A W S E D F T G Y H U J</b> 任意一个键就进入(键位会跟着亮);空格重敲当前音;Esc 停。打拍子模式下会给<b>准确率与评级</b>(准确率 = 偏差 ≤120ms 的敲击占比)。</p>' +
-        '<div class="bt-kbd" id="kbd"></div>' +
-        '<p class="idp-hint" style="margin-top:10px">想每天来一次就点「今日挑战」:当天模板固定,打满 20 下给评级,连续来练的天数只存在你自己的浏览器里(localStorage),不上传。</p>' +
-    '<p class="idp-hint" style="margin-top:10px">所有声音都是浏览器现场合成的正弦/三角波,没有任何音频文件;画面也是 Canvas 画的。</p>' +
-      '</div>' +
-    '</div>' +
-    '<div id="out"></div>';
+  root.innerHTML = `
+    <h1 class="tool-h1">节奏标本</h1>
+    <p class="tool-sub">上传自己的歌，浏览器本地测速、找节拍点，自动生成四轨谱面；也可以先用示例节拍试玩。音频不离开这台电脑，不上传、不用版权曲库。</p>
+    <div class="bs-wrap">
+      <div>
+        <div class="bs-stage">
+          <canvas id="bsCv" width="960" height="640" aria-label="节奏标本游戏画面"></canvas>
+          <div class="bs-count" id="bsCount" hidden>3</div>
+          <div class="bs-hud" id="bsHud" hidden>
+            <span>分数 <b id="bsScore">0</b></span>
+            <span class="bs-combo">连击 <b id="bsCombo">0</b></span>
+            <span>准确率 <b id="bsAcc">--</b></span>
+            <span class="bs-right" id="bsProgress"></span>
+          </div>
+          <div class="bs-veil" id="bsVeil">
+            <div class="bs-veil-inner">
+              <h2 id="bsVeilTitle">先把一首歌放进来</h2>
+              <p id="bsVeilText">拖入 MP3 / WAV / M4A / OGG，或先用示例节拍。文件只在你的浏览器里解码，不会上传。</p>
+              <button class="bs-big" id="bsVeilBtn" type="button">选择音乐</button>
+            </div>
+          </div>
+        </div>
+        <div class="bs-row" id="bsPlayRow" hidden>
+          <button class="bs-chip" id="bsPause" type="button">暂停</button>
+          <button class="bs-chip" id="bsQuit" type="button">退出本局</button>
+          <span class="bs-tip" style="align-self:center">键盘 D F J K / 触摸左右四区；先点击画面再开始。</span>
+        </div>
+      </div>
+      <aside class="bs-side">
+        <div id="bsPanelUpload">
+          <h3>上传一首歌</h3>
+          <p>本地解码与分析，音频不上传。建议 8 分钟内、30MB 以内；分析大约 1–3 秒。</p>
+          <div class="bs-drop">
+            <strong>拖入音频文件</strong>
+            <span>MP3 / WAV / M4A / OGG</span>
+            <div class="bs-row" style="justify-content:center">
+              <button class="bs-btn" id="bsPick" type="button">选择文件</button>
+              <button class="bs-btn bs-btn--ghost" id="bsDemo" type="button">示例节拍</button>
+            </div>
+          </div>
+          <input class="bs-file" id="bsFile" type="file" accept="audio/*">
+          <div class="bs-status" id="bsStatus"></div>
+        </div>
 
-  var cv = root.querySelector('#cv'), g = cv.getContext('2d');
-  var veil = root.querySelector('#veil'), statsEl = root.querySelector('#stats');
-  var out = root.querySelector('#out');
+        <div id="bsPanelConfig" hidden>
+          <h3 id="bsSongName">—</h3>
+          <div class="bs-meta" id="bsMeta"></div>
+          <span class="bs-label">难度</span>
+          <div class="bs-row" id="bsDiff">
+            <button class="bs-chip" data-diff="easy" type="button">Easy</button>
+            <button class="bs-chip active" data-diff="normal" type="button">Normal</button>
+            <button class="bs-chip" data-diff="hard" type="button">Hard</button>
+          </div>
+          <span class="bs-label">美术皮肤</span>
+          <div class="bs-row" id="bsSkins">
+            <button class="bs-chip active" data-skin="herbarium" type="button">标本室</button>
+            <button class="bs-chip" data-skin="nocturne" type="button">夜航</button>
+            <button class="bs-chip" data-skin="papercut" type="button">剪纸</button>
+            <button class="bs-chip" data-skin="custom" type="button">自定义</button>
+          </div>
+          <input class="bs-file" id="bsSkinFile" type="file" accept="image/*">
+          <div class="bs-row" id="bsSkinTools" hidden>
+            <button class="bs-chip" id="bsCustomPick" type="button">选择底图</button>
+            <button class="bs-chip" id="bsCustomClear" type="button">清除底图</button>
+          </div>
+          <span class="bs-label">BPM（自动检测，可手动改显示）</span>
+          <input class="bs-input" id="bsBpm" type="number" min="60" max="200" step="0.5" style="width:100%;min-height:42px;border:1px solid var(--c-line-strong);border-radius:10px;padding:0 12px;font-size:15px">
+          <div class="bs-settings">
+            <div class="bs-setrow"><span>速度</span><input id="bsSpeed" type="range" min="0.7" max="1.5" step="0.05" value="1"><b id="bsSpeedVal">1.0×</b></div>
+            <div class="bs-setrow"><span>谱面密度</span><input id="bsDensity" type="range" min="0.6" max="1.4" step="0.05" value="1"><b id="bsDensityVal">100%</b></div>
+            <div class="bs-setrow"><span>延迟补偿</span><input id="bsOffset" type="range" min="-150" max="150" step="5" value="0"><b id="bsOffsetVal">0ms</b></div>
+            <div class="bs-setrow"><span>音量</span><input id="bsVolume" type="range" min="0" max="1" step="0.05" value="0.9"><b id="bsVolumeVal">90%</b></div>
+          </div>
+          <p class="bs-best" id="bsBest"></p>
+          <p class="bs-tip" style="margin-top:8px">延迟补偿：如果总觉得音符比鼓点早，就往右调；设置会自动记住，先试一局再微调。</p>
+          <div class="bs-row" style="margin-top:14px">
+            <button class="bs-btn" id="bsStart" type="button">开始</button>
+            <button class="bs-btn bs-btn--ghost" id="bsBack" type="button">换一首</button>
+          </div>
+          <p class="bs-tip">自动谱面是启发式生成的：副歌会更密，长音会变成可点的点。觉得太密就选 Easy。</p>
+        </div>
+
+        <div id="bsPanelResult" hidden>
+          <h3>本局标本</h3>
+          <div class="bs-result">
+            <div class="bs-grade" id="bsGrade">A</div>
+            <div class="bs-stat" id="bsStat"></div>
+          </div>
+          <div class="bs-row">
+            <button class="bs-btn" id="bsExport" type="button">导出标本卡</button>
+            <button class="bs-btn bs-btn--ghost" id="bsReplay" type="button">再玩一次</button>
+          </div>
+          <div class="bs-row">
+            <button class="bs-chip" id="bsNew" type="button">换一首歌</button>
+          </div>
+        </div>
+
+        <div id="bsPanelPlay" hidden>
+          <h3>正在游玩</h3>
+          <div class="bs-meta" id="bsPlayMeta"></div>
+          <p>键盘 D F J K / 触摸四区。副歌会更密；觉得太难，下一局选 Easy。</p>
+        </div>
+      </aside>
+    </div>
+  `;
+
+  var cv = root.querySelector('#bsCv'), g = cv.getContext('2d');
   var W = cv.width, Hh = cv.height;
+  var veil = root.querySelector('#bsVeil'), veilTitle = root.querySelector('#bsVeilTitle'), veilText = root.querySelector('#bsVeilText'), veilBtn = root.querySelector('#bsVeilBtn');
+  var hud = root.querySelector('#bsHud'), scoreEl = root.querySelector('#bsScore'), comboEl = root.querySelector('#bsCombo'), accEl = root.querySelector('#bsAcc'), progressEl = root.querySelector('#bsProgress');
+  var panelUpload = root.querySelector('#bsPanelUpload'), panelConfig = root.querySelector('#bsPanelConfig'), panelResult = root.querySelector('#bsPanelResult'), panelPlay = root.querySelector('#bsPanelPlay');
+  var countEl = root.querySelector('#bsCount');
+  var speedEl = root.querySelector('#bsSpeed'), offsetEl = root.querySelector('#bsOffset'), volumeEl = root.querySelector('#bsVolume'), densityEl = root.querySelector('#bsDensity');
+  var speedVal = root.querySelector('#bsSpeedVal'), offsetVal = root.querySelector('#bsOffsetVal'), volumeVal = root.querySelector('#bsVolumeVal'), densityVal = root.querySelector('#bsDensityVal');
+  var bestEl = root.querySelector('#bsBest');
+  var statusEl = root.querySelector('#bsStatus');
+  var fileEl = root.querySelector('#bsFile'), skinFileEl = root.querySelector('#bsSkinFile');
 
-  // ---------- 声音:现场合成,零采样 ----------
   var ac = null, master = null;
-  var SCALE = [0, 3, 5, 7, 10, 12, 15, 17, 19, 22, 24, 27]; // 五声音阶 + 小调色彩,怎么敲都不难听
-  var KEYMAP = ['A', 'W', 'S', 'E', 'D', 'F', 'T', 'G', 'Y', 'H', 'U', 'J'];
+  var S = {
+    buffer: null, fileName: '', duration: 0, bpm: 120, peaks: [], notes: [],
+    difficulty: 'normal', skin: 'herbarium',
+    customImage: null, palette: null,
+    playing: false, paused: false, startAt: 0, source: null, raf: 0,
+    score: 0, combo: 0, maxCombo: 0, accSum: 0, total: 0,
+    hits: { perfect: 0, great: 0, good: 0, miss: 0 }, hitFx: [],
+    songsPlayed: 0,
+    speed: 1, offset: 0, volume: 0.9, density: 1,
+    countdownTimer: 0, newBest: false
+  };
+  var SKIN_NAMES = { herbarium: '标本室', nocturne: '夜航', papercut: '剪纸', custom: '自定义' };
+  var DIFF_MIN = { easy: 0.24, normal: 0.14, hard: 0.085 };
+  var DIFF_KEEP = { easy: 0.55, normal: 0.8, hard: 1 };
+
   function ensureAudio() {
     if (!ac) {
       var Ctx = window.AudioContext || window.webkitAudioContext;
       if (!Ctx) throw new Error('这个浏览器不支持 Web Audio');
       ac = new Ctx();
-      master = ac.createGain(); master.gain.value = 0.22; master.connect(ac.destination);
+      master = ac.createGain(); master.gain.value = S.volume; master.connect(ac.destination);
     }
     if (ac.state === 'suspended' && ac.resume) ac.resume();
     return ac;
   }
-  function freq(semi) { return 220 * Math.pow(2, semi / 12); }
-  function playNote(i, gainMul) {
-    ensureAudio();
-    var t = ac.currentTime, base = freq(SCALE[i % SCALE.length]);
-    var osc = ac.createOscillator(), gn = ac.createGain();
-    osc.type = 'triangle'; osc.frequency.value = base;
-    var vel = 0.85 * (gainMul || 1);
-    gn.gain.setValueAtTime(0.0001, t);
-    gn.gain.exponentialRampToValueAtTime(vel, t + 0.012);
-    gn.gain.exponentialRampToValueAtTime(0.0001, t + 0.75);
-    osc.connect(gn); gn.connect(master); osc.start(t); osc.stop(t + 0.8);
-    // 一层柔和泛音,声音不至于太干
-    var o2 = ac.createOscillator(), g2 = ac.createGain();
-    o2.type = 'sine'; o2.frequency.value = base * 2;
-    g2.gain.setValueAtTime(0.0001, t);
-    g2.gain.exponentialRampToValueAtTime(vel * 0.22, t + 0.02);
-    g2.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
-    o2.connect(g2); g2.connect(master); o2.start(t); o2.stop(t + 0.55);
+
+  function loadSettings() {
+    try {
+      var raw = localStorage.getItem('gjh-beat-settings-v1');
+      if (!raw) return;
+      var d = JSON.parse(raw);
+      if (d.speed >= 0.7 && d.speed <= 1.5) S.speed = d.speed;
+      if (d.offset >= -150 && d.offset <= 150) S.offset = d.offset;
+      if (d.volume >= 0 && d.volume <= 1) S.volume = d.volume;
+      if (d.density >= 0.6 && d.density <= 1.4) S.density = d.density;
+    } catch (e) {}
   }
-  function playKick(when) {
-    var t = when || ac.currentTime;
-    var o = ac.createOscillator(), gn = ac.createGain();
-    o.type = 'sine'; o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(48, t + 0.16);
-    gn.gain.setValueAtTime(0.9, t); gn.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
-    o.connect(gn); gn.connect(master); o.start(t); o.stop(t + 0.25);
+  function saveSettings() {
+    try { localStorage.setItem('gjh-beat-settings-v1', JSON.stringify({ speed: S.speed, offset: S.offset, volume: S.volume, density: S.density })); } catch (e) {}
   }
-  function playHat(when) {
-    var t = when || ac.currentTime, len = 0.06;
-    var buf = ac.createBuffer(1, Math.floor(ac.sampleRate * len), ac.sampleRate);
-    var d = buf.getChannelData(0);
-    for (var i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
-    var src = ac.createBufferSource(); src.buffer = buf;
-    var hp = ac.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 6000;
-    var gn = ac.createGain(); gn.gain.value = 0.25;
-    src.connect(hp); hp.connect(gn); gn.connect(master); src.start(t);
+  function syncSettingsUI() {
+    speedEl.value = S.speed; offsetEl.value = S.offset; volumeEl.value = S.volume; densityEl.value = S.density;
+    speedVal.textContent = S.speed.toFixed(2).replace(/0$/, '') + '×';
+    offsetVal.textContent = (S.offset > 0 ? '+' : '') + S.offset + 'ms';
+    volumeVal.textContent = Math.round(S.volume * 100) + '%';
+    densityVal.textContent = Math.round(S.density * 100) + '%';
+    if (master) master.gain.value = S.volume;
   }
 
-  function playSnare(when) {
-    var t = when || ac.currentTime, len = 0.12;
-    var buf = ac.createBuffer(1, Math.floor(ac.sampleRate * len), ac.sampleRate);
-    var d = buf.getChannelData(0);
-    for (var i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 2);
-    var src = ac.createBufferSource(); src.buffer = buf;
-    var bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1800; bp.Q.value = 0.9;
-    var gn = ac.createGain(); gn.gain.value = 0.32;
-    src.connect(bp); bp.connect(gn); gn.connect(master); src.start(t);
+  function bestStore() {
+    try { return JSON.parse(localStorage.getItem('gjh-beat-best-v1') || '{}') || {}; } catch (e) { return {}; }
+  }
+  function bestKey() {
+    return hashStr((S.fileName || '') + '|' + S.total + '|' + Math.round(S.bpm)) + '|' + S.difficulty;
+  }
+  function showBest() {
+    if (!S.total) { bestEl.textContent = ''; return; }
+    var b = bestStore()[bestKey()];
+    bestEl.innerHTML = b
+      ? '本曲最佳：<b>' + b.grade + '</b> · ' + b.acc.toFixed(1) + '% · 最大连击 ' + b.combo
+      : '本曲暂无记录。打完一局会自动存在这台设备上（不上传）。';
+  }
+  function saveBest(acc, grade) {
+    var store = bestStore(), key = bestKey(), old = store[key];
+    if (!old || acc > old.acc) {
+      store[key] = { acc: acc, grade: grade, combo: S.maxCombo, at: Date.now() };
+      try { localStorage.setItem('gjh-beat-best-v1', JSON.stringify(store)); } catch (e) {}
+      S.newBest = true;
+    }
+    showBest();
   }
 
-  // ---------- 画面 ----------
-  var shapes = [], ripples = [], pulse = 0, hueBase = 205;
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function addHit(i, x, y, who) {
-    // 左边偏冷、右边偏暖:双人模式下谁在敲一眼能看出来
-    var hue = (hueBase + i * 24 + (who ? 130 : 0)) % 360;
-    var n = reduce ? 6 : 18;
-    for (var k = 0; k < n; k++) {
-      var a = Math.random() * Math.PI * 2, sp = 0.6 + Math.random() * 3.2;
-      shapes.push({ x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 0.6, r: 3 + Math.random() * 9, life: 1, hue: hue, spin: (Math.random() - 0.5) * 0.2 });
-    }
-    ripples.push({ x: x, y: y, r: 6, life: 1, hue: hue });
-    pulse = Math.min(1, pulse + (reduce ? 0.15 : 0.35));
+  function hashStr(s) {
+    var h = 2166136261;
+    for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return h >>> 0;
   }
-  function step() {
-    // 背景:呼吸的深色渐变(rédu-motion 下不动)
-    var breathe = reduce ? 0.5 : (0.5 + 0.5 * Math.sin(performance.now() / 2600));
-    var grad = g.createLinearGradient(0, 0, W, Hh);
-    grad.addColorStop(0, 'hsl(' + hueBase + ',42%,' + (9 + 5 * breathe) + '%)');
-    grad.addColorStop(1, 'hsl(' + ((hueBase + 60) % 360) + ',46%,' + (7 + 4 * breathe) + '%)');
-    g.fillStyle = grad; g.fillRect(0, 0, W, Hh);
-    g.globalCompositeOperation = 'lighter';
-    for (var i = shapes.length - 1; i >= 0; i--) {
-      var s = shapes[i];
-      s.x += s.vx; s.y += s.vy; s.vy += 0.045; s.vx *= 0.992; s.life -= 0.012;
-      if (s.life <= 0) { shapes.splice(i, 1); continue; }
-      g.beginPath();
-      g.fillStyle = 'hsla(' + s.hue + ',85%,62%,' + (s.life * 0.75) + ')';
-      g.arc(s.x, s.y, s.r * (0.6 + s.life * 0.6), 0, Math.PI * 2);
-      g.fill();
-    }
-    for (var j = ripples.length - 1; j >= 0; j--) {
-      var rp = ripples[j];
-      rp.r += 4.2; rp.life -= 0.02;
-      if (rp.life <= 0) { ripples.splice(j, 1); continue; }
-      g.beginPath();
-      g.strokeStyle = 'hsla(' + rp.hue + ',90%,70%,' + (rp.life * 0.6) + ')';
-      g.lineWidth = 3 + 6 * rp.life;
-      g.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
-      g.stroke();
-    }
-    g.globalCompositeOperation = 'source-over';
-    if (pulse > 0.001) { pulse *= 0.94; g.fillStyle = 'rgba(255,255,255,' + (pulse * 0.05) + ')'; g.fillRect(0, 0, W, Hh); }
-    requestAnimationFrame(step);
+  function rng(seed) {
+    var a = seed >>> 0;
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
   }
-  if (shapes.length === 0) requestAnimationFrame(step);
+  function fmtTime(s) {
+    s = Math.max(0, s || 0);
+    var m = Math.floor(s / 60), ss = Math.floor(s % 60);
+    return m + ':' + String(ss).padStart(2, '0');
+  }
 
-  // ---------- 交互 ----------
-  var mode = 'free', started = false, bpm = 100, duo = false;
-  // 每日挑战:当天固定模板 + 打满 20 下出评级,记录存在本机(localStorage),算"连续来练几天"。
-  // 依据:Wordle 的"每日同题"(内部文档/计划-作品线成熟化.md 第 8 节)+ Monkeytype 的"秒重开"。
-  var dailyOn = false, DAILY_GOAL = 20, clearedThisRun = false;
-  function todayKey(d) { d = d || new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
-  function dailyIdx() {
-    var d = new Date();
-    var days = Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
-    return ((days % TEMPLATES.length) + TEMPLATES.length) % TEMPLATES.length;
-  }
-  function dailyRead() { try { return JSON.parse(localStorage.getItem('tb-daily') || 'null'); } catch (e) { return null; } }
-  function dailyStreak(st) {
-    if (!st || !st.days) return 0;
-    var n = 0, d = new Date();
-    for (var i = 0; i < 400; i++) {
-      if (st.days.indexOf(todayKey(d)) < 0) break;
-      n++; d.setDate(d.getDate() - 1);
+  /* ---------- analysis ---------- */
+  function analyze(buffer) {
+    var sr = buffer.sampleRate;
+    var ch = buffer.numberOfChannels;
+    var maxLen = Math.min(buffer.length, Math.floor(sr * 480));
+    var mono = new Float32Array(maxLen);
+    for (var c = 0; c < ch; c++) {
+      var data = buffer.getChannelData(c);
+      for (var i = 0; i < maxLen; i++) mono[i] += data[i] / ch;
     }
-    return n;
-  }
-  function dailyRecord(g, acc) {
-    var st = dailyRead() || { days: [] };
-    if (!st.days) st.days = [];
-    var k = todayKey();
-    if (st.days.indexOf(k) < 0) st.days.push(k);
-    if (st.days.length > 90) st.days = st.days.slice(-90);
-    try { localStorage.setItem('tb-daily', JSON.stringify(st)); } catch (e) { /* 隐私模式下写不了就只当次有效 */ }
-    return dailyStreak(st);
-  }
-  // 两位玩家各自计数:双人模式下左右半区各算各的
-  var P = [{ hits: 0, combo: 0, best: 0, offsets: [] }, { hits: 0, combo: 0, best: 0, offsets: [] }];
-  var lastBeat = 0, loopTimer = null, nextBeatAt = 0, noteIdx = 0, lastHitAt = 0;
-  var KEYMAP_L = ['A', 'S', 'D', 'F'], KEYMAP_R = ['J', 'K', 'L', ';'];
-  function timeNow() { return performance.now(); }
-  function hitAt(clientX, clientY, forced) {
-    var rect = cv.getBoundingClientRect();
-    var x = clientX == null ? W / 2 : (clientX - rect.left) / rect.width * W;
-    var y = clientY == null ? Hh / 2 : (clientY - rect.top) / rect.height * Hh;
-    var who = forced !== undefined ? forced : (duo ? (x < W / 2 ? 0 : 1) : 0);
-    var st = P[who];
-    var i = noteIdx++;
-    playNote(i + who * 3, 1);   // 右边比左边高几个音级,两个人听起来不打架
-    addHit(i, x, y, who);
-    st.hits++;
-    var now = timeNow();
-    if (mode === 'beat') {
-      var period = 60000 / bpm;
-      var off = now - lastBeat;
-      var err = Math.min(off % period, period - (off % period));
-      st.offsets.push(err);
-      if (err < 120) { st.combo++; if (st.combo > st.best) st.best = st.combo; } else { st.combo = 0; }
-    }
-    lastHitAt = now;
-    paintStats();
-  }
-  function resetStats() { P = [{ hits: 0, combo: 0, best: 0, offsets: [] }, { hits: 0, combo: 0, best: 0, offsets: [] }]; noteIdx = 0; clearedThisRun = false; }
-  // 章节式关卡(参照 Ableton 学习音乐的"章节/关卡"):每套鼓点 3 关,目标逐级提高,通关记在本机
-  var LEVELS = [
-    { name: '第一关', acc: 60, best: 0, min: 12, tip: '敲满 12 下且准确率 ≥60%' },
-    { name: '第二关', acc: 75, best: 8, min: 16, tip: '准确率 ≥75% 且最长连击 ≥8' },
-    { name: '第三关', acc: 88, best: 16, min: 24, tip: '准确率 ≥88% 且最长连击 ≥16' }
-  ];
-  function levelsRead() { try { return JSON.parse(localStorage.getItem('tb-levels') || '{}'); } catch (e) { return {}; } }
-  function levelsWrite(o) { try { localStorage.setItem('tb-levels', JSON.stringify(o)); } catch (e) {} }
-  function levelsDone(t) { var o = levelsRead(); return Math.min(LEVELS.length, o[t.id] || 0); }
-  // 难度曲线:每过一关,同一套鼓点提速 8% —— 之前只有"准确率门槛",没有速度变化,练到后面手感是平的。
-  // 每日挑战不加速(它是"每天同一题",所有人在同一起跑线才有可比性)。
-  function levelSpeedPct(t) { return dailyOn ? 0 : 8 * levelsDone(t); }
-  function effBpm(t) { return Math.round(t.bpm * (1 + levelSpeedPct(t) / 100)); }
-  function tryLevel() {
-    if (mode !== 'beat' || duo) return;
-    // 一次只过一关:否则一轮好成绩会把三关一口气全清掉,后两关连提示都来不及显示,
-    // 关卡也就失去了"再来一次"的意义(实测:塞一组好数据后 {"four":3} 直接满级)。
-    if (clearedThisRun) return;
-    var t = TEMPLATES[tmplIdx], done = levelsDone(t);
-    if (done >= LEVELS.length) return;
-    var L = LEVELS[done];
-    if (P[0].hits < L.min) return;
-    var acc = accOf(P[0]);
-    if (acc === null || acc < L.acc || P[0].best < L.best) return;
-    clearedThisRun = true;
-    var o = levelsRead(); o[t.id] = done + 1; levelsWrite(o);
-    var nx = done + 1 < LEVELS.length
-      ? ('解锁 ' + LEVELS[done + 1].name + ':' + LEVELS[done + 1].tip + ';速度提到 ' + effBpm(t) + ' BPM')
-      : '这套鼓点三关都过了(已是最快)';
-    H.toast('「' + t.name + '」' + L.name + ' 通过 · ' + nx, { ms: 6000 });
-    if (started && mode === 'beat' && !duo) startLoop();   // 立刻用新速度继续,不用等下一次开始
-    paintStats();
-  }
-  function paintLevelLine() {
-    var t = TEMPLATES[tmplIdx], done = levelsDone(t);
-    if (done >= LEVELS.length) return '<span style="color:var(--c-ok)">关卡:<b>' + H.esc(t.name) + '</b> 三关全部通过 ✓</span>';
-    var sp = levelSpeedPct(t);
-    return '<span style="color:#6e6e73">关卡:<b>' + H.esc(t.name) + '</b> 第 ' + (done + 1) + '/' + LEVELS.length + ' 关 · 目标 ' + H.esc(LEVELS[done].tip)
-      + ' · 速度 ' + effBpm(t) + ' BPM' + (sp ? '(比原速快 ' + sp + '%)' : '(原速)') + '</span>';
-  }
-  function avgOf(st) { return st.offsets.length ? Math.round(st.offsets.reduce(function (a, b) { return a + b; }, 0) / st.offsets.length) : null; }
-  // 准确率与评级:全部本地算、口径写在界面上("偏差 ≤120ms 的敲击占比"),不做玄学分数。
-  // 依据:NN/g 游戏化"先反馈再计分"+ ZType/Monkeytype 那种"立刻给结果、马上能再来一次"的做法。
-  function accOf(st) {
-    if (!st.offsets.length) return null;
-    var ok = st.offsets.filter(function (o) { return Math.abs(o) <= 120; }).length;
-    return Math.round(ok / st.offsets.length * 100);
-  }
-  function gradeOf(st) {
-    var acc = accOf(st);
-    if (acc === null) return null;
-    if (acc >= 95 && st.best >= 20) return { g: 'S', t: '和节拍锁死了' };
-    if (acc >= 88 && st.best >= 12) return { g: 'A', t: '很稳' };
-    if (acc >= 75) return { g: 'B', t: '跟上了' };
-    return { g: 'C', t: '再听两轮' };
-  }
-  function gradeLine(st, who) {
-    var gr = gradeOf(st), acc = accOf(st);
-    if (!gr) return '';
-    var color = who === 1 ? '#e0894f' : '#5b8def';
-    return '<div class="bt-grade"><span class="g" style="color:' + color + '">' + gr.g + '</span> · ' + H.esc(gr.t)
-      + ' · 准确率 <b>' + acc + '%</b><span style="color:#6e6e73">(偏差 ≤120ms 的敲击占比)</span>'
-      + ' · 最长连击 <b>' + st.best + '</b></div>';
-  }
-  function flashKey(k) {
-    if (!k) return;
-    var el = root.querySelector('.bt-kbd span[data-k="' + k.toUpperCase() + '"]');
-    if (!el) return;
-    el.classList.add('on');
-    setTimeout(function () { el.classList.remove('on'); }, 140);
-  }
-  function paintStats() {
-    var lines = [];
-    var t = TEMPLATES[tmplIdx];
-    if (duo) {
-      lines.push('<div style="display:flex;gap:18px"><div style="flex:1"><div style="color:#5b8def">左边(玩家 1)</div>敲 <b>' + P[0].hits + '</b> 下'
-        + (mode === 'beat' ? '<br>连击 <b>' + P[0].combo + '</b>(最长 <b>' + P[0].best + '</b>)<br>偏差 <b>' + (avgOf(P[0]) === null ? '—' : avgOf(P[0]) + ' ms') + '</b>' : '') + '</div>'
-        + '<div style="flex:1"><div style="color:#e0894f">右边(玩家 2)</div>敲 <b>' + P[1].hits + '</b> 下'
-        + (mode === 'beat' ? '<br>连击 <b>' + P[1].combo + '</b>(最长 <b>' + P[1].best + '</b>)<br>偏差 <b>' + (avgOf(P[1]) === null ? '—' : avgOf(P[1]) + ' ms') + '</b>' : '') + '</div></div>');
-    } else {
-      lines.push('敲击次数 <b>' + P[0].hits + '</b>');
-      if (mode === 'beat') {
-        lines.push('连击 <b>' + P[0].combo + '</b>(最长 <b>' + P[0].best + '</b>)');
-        lines.push('平均偏差 <b>' + (avgOf(P[0]) === null ? '—' : avgOf(P[0]) + ' ms') + '</b>' + (avgOf(P[0]) !== null && avgOf(P[0]) < 60 ? '(稳)' : ''));
-        var gl = gradeLine(P[0], 0); if (gl) lines.push(gl);
-      } else {
-        lines.push('模式:<b>自由敲</b>(怎么敲都不会难听)');
+    var step = Math.max(1, Math.floor(sr / 22050));
+    var dsr = sr / step;
+    var frame = Math.round(dsr * 0.046);
+    var hop = Math.max(128, Math.round(frame / 2));
+    var frames = Math.max(1, Math.floor((maxLen / step - frame) / hop));
+    var nrg = new Float32Array(frames), low = new Float32Array(frames), high = new Float32Array(frames);
+    var rc = 1 / (2 * Math.PI * 180);
+    var a = 1 / (1 + rc * dsr);
+    var lp = 0;
+    for (var f = 0; f < frames; f++) {
+      var start = f * hop;
+      var e = 0, l = 0, h = 0;
+      for (var j = 0; j < frame; j += 2) {
+        var x = mono[(start + j) * step];
+        lp += a * (x - lp);
+        var hx = x - lp;
+        e += x * x; l += lp * lp; h += hx * hx;
       }
+      nrg[f] = e; low[f] = l; high[f] = h;
     }
-    if (duo && mode === 'beat') {
-      var g0 = gradeOf(P[0]), g1 = gradeOf(P[1]);
-      if (g0 && g1) {
-        lines.push('<div class="bt-grade">左边 <span class="g" style="color:#5b8def">' + g0.g + '</span> 准确率 <b>' + accOf(P[0]) + '%</b>'
-          + ' · 右边 <span class="g" style="color:#e0894f">' + g1.g + '</span> 准确率 <b>' + accOf(P[1]) + '%</b>'
-          + ' · ' + (accOf(P[0]) === accOf(P[1]) ? '平手' : (accOf(P[0]) > accOf(P[1]) ? '左边更稳' : '右边更稳')) + '</div>');
-      }
+    var onset = new Float32Array(frames);
+    var maxO = 0;
+    for (var k = 1; k < frames; k++) {
+      var v = Math.max(0, nrg[k] - nrg[k - 1]) + 0.6 * Math.max(0, low[k] - low[k - 1]) + 0.6 * Math.max(0, high[k] - high[k - 1]);
+      onset[k] = v;
+      if (v > maxO) maxO = v;
     }
-    // 常驻显示(不只点了才显示):用户一进页面就该看到"今天有挑战、我连了几天" ——
-    // 第一版只在 dailyOn 时显示,于是没点过的人完全不知道有这回事(端到端测试抓到的)。
-    lines.push(paintDailyLine());
-    if (mode === 'beat' && !duo) lines.push(paintLevelLine());
-    lines.push('伴奏:<b>' + t.name + '</b> · ' + bpm + ' BPM' + (t.id === 'none' ? '(可以自己敲节奏)' : ''));
-    lines.push('<span style="color:#6e6e73">声音全部由浏览器现场合成,没有音频文件,也没有任何请求。</span>');
-    statsEl.innerHTML = lines.map(function (l) { return '<div>' + l + '</div>'; }).join('');
-    // 打满目标就结算一次,并把"今天来过了"记在本机;结果卡给"再来一次"
-    tryLevel();
-    if (dailyOn && mode === 'beat' && P[0].hits === DAILY_GOAL) {
-      var gr = gradeOf(P[0]), acc = accOf(P[0]);
-      if (gr) {
-        var streak = dailyRecord(gr, acc);
-        out.innerHTML = '<div class="note ok" style="display:block"><b>今日挑战完成</b> · 评级 <b>' + gr.g + '</b>(' + H.esc(gr.t) + ')'
-          + ' · 准确率 <b>' + acc + '%</b> · 最长连击 <b>' + P[0].best + '</b>'
-          + (streak > 1 ? ' · 已连续来练 <b>' + streak + '</b> 天' : '')
-          + '</div><div class="tool-row"><button class="tool-btn" id="againD">再来一次(当日最高分不会覆盖记录)</button></div>';
-        var ab = root.querySelector('#againD');
-        if (ab) ab.addEventListener('click', function () { out.innerHTML = ''; resetStats(); paintStats(); });
-      }
+    if (maxO <= 0) return { peaks: [], bpm: 120, duration: maxLen / sr };
+    var peaks = [];
+    var lastT = -9;
+    for (var q = 2; q < frames - 2; q++) {
+      if (onset[q] <= onset[q - 1] || onset[q] < onset[q + 1]) continue;
+      var local = 0, n = 0;
+      for (var w = -10; w <= 10; w++) { var idx = q + w; if (idx >= 0 && idx < frames) { local += onset[idx]; n++; } }
+      local /= Math.max(1, n);
+      if (onset[q] < local * 1.35 + maxO * 0.035) continue;
+      var t = (q * hop + frame / 2) / dsr;
+      if (t - lastT < 0.085) continue;
+      var totalBand = low[q] + high[q] + 1e-9;
+      peaks.push({ t: t, strength: onset[q] / maxO, lowRatio: low[q] / totalBand });
+      lastT = t;
     }
-  }
-  function paintKbd() {
-    var keys = duo ? KEYMAP_L.concat(['|']).concat(KEYMAP_R) : KEYMAP;
-    root.querySelector('#kbd').innerHTML = keys.map(function (k) {
-      return '<span' + (k === '|' ? '' : ' data-k="' + k + '"') + '>' + (k === '|' ? '·' : k) + '</span>';
-    }).join('');
-  }
-  paintKbd();
-  if (tmplIdx) { var _tb = root.querySelector('#tmpl'); if (_tb) _tb.textContent = '伴奏:' + TEMPLATES[tmplIdx].name; }
-
-  // 节拍模板:每个模板用 16 分音符的字符串谱表示(1 = 这一格打一下)
-  var TEMPLATES = [
-    { id: 'simple', name: '简单四拍', bpm: 100, kick: '1000100010001000', hat: '0010001000100010' },
-    { id: 'four', name: '四拍舞曲', bpm: 120, kick: '1000100010001000', hat: '1010101010101010', clap: '0000100000001000' },
-    { id: 'bossa', name: '轻巴萨', bpm: 96, kick: '1000001010000010', hat: '0010101000101010' },
-    { id: 'none', name: '无伴奏', bpm: 100, kick: '', hat: '' }
-  ];
-  var tmplIdx = 0;
-  try {
-    var lastTmpl = localStorage.getItem('tb-tmpl');
-    if (lastTmpl) { TEMPLATES.forEach(function (t, i) { if (t.id === lastTmpl) tmplIdx = i; }); }
-  } catch (e) { /* 隐私模式读不了就用第一套 */ }
-  function saveTmpl() { try { localStorage.setItem('tb-tmpl', TEMPLATES[tmplIdx].id); } catch (e) {} }
-  function startLoop() {
-    stopLoop();
-    ensureAudio();
-    var t = TEMPLATES[tmplIdx];
-    bpm = effBpm(t);   // 按当前关卡难度取速度(过一关 +8%)
-    var stepMs = (60000 / bpm) / 4;   // 十六分音符
-    var stepIdx = 0;
-    nextBeatAt = timeNow();
-    lastBeat = nextBeatAt;
-    loopTimer = setInterval(function () {
-      var now = timeNow();
-      while (nextBeatAt <= now + 45) {
-        var when = ac.currentTime + Math.max(0, (nextBeatAt - now) / 1000);
-        if (t.kick.charAt(stepIdx % 16) === '1') playKick(when);
-        if (t.hat.charAt(stepIdx % 16) === '1') playHat(when);
-        if (t.clap && t.clap.charAt(stepIdx % 16) === '1') playSnare(when);
-        if (stepIdx % 4 === 0) lastBeat = nextBeatAt;   // 四分音符拍点,跟拍判定用它
-        stepIdx++;
-        nextBeatAt += stepMs;
-      }
-    }, 25);
-  }
-  function stopLoop() { if (loopTimer) { clearInterval(loopTimer); loopTimer = null; } }
-  // 模板试听:切模板时用同一套合成器把这两小节鼓点排进 AudioContext,先听再玩。
-  // 依据(内部文档第 8 节清单第 1 条):"模板怎么选"是上手卡点,试听比看名字强。
-  function previewTemplate(t) {
-    try { ensureAudio(); } catch (e) { return; }
-    if (!ac) return;
-    var stepSec = (60 / t.bpm) / 4, t0 = ac.currentTime + 0.06, notes = 0;
-    for (var i = 0; i < 32; i++) {   // 两小节
-      var when = t0 + i * stepSec, k = i % 16;
-      if (t.kick.charAt(k) === '1') { playKick(when); notes++; }
-      if (t.hat.charAt(k) === '1') { playHat(when); notes++; }
-      if (t.clap && t.clap.charAt(k) === '1') { playSnare(when); notes++; }
-    }
-    if (root.__btTest) { root.__btTest.previews++; root.__btTest.notes += notes; }
+    var bpm = estimateBpm(onset, dsr, hop);
+    return { peaks: peaks, bpm: bpm, duration: maxLen / sr };
   }
 
-  function start() {
-    try { ensureAudio(); } catch (e) { out.innerHTML = '<div class="note err" style="display:block">' + H.esc(H.friendlyError(e, '音频初始化失败')) + '</div>'; return; }
-    started = true;
-    veil.style.display = 'none';
-    if (mode === 'beat') startLoop();
-    paintStats();
-    hitAt(null, null);
-  }
-  root.querySelector('#start').addEventListener('click', start);
-  // 自测钩子:关卡达标依赖真实敲击时序,端到端很难稳定复现"刚好达标";
-  // 这里提供一个入口直接塞统计值再跑判定,用来验"解锁 → 落盘 localStorage → UI 更新"这条链路(只给测试用)。
-  root.__btTest = {
-    previews: 0, notes: 0,
-    forceClear: function (acc, best, hits) {
-      var n = Math.max(1, hits || 20), off = [];
-      for (var i = 0; i < n; i++) off.push(i < Math.round(n * acc / 100) ? 10 : 300);
-      P[0].hits = n; P[0].best = best || 0; P[0].offsets = off; clearedThisRun = false;
-      mode = 'beat'; tryLevel();
-      return levelsRead();
+  function estimateBpm(onset, dsr, hop) {
+    var hopT = hop / dsr;
+    var best = 0, bestBpm = 120;
+    for (var bpm = 70; bpm <= 190; bpm += 0.5) {
+      var lag = 60 / bpm / hopT;
+      var score = 0;
+      for (var k = 1; k <= 8; k++) {
+        var idx = Math.round(lag * k);
+        if (idx > 0 && idx < onset.length) score += onset[idx] * (1 - k * 0.035);
+      }
+      if (score > best) { best = score; bestBpm = bpm; }
     }
-  };
-  var dailyBtn = root.querySelector('#daily');
-  function startDaily() {
-    var t = TEMPLATES[dailyIdx()];
-    var ti = TEMPLATES.indexOf(t);
-    if (ti >= 0) { tmplIdx = ti; bpm = t.bpm; var tb = root.querySelector('#tmpl'); if (tb) tb.textContent = '伴奏:' + t.name; }
-    mode = 'beat'; dailyOn = true; duo = false;
-    root.querySelectorAll('.bt-chip[data-m]').forEach(function (x) { x.classList.toggle('active', x.dataset.m === 'beat'); });
-    resetStats(); paintStats(); paintKbd();
-    if (!started) start();
-    else if (mode === 'beat') startLoop();   // 已经在跑就用当日模板重起循环(原来只改了状态,bpm 还是旧的)
-    H.toast('今日挑战:' + t.name + ' · ' + bpm + ' BPM —— 打满 ' + DAILY_GOAL + ' 下看评级', { ms: 5200 });
-  }
-  if (dailyBtn) dailyBtn.addEventListener('click', startDaily);
-  function paintDailyLine() {
-    var st = dailyRead();
-    var n = dailyStreak(st);
-    var t = TEMPLATES[dailyIdx()];
-    return '<span style="color:#6e6e73">今日挑战模板:<b>' + H.esc(t.name) + '</b> · ' + t.bpm + ' BPM · 打满 ' + DAILY_GOAL + ' 下出评级'
-      + (n ? ' · 已连续来练 <b>' + n + '</b> 天' : '') + '</span>';
-  }
-  cv.addEventListener('pointerdown', function (e) { if (!started) { start(); return; } hitAt(e.clientX, e.clientY); });
-  // 键盘:单人时 A W S E D F T G Y H U J;双人时左边 A S D F、右边 J K L ; 各管一半画面
-  function keyPlayer(k) {
-    k = (k || '').toUpperCase();
-    if (duo) {
-      if (KEYMAP_L.indexOf(k) >= 0) return 0;
-      if (KEYMAP_R.indexOf(k) >= 0) return 1;
-      return -1;
-    }
-    return KEYMAP.indexOf(k) >= 0 ? 0 : -1;
-  }
-  cv.addEventListener('keydown', function (e) {
-    var p = keyPlayer(e.key);
-    if (p >= 0) { e.preventDefault(); flashKey(e.key); if (!started) start(); else hitAt(p === 0 ? W / 4 : W * 3 / 4, Hh / 2, p); }
-    else if (e.key === ' ') { e.preventDefault(); if (!started) start(); else hitAt(null, null); }
-  });
-  cv.setAttribute('tabindex', '0');
-  cv.setAttribute('role', 'button');
-  cv.setAttribute('aria-label', '节奏玩具:点一下开始;单人按 A W S E D F T G Y H U J,双人左边 A S D F、右边 J K L 分号');
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && started) { stopLoop(); veil.style.display = 'flex'; started = false; return; }
-    var pk = keyPlayer(e.key);
-    // 之前这里"没开始就直接 return",于是遮罩还在时敲键毫无反应 —— 而 NN/g 的判据是"首屏可试"。
-    // 现在敲任意音符键就等于开始(并敲下第一下),不用先点一下遮罩。
-    if (!started) { if (pk >= 0 || e.key === ' ') { e.preventDefault(); if (pk >= 0) flashKey(e.key); start(); } return; }
-    if (document.activeElement === cv) return;   // 画布自己那份 keydown 已经处理过了,避免敲一下算两下
-    if (pk >= 0) { flashKey(e.key); hitAt(pk === 0 ? W / 4 : W * 3 / 4, Hh / 2, pk); }
-  });
-  root.querySelectorAll('.bt-chip[data-m]').forEach(function (b) {
-    b.addEventListener('click', function () {
-      mode = b.dataset.m;
-      root.querySelectorAll('.bt-chip[data-m]').forEach(function (x) { x.classList.toggle('active', x === b); });
-      if (!started) { paintStats(); return; }
-      if (mode === 'beat') startLoop(); else stopLoop();
-      resetStats(); paintStats();
+    // 倾向于 80–170 的常见区间,避免半速/倍速误判
+    var candidates = [bestBpm, bestBpm * 2, bestBpm / 2].filter(function (b) { return b >= 70 && b <= 190; });
+    var final = bestBpm;
+    var bestScore = -1;
+    candidates.forEach(function (b) {
+      var lag = 60 / b / hopT;
+      var score = 0;
+      for (var k = 1; k <= 8; k++) {
+        var idx = Math.round(lag * k);
+        if (idx > 0 && idx < onset.length) score += onset[idx];
+      }
+      if (score > bestScore) { bestScore = score; final = b; }
     });
-  });
-  root.querySelector('#tmpl').addEventListener('click', function () {
-    tmplIdx = (tmplIdx + 1) % TEMPLATES.length;
-    root.querySelector('#tmpl').textContent = '伴奏:' + TEMPLATES[tmplIdx].name;
-    saveTmpl();
-    previewTemplate(TEMPLATES[tmplIdx]);   // 切了就听得到,不用先开始
-    resetStats();
-    if (mode === 'beat' && started) startLoop();
-    paintStats();
-  });
-  root.querySelector('#duo').addEventListener('click', function () {
-    duo = !duo;
-    root.querySelector('#duo').textContent = '双人模式:' + (duo ? '开' : '关');
-    resetStats(); paintKbd(); paintStats();
-  });
-
-  // ---------- 导出分享图(把我们"能交付"的基因接上) ----------
-  // 分享图上带二维码:产物本身就是拉新入口(调研结论:传播发生在外部分享)
-  async function makeQr(text, size) {
-    if (!window.qrcode) await H.loadScript('/vendor/qrcode.min.js?v=1');
-    var qr = window.qrcode(0, 'M');
-    qr.addData(text); qr.make();
-    var n = qr.getModuleCount();
-    var cell = Math.max(2, Math.floor(size / (n + 4)));
-    var pad = 2 * cell;
-    var c2 = document.createElement('canvas');
-    c2.width = c2.height = n * cell + pad * 2;
-    var g2 = c2.getContext('2d');
-    g2.fillStyle = '#fff'; g2.fillRect(0, 0, c2.width, c2.height);
-    g2.fillStyle = '#000';
-    for (var r = 0; r < n; r++) for (var col = 0; col < n; col++) if (qr.isDark(r, col)) g2.fillRect(pad + col * cell, pad + r * cell, cell, cell);
-    return c2;
+    return Math.round(final * 10) / 10;
   }
-  root.querySelector('#poster').addEventListener('click', async function () {
-    var qrImg = null;
-    try { qrImg = await makeQr('https://gongjuhe.top/beat-toy/', 200); } catch (e) { qrImg = null; }
-    var pw = 1080, ph = 1350;
-    var c = document.createElement('canvas'); c.width = pw; c.height = ph;
-    var pg = c.getContext('2d');
-    var grad = pg.createLinearGradient(0, 0, pw, ph);
-    grad.addColorStop(0, 'hsl(' + hueBase + ',45%,10%)'); grad.addColorStop(1, 'hsl(' + ((hueBase + 60) % 360) + ',50%,7%)');
-    pg.fillStyle = grad; pg.fillRect(0, 0, pw, ph);
-    // 波形:把敲击次数画成柱状节奏
-    var totalHits = P[0].hits + P[1].hits;
-    var bars = Math.max(12, Math.min(64, totalHits || 12));
-    pg.globalCompositeOperation = 'lighter';
-    for (var i = 0; i < bars; i++) {
-      var h = 60 + 320 * Math.abs(Math.sin(i * 0.7 + totalHits * 0.11));
-      pg.fillStyle = 'hsla(' + ((hueBase + i * 22) % 360) + ',85%,60%,.75)';
-      var bw = (pw - 160) / bars;
-      pg.fillRect(80 + i * bw, ph - 420 - h, Math.max(4, bw - 6), h);
+
+  function buildChart() {
+    var keep = Math.min(1, Math.max(0.25, DIFF_KEEP[S.difficulty] * S.density));
+    var minGap = DIFF_MIN[S.difficulty];
+    var src = S.peaks.slice().sort(function (a, b) { return b.strength - a.strength; });
+    src = src.slice(0, Math.max(12, Math.round(src.length * keep))).sort(function (a, b) { return a.t - b.t; });
+    var notes = [], lastT = -9, lastLane = -1, streak = 0;
+    src.forEach(function (p, i) {
+      if (p.t - lastT < minGap) return;
+      var lane;
+      if (p.lowRatio > 0.62) lane = 0;
+      else if (p.lowRatio < 0.38) lane = 3;
+      else lane = i % 2 === 0 ? 1 : 2;
+      if (lane === lastLane) streak++; else streak = 0;
+      if (streak >= 2) { lane = (lane + 1) % 4; streak = 0; }
+      notes.push({ t: p.t, lane: lane, judged: false, hit: false, grade: '' });
+      lastT = p.t; lastLane = lane;
+    });
+    if (notes.length < 8) {
+      notes = S.peaks.slice(0, 120).map(function (p, i) {
+        return { t: p.t, lane: i % 4, judged: false, hit: false, grade: '' };
+      });
     }
-    pg.globalCompositeOperation = 'source-over';
-    pg.fillStyle = '#fff'; pg.textBaseline = 'top';
-    pg.font = '700 92px "Geist", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
-    pg.fillText(duo ? ('左边 ' + P[0].hits + ' 下 · 右边 ' + P[1].hits + ' 下') : ('我敲了 ' + P[0].hits + ' 下'), 80, 150);
-    pg.font = '500 40px "Geist", -apple-system, "PingFang SC", sans-serif';
-    pg.fillStyle = 'rgba(255,255,255,.8)';
-    var subLine = mode === 'beat'
-      ? ('跟拍 · ' + TEMPLATES[tmplIdx].name + ' ' + bpm + ' BPM · 最长连击 ' + (duo ? (P[0].best + ' / ' + P[1].best) : P[0].best))
-      : ('自由敲 · ' + TEMPLATES[tmplIdx].name + ' · 怎么敲都不会难听');
-    pg.fillText(subLine, 80, 280);
-    // 双人打拍子:分享图上给"左右对比 + 胜负",而不只是两个连击数字(调研:分享要能讲故事、能炫)
-    if (duo && mode === 'beat') {
-      var a0 = accOf(P[0]), a1 = accOf(P[1]);
-      if (a0 !== null && a1 !== null) {
-        var gg0 = gradeOf(P[0]), gg1 = gradeOf(P[1]);
-        pg.font = '600 46px "Geist", -apple-system, "PingFang SC", sans-serif';
-        pg.fillStyle = '#8cc0ff';
-        pg.fillText('左手 ' + (gg0 ? gg0.g : '—') + ' · 准确率 ' + a0 + '%', 80, 352);
-        pg.fillStyle = '#e8a06a';
-        pg.fillText('右手 ' + (gg1 ? gg1.g : '—') + ' · 准确率 ' + a1 + '%', 80, 414);
-        pg.fillStyle = 'rgba(255,255,255,.92)';
-        pg.font = '700 44px "Geist", -apple-system, "PingFang SC", sans-serif';
-        pg.fillText(a0 === a1 ? '打平' : (a0 > a1 ? '左边更稳' : '右边更稳'), 80, 486);
+    S.notes = notes;
+    S.total = notes.length;
+  }
+
+  function makeDemoBuffer() {
+    ensureAudio();
+    var sr = 44100, dur = 24;
+    var buf = ac.createBuffer(1, sr * dur, sr);
+    var d = buf.getChannelData(0);
+    var rnd = rng(1234567);
+    for (var i = 0; i < d.length; i++) {
+      var t = i / sr;
+      var beat = t % 0.5;
+      var eighth = t % 0.25;
+      var kick = Math.exp(-beat * 26) * Math.sin(2 * Math.PI * 55 * beat);
+      var hat = eighth < 0.025 ? (rnd() * 2 - 1) * Math.exp(-eighth * 90) * 0.35 : 0;
+      var snare = (t % 2 > 0.95 && t % 2 < 1.02) ? (rnd() * 2 - 1) * Math.exp(-(t % 2 - 0.95) * 40) * 0.3 : 0;
+      var bass = Math.sin(2 * Math.PI * 110 * beat) * Math.exp(-beat * 10) * 0.18;
+      d[i] = Math.max(-1, Math.min(1, kick * 0.8 + hat + snare + bass));
+    }
+    return buf;
+  }
+
+  /* ---------- game ---------- */
+  function now() { return ac ? ac.currentTime - S.startAt - (S.offset / 1000) : 0; }
+
+  function drawBackground() {
+    var skin = S.skin;
+    if (skin === 'custom' && S.customImage) {
+      var img = S.customImage;
+      var scale = Math.max(W / img.width, Hh / img.height);
+      var iw = img.width * scale, ih = img.height * scale;
+      g.save();
+      g.filter = 'blur(2px) brightness(.55) saturate(.9)';
+      g.drawImage(img, (W - iw) / 2, (Hh - ih) / 2, iw, ih);
+      g.restore();
+      g.fillStyle = 'rgba(8,10,16,.28)';
+      g.fillRect(0, 0, W, Hh);
+      return;
+    }
+    if (skin === 'nocturne') {
+      var grad = g.createLinearGradient(0, 0, 0, Hh);
+      grad.addColorStop(0, '#070A18');
+      grad.addColorStop(1, '#0B1220');
+      g.fillStyle = grad; g.fillRect(0, 0, W, Hh);
+      var r = rng(99);
+      for (var i = 0; i < 80; i++) {
+        g.fillStyle = 'rgba(255,255,255,' + (0.12 + r() * 0.4) + ')';
+        g.beginPath(); g.arc(r() * W, r() * Hh * 0.8, r() * 1.4 + 0.4, 0, Math.PI * 2); g.fill();
       }
+      return;
     }
-    pg.fillStyle = 'rgba(255,255,255,.55)';
-    pg.font = '500 34px "Geist", -apple-system, "PingFang SC", sans-serif';
-    pg.fillText('gongjuhe.top/beat-toy · 声音与画面全部在本机生成', 80, ph - 120);
-    if (qrImg) {
-      // 二维码往上挪 60px:原来它和底部落款在同一水平线上,"扫码玩一个你的"和落款挤在一起/相互压字
-      // (导出图里一眼看出来的排版缺陷 —— 分享图是拉新入口,不能糊)
-      var qs = qrImg.width, qx = pw - qs - 88, qy = ph - qs - 210;
-      pg.fillStyle = '#fff';
-      pg.beginPath();
-      var rr = 14, qw = qs + 24;
-      pg.moveTo(qx - 12 + rr, qy - 12);
-      pg.arcTo(qx - 12 + qw, qy - 12, qx - 12 + qw, qy - 12 + qw, rr);
-      pg.arcTo(qx - 12 + qw, qy - 12 + qw, qx - 12, qy - 12 + qw, rr);
-      pg.arcTo(qx - 12, qy - 12 + qw, qx - 12, qy - 12, rr);
-      pg.arcTo(qx - 12, qy - 12, qx - 12 + qw, qy - 12, rr);
-      pg.closePath(); pg.fill();
-      pg.drawImage(qrImg, qx, qy);
-      pg.fillStyle = 'rgba(255,255,255,.78)';
-      pg.font = '500 24px "Geist", -apple-system, "PingFang SC", sans-serif';
-      pg.textAlign = 'center';
-      pg.fillText('扫码玩一个你的', qx + qs / 2, qy + qs + 20);
-      pg.textAlign = 'left';
+    if (skin === 'papercut') {
+      g.fillStyle = '#F1EEE4'; g.fillRect(0, 0, W, Hh);
+      return;
     }
-    c.toBlob(async function (blob) {
-      if (!blob) { out.innerHTML = '<div class="note err" style="display:block">导出失败,请重试。</div>'; return; }
-      var chk = await H.checkImage(blob);
-      if (chk.ok) H.downloadBlob(blob, '节奏玩具-' + totalHits + '下' + (duo ? '-双人' : '') + '.png');
-      out.innerHTML = '<div class="note ' + (chk.ok ? 'ok' : 'err') + '" style="display:block">'
-        + (chk.ok ? '已导出 ' + chk.width + ' × ' + chk.height + ' · ' + H.fmt(chk.bytes) + '(自检 ✓)' : '自检没通过:' + H.esc(chk.error)) + '</div>';
-    }, 'image/png');
+    g.fillStyle = '#E7EBE1'; g.fillRect(0, 0, W, Hh);
+    g.strokeStyle = 'rgba(30,42,34,.08)'; g.lineWidth = 1;
+    for (var x = 0; x < W; x += 34) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, Hh); g.stroke(); }
+    for (var y = 0; y < Hh; y += 34) { g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); }
+  }
+
+  function laneX(lane) {
+    var left = 110, right = W - 110;
+    var w = (right - left) / 4;
+    return left + w * lane + w / 2;
+  }
+  function laneColor(lane) {
+    if (S.skin === 'nocturne') return ['#D7FF3F', '#7EEBFF', '#FF8BE0', '#FFD447'][lane];
+    if (S.skin === 'papercut') return ['#D8232A', '#1F4FA0', '#D9A441', '#1E2A22'][lane];
+    if (S.skin === 'custom' && S.palette && S.palette[lane]) return S.palette[lane];
+    return ['#2F4B7C', '#B4552D', '#5F6B5F', '#D9A441'][lane];
+  }
+
+  function drawIdle() {
+    drawBackground();
+    g.fillStyle = S.skin === 'nocturne' ? 'rgba(255,255,255,.9)' : 'rgba(30,42,34,.72)';
+    g.font = '600 34px Georgia,"Songti SC","SimSun",serif';
+    g.textAlign = 'center';
+    g.fillText('节奏标本', W / 2, Hh / 2 - 8);
+    g.font = '14px "Segoe UI","PingFang SC","Microsoft YaHei",sans-serif';
+    g.fillText('上传一首歌，把它的节拍做成一张谱', W / 2, Hh / 2 + 26);
+    g.textAlign = 'left';
+  }
+
+  function drawGame() {
+    drawBackground();
+    var t = now();
+    var approach = 2.0 / S.speed;
+    var judgeY = Hh * 0.76;
+    var topY = -40;
+    var left = 110, right = W - 110;
+    var laneW = (right - left) / 4;
+
+    // lanes
+    for (var i = 0; i < 4; i++) {
+      var x = left + i * laneW;
+      if (S.skin === 'herbarium') {
+        g.fillStyle = i % 2 ? 'rgba(247,246,239,.42)' : 'rgba(247,246,239,.62)';
+      } else if (S.skin === 'papercut') {
+        g.fillStyle = i % 2 ? 'rgba(216,35,42,.10)' : 'rgba(31,79,160,.10)';
+      } else {
+        g.fillStyle = i % 2 ? 'rgba(255,255,255,.035)' : 'rgba(255,255,255,.06)';
+      }
+      g.fillRect(x, 0, laneW, Hh);
+      g.strokeStyle = S.skin === 'nocturne' ? 'rgba(255,255,255,.08)' : 'rgba(30,42,34,.10)';
+      g.lineWidth = 1;
+      g.beginPath(); g.moveTo(x, 0); g.lineTo(x, Hh); g.stroke();
+    }
+
+    // judgment line
+    g.strokeStyle = S.skin === 'nocturne' ? '#D7FF3F' : S.skin === 'papercut' ? '#111' : '#2F4B7C';
+    g.lineWidth = 3;
+    g.beginPath(); g.moveTo(left, judgeY); g.lineTo(right, judgeY); g.stroke();
+
+    // notes
+    S.notes.forEach(function (n) {
+      if (n.judged) return;
+      var dt = n.t - t;
+      if (dt > approach || dt < -0.22) return;
+      var y = judgeY - (dt / approach) * (judgeY - topY);
+      var x = laneX(n.lane);
+      var color = laneColor(n.lane);
+      if (S.skin === 'nocturne') {
+        var grd = g.createRadialGradient(x, y, 0, x, y, 26);
+        grd.addColorStop(0, color);
+        grd.addColorStop(0.25, color + '99');
+        grd.addColorStop(1, 'rgba(0,0,0,0)');
+        g.fillStyle = grd;
+        g.beginPath(); g.arc(x, y, 26, 0, Math.PI * 2); g.fill();
+        g.fillStyle = '#fff';
+        g.beginPath(); g.arc(x, y, 5, 0, Math.PI * 2); g.fill();
+      } else if (S.skin === 'papercut') {
+        g.fillStyle = 'rgba(0,0,0,.25)';
+        g.fillRect(x - 44, y - 10, 88, 22);
+        g.fillStyle = color;
+        g.fillRect(x - 46, y - 12, 88, 22);
+      } else {
+        g.fillStyle = color;
+        g.beginPath();
+        if (g.roundRect) g.roundRect(x - 44, y - 11, 88, 22, 11);
+        else g.rect(x - 44, y - 11, 88, 22);
+        g.fill();
+        g.fillStyle = 'rgba(255,255,255,.8)';
+        g.beginPath(); g.arc(x, y, 4, 0, Math.PI * 2); g.fill();
+      }
+    });
+
+    // hit effects
+    S.hitFx = S.hitFx.filter(function (fx) { return t - fx.t < 0.35; });
+    g.textAlign = 'center';
+    S.hitFx.forEach(function (fx) {
+      var age = (t - fx.t) / 0.35;
+      g.strokeStyle = 'rgba(217,164,65,' + (1 - age) + ')';
+      g.lineWidth = 3;
+      g.beginPath(); g.arc(laneX(fx.lane), judgeY, 18 + age * 42, 0, Math.PI * 2); g.stroke();
+      g.fillStyle = fx.grade === 'perfect' ? '#D9A441' : fx.grade === 'great' ? '#2F4B7C' : '#5F6B5F';
+      g.globalAlpha = 1 - age;
+      g.font = '600 15px "Segoe UI","PingFang SC",sans-serif';
+      g.fillText(fx.grade === 'perfect' ? 'PERFECT' : fx.grade === 'great' ? 'GREAT' : 'GOOD', laneX(fx.lane), judgeY - 34 - age * 22);
+      g.globalAlpha = 1;
+    });
+    g.textAlign = 'left';
+
+    // key labels
+    g.textAlign = 'center';
+    g.font = '13px "Segoe UI","PingFang SC","Microsoft YaHei",sans-serif';
+    for (var k = 0; k < 4; k++) {
+      g.fillStyle = S.skin === 'nocturne' ? 'rgba(255,255,255,.45)' : 'rgba(30,42,34,.42)';
+      g.fillText(['D', 'F', 'J', 'K'][k], laneX(k), Hh - 24);
+    }
+    g.textAlign = 'left';
+
+    // progress
+    if (S.total) {
+      var done = S.hits.perfect + S.hits.great + S.hits.good + S.hits.miss;
+      var pct = Math.min(100, Math.round(done / S.total * 100));
+      progressEl.textContent = pct + '%';
+    }
+  }
+
+  function render() {
+    if (S.playing || S.paused) drawGame();
+    else if (S.buffer) drawIdle();
+    else drawIdle();
+    S.raf = requestAnimationFrame(render);
+  }
+
+  function updateHud() {
+    scoreEl.textContent = S.score;
+    comboEl.textContent = S.combo;
+    if (S.total) {
+      var acc = (S.accSum / S.total) * 100;
+      accEl.textContent = (acc >= 100 ? 100 : acc).toFixed(1) + '%';
+    } else {
+      accEl.textContent = '--';
+    }
+  }
+
+  function judge(lane) {
+    if (!S.playing || S.paused) return;
+    var t = now();
+    var best = null, bestD = 1;
+    S.notes.forEach(function (n) {
+      if (n.judged || n.lane !== lane) return;
+      var d = Math.abs(n.t - t);
+      if (d < 0.16 && d < bestD) { best = n; bestD = d; }
+    });
+    if (!best) return;
+    best.judged = true;
+    best.hit = true;
+    var grade, weight;
+    if (bestD <= 0.045) { grade = 'perfect'; weight = 1; }
+    else if (bestD <= 0.09) { grade = 'great'; weight = 0.72; }
+    else { grade = 'good'; weight = 0.4; }
+    best.grade = grade;
+    S.hits[grade]++;
+    S.combo++; if (S.combo > S.maxCombo) S.maxCombo = S.combo;
+    S.score += Math.round(weight * 1000 + Math.max(0, S.combo - 1) * 8);
+    S.accSum += weight;
+    S.hitFx.push({ lane: lane, t: t, grade: grade });
+    updateHud();
+  }
+
+  function checkMiss(t) {
+    var changed = false;
+    S.notes.forEach(function (n) {
+      if (!n.judged && n.t < t - 0.16) {
+        n.judged = true; n.hit = false; n.grade = 'miss';
+        S.hits.miss++; S.combo = 0; changed = true;
+      }
+    });
+    if (changed) updateHud();
+  }
+
+  function finishGame() {
+    if (!S.playing) return;
+    if (S.countdownTimer) { clearInterval(S.countdownTimer); S.countdownTimer = 0; }
+    countEl.hidden = true;
+    S.notes.forEach(function (n) { if (!n.judged) { n.judged = true; S.hits.miss++; } });
+    S.playing = false; S.paused = false;
+    if (S.source) { try { S.source.stop(); } catch (e) {} S.source = null; }
+    S.hitFx = [];
+    var acc = S.total ? (S.accSum / S.total) * 100 : 0;
+    var grade = acc >= 95 ? 'S' : acc >= 85 ? 'A' : acc >= 70 ? 'B' : 'C';
+    root.querySelector('#bsGrade').textContent = grade;
+    root.querySelector('#bsStat').innerHTML =
+      '<div><span>准确率</span><b>' + acc.toFixed(1) + '%</b></div>'
+      + '<div><span>最大连击</span><b>' + S.maxCombo + '</b></div>'
+      + '<div><span>Perfect</span><b>' + S.hits.perfect + '</b></div>'
+      + '<div><span>Great</span><b>' + S.hits.great + '</b></div>'
+      + '<div><span>Good</span><b>' + S.hits.good + '</b></div>'
+      + '<div><span>Miss</span><b>' + S.hits.miss + '</b></div>';
+    panelResult.hidden = false;
+    panelConfig.hidden = true;
+    panelPlay.hidden = true;
+    root.querySelector('#bsPanelUpload').hidden = true;
+    root.querySelector('#bsPlayRow').hidden = true;
+    hud.hidden = false;
+    updateHud();
+    S.final = { grade: grade, acc: acc };
+    saveBest(acc, grade);
+    if (S.newBest) {
+      root.querySelector('#bsStat').insertAdjacentHTML('beforeend', '<div><span>记录</span><b>NEW BEST</b></div>');
+    }
+    drawIdle();
+  }
+
+  function startGame() {
+    if (!S.buffer || !S.notes.length) return;
+    ensureAudio();
+    if (ac.state === 'suspended') ac.resume();
+    buildChart();
+    S.score = 0; S.combo = 0; S.maxCombo = 0; S.accSum = 0;
+    S.hits = { perfect: 0, great: 0, good: 0, miss: 0 };
+    S.hitFx = []; S.final = null; S.playing = true; S.paused = false;
+    S.source = ac.createBufferSource();
+    S.source.buffer = S.buffer;
+    S.source.connect(master);
+    var startDelay = 3.0;
+    S.startAt = ac.currentTime + startDelay;
+    S.source.start(S.startAt);
+    S.source.onended = function () { if (S.playing) finishGame(); };
+    S.newBest = false;
+    if (S.countdownTimer) clearInterval(S.countdownTimer);
+    var count = 3;
+    countEl.hidden = false;
+    countEl.textContent = String(count);
+    S.countdownTimer = setInterval(function () {
+      count--;
+      if (count > 0) {
+        countEl.textContent = String(count);
+      } else {
+        countEl.textContent = 'GO';
+        clearInterval(S.countdownTimer);
+        S.countdownTimer = 0;
+        setTimeout(function () { countEl.hidden = true; }, 420);
+      }
+    }, 1000);
+    veil.hidden = true;
+    hud.hidden = false;
+    panelConfig.hidden = true;
+    panelResult.hidden = true;
+    panelUpload.hidden = true;
+    panelPlay.hidden = false;
+    root.querySelector('#bsPlayMeta').innerHTML =
+      '<div>曲目 <b>' + (S.fileName || '未命名').replace(/\.[^.]+$/, '').slice(0, 26) + '</b></div>'
+      + '<div>BPM <b>' + Math.round(S.bpm) + '</b> · 难度 <b>' + S.difficulty.toUpperCase() + '</b></div>'
+      + '<div>皮肤 <b>' + SKIN_NAMES[S.skin] + '</b> · 音符 <b>' + S.total + '</b></div>';
+    root.querySelector('#bsPlayRow').hidden = false;
+    updateHud();
+  }
+
+  function stopGame(showUpload) {
+    S.playing = false; S.paused = false;
+    if (S.countdownTimer) { clearInterval(S.countdownTimer); S.countdownTimer = 0; }
+    countEl.hidden = true;
+    if (S.source) { try { S.source.stop(); } catch (e) {} S.source = null; }
+    hud.hidden = true;
+    root.querySelector('#bsPlayRow').hidden = true;
+    panelResult.hidden = true;
+    panelPlay.hidden = true;
+    panelConfig.hidden = false;
+    root.querySelector('#bsPanelUpload').hidden = true;
+    veil.hidden = true;
+    if (ac && ac.state === 'suspended') ac.resume();
+    drawIdle();
+    veilBtn.textContent = '选择音乐';
+    veilHandler = function () { file.click(); };
+    if (showUpload) { panelConfig.hidden = true; veil.hidden = false; veilTitle.textContent = '再放一首歌'; veilText.textContent = '拖入音频，或先用示例节拍。'; }
+  }
+
+  function updateMeta() {
+    root.querySelector('#bsSongName').textContent = S.fileName || '未命名';
+    var bpm = Math.round(S.bpm * 10) / 10;
+    root.querySelector('#bsMeta').innerHTML =
+      '<div>时长 <b>' + fmtTime(S.duration) + '</b></div>'
+      + '<div>估计 BPM <b>' + bpm + '</b></div>'
+      + '<div>节拍点 <b>' + S.peaks.length + '</b></div>'
+      + '<div>谱面音符 <b>' + S.notes.length + '</b></div>'
+      + '<div>分析范围 <b>' + fmtTime(Math.min(S.duration, 480)) + '</b></div>';
+    root.querySelector('#bsBpm').value = bpm;
+    showBest();
+  }
+
+  function loadBuffer(buffer, name) {
+    S.buffer = buffer;
+    S.fileName = name;
+    S.duration = buffer.duration;
+    statusEl.textContent = '正在分析节拍点…';
+    return new Promise(function (resolve) {
+      setTimeout(function () {
+        var analysis = analyze(buffer);
+        if (!analysis.peaks.length) {
+          statusEl.textContent = '这段音频里没找到足够的节拍点；换一首鼓点更清楚的歌试试。';
+          H.toast('没有找到足够节拍点');
+          resolve(false);
+          return;
+        }
+        S.peaks = analysis.peaks;
+        S.bpm = analysis.bpm;
+        buildChart();
+        updateMeta();
+        panelUpload.hidden = true;
+        panelConfig.hidden = false;
+        panelResult.hidden = true;
+        panelPlay.hidden = true;
+        root.querySelector('#bsPanelUpload').hidden = true;
+        veil.hidden = true;
+        hud.hidden = true;
+        statusEl.textContent = '';
+        drawIdle();
+        H.toast('分析完成：' + S.notes.length + ' 个音符');
+        resolve(true);
+      }, 40);
+    });
+  }
+
+  function openFile(file) {
+    if (!file) return;
+    if (!/^audio\//.test(file.type) && !/\.(mp3|wav|m4a|ogg|aac|flac)$/i.test(file.name)) {
+      statusEl.textContent = '这个文件看起来不是音频，换一个 MP3 / WAV / M4A / OGG 试试。';
+      return;
+    }
+    if (file.size > 40 * 1024 * 1024) {
+      statusEl.textContent = '文件超过 40MB 了；先用 8 分钟以内的版本试试。';
+      return;
+    }
+    statusEl.textContent = '正在解码…（文件不会离开浏览器）';
+    ensureAudio();
+    file.arrayBuffer().then(function (ab) {
+      return ac.decodeAudioData(ab);
+    }).then(function (buf) {
+      if (buf.duration > 600) {
+        statusEl.textContent = '这首歌超过 10 分钟；先做 10 分钟以内的版本。';
+        return;
+      }
+      return loadBuffer(buf, file.name);
+    }).catch(function () {
+      statusEl.textContent = '解码失败：这个格式浏览器可能不支持，换 WAV / MP3 试试。';
+    });
+  }
+
+  /* ---------- specimen card ---------- */
+  function exportCard() {
+    var c = document.createElement('canvas');
+    c.width = 1080; c.height = 1350;
+    var ctx = c.getContext('2d');
+    ctx.fillStyle = '#F7F6EF'; ctx.fillRect(0, 0, 1080, 1350);
+    ctx.strokeStyle = 'rgba(30,42,34,.18)'; ctx.lineWidth = 2;
+    ctx.strokeRect(54, 54, 972, 1242);
+    ctx.fillStyle = '#2F4B7C'; ctx.font = '600 20px Georgia,serif';
+    ctx.fillText('BEAT SPECIMEN / 节奏标本', 84, 100);
+    ctx.fillStyle = '#1E2A22'; ctx.font = '600 54px Georgia,"Songti SC","SimSun",serif';
+    ctx.fillText((S.fileName || '未命名').replace(/\.[^.]+$/, '').slice(0, 22), 84, 170);
+    ctx.fillStyle = '#5F6B5F'; ctx.font = '16px "Segoe UI","PingFang SC",sans-serif';
+    ctx.fillText((S.final ? S.final.grade : '—') + ' · ' + Math.round(S.bpm) + ' BPM · ' + (DIFF_MIN[S.difficulty] ? S.difficulty.toUpperCase() : ''), 84, 206);
+
+    // song constellation
+    var panelY = 240, panelH = 620;
+    ctx.fillStyle = '#070A18'; ctx.fillRect(84, panelY, 912, panelH);
+    var rnd = rng(hashStr(S.fileName + S.notes.length + S.bpm));
+    var pts = [];
+    ctx.strokeStyle = 'rgba(217,164,65,.4)'; ctx.lineWidth = 1.4;
+    for (var i = 0; i < Math.min(S.notes.length, 80); i++) {
+      pts.push({ x: 120 + rnd() * 840, y: panelY + 40 + rnd() * (panelH - 80) });
+    }
+    pts.forEach(function (p, i) {
+      if (i === 0) return;
+      ctx.beginPath(); ctx.moveTo(pts[i - 1].x, pts[i - 1].y); ctx.lineTo(p.x, p.y); ctx.stroke();
+    });
+    pts.forEach(function (p, i) {
+      var r = 2 + (i % 3);
+      var grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 5);
+      grd.addColorStop(0, 'rgba(243,233,216,.95)');
+      grd.addColorStop(1, 'rgba(243,233,216,0)');
+      ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(p.x, p.y, r * 5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#F3E9D8'; ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.fillStyle = 'rgba(243,233,216,.65)'; ctx.font = '14px Georgia,serif';
+    ctx.fillText('这首歌的星座 · 同一首歌永远同一片星空', 108, panelY + panelH - 26);
+
+    // stats
+    ctx.fillStyle = '#1E2A22'; ctx.font = '600 26px Georgia,serif';
+    ctx.fillText('本局成绩', 84, 920);
+    var stats = [
+      ['准确率', (S.total ? (S.accSum / S.total * 100) : 0).toFixed(1) + '%'],
+      ['最大连击', S.maxCombo],
+      ['Perfect', S.hits.perfect],
+      ['Miss', S.hits.miss]
+    ];
+    ctx.font = '16px "Segoe UI","PingFang SC",sans-serif';
+    stats.forEach(function (s, i) {
+      var y = 960 + i * 30;
+      ctx.fillStyle = '#5F6B5F'; ctx.fillText(s[0], 84, y);
+      ctx.fillStyle = '#1E2A22'; ctx.fillText(String(s[1]), 300, y);
+    });
+    ctx.fillStyle = '#5F6B5F'; ctx.font = '14px "Segoe UI","PingFang SC",sans-serif';
+    ctx.fillText('gongjuhe.top · 本卡在本地生成 · 音频没有上传', 84, 1260);
+    c.toBlob(function (blob) { if (blob) H.downloadBlob(blob, '节奏标本-' + (S.fileName || '未命名').replace(/\.[^.]+$/, '') + '.png'); }, 'image/png');
+    H.toast('正在导出标本卡');
+  }
+
+  /* ---------- wiring ---------- */
+  var pickBtn = root.querySelector('#bsPick');
+  var demoBtn = root.querySelector('#bsDemo');
+  var startBtn = root.querySelector('#bsStart');
+  var backBtn = root.querySelector('#bsBack');
+  var file = root.querySelector('#bsFile');
+  var skinFile = root.querySelector('#bsSkinFile');
+
+  pickBtn.addEventListener('click', function () { file.click(); });
+  file.addEventListener('change', function () { if (file.files[0]) openFile(file.files[0]); file.value = ''; });
+  var dropZone = root.querySelector('#bsPanelUpload .bs-drop');
+  ['dragenter', 'dragover'].forEach(function (ev) {
+    dropZone.addEventListener(ev, function (e) { e.preventDefault(); dropZone.style.borderColor = 'var(--c-accent)'; });
+  });
+  ['dragleave', 'dragend'].forEach(function (ev) {
+    dropZone.addEventListener(ev, function () { dropZone.style.borderColor = ''; });
+  });
+  dropZone.addEventListener('drop', function (e) {
+    e.preventDefault();
+    dropZone.style.borderColor = '';
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) openFile(e.dataTransfer.files[0]);
+  });
+  demoBtn.addEventListener('click', function () {
+    statusEl.textContent = '正在生成示例节拍…';
+    setTimeout(function () {
+      loadBuffer(makeDemoBuffer(), '示例节拍 · 120 BPM');
+    }, 20);
   });
 
-  paintStats();
-  if (reduce) out.innerHTML = '<div class="note" style="display:block">检测到系统开启了「减少动态效果」:粒子数量已自动减少,背景不再呼吸。</div>';
+  root.querySelector('#bsDiff').addEventListener('click', function (e) {
+    var b = e.target.closest('.bs-chip'); if (!b) return;
+    S.difficulty = b.dataset.diff;
+    root.querySelectorAll('#bsDiff .bs-chip').forEach(function (x) { x.classList.toggle('active', x === b); });
+    buildChart(); updateMeta(); drawIdle();
+  });
+  root.querySelector('#bsSkins').addEventListener('click', function (e) {
+    var b = e.target.closest('.bs-chip'); if (!b) return;
+    S.skin = b.dataset.skin;
+    root.querySelectorAll('#bsSkins .bs-chip').forEach(function (x) { x.classList.toggle('active', x === b); });
+    root.querySelector('#bsSkinTools').hidden = S.skin !== 'custom';
+    if (S.skin === 'custom' && !S.customImage) skinFile.click();
+    drawIdle();
+  });
+  root.querySelector('#bsBpm').addEventListener('change', function () {
+    var v = parseFloat(this.value);
+    if (v >= 60 && v <= 200) { S.bpm = v; updateMeta(); drawIdle(); }
+  });
+  speedEl.addEventListener('input', function () { S.speed = parseFloat(this.value) || 1; syncSettingsUI(); saveSettings(); drawIdle(); });
+  offsetEl.addEventListener('input', function () { S.offset = parseInt(this.value, 10) || 0; syncSettingsUI(); saveSettings(); drawIdle(); });
+  volumeEl.addEventListener('input', function () { S.volume = parseFloat(this.value); syncSettingsUI(); saveSettings(); });
+  densityEl.addEventListener('input', function () {
+    S.density = parseFloat(this.value) || 1;
+    syncSettingsUI(); saveSettings();
+    if (S.peaks.length) { buildChart(); updateMeta(); drawIdle(); }
+  });
+  root.querySelector('#bsCustomPick').addEventListener('click', function () { skinFile.click(); });
+  root.querySelector('#bsCustomClear').addEventListener('click', function () {
+    S.customImage = null; S.palette = null;
+    H.toast('已清除自定义底图');
+  });
+  skinFile.addEventListener('change', function () {
+    var f = skinFile.files[0]; if (!f) return;
+    var img = new Image();
+    img.onload = function () {
+      S.customImage = img;
+      var c = document.createElement('canvas'); c.width = 32; c.height = 32;
+      var cx = c.getContext('2d'); cx.drawImage(img, 0, 0, 32, 32);
+      var d = cx.getImageData(0, 0, 32, 32).data;
+      var colors = [];
+      for (var i = 0; i < d.length; i += 4 * 64) {
+        colors.push('rgb(' + d[i] + ',' + d[i + 1] + ',' + d[i + 2] + ')');
+      }
+      S.palette = colors.slice(0, 4);
+      S.skin = 'custom';
+      root.querySelectorAll('#bsSkins .bs-chip').forEach(function (x) { x.classList.toggle('active', x.dataset.skin === 'custom'); });
+      H.toast('已应用自定义底图（只在本地）');
+      drawIdle();
+    };
+    img.src = URL.createObjectURL(f);
+    skinFile.value = '';
+  });
+
+  startBtn.addEventListener('click', startGame);
+  backBtn.addEventListener('click', function () { stopGame(true); });
+  root.querySelector('#bsPause').addEventListener('click', function () {
+    if (!S.playing || S.paused || now() < 0) return;
+    if (!S.paused) {
+      ac.suspend(); S.paused = true; this.textContent = '继续';
+      veil.hidden = false; veilTitle.textContent = '暂停'; veilText.textContent = '点击继续，或退出本局。'; veilBtn.textContent = '继续';
+      veilHandler = function () { ac.resume(); S.paused = false; veil.hidden = true; root.querySelector('#bsPause').textContent = '暂停'; };
+    }
+  });
+  root.querySelector('#bsQuit').addEventListener('click', function () { stopGame(false); });
+  root.querySelector('#bsReplay').addEventListener('click', function () { panelResult.hidden = true; startGame(); });
+  root.querySelector('#bsExport').addEventListener('click', exportCard);
+  root.querySelector('#bsNew').addEventListener('click', function () { stopGame(true); });
+  var veilHandler = function () { file.click(); };
+  veilBtn.addEventListener('click', function () { veilHandler(); });
+
+  document.addEventListener('keydown', function (e) {
+    if (!S.playing || S.paused) return;
+    var k = e.key.toLowerCase();
+    var lane = k === 'd' ? 0 : k === 'f' ? 1 : k === 'j' ? 2 : k === 'k' ? 3 : -1;
+    if (lane >= 0) { e.preventDefault(); judge(lane); }
+  });
+  cv.addEventListener('pointerdown', function (e) {
+    if (!S.playing || S.paused) return;
+    var r = cv.getBoundingClientRect();
+    var x = (e.clientX - r.left) / r.width * W;
+    var left = 110, right = W - 110;
+    var lane = Math.floor((x - left) / ((right - left) / 4));
+    if (lane >= 0 && lane < 4) judge(lane);
+  });
+
+  // main loop
+  loadSettings();
+  syncSettingsUI();
+  var lastCheck = 0;
+  function loop() {
+    if (S.playing && !S.paused) {
+      var t = now();
+      checkMiss(t);
+      if (t > S.duration + 1 || (S.notes.length && t > S.notes[S.notes.length - 1].t + 2.2)) finishGame();
+    }
+    drawGameOrIdle();
+    S.raf = requestAnimationFrame(loop);
+  }
+  function drawGameOrIdle() {
+    if (S.playing || S.paused) drawGame(); else drawIdle();
+  }
+  loop();
+
+  drawIdle();
 }

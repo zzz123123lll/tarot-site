@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#07080d">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231d1d1f'/%3E%3Cpath d='M50 16L59 41L84 50L59 59L50 84L41 59L16 50L41 41Z' fill='%23e6c784'/%3E%3C/svg%3E">
-<title>文字星图 - 把一段文字变成星空 · 工具盒</title>
-<meta name="description" content="文字星图:写下一段文字,每个字变成一颗星,字与字的连线就是句子的走向。同一段文字永远是同一片星空,可导出分享图;纯本机计算,不上传。">
+<title>纪念星图 - 把想留住的字放回天上 · 工具盒</title>
+<meta name="description" content="纪念星图:把一段话、一列名字或一封信变成只属于你们的星空。可导出分享卡,也可打印 A4 海报;纯本机生成,不上传。">
 <link rel="canonical" href="https://gongjuhe.top/star-map/">
-<meta property="og:title" content="文字星图 - 把一段文字变成星空 · 工具盒">
-<meta property="og:description" content="每个字一颗星;同一段文字永远是同一片星空。本机生成,可导出分享图。">
+<meta property="og:title" content="纪念星图 - 把想留住的字放回天上 · 工具盒">
+<meta property="og:description" content="一段话、一列名字或一封信,变成一张可打印的私人星图。本机生成,不上传。">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://gongjuhe.top/og.png">
+<meta property="og:image" content="https://gongjuhe.top/og-personal.png">
 <meta property="og:url" content="https://gongjuhe.top/star-map/">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
@@ -28,7 +28,7 @@
   <a class="tool-nav-brand" href="/"><span class="nav-mark"><svg class="nav-star" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.4l2.55 7.05L21.6 12l-7.05 2.55L12 21.6l-2.55-7.05L2.4 12l7.05-2.55z" fill="currentColor"/></svg></span>工具盒</a>
   <span class="tool-nav-title" id="toolTitle"></span>
 </nav>
-<div class="tool-container" id="toolRoot"><div class="tool-static"><h1 class="tool-h1">文字星图</h1><p class="tool-sub">写下一段文字，它会变成一片星空：每个字是一颗星，字与字的连线就是句子的走向。同一段文字永远是同一片星空，可以导出成分享图。</p><p class="tool-static-note">这个工具在你的浏览器里本地运行，不上传任何内容；加载完成后即可直接使用。</p></div></div>
+<div class="tool-container" id="toolRoot"><div class="tool-static"><h1 class="tool-h1">纪念星图</h1><p class="tool-sub">把想留住的字，放回天上。一段话、一列名字、一封信，都会变成只属于你们的星空；可导出分享卡，也可以打印成 A4 海报。</p><p class="tool-static-note">这个工具在你的浏览器里本地运行，不上传任何内容；加载完成后即可直接使用。</p></div></div>
 <script type="module">
 import { mountTool } from '/shared/toolkit.js?v=67';
 function slugFromPath() {
@@ -43,7 +43,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js?v=23'); });
 }
 </script>
-  <footer class="tool-foot"><h2 class="tool-more-title">接着可以做什么</h2><div class="tool-more-grid"><a class="tool-more-card" data-fx="spotlight" href="/beat-toy/"><span class="tmc-name">节奏玩具</span><span class="tmc-desc">点开即玩：敲击发声、画面留痕，可导出分享图。</span></a><a class="tool-more-card" data-fx="spotlight" href="/tarot/"><span class="tmc-name">塔罗占卜</span><span class="tmc-desc">78 张韦特牌，一次有依据、不套话的解读。</span></a><a class="tool-more-card" data-fx="spotlight" href="/cover-gen/"><span class="tmc-name">封面图生成</span><span class="tmc-desc">输入标题，一键出小红书/公众号/视频封面，本机排版。</span></a></div><p class="tool-foot-line">生成与好玩 · 全部工具本地运行，文件不上传</p><nav class="tool-foot-links" aria-label="同分区工具"><a href="/tarot/">塔罗占卜</a><a href="/cover-gen/">封面图生成</a><a href="/beat-toy/">节奏玩具</a><a href="/verify/">怎么验证不上传</a><a href="/">全部工具</a></nav></footer>
+  <footer class="tool-foot"><h2 class="tool-more-title">接着可以做什么</h2><div class="tool-more-grid"><a class="tool-more-card" data-fx="spotlight" href="/beat-toy/"><span class="tmc-name">节奏标本</span><span class="tmc-desc">上传自己的歌，自动生成四轨谱面；可换皮肤，导出歌曲标本卡。</span></a><a class="tool-more-card" data-fx="spotlight" href="/tarot/"><span class="tmc-name">塔罗占卜</span><span class="tmc-desc">78 张韦特牌，一次有依据、不套话的解读。</span></a><a class="tool-more-card" data-fx="spotlight" href="/cover-gen/"><span class="tmc-name">封面图生成</span><span class="tmc-desc">输入标题，一键出小红书/公众号/视频封面，本机排版。</span></a></div><p class="tool-foot-line">生成与好玩 · 全部工具本地运行，文件不上传</p><nav class="tool-foot-links" aria-label="同分区工具"><a href="/tarot/">塔罗占卜</a><a href="/cover-gen/">封面图生成</a><a href="/beat-toy/">节奏标本</a><a href="/verify/">怎么验证不上传</a><a href="/">全部工具</a></nav></footer>
   <script defer src="/assets/pointer-fx.js?v=1"></script>
 </body>
 </html>

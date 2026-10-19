@@ -1,26 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>页面未找到 · 工具盒</title>
-<link rel="stylesheet" href="/base.css?v=7">
-<link rel="stylesheet" href="/fonts.css?v=4">
-<style>
-/* 404 也用同一套令牌(base.css):字号取阶梯里的 21px,圆角取 --r-sm */
-body{font-family:"Geist",-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--c-text);background:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center}
-main{text-align:center;padding:var(--sp-4)}
-h1{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600;margin:0 0 var(--sp-2)}
-p{font-size:var(--fs-small);line-height:var(--lh-small);color:var(--c-muted);margin:0 0 var(--sp-5)}
-a{display:inline-flex;align-items:center;min-height:44px;padding:0 var(--sp-4);background:var(--c-accent);color:#fff;text-decoration:none;border-radius:var(--r-sm);font-size:var(--fs-small)}
-</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>页面未找到 · Alex</title>
+<meta name="theme-color" content="#E7EBE1">
+<link rel="stylesheet" href="/personal.css?v=3">
 </head>
 <body>
-<main>
-<h1>页面未找到</h1>
-<p>这个工具不在盒子里,回首页看看吧。</p>
-<a href="/">← 回到工具盒</a>
+<main class="container page-hero" style="min-height:100vh;display:grid;align-content:center">
+  <p class="section-label">404 / 未采集</p>
+  <h1>这页标本还没采集到。</h1>
+  <p class="page-lead">你要找的页面不在这里。可能是链接过期了，也可能是我还没写完。</p>
+  <p style="display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin-top:30px">
+    <a class="btn" href="/">← 回到首页</a>
+    <a class="section-link" href="/work/">去作品目录 →</a>
+  </p>
 </main>
-  <script defer src="/assets/pointer-fx.js?v=1"></script>
 </body>
 </html>
