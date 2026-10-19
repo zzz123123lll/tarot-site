@@ -165,7 +165,7 @@
     ],
     "example": {
       "label": "PDF 本关实操题",
-      "input": "本关题目：为售后退款智能体编写严谨的 Tool JSON Schema。",
+      "input": "来源劣质示例：{\"name\": \"refund\", \"description\": \"给客户退款\", \"parameters\": {\"id\": \"string\",  \"money\": \"number\"}}",
       "walkthrough": "来源要求 order_id、refund_amount_cny、reason_category 均有类型/约束，并设计校验失败的错误格式。",
       "output": "参考答案是完整工具 schema（见本关原文）。"
     },

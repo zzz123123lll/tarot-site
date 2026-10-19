@@ -50,9 +50,9 @@
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
-      <p class="explain-example-title">先看来源里的例子：PDF 本关实操题</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>本关题目：编写多轮对话指代消解与复杂对比问题拆解器。</pre></div>
+        <div class="explain-code"><span>输入</span><pre>来源任务：用户在第 1 轮问了“Pro 版会员的年费是多少？”,第 2 轮追问：“那它跟企业旗舰版在 API 每分钟调用限额上有什么区别？”</pre></div>
         <div class="explain-walk"><h3>发生了什么</h3><p>来源要求 Query Rewriter 读取 chat_history 和 latest_question；对比题输出两个独立子查询；纯致谢跳过向量库。</p><h3>输出</h3><p>参考答案是改写器和子查询 JSON（见本关原文）。</p></div>
       </div>
       <div class="explain-two">

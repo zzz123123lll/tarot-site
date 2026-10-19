@@ -179,7 +179,7 @@
     ],
     "example": {
       "label": "PDF 本关实操题",
-      "input": "本关题目：编写零第三方框架依赖的余弦相似度检索函数。",
+      "input": "来源劣质示例：def search(q, docs)：return sorted(docs, key=lambda d: sum(q*d))[:3]（缺陷：仅算点积未做模长归一化，长文档或数值偏大的向量会霸榜，且无最低相关度阈值过滤。）",
       "walkthrough": "来源要求公式含 L2 范数、防除零、min_score=0.75 过滤，并按相似度降序返回 doc_id/score/text。",
       "output": "参考答案是完整的余弦检索函数（见本关原文）。"
     },

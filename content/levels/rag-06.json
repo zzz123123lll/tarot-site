@@ -157,8 +157,8 @@
       "闲聊/致谢可跳过检索"
     ],
     "example": {
-      "label": "PDF 本关实操题",
-      "input": "本关题目：编写多轮对话指代消解与复杂对比问题拆解器。",
+      "label": "PDF 本关任务（来源）",
+      "input": "来源任务：用户在第 1 轮问了“Pro 版会员的年费是多少？”,第 2 轮追问：“那它跟企业旗舰版在 API 每分钟调用限额上有什么区别？”",
       "walkthrough": "来源要求 Query Rewriter 读取 chat_history 和 latest_question；对比题输出两个独立子查询；纯致谢跳过向量库。",
       "output": "参考答案是改写器和子查询 JSON（见本关原文）。"
     },
