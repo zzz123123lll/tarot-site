@@ -2,6 +2,28 @@
   'use strict';
 
   var PREFIX = 'gjh-notes:';
+  var LABELS = {
+    system: 'System / 系统提示词', user: 'User / 用户指令', xml: 'XML 标签', json: 'JSON',
+    rrf: 'RRF 融合', star: 'STAR 法则', l2: 'L2 范数', rsvp: 'RSVP / 截止',
+    '字': '字数限制', '字数': '字数限制', '时间': '时间', '地点': '地点',
+    '亮点': '核心亮点', '媒体': '媒体权益', '退货': '售后/退货', '物流': '物流风险',
+    '复购': '复购/客单价', '空话': '量化/数据', '量化': '量化/数据', '数据': '量化/数据',
+    '职级': '职级/身份', '立场': '立场', '受众': '目标受众', '引用': '引用/溯源',
+    '拒答': '拒答机制', '过滤': '过滤条件', '阈值': '相似度阈值', '检索': '检索',
+    '拆分': '拆解', '拆解': '拆解', '规划': '规划结构', '工具': '工具定义',
+    '记忆': '分层记忆', '反思': '反思/校验', '多智能体': '多智能体', '护栏': '安全护栏',
+    '上下文': '上下文工程', 'chunk': '分块', 'schema': 'JSON Schema', 'required': '必填字段',
+    'tool': '工具', 'id': 'id', 'score': 'score', 'text': 'text', 'source': 'source',
+    'streamlit': 'Streamlit', 'faithfulness': '忠实度', 'context recall': 'Context Recall',
+    'generator': 'Generator', 'validator': 'Validator', 'refiner': 'Refiner',
+    'thought': 'Thought', 'action': 'Action', 'observation': 'Observation',
+    'final decision': 'Final Decision', 'l1': 'L1 自动执行', 'l2': 'L2 需确认', 'l3': 'L3 严禁外发',
+    'hitl': 'HITL', 'judge': 'LLM Judge', 'router': 'Router', 'rewriter': 'Query Rewriter'
+  };
+  function labelOf(word) {
+    var w = String(word);
+    return LABELS[w] || LABELS[w.toLowerCase()] || w;
+  }
 
   function readData(key) {
     try { return JSON.parse(localStorage.getItem(PREFIX + key) || '{}') || {}; }
@@ -117,7 +139,7 @@
         } else {
           (r.groups || []).forEach(function (g) {
             var found = g.some(function (w) { return low.indexOf(String(w).toLowerCase()) >= 0; });
-            if (!found) miss.push(g[0]);
+            if (!found) miss.push(labelOf(g[0]));
           });
           if (!r.groups || !r.groups.length) {
             if (text.length < 60) miss.push('内容过短');
