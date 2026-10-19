@@ -216,8 +216,6 @@
   }
   // 知识库外壳的离线缓存（旧站 SW 已被替换）
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js').catch(function () {});
-    });
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
   }
 })();
