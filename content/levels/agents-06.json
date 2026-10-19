@@ -137,5 +137,27 @@
       "explanation": "合规风控发现侵权等高风险时应直接打回上游阶段。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "Microsoft 第 8 课 Multi-Agent Design Pattern：多智能体通过角色分工、协作与交接完成单个 Agent 难以完成的任务。",
+    "points": [
+      "多智能体不是简单复制模型，而是把职责和工具切开。",
+      "智能体之间需要明确协作和交接方式。",
+      "每个角色应有独立职责边界，避免工具和权限混乱。",
+      "高风险场景需要回退/否决机制，而不是继续流水线。"
+    ],
+    "guide": "读第 8 课后，把练习里的 4 个子智能体、独立工具集、Handoff Schema 和一票否决分别对应到角色分工、交接和治理。",
+    "example": "来源课程的多智能体示例对应本关的选品/合规/内容分工；不要另造例子。",
+    "takeaway": "多智能体的核心是边界、交接和治理。",
+    "refs": [
+      [
+        "Microsoft · Lesson 8 Multi-Agent",
+        "https://github.com/microsoft/ai-agents-for-beginners/blob/main/08-multi-agent/README.md"
+      ],
+      [
+        "PDF 第 6 关",
+        ""
+      ]
+    ]
+  }
 }

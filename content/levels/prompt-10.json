@@ -101,5 +101,27 @@
       "explanation": "拆成多个阶段后，中间产物可验证，问题不会一路带到最终结果。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "“写作就是重写”：让 Claude 再检查或改进回答，常常能提高准确性；提示链（prompt chaining）可以把多个步骤串起来，比如先写一版，再让模型改进。",
+    "points": [
+      "可以要求模型修正上一轮回答，或对已有答案再核对。",
+      "来源提醒：即使答案已经正确，模型也可能在“再检查”时改动它；可以按第 8 章给它“坚持正确、不要乱改”的退路。",
+      "提示链也可以用于改进写作：先生成第一版，再让模型改进。",
+      "多步之间的输入输出替换是提示链的核心操作。"
+    ],
+    "guide": "本关的“初稿→审查→定稿”对应来源的 chaining：每一步只做一件事，下一步读取上一步产物。",
+    "example": "来源里有“先让模型列词、再让它修正”和“先写故事、再改进故事”的提示链例子。",
+    "takeaway": "多 Prompt 的本质是让每一步有可验证的中间产物。",
+    "refs": [
+      [
+        "Anthropic Appendix: Chaining Prompts",
+        "https://github.com/anthropics/courses/blob/master/prompt_engineering_interactive_tutorial/AmazonBedrock/anthropic/10.1_Appendix_Chaining%20Prompts.ipynb"
+      ],
+      [
+        "PDF 附录/第 10 关",
+        ""
+      ]
+    ]
+  }
 }

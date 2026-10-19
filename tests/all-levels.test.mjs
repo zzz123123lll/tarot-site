@@ -26,6 +26,9 @@ for (const tf of trackFiles) {
     seen.add(level.id);
     assert(level.trackId === track.id, level.id + ' track');
     assert(level.title && level.summary && level.lessonHtml && level.referenceAnswerHtml, level.id + ' content');
+    assert(level.reading && level.reading.quote && level.reading.guide, level.id + ' reading');
+    assert(Array.isArray(level.reading.points) && level.reading.points.length >= 3, level.id + ' reading points');
+    assert(Array.isArray(level.reading.refs) && level.reading.refs.length >= 1, level.id + ' reading refs');
     assert(Array.isArray(level.knowledgeChecks) && level.knowledgeChecks.length === 3, level.id + ' knowledgeChecks');
     level.knowledgeChecks.forEach((q) => {
       assert(q.id && q.question && q.explanation, level.id + ' knowledgeCheck fields');
@@ -68,6 +71,8 @@ for (const tf of trackFiles) {
     assert(!html.includes('data-rules='), level.id + ' page legacy rules');
     assert(html.includes('/content/levels/' + level.id + '.json'), level.id + ' page exercise data');
     assert(html.includes('data-objective'), level.id + ' page objective container');
+    assert(html.includes('class="source-reading"'), level.id + ' page source reading');
+    assert(html.includes('SOURCE READING'), level.id + ' page source reading label');
   }
 }
 

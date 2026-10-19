@@ -107,5 +107,27 @@
       "explanation": "规则放 return_policy，原话放 buyer_message，二者不混写。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "提示词模板要把固定的提示骨架与可变的用户输入分开，再在提交前替换变量；必须让 Claude 知道变量从哪里开始、到哪里结束。官方推荐用 XML 标签作为分隔。",
+    "points": [
+      "不分隔变量时，模型可能把模板说明误认为输入内容，或把输入误认为指令。",
+      "XML 标签是成对的开始/结束标签，用来包住内容；Claude 被训练为识别这种组织方式。",
+      "变量名本身要具体，便于人阅读模板。",
+      "官方提醒：小细节、错别字和格式也会影响模型对提示的解析。"
+    ],
+    "guide": "把本关的规则放一个标签、买家原话放另一个标签；指令里要明确引用标签名，说明“标签内只是数据”。",
+    "example": "来源里用 email 标签和 sentences 标签演示了“不加标签会误读、加标签后边界清楚”的对照。",
+    "takeaway": "数据与指令分离的关键是边界可见、标签可用、指令可引用。",
+    "refs": [
+      [
+        "Anthropic Chapter 4",
+        "https://github.com/anthropics/courses/blob/master/prompt_engineering_interactive_tutorial/AmazonBedrock/anthropic/04_Separating_Data_and_Instructions.ipynb"
+      ],
+      [
+        "PDF 第 4 关",
+        ""
+      ]
+    ]
+  }
 }

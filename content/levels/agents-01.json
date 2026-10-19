@@ -136,5 +136,27 @@
       "explanation": "步数上限、失败阈值和告警能防止 Agent 无限循环。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "Microsoft AI Agents for Beginners 第 1 课：Agent 是让 LLM 真正“做事”的系统，由环境、传感器、执行器以及工具和记忆等部分组成；它不同于只生成文本的普通 LLM。",
+    "points": [
+      "Agent 是一个系统，不只是模型；环境、感知和执行器共同构成行动闭环。",
+      "LLM 负责理解自然语言、推理上下文并把模糊请求转成行动计划。",
+      "工具决定 Agent 能做什么，记忆分短期对话和长期知识。",
+      "本关的 ReAct 循环（Thought→Action→Observation→Final）是对“感知—行动—反馈”的工程化。"
+    ],
+    "guide": "读第 1 课后，把练习里的 Model、Instructions、Tools、Loop Guard 四个组件分别对应到来源的系统组成。",
+    "example": "来源用旅行 Agent 说明环境/传感器/执行器、工具和记忆；练习的机票改签 Agent 属于同一类多步任务。",
+    "takeaway": "Agent 的可靠性来自系统组件和循环，而不是单次回答。",
+    "refs": [
+      [
+        "Microsoft · Lesson 1 Intro to AI Agents",
+        "https://github.com/microsoft/ai-agents-for-beginners/blob/main/01-intro-to-ai-agents/README.md"
+      ],
+      [
+        "PDF 第 1 关",
+        ""
+      ]
+    ]
+  }
 }

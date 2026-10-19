@@ -139,5 +139,27 @@
       "explanation": "分离后模型更容易知道哪些是长期规则，哪些是这一次要处理的任务。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "Messages API 至少需要 model、max_tokens、messages；每条 message 必须有 role 和 content；user/assistant 必须交替，第一条必须是 user；system 是独立参数。",
+    "points": [
+      "system prompt 在用户问题之前提供 context、instructions、guidelines，不是 messages 数组里的一条消息。",
+      "官方说明：写得好的 system prompt 可以提升模型遵循规则的能力。",
+      "消息角色和交替顺序是 API 结构约束；格式错误会直接报错，而不是模型理解问题。",
+      "本关练习要求把身份/文风放 System，把任务事实与约束放 User。"
+    ],
+    "guide": "读原文时先确认两件事：哪些内容属于 system 通道，哪些属于 user 通道。练习里的“全局身份/文风”对应 system；“时间、地点、亮点、媒体权益”对应 user。",
+    "example": "来源下方的“新手踩坑写法 vs 高手结构化写法”就是本关例子，直接对照，不需要另造例子。",
+    "takeaway": "先分清通道和消息角色，再谈提示词措辞。",
+    "refs": [
+      [
+        "Anthropic Chapter 1",
+        "https://github.com/anthropics/courses/blob/master/prompt_engineering_interactive_tutorial/AmazonBedrock/anthropic/01_Basic_Prompt_Structure.ipynb"
+      ],
+      [
+        "PDF 第 1 关",
+        ""
+      ]
+    ]
+  }
 }

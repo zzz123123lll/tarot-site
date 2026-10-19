@@ -117,5 +117,27 @@
       "explanation": "表格的列头与数据行被拆开后，语义会严重受损。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "RAGStream 会把上传文档处理成带重叠的 chunk，以保留上下文；分块与重叠是文档进入检索前的基础步骤。",
+    "points": [
+      "文档需要先切成可检索的片段，而不是整篇直接送入检索。",
+      "相邻 chunk 保留 overlap，减少边界处的上下文丢失。",
+      "RAGStream 的文档分块服务于后续语义检索和对话。",
+      "来源强调分块是为了让检索拿到更完整的上下文。"
+    ],
+    "guide": "本关要求按标题/段落优先级切分、设置 chunk_size 与 overlap、表格整体保留；对应来源的分块与重叠思想。",
+    "example": "来源 RAGStream README 描述了文档分块与重叠能力；原文练习中的表格/标题切分对照就是本关例子。",
+    "takeaway": "分块要同时考虑片段独立性和边界上下文。",
+    "refs": [
+      [
+        "StepByStep-RAG · RAGStream",
+        "https://github.com/gurucharanmk/StepByStep-RAG/blob/main/RAGStream/README.md"
+      ],
+      [
+        "PDF 第 2 关",
+        ""
+      ]
+    ]
+  }
 }

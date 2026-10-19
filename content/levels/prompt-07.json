@@ -108,5 +108,27 @@
       "explanation": "低质量或重复示例会引入噪声；关键是对齐目标格式和边界。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "给 Claude 示例——你希望它怎样做，或明确不希望它怎样做——对得到正确答案和正确格式都极其有效；这就是 few-shot prompting，示例数量用 shot 表示。",
+    "points": [
+      "示例可以直接传达语气、格式和期望行为，比长篇描述更省力。",
+      "官方用“parent bot”说明：默认回答太正式时，给几个理想回答示例即可改变语气。",
+      "格式化任务也可以给已排好格式的示例，让模型从中外推。",
+      "assistant turn 的预填充可以配合示例，让模型从正确格式继续。"
+    ],
+    "guide": "本关要求至少 2 组完整“原始主题→爆款标题”示例，并覆盖人群、痛点、收益；对应来源的 few-shot 示例和格式外推。",
+    "example": "来源里的 parent bot 语气示例、姓名/职业格式化示例就是本关可用的来源例子。",
+    "takeaway": "少样本的关键是示例完整、格式一致、能代表目标边界。",
+    "refs": [
+      [
+        "Anthropic Chapter 7",
+        "https://github.com/anthropics/courses/blob/master/prompt_engineering_interactive_tutorial/AmazonBedrock/anthropic/07_Using_Examples_Few-Shot_Prompting.ipynb"
+      ],
+      [
+        "PDF 第 7 关",
+        ""
+      ]
+    ]
+  }
 }

@@ -13,7 +13,8 @@
     "referenceAnswerHtml",
     "exercise",
     "next",
-    "knowledgeChecks"
+    "knowledgeChecks",
+    "reading"
   ],
   "properties": {
     "id": {
@@ -171,6 +172,55 @@
         },
         "additionalProperties": false
       }
+    },
+    "reading": {
+      "type": "object",
+      "required": [
+        "quote",
+        "points",
+        "guide",
+        "example",
+        "takeaway",
+        "refs"
+      ],
+      "properties": {
+        "quote": {
+          "type": "string",
+          "minLength": 1
+        },
+        "points": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "string"
+          }
+        },
+        "guide": {
+          "type": "string",
+          "minLength": 1
+        },
+        "example": {
+          "type": "string",
+          "minLength": 1
+        },
+        "takeaway": {
+          "type": "string",
+          "minLength": 1
+        },
+        "refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": true

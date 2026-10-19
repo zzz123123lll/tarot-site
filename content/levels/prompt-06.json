@@ -122,5 +122,27 @@
       "explanation": "强制只输出结论会跳过推理过程，复杂题准确率下降。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "给 Claude 时间逐步思考，通常能让它在复杂任务上更准确；但思考只有在“说出来”时才真正发生。只要求“思考但只输出答案”，模型实际上没有完成推理。",
+    "points": [
+      "来源明确说：要求模型先想再答时，必须把思考过程写出来，而不是只让它内部想。",
+      "官方观察到模型对参数顺序敏感，换顺序可能改变判断。",
+      "在多数但不是所有情况下，模型更倾向于选择两个选项中的第二个。",
+      "把推理步骤显式写出来后，原本错误的答案可能被纠正。"
+    ],
+    "guide": "本关练习要求先在 thinking 标签里推演、再在 answer 标签里给结论；对应来源的“out loud thinking”和顺序敏感性。",
+    "example": "来源里用差评判断和奇偶求和等例子展示：直接要答案会错，允许分步思考后能修正。",
+    "takeaway": "思考必须是可见的步骤，不能只是要求“请思考”。",
+    "refs": [
+      [
+        "Anthropic Chapter 6",
+        "https://github.com/anthropics/courses/blob/master/prompt_engineering_interactive_tutorial/AmazonBedrock/anthropic/06_Precognition_Thinking_Step_by_Step.ipynb"
+      ],
+      [
+        "PDF 第 6 关",
+        ""
+      ]
+    ]
+  }
 }

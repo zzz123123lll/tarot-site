@@ -131,5 +131,27 @@
       "explanation": "身份、立场和标准越具体，评价与输出越稳定。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "角色提示（role prompting）是让 Claude 进入一个具体角色并带上必要上下文；角色上下文越详细，效果通常越好。角色可以放在 system prompt，也可以放在 user turn。",
+    "points": [
+      "角色会改变回答的视角、语气、风格和内容深度，而不只是换一个称呼。",
+      "还可以补充“受众是谁”，角色加受众组合会明显改变输出。",
+      "官方指出角色提示也能帮助模型处理数学或逻辑任务。",
+      "本关要求具体职级、严苛立场和目标岗位标准，这三者都属于角色上下文。"
+    ],
+    "guide": "读原文时把“角色”拆成身份、立场、受众、评价标准四部分；练习要求里的职级/立场/岗位标准分别落到这四部分。",
+    "example": "来源里对比了“没有角色提示”和“让 Claude 扮演猫/逻辑机器人”的例子，用它们理解角色如何改变输出。",
+    "takeaway": "角色不是头衔，是视角、受众和判断标准的组合。",
+    "refs": [
+      [
+        "Anthropic Chapter 3",
+        "https://github.com/anthropics/courses/blob/master/prompt_engineering_interactive_tutorial/AmazonBedrock/anthropic/03_Assigning_Roles_Role_Prompting.ipynb"
+      ],
+      [
+        "PDF 第 3 关",
+        ""
+      ]
+    ]
+  }
 }

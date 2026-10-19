@@ -126,5 +126,23 @@
       "explanation": "Cross-Encoder 计算重，适合对少量候选精排，不适合全库暴力检索。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "本关来源（PDF 第 4 关）把混合检索拆成：向量召回 Top-20、BM25 召回 Top-20、RRF 按排名融合、再用 Cross-Encoder 精排 Top-4。",
+    "points": [
+      "向量检索擅长语义相近，BM25 擅长字面精确匹配。",
+      "RRF 使用排名而不是原始分数，避免不同检索器分数量纲不可比。",
+      "Cross-Encoder 需要把查询与文档拼接后过完整 Transformer，计算重，只适合对少量候选精排。",
+      "因此顺序是：先粗排召回，再 RRF 融合，再 Reranker 精排。"
+    ],
+    "guide": "读 PDF 原文时抓住“两阶段”：第一阶段扩大召回，第二阶段提高排序精度。练习中的 RRF 公式和 top-4 都对应这个流程。",
+    "example": "PDF 第 4 关给出的 RRF 公式、Python 融合排序和 Cross-Encoder 说明就是本关来源例子。",
+    "takeaway": "混合检索解决召回，Reranker 解决排序精度。",
+    "refs": [
+      [
+        "PDF 第 4 关（用户提供）",
+        ""
+      ]
+    ]
+  }
 }

@@ -137,5 +137,27 @@
       "explanation": "真实报错是修复 SQL 的关键反馈，应进入下一轮修复。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "Microsoft 第 9 课 Metacognition：让 Agent 观察、评估并修正自己的推理；本关 PDF 把它工程化为 Generator → Validator → Refiner 三步。",
+    "points": [
+      "生成之后需要校验，不能把第一次生成直接当作最终结果。",
+      "校验可以包含确定性规则和语义核对。",
+      "失败时把错误反馈给 Refiner 做定向修复。",
+      "重试要有上限，超过上限转人工处理。"
+    ],
+    "guide": "读第 9 课后，把练习里的 Validator 分成“硬规则”和“语义核对”两类，Refiner 只负责按反馈修复。",
+    "example": "PDF 第 5 关的 SQL 安全拦截、LIMIT/分区检查、报错回传和最大重试次数就是本关来源例子。",
+    "takeaway": "可靠 Agent 不是一次写对，而是有校验和返工。",
+    "refs": [
+      [
+        "Microsoft · Lesson 9 Metacognition",
+        "https://github.com/microsoft/ai-agents-for-beginners/blob/main/09-metacognition/README.md"
+      ],
+      [
+        "PDF 第 5 关",
+        ""
+      ]
+    ]
+  }
 }

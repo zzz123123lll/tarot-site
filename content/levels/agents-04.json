@@ -122,5 +122,31 @@
       "explanation": "自检发现字段缺失时，应调整查询词再检索，而不是硬答。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "Microsoft 第 5 课 Agentic RAG 与第 13 课 Agentic Memory：Agent 需要短期会话记忆、长期用户记忆，并能在需要时自主检索和改写查询。",
+    "points": [
+      "短期记忆保存当前对话，长期记忆保存跨会话的偏好和状态。",
+      "Agentic RAG 会判断何时检索、检索什么，而不是每次机械检索。",
+      "首次检索缺少关键字段时，应改写查询再检索。",
+      "对话结束后，应判断哪些新信息值得写回长期记忆。"
+    ],
+    "guide": "读两课后，把练习里的“用户画像记忆、主动文档检索、二次检索、记忆写回”分别对应到短期/长期记忆和 Agentic RAG。",
+    "example": "来源课程中的旅行 Agent 记忆与 Agentic RAG 示例对应本关的理财顾问场景；不要另造例子。",
+    "takeaway": "记忆的关键是分层和写回策略，不是存得越多越好。",
+    "refs": [
+      [
+        "Microsoft · Lesson 5 Agentic RAG",
+        "https://github.com/microsoft/ai-agents-for-beginners/blob/main/05-agentic-rag/README.md"
+      ],
+      [
+        "Microsoft · Lesson 13 Agentic Memory",
+        "https://github.com/microsoft/ai-agents-for-beginners/blob/main/13-agent-memory/README.md"
+      ],
+      [
+        "PDF 第 4 关",
+        ""
+      ]
+    ]
+  }
 }

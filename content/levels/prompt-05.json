@@ -108,5 +108,27 @@
       "explanation": "明确首尾能让模型只输出目标结构，减少解释性废话。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "Claude 可以按要求输出多种格式；可以用 XML 标签把回答包起来，便于程序提取；把第一个 XML 标签放进 assistant turn，就是“替 Claude 开头”的预填充技术。",
+    "points": [
+      "XML 输出标签让人类和程序都能可靠提取目标内容，而不必解析多余前言。",
+      "assistant turn 预填充等于告诉模型“你已经说到了这里”，它会从该点继续。",
+      "JSON 也可以用预填充 `{` 来接近强制 JSON 输出。",
+      "API 调用时可以把结束标签传给 stop_sequences，让生成在目标标签处停止。"
+    ],
+    "guide": "本关要求精确定义 JSON 键名、类型、枚举和首尾包裹；对应来源里的“输出格式 + 预填充/停止序列”思路。",
+    "example": "来源用 haiku 的 XML 包裹和 JSON 预填充演示输出控制；不要另造格式例子。",
+    "takeaway": "输出格式的控制点是结构、开头预填充和停止边界。",
+    "refs": [
+      [
+        "Anthropic Chapter 5",
+        "https://github.com/anthropics/courses/blob/master/prompt_engineering_interactive_tutorial/AmazonBedrock/anthropic/05_Formatting_Output_and_Speaking_for_Claude.ipynb"
+      ],
+      [
+        "PDF 第 5 关",
+        ""
+      ]
+    ]
+  }
 }

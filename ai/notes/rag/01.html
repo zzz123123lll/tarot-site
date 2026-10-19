@@ -11,7 +11,7 @@
 <meta property="og:description" content="先手算余弦相似度，再补上阈值、空结果和结构化返回。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=6">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=7">
 <script src="/ai/notes/notes.js?v=5" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=4"></script>
 </head>
@@ -41,7 +41,20 @@
     <p class="kicker">RAG / KNOWLEDGE BASE / 01 · ENGINE v1</p>
     <h1>向量表示与余弦相似度基础</h1>
     <p class="lede">先手算余弦相似度，再补上阈值、空结果和结构化返回。</p>
-    <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 StepByStep-RAG / GraphRAG / RAG 评估实践</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 StepByStep-RAG / GraphRAG / RAG 评估实践</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <section class="source-reading" id="reading">
+    <p class="label">SOURCE READING / 来源精读</p>
+    <p class="reading-quote">CosineExplorer 用二维向量演示余弦相似度：相似度 = (A·B)/(|A|·|B|)，取值从 -1（完全相反）到 1（完全相同）；它衡量方向相似，不看向量长度。</p>
+    <div class="reading-grid">
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>每个文本先被 Embedding 模型映射为向量，再用余弦相似度比较语义接近程度。</li><li>分子是点积，分母是两个向量模长的乘积。</li><li>二维向量可视化是为了先理解概念，再扩展到高维文本向量。</li><li>余弦值越接近 1，方向越接近；向量长度不影响方向相似性。</li></ol></div>
+      <div>
+        <h3>怎么对应本关练习</h3><p>本关要求手写 L2 归一化、防除零、阈值过滤、排序返回；对应来源公式和 CosineExplorer 的教学顺序。</p>
+        <h3>例子在哪</h3><p>来源 README 用二维坐标 (2,3) 与 (4,6) 得到 1.00 的示例，可作为手算对照。</p>
+      </div>
+    </div>
+    <p class="reading-takeaway">先理解方向相似，再实现工程细节。</p>
+    <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/gurucharanmk/StepByStep-RAG/blob/main/CosineExplorer/README.md" target="_blank" rel="noopener">StepByStep-RAG · CosineExplorer ↗</a><span>PDF 第 1 关</span></div>
+  </section>
     <section class="lesson"><h3>核心原理</h3>
 <p>在 StepByStep-RAG 的第一模块 CosineExplorer 中，作者指出理解 RAG 的起点是搞懂计算机如何衡量两段文字“意思相近”。通过嵌入模型(Embedding Model)，每段文本被映射为高维空间中的数值向量A 与 B。衡量它们语义接近程度的核心指标是余弦相似度(Cosine Similarity)：即两个向量夹角的余弦值（点积除以各自模长的乘积），取值范围为 [-1, 1]。夹角越接近 0 度，余弦值越接近 1,代表语义高度重合；与向量绝对长度（文章字数多少）无关，只看方向是否一致。</p>
 <h2>第 1 关实操练习题：编写零第三方框架依赖的余弦相似度检索函数</h2>

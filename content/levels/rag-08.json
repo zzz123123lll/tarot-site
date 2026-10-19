@@ -136,5 +136,27 @@
       "explanation": "Faithfulness 看回答中的断言能否被检索上下文支持。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "本关 PDF 把 RAG 评估拆成 Context Recall 与 Faithfulness：前者看相关文档是否召回，后者看回答是否忠实于检索上下文；两者低分对应不同修法。",
+    "points": [
+      "Context Recall 低：相关证据没有被召回，优先修分块/检索。",
+      "Faithfulness 低：回答超出上下文，优先修引用/拒答/生成约束。",
+      "来源还强调 Streamlit 侧边栏的透明化调试信息，便于观察检索与生成。",
+      "把两个指标混在一起，会导致不知道改检索还是改生成。"
+    ],
+    "guide": "读练习时先判断问题属于“没找到”还是“找到了但答歪”，再对应 Recall/Faithfulness 两个指标。",
+    "example": "PDF 第 8 关的 4 类故障矩阵和 RAGStream 调试面板说明就是本关来源例子。",
+    "takeaway": "RAG 评估要拆指标，才能定位问题。",
+    "refs": [
+      [
+        "PDF 第 8 关（用户提供）",
+        ""
+      ],
+      [
+        "StepByStep-RAG · RAGStream",
+        "https://github.com/gurucharanmk/StepByStep-RAG/blob/main/RAGStream/README.md"
+      ]
+    ]
+  }
 }

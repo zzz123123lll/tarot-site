@@ -124,5 +124,27 @@
       "explanation": "元数据让检索能按版本、部门、生效状态做精确过滤。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "SemanticSeek 用 Embedding 把查询和文档转成向量，再用余弦相似度计算相关性，并按 Top-K 返回最相关文档。",
+    "points": [
+      "语义检索不是关键词匹配，而是比较查询与文档的向量表示。",
+      "来源使用 Ollama 的 nomic-embed-text 模型生成 embedding。",
+      "检索结果按相似度排序，返回 Top-K 文档。",
+      "语义检索适合自然语言问法，但仍需要文档侧的准备和索引。"
+    ],
+    "guide": "本关的入库结构、元数据过滤和查询逻辑，是在来源的语义检索链路上增加工程约束。",
+    "example": "来源 README 用酒店洗衣服务的自然语言查询展示 Top-K 结果和相似度分数。",
+    "takeaway": "语义检索的核心是 embedding + 相似度 + Top-K。",
+    "refs": [
+      [
+        "StepByStep-RAG · SemanticSeek",
+        "https://github.com/gurucharanmk/StepByStep-RAG/blob/main/SemanticSeek/README.md"
+      ],
+      [
+        "PDF 第 3 关",
+        ""
+      ]
+    ]
+  }
 }

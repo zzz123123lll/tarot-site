@@ -139,5 +139,27 @@
       "explanation": "隔离让子任务内部的试错不污染主控上下文。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "Microsoft 第 12 课 Context Engineering：Agent 的上下文窗口是有限预算，需要选择、压缩和组织进入窗口的信息。",
+    "points": [
+      "工具返回、历史对话和子任务过程都会占用上下文。",
+      "长日志需要截断和摘要，保留关键错误与结论。",
+      "历史可以用滑动窗口或状态压缩，保留里程碑而不是全部过程。",
+      "子 Agent 上下文隔离可以让主控只接收最终结论。"
+    ],
+    "guide": "读第 12 课后，把练习里的入窗截断、滑动窗口、状态压缩、子智能体隔离对应到“选择/压缩/组织”三种上下文工程手段。",
+    "example": "PDF 第 7 关的长日志摘要、200 字结论和原始文件路径引用就是本关来源例子。",
+    "takeaway": "上下文工程是预算管理，不是把所有东西都塞进去。",
+    "refs": [
+      [
+        "Microsoft · Lesson 12 Context Engineering",
+        "https://github.com/microsoft/ai-agents-for-beginners/blob/main/12-context-engineering/README.md"
+      ],
+      [
+        "PDF 第 7 关",
+        ""
+      ]
+    ]
+  }
 }

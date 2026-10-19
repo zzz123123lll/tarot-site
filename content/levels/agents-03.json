@@ -140,5 +140,27 @@
       "explanation": "并行前提是步骤之间没有数据或顺序依赖。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "本关 PDF 要求 Planner 输出结构化计划表：每个子任务包含 step_id、tool_name、depends_on、expected_output；依赖决定串行，互不依赖才能并行，并设计动态重规划分支。",
+    "points": [
+      "复杂目标需要先拆子任务，再决定执行顺序。",
+      "depends_on 表达前置依赖；为空表示可以先执行。",
+      "互不依赖的步骤可以并行，有依赖的必须串行。",
+      "前置结果异常时要能终止或重规划，而不是继续原计划。"
+    ],
+    "guide": "读 PDF 时把“计划表”和“执行图”分开：计划表是数据，执行图由依赖关系决定。",
+    "example": "PDF 第 3 关的工商核查→新闻/官网并行→汇总简报示例就是本关的来源例子。",
+    "takeaway": "Planner 的核心是依赖关系和可重规划。",
+    "refs": [
+      [
+        "PDF 第 3 关（用户提供）",
+        ""
+      ],
+      [
+        "Microsoft · Lesson 7 Planning",
+        "https://github.com/microsoft/ai-agents-for-beginners/blob/main/07-planning-design/README.md"
+      ]
+    ]
+  }
 }

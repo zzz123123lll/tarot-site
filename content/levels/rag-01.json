@@ -147,5 +147,27 @@
       "explanation": "低于阈值的文档通常相关性不足，过滤掉可减少噪音。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "CosineExplorer 用二维向量演示余弦相似度：相似度 = (A·B)/(|A|·|B|)，取值从 -1（完全相反）到 1（完全相同）；它衡量方向相似，不看向量长度。",
+    "points": [
+      "每个文本先被 Embedding 模型映射为向量，再用余弦相似度比较语义接近程度。",
+      "分子是点积，分母是两个向量模长的乘积。",
+      "二维向量可视化是为了先理解概念，再扩展到高维文本向量。",
+      "余弦值越接近 1，方向越接近；向量长度不影响方向相似性。"
+    ],
+    "guide": "本关要求手写 L2 归一化、防除零、阈值过滤、排序返回；对应来源公式和 CosineExplorer 的教学顺序。",
+    "example": "来源 README 用二维坐标 (2,3) 与 (4,6) 得到 1.00 的示例，可作为手算对照。",
+    "takeaway": "先理解方向相似，再实现工程细节。",
+    "refs": [
+      [
+        "StepByStep-RAG · CosineExplorer",
+        "https://github.com/gurucharanmk/StepByStep-RAG/blob/main/CosineExplorer/README.md"
+      ],
+      [
+        "PDF 第 1 关",
+        ""
+      ]
+    ]
+  }
 }

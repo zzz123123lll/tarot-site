@@ -126,5 +126,27 @@
       "explanation": "拆成两个子查询能避免只召回 A 而漏掉 B。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "ConvoRAG 在传统 RAG 上增加对话历史、查询分类和查询上下文化，使回答能考虑正在进行中的对话。",
+    "points": [
+      "多轮 RAG 不能只拿当前一句话检索，需要历史上下文。",
+      "查询分类可以优化检索路径。",
+      "查询上下文化会把简短追问补成可检索的问题。",
+      "这些能力对应练习中的 Query Rewriter 和对比型问题拆解。"
+    ],
+    "guide": "读本关时把“用户原话”与“改写后的检索问题”分开；练习要求先补全代词、再拆子查询。",
+    "example": "来源 ConvoRAG README 的对话历史、查询分类、上下文化三项功能，就是本关的来源例子。",
+    "takeaway": "多轮 RAG 的第一步是把追问变成完整问题。",
+    "refs": [
+      [
+        "StepByStep-RAG · ConvoRAG",
+        "https://github.com/gurucharanmk/StepByStep-RAG/blob/main/ConvoRAG/README.md"
+      ],
+      [
+        "PDF 第 6 关",
+        ""
+      ]
+    ]
+  }
 }

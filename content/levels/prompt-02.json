@@ -129,5 +129,27 @@
       "explanation": "不要依赖模型自觉；直接把“第一行给什么、不要给什么”写清楚。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "Claude 除了你明确告诉它的内容之外没有上下文；越直接、越清楚地说明要什么，回答越准确。黄金法则：把提示词给同事看，如果同事会困惑，Claude 也会困惑。",
+    "points": [
+      "不要假设模型知道你的隐含标准；“专业、简洁”不是可直接检查的条件。",
+      "想让模型跳过开场白，就直接要求它跳过开场白。",
+      "想让模型在多个候选中给出唯一结论，就直接要求它选一个。",
+      "清晰直接会同时影响内容、格式和结论的确定性。"
+    ],
+    "guide": "读练习要求时，把每条要求改写成“模型能检查的条件”：条数、字数、第一行、禁止词。",
+    "example": "来源里有 haiku 前言问题和“谁是历史最佳球员”的摇摆例子，用它们理解“直接要求”前后的差异。",
+    "takeaway": "清晰不是礼貌措辞，而是可验收的约束。",
+    "refs": [
+      [
+        "Anthropic Chapter 2",
+        "https://github.com/anthropics/courses/blob/master/prompt_engineering_interactive_tutorial/AmazonBedrock/anthropic/02_Being_Clear_and_Direct.ipynb"
+      ],
+      [
+        "PDF 第 2 关",
+        ""
+      ]
+    ]
+  }
 }

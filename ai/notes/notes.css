@@ -215,3 +215,19 @@ footer a:hover{color:var(--ink)}
 .objective-card:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0}
 .objective-index{font-size:15px;line-height:1.65;font-weight:650;margin:0 0 12px;max-width:760px}
 .objective-index::before{content:"Q";font-family:var(--mono);font-size:10px;color:var(--accent);margin-right:8px}
+
+/* 来源精读：只做原文要点/转述/出处，不造类比和例子 */
+.source-reading{border-top:2px solid var(--ink);border-bottom:1px solid var(--line);padding:24px 0 22px;margin:26px 0 36px;scroll-margin-top:24px}
+.source-reading .label{display:block;margin-bottom:12px}
+.reading-quote{font-size:20px;line-height:1.7;letter-spacing:-.02em;font-weight:600;color:var(--ink);margin:0 0 24px;max-width:920px}
+.reading-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.reading-grid h3{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin:0 0 10px;font-weight:500}
+.reading-grid p{font-size:14px;line-height:1.85;color:var(--ink-2);margin:0 0 18px}
+.reading-points{margin:0;padding-left:18px;display:grid;gap:8px}
+.reading-points li{font-size:14px;line-height:1.8;color:var(--ink-2);padding-left:4px}
+.reading-takeaway{font-size:16px!important;line-height:1.8!important;font-weight:600;color:var(--ink)!important;border-left:2px solid var(--accent);padding-left:12px;margin:20px 0 0!important}
+.reading-refs{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;border-top:1px solid var(--line);padding-top:16px;margin-top:22px}
+.reading-refs .label{margin:0 8px 0 0}
+.reading-refs a,.reading-refs span{font-family:var(--mono);font-size:10px;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:2px}
+.reading-refs a:hover{color:var(--accent);border-color:var(--accent)}
+@media(max-width:800px){.reading-grid{grid-template-columns:1fr;gap:22px}.reading-quote{font-size:18px}}

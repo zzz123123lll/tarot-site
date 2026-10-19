@@ -156,5 +156,27 @@
       "explanation": "给模型一个安全的退路，能降低它在证据不足时脑补。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "复杂提示词有一个推荐的组合结构；不是所有提示词都需要每个元素。通常先用较多元素让提示词跑通，再逐步精简。部分元素的顺序很重要，按官方推荐顺序是较好的起点。",
+    "points": [
+      "官方把角色、任务、背景资料、详细指令、输出格式等元素组合成复杂提示词。",
+      "顺序并非对所有元素都重要；但按推荐顺序组织，是一个稳妥的起点。",
+      "应先让复杂提示词完整工作，再去做删减和优化。",
+      "法律、职业教练等场景的官方示例展示了同一结构在不同领域的复用。"
+    ],
+    "guide": "本关的十要素不是要机械全塞，而是按来源结构组合：角色、背景、数据、指令、思考、输出、退路等。",
+    "example": "来源里有职业教练和法律服务两个复杂提示词示例，用它们看结构如何组合。",
+    "takeaway": "复杂提示词先求结构完整，再求精简。",
+    "refs": [
+      [
+        "Anthropic Chapter 9",
+        "https://github.com/anthropics/courses/blob/master/prompt_engineering_interactive_tutorial/AmazonBedrock/anthropic/09_Complex_Prompts_from_Scratch.ipynb"
+      ],
+      [
+        "PDF 第 9 关",
+        ""
+      ]
+    ]
+  }
 }

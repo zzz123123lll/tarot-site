@@ -33,6 +33,9 @@ function validate(track, level) {
     assert(Array.isArray(q.options) && q.options.length === 4, 'knowledgeCheck options');
     assert(Number.isInteger(q.answer) && q.answer >= 0 && q.answer < 4, 'knowledgeCheck answer');
   });
+  assert(level.reading && level.reading.quote && level.reading.guide && level.reading.example && level.reading.takeaway, 'reading fields');
+  assert(Array.isArray(level.reading.points) && level.reading.points.length >= 3, 'reading points');
+  assert(Array.isArray(level.reading.refs) && level.reading.refs.length >= 1, 'reading refs');
   assert(level.exercise && Array.isArray(level.exercise.criteria), 'exercise criteria');
   assert(level.exercise.minLength >= 0, 'minLength');
   assert(level.exercise.criteria.length > 0, 'criteria empty');
@@ -77,6 +80,24 @@ export function renderLevel(trackId, levelId) {
   const pdf = 'mailto:1336089899@qq.com?subject=' + encodeURIComponent('索取《' + track.title + '》完整 PDF');
   const outPath = path.join(ROOT, 'ai', 'notes', track.id, String(level.level).padStart(2, '0') + '.html');
 
+  const rd = level.reading;
+  const sourceLinks = rd.refs.map((ref) => ref[1]
+    ? `<a href="${esc(ref[1])}" target="_blank" rel="noopener">${esc(ref[0])} ↗</a>`
+    : `<span>${esc(ref[0])}</span>`).join('');
+  const reading = `<section class="source-reading" id="reading">
+    <p class="label">SOURCE READING / 来源精读</p>
+    <p class="reading-quote">${esc(rd.quote)}</p>
+    <div class="reading-grid">
+      <div><h3>逐点读懂</h3><ol class="reading-points">${rd.points.map((p) => `<li>${esc(p)}</li>`).join('')}</ol></div>
+      <div>
+        <h3>怎么对应本关练习</h3><p>${esc(rd.guide)}</p>
+        <h3>例子在哪</h3><p>${esc(rd.example)}</p>
+      </div>
+    </div>
+    <p class="reading-takeaway">${esc(rd.takeaway)}</p>
+    <div class="reading-refs"><span class="label">SOURCES</span>${sourceLinks}</div>
+  </section>`;
+
   const page = `<!doctype html>
 <html lang="zh-CN">
 <head>
@@ -90,7 +111,7 @@ export function renderLevel(trackId, levelId) {
 <meta property="og:description" content="${esc(level.summary)}">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=6">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=7">
 <script src="/ai/notes/notes.js?v=5" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=4"></script>
 </head>
@@ -120,7 +141,8 @@ export function renderLevel(trackId, levelId) {
     <p class="kicker">${esc(track.label)} / ${String(level.level).padStart(2, '0')} · ENGINE v1</p>
     <h1>${esc(level.title)}</h1>
     <p class="lede">${esc(level.summary)}</p>
-    <div class="meta"><span>约 ${level.readMinutes} 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 ${esc(level.source)}</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <div class="meta"><span>约 ${level.readMinutes} 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 ${esc(level.source)}</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    ${reading}
     <section class="lesson">${level.lessonHtml}</section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/${esc(track.id)}/${String(level.level).padStart(2, '0')}" data-exercise="/content/levels/${esc(level.id)}.json">
       <div class="practice-head">

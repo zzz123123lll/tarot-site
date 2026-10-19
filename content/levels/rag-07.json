@@ -136,5 +136,27 @@
       "explanation": "把昂贵的抽取限制在核心研报和长周期规范上，日常短资讯用轻量索引。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "本关 PDF 说明 GraphRAG 用实体、关系和社区摘要做全局检索，适合跨文档的宏观归纳；图谱索引成本高，应只对高价值核心文档启用。",
+    "points": [
+      "向量检索擅长局部细节，GraphRAG 的 Global Search 擅长跨文档主题归纳。",
+      "图谱需要抽取实体与关系，并构建社区摘要。",
+      "索引成本高，不适合所有文档全量启用。",
+      "具体数值/局部问题仍可用向量或 Local Search。"
+    ],
+    "guide": "读 PDF 时区分 Local Search 与 Global Search 的适用问题；练习中的实体/关系/三元组和成本优化都来自这段。",
+    "example": "PDF 第 7 关的实体/关系抽取 JSON 和查询路由说明就是本关例子。",
+    "takeaway": "GraphRAG 解决全局关系问题，不替代所有向量检索。",
+    "refs": [
+      [
+        "PDF 第 7 关（用户提供）",
+        ""
+      ],
+      [
+        "Microsoft GraphRAG 文档",
+        "https://microsoft.github.io/graphrag/"
+      ]
+    ]
+  }
 }

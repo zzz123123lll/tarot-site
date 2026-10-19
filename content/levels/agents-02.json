@@ -133,5 +133,27 @@
       "explanation": "结构化错误能引导 Agent 向用户追问，而不是乱填参数。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "本关 PDF 要求编写完整的 OpenAI/Pydantic 兼容 JSON Schema：工具名、调用前提说明（description）与 required 必填字段；参数校验失败要返回结构化错误，引导 Agent 追问。",
+    "points": [
+      "工具 schema 是 Agent 调用外部函数的结构化合同。",
+      "description 要说明何时调用、调用前提和限制。",
+      "required 明确必填参数，类型/枚举限制取值范围。",
+      "校验失败应返回结构化错误，而不是让 Agent 盲目重试或编造参数。"
+    ],
+    "guide": "读 PDF 时把工具 schema 拆成 name、description、parameters、required 四部分；练习要求逐项都有对应。",
+    "example": "PDF 第 2 关的工具定义和“结构化错误返回”示例就是本关来源例子。",
+    "takeaway": "工具调用的可靠性来自 schema 和信息完整的错误返回。",
+    "refs": [
+      [
+        "PDF 第 2 关（用户提供）",
+        ""
+      ],
+      [
+        "Microsoft · Lesson 4 Tool Use",
+        "https://github.com/microsoft/ai-agents-for-beginners/blob/main/04-tool-use/README.md"
+      ]
+    ]
+  }
 }

@@ -11,7 +11,7 @@
 <meta property="og:description" content="本关练习：训练小红书爆款标题与情绪钩子生成器。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=6">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=7">
 <script src="/ai/notes/notes.js?v=5" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=4"></script>
 </head>
@@ -41,7 +41,20 @@
     <p class="kicker">PROMPT ENGINEERING / 07 · ENGINE v1</p>
     <h1>少样本示例教学</h1>
     <p class="lede">本关练习：训练小红书爆款标题与情绪钩子生成器。</p>
-    <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <section class="source-reading" id="reading">
+    <p class="label">SOURCE READING / 来源精读</p>
+    <p class="reading-quote">给 Claude 示例——你希望它怎样做，或明确不希望它怎样做——对得到正确答案和正确格式都极其有效；这就是 few-shot prompting，示例数量用 shot 表示。</p>
+    <div class="reading-grid">
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>示例可以直接传达语气、格式和期望行为，比长篇描述更省力。</li><li>官方用“parent bot”说明：默认回答太正式时，给几个理想回答示例即可改变语气。</li><li>格式化任务也可以给已排好格式的示例，让模型从中外推。</li><li>assistant turn 的预填充可以配合示例，让模型从正确格式继续。</li></ol></div>
+      <div>
+        <h3>怎么对应本关练习</h3><p>本关要求至少 2 组完整“原始主题→爆款标题”示例，并覆盖人群、痛点、收益；对应来源的 few-shot 示例和格式外推。</p>
+        <h3>例子在哪</h3><p>来源里的 parent bot 语气示例、姓名/职业格式化示例就是本关可用的来源例子。</p>
+      </div>
+    </div>
+    <p class="reading-takeaway">少样本的关键是示例完整、格式一致、能代表目标边界。</p>
+    <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/anthropics/courses/blob/master/prompt_engineering_interactive_tutorial/AmazonBedrock/anthropic/07_Using_Examples_Few-Shot_Prompting.ipynb" target="_blank" rel="noopener">Anthropic Chapter 7 ↗</a><span>PDF 第 7 关</span></div>
+  </section>
     <section class="lesson"><h3>核心原理</h3>
 <p>“千言万语的抽象解释，不如给 AI 看两个标准样例。”在 Anthropic 教程第 7 章与 DAIR.AI Few-Shot Prompting 指南（如著名的“whatpu / farduddle”新词造句实验）中，少样本提示(Few-Shot)是统一文风、对齐主观分类尺度以及规范固定输出排版的最强武器。提供示例时应包裹在 &lt;examples&gt; 与 &lt;example&gt;标签内，覆盖典型情况与容易混淆的边界情况。</p>
 <h3>踩坑写法 vs. 高手写法对比</h3>

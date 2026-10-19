@@ -111,5 +111,27 @@
       "explanation": "先引证再推理，把结论绑定到可核验的原文证据。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "Claude 有时会幻觉，给出不真实或无依据的说法；可用技术包括给它“可以说不知道”的退路，以及要求它先找证据再回答。",
+    "points": [
+      "模型被要求必须回答时，可能为了“有帮助”而编造；明确允许它拒答或只在不确时回答。",
+      "长文档里可能有干扰信息，模型会误用；先摘录相关引文再基于引文回答能降低错误。",
+      "官方建议把问题放在长文档之后，而不是之前（第 9 章还会展开）。",
+      "多种避免幻觉的技术可以组合使用，不限于本章两种。"
+    ],
+    "guide": "本关要求先摘录合同原句，再基于证据回答；没有证据时必须说“合同未包含该条款”。",
+    "example": "来源里用“Matterport 订阅数”的长文档干扰例子和“先找引文”的修正方式，直接对应本关的证据链。",
+    "takeaway": "防幻觉的核心是允许不知道、先找证据、再回答。",
+    "refs": [
+      [
+        "Anthropic Chapter 8",
+        "https://github.com/anthropics/courses/blob/master/prompt_engineering_interactive_tutorial/AmazonBedrock/anthropic/08_Avoiding_Hallucinations.ipynb"
+      ],
+      [
+        "PDF 第 8 关",
+        ""
+      ]
+    ]
+  }
 }

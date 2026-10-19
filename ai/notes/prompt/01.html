@@ -11,7 +11,7 @@
 <meta property="og:description" content="先分清 System 与 User，再把任务事实、约束和字数写清楚。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=6">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=7">
 <script src="/ai/notes/notes.js?v=5" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=4"></script>
 </head>
@@ -41,7 +41,20 @@
     <p class="kicker">PROMPT ENGINEERING / 01 · ENGINE v1</p>
     <h1>基础提示词结构</h1>
     <p class="lede">先分清 System 与 User，再把任务事实、约束和字数写清楚。</p>
-    <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <section class="source-reading" id="reading">
+    <p class="label">SOURCE READING / 来源精读</p>
+    <p class="reading-quote">Messages API 至少需要 model、max_tokens、messages；每条 message 必须有 role 和 content；user/assistant 必须交替，第一条必须是 user；system 是独立参数。</p>
+    <div class="reading-grid">
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>system prompt 在用户问题之前提供 context、instructions、guidelines，不是 messages 数组里的一条消息。</li><li>官方说明：写得好的 system prompt 可以提升模型遵循规则的能力。</li><li>消息角色和交替顺序是 API 结构约束；格式错误会直接报错，而不是模型理解问题。</li><li>本关练习要求把身份/文风放 System，把任务事实与约束放 User。</li></ol></div>
+      <div>
+        <h3>怎么对应本关练习</h3><p>读原文时先确认两件事：哪些内容属于 system 通道，哪些属于 user 通道。练习里的“全局身份/文风”对应 system；“时间、地点、亮点、媒体权益”对应 user。</p>
+        <h3>例子在哪</h3><p>来源下方的“新手踩坑写法 vs 高手结构化写法”就是本关例子，直接对照，不需要另造例子。</p>
+      </div>
+    </div>
+    <p class="reading-takeaway">先分清通道和消息角色，再谈提示词措辞。</p>
+    <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/anthropics/courses/blob/master/prompt_engineering_interactive_tutorial/AmazonBedrock/anthropic/01_Basic_Prompt_Structure.ipynb" target="_blank" rel="noopener">Anthropic Chapter 1 ↗</a><span>PDF 第 1 关</span></div>
+  </section>
     <section class="lesson"><h3>核心原理</h3>
 <p>根据 Anthropic 官方交互式教程第 1 章，大模型交互由两大核心通道构成：一是系统提示词(System Prompt)，用于定义全局规则、AI 身份背景与持久边界；二是用户与助手交替消息(User /Assistant Turns)，用于传递具体任务与上下文。新手常犯的错误是将背景规则、参考资料与具体问题胡乱揉成一句话，导致模型抓不住核心任务。</p>
 <h3>踩坑写法 vs. 高手写法对比</h3>

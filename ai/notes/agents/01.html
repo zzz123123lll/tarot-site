@@ -11,7 +11,7 @@
 <meta property="og:description" content="先把 Agent 的循环、触发条件和熔断规则写完整。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=6">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=7">
 <script src="/ai/notes/notes.js?v=5" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=4"></script>
 </head>
@@ -41,7 +41,20 @@
     <p class="kicker">AI AGENTS / 01 · ENGINE v1</p>
     <h1>Agent 核心循环与框架选型</h1>
     <p class="lede">先把 Agent 的循环、触发条件和熔断规则写完整。</p>
-    <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Microsoft AI Agents for Beginners (77.2k Stars)</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Microsoft AI Agents for Beginners (77.2k Stars)</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <section class="source-reading" id="reading">
+    <p class="label">SOURCE READING / 来源精读</p>
+    <p class="reading-quote">Microsoft AI Agents for Beginners 第 1 课：Agent 是让 LLM 真正“做事”的系统，由环境、传感器、执行器以及工具和记忆等部分组成；它不同于只生成文本的普通 LLM。</p>
+    <div class="reading-grid">
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>Agent 是一个系统，不只是模型；环境、感知和执行器共同构成行动闭环。</li><li>LLM 负责理解自然语言、推理上下文并把模糊请求转成行动计划。</li><li>工具决定 Agent 能做什么，记忆分短期对话和长期知识。</li><li>本关的 ReAct 循环（Thought→Action→Observation→Final）是对“感知—行动—反馈”的工程化。</li></ol></div>
+      <div>
+        <h3>怎么对应本关练习</h3><p>读第 1 课后，把练习里的 Model、Instructions、Tools、Loop Guard 四个组件分别对应到来源的系统组成。</p>
+        <h3>例子在哪</h3><p>来源用旅行 Agent 说明环境/传感器/执行器、工具和记忆；练习的机票改签 Agent 属于同一类多步任务。</p>
+      </div>
+    </div>
+    <p class="reading-takeaway">Agent 的可靠性来自系统组件和循环，而不是单次回答。</p>
+    <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/microsoft/ai-agents-for-beginners/blob/main/01-intro-to-ai-agents/README.md" target="_blank" rel="noopener">Microsoft · Lesson 1 Intro to AI Agents ↗</a><span>PDF 第 1 关</span></div>
+  </section>
     <section class="lesson"><h3>核心原理</h3>
 <p>在 Microsoft AI Agents for Beginners 第 1‒3 课与 Agentic AI Masterclass Exercise 1 中，智能体与普通大模型调用的本质区别在于 ReAct(Reasoning + Acting)循环：模型接收用户目标后，进入“思考(Thought)→ 决定调用工具(Action)→ 获取环境反馈(Observation)→ 再次思考”的循环，直至满足终止条件。在工程实现上，无论是使用 Pydantic AI、LangGraph、CrewAI 还是 OpenAI Agents SDK（详见ed-donner/agents），都必须明确定义四个核心组件：Model（底层推理模型）、Instructions（系统级行为准则）、Tools（可执行外部函数集）与 Loop Guard（最大循环步数限制，防死循环烧钱）。</p>
 <p>踩坑设计 vs. 工业级设计对比：</p>

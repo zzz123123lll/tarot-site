@@ -118,5 +118,27 @@
       "explanation": "引用把断言绑定到具体片段，便于读者核查。",
       "id": "q3"
     }
-  ]
+  ],
+  "reading": {
+    "quote": "SimpleRAG 把语义检索与生成结合：先检索相关文档，再让模型基于检索到的上下文回答；如果上下文中没有答案，系统会引导用户联系 helpdesk。",
+    "points": [
+      "RAG 的回答应基于检索上下文，而不是只靠模型记忆。",
+      "来源明确区分“能从文档回答”和“文档中没有答案”的情况。",
+      "没有答案时不硬答，而是给出回退路径。",
+      "这为练习中的引用角标和固定拒答话术提供了来源依据。"
+    ],
+    "guide": "本关的 [来源X] 和拒答要求，对应 SimpleRAG 的“基于上下文回答 + 无答案回退”原则。",
+    "example": "来源 README 描述 SimpleRAG 在无法从上下文生成答案时引导 helpdesk，这就是本关的回退例子。",
+    "takeaway": "RAG 的价值在于有依据地回答，也在于有依据地拒答。",
+    "refs": [
+      [
+        "StepByStep-RAG · SimpleRAG",
+        "https://github.com/gurucharanmk/StepByStep-RAG/blob/main/SimpleRAG/README.md"
+      ],
+      [
+        "PDF 第 5 关",
+        ""
+      ]
+    ]
+  }
 }

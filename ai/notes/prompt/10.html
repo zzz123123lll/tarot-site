@@ -11,7 +11,7 @@
 <meta property="og:description" content="本关练习：第 10 关实操练习。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=6">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=7">
 <script src="/ai/notes/notes.js?v=5" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=4"></script>
 </head>
@@ -41,7 +41,20 @@
     <p class="kicker">PROMPT ENGINEERING / 10 · ENGINE v1</p>
     <h1>超越单次提问</h1>
     <p class="lede">本关练习：第 10 关实操练习。</p>
-    <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <section class="source-reading" id="reading">
+    <p class="label">SOURCE READING / 来源精读</p>
+    <p class="reading-quote">“写作就是重写”：让 Claude 再检查或改进回答，常常能提高准确性；提示链（prompt chaining）可以把多个步骤串起来，比如先写一版，再让模型改进。</p>
+    <div class="reading-grid">
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>可以要求模型修正上一轮回答，或对已有答案再核对。</li><li>来源提醒：即使答案已经正确，模型也可能在“再检查”时改动它；可以按第 8 章给它“坚持正确、不要乱改”的退路。</li><li>提示链也可以用于改进写作：先生成第一版，再让模型改进。</li><li>多步之间的输入输出替换是提示链的核心操作。</li></ol></div>
+      <div>
+        <h3>怎么对应本关练习</h3><p>本关的“初稿→审查→定稿”对应来源的 chaining：每一步只做一件事，下一步读取上一步产物。</p>
+        <h3>例子在哪</h3><p>来源里有“先让模型列词、再让它修正”和“先写故事、再改进故事”的提示链例子。</p>
+      </div>
+    </div>
+    <p class="reading-takeaway">多 Prompt 的本质是让每一步有可验证的中间产物。</p>
+    <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/anthropics/courses/blob/master/prompt_engineering_interactive_tutorial/AmazonBedrock/anthropic/10.1_Appendix_Chaining%20Prompts.ipynb" target="_blank" rel="noopener">Anthropic Appendix: Chaining Prompts ↗</a><span>PDF 附录/第 10 关</span></div>
+  </section>
     <section class="lesson"><h3>核心原理</h3>
 <p>在 Anthropic 教程附录(Appendix: Beyond Standard Prompting) 与 DAIR.AI 高级指南中，当一个任务过于庞大（例如：先从长篇访谈录中提炼痛点 → 再根据痛点撰写 5 篇不同角度的种草文案 → 最后审查文案是否包含违禁词并润色），哪怕写再长的单条 Prompt,模型也会顾此失彼。此时应当采用提示词链(Chaining Prompts)：将任务拆解为 2‒3 个串行的独立 Prompt,把上一步的输出标签（如 &lt;draft_copy&gt;）作为下一步的输入变量，形成自我纠错流水线(Generator → Critic → Refiner)。同时，针对实时计算或私有数据，应结合工具调用(Tool Use) 与检索增强生成(Search &amp; Retrieval / RAG)。</p>
 <h2>番外关实操练习题：设计“爆款文章生成与违禁词自检”三步提示词链</h2>

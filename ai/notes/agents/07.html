@@ -11,7 +11,7 @@
 <meta property="og:description" content="本关练习：设计长周期研发排障 Agent 的上下文压缩与隔离方案。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=6">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=7">
 <script src="/ai/notes/notes.js?v=5" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=4"></script>
 </head>
@@ -41,7 +41,20 @@
     <p class="kicker">AI AGENTS / 07 · ENGINE v1</p>
     <h1>智能体通信协议与上下文工程</h1>
     <p class="lede">本关练习：设计长周期研发排障 Agent 的上下文压缩与隔离方案。</p>
-    <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Microsoft AI Agents for Beginners (77.2k Stars)</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Microsoft AI Agents for Beginners (77.2k Stars)</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <section class="source-reading" id="reading">
+    <p class="label">SOURCE READING / 来源精读</p>
+    <p class="reading-quote">Microsoft 第 12 课 Context Engineering：Agent 的上下文窗口是有限预算，需要选择、压缩和组织进入窗口的信息。</p>
+    <div class="reading-grid">
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>工具返回、历史对话和子任务过程都会占用上下文。</li><li>长日志需要截断和摘要，保留关键错误与结论。</li><li>历史可以用滑动窗口或状态压缩，保留里程碑而不是全部过程。</li><li>子 Agent 上下文隔离可以让主控只接收最终结论。</li></ol></div>
+      <div>
+        <h3>怎么对应本关练习</h3><p>读第 12 课后，把练习里的入窗截断、滑动窗口、状态压缩、子智能体隔离对应到“选择/压缩/组织”三种上下文工程手段。</p>
+        <h3>例子在哪</h3><p>PDF 第 7 关的长日志摘要、200 字结论和原始文件路径引用就是本关来源例子。</p>
+      </div>
+    </div>
+    <p class="reading-takeaway">上下文工程是预算管理，不是把所有东西都塞进去。</p>
+    <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/microsoft/ai-agents-for-beginners/blob/main/12-context-engineering/README.md" target="_blank" rel="noopener">Microsoft · Lesson 12 Context Engineering ↗</a><span>PDF 第 7 关</span></div>
+  </section>
     <section class="lesson"><h3>核心原理 </h3>
 <p>在 Microsoft AI Agents for Beginners 第 11 课 ( Agentic Protocols ) 与第 12 课 ( Context Engineering) 以及 12-Factor Agents 中，生产级智能体工程有两大前沿基石：</p>
 <p>标准化协议(MCP / A2A / NLWeb)：通过 Model Context Protocol (MCP) 统一大模型与外部数据源/工具（GitHub、数据库、本地文件）的连接标准；通过 Agent-to-Agent (A2A) 协议实现跨框架智能体之间的发现与协作。</p>
