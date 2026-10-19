@@ -69,3 +69,5 @@
 /og-personal.png
   Cache-Control: public, max-age=3600, must-revalidate
 
+/ai/ai.css
+  Cache-Control: public, max-age=0, must-revalidate
