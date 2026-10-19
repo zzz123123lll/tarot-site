@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>先思后答与思维链 · 第 06 关 — AI 提示词工程：九关实战通关</title>
-<meta name="description" content="大语言模型是按 Token 从左到右逐字生成的。">
+<meta name="description" content="本关练习：设计促销满减凑单最优解提示词。">
 <link rel="canonical" href="https://gongjuhe.top/ai/notes/prompt/06">
 <meta property="og:type" content="article">
 <meta property="og:title" content="先思后答与思维链 — AI 提示词工程：九关实战通关">
-<meta property="og:description" content="大语言模型是按 Token 从左到右逐字生成的。">
+<meta property="og:description" content="本关练习：设计促销满减凑单最优解提示词。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
 <link rel="stylesheet" href="/ai/notes/notes.css?v=4">
@@ -39,7 +39,7 @@
   <article class="article">
     <p class="kicker">PROMPT ENGINEERING / 06 · ENGINE v1</p>
     <h1>先思后答与思维链</h1>
-    <p class="lede">大语言模型是按 Token 从左到右逐字生成的。</p>
+    <p class="lede">本关练习：设计促销满减凑单最优解提示词。</p>
     <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="lesson"><h3>核心原理</h3>
 <p>大语言模型是按 Token 从左到右逐字生成的。如果让它在第一句话就直接给出“是/否”或最终数值，它根本来不及在内部完成多步逻辑运算！无论是 Anthropic 教程第 6 章(Precognition) 还是 DAIR.AI 指南中的 Chain-of-Thought (CoT) 章节，都证明了“思考顺序决定准确率”:必须强制模型先在 &lt;thinking&gt; 标签内分步写出推理过程，最后再在 &lt;answer&gt; 标签内输出结论。在 DAIR.AI 的经典苹果算术题与奇偶数求和测试中，仅增加分步思考环节就能将原本算错的逻辑题准确率提升至近乎满分。</p>

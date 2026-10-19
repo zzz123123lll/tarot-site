@@ -3,7 +3,7 @@
   "trackId": "prompt",
   "level": 10,
   "title": "超越单次提问",
-  "summary": "在 Anthropic 教程附录(Appendix: Beyond Standard Prompting) 与 DAIR.AI 高级指南中，当…",
+  "summary": "本关练习：第 10 关实操练习。",
   "source": "Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide",
   "readMinutes": 3,
   "lessonHtml": "<h3>核心原理</h3>\n<p>在 Anthropic 教程附录(Appendix: Beyond Standard Prompting) 与 DAIR.AI 高级指南中，当一个任务过于庞大（例如：先从长篇访谈录中提炼痛点 → 再根据痛点撰写 5 篇不同角度的种草文案 → 最后审查文案是否包含违禁词并润色），哪怕写再长的单条 Prompt,模型也会顾此失彼。此时应当采用提示词链(Chaining Prompts)：将任务拆解为 2‒3 个串行的独立 Prompt,把上一步的输出标签（如 &lt;draft_copy&gt;）作为下一步的输入变量，形成自我纠错流水线(Generator → Critic → Refiner)。同时，针对实时计算或私有数据，应结合工具调用(Tool Use) 与检索增强生成(Search &amp; Retrieval / RAG)。</p>\n<h2>番外关实操练习题：设计“爆款文章生成与违禁词自检”三步提示词链</h2>\n<h3>任务背景</h3>\n<p>在为客户批量代写小红书或公众号带货文案时，单次生成的文案常常既不够吸引人，又容易误触“最、第一、国家级、根治”等广告法极限词。</p>\n<h3>通关硬性要求（满分 10 分）</h3>\n<p>1. 设计 Step 1（初稿生成 Prompt）：输入产品资料 &lt;product_info&gt;,输出初稿 &lt;draft_v1&gt;（3 分）；</p>\n<p>2. 设计 Step 2（合规与质量毒舌审查 Prompt）：将 &lt;draft_v1&gt; 作为输入，专门查找极限违禁词、AI 套话与逻辑漏洞，输出修改清单 &lt;critique_list&gt;（4 分）；</p>\n<p>3. 设计 Step 3（终稿定稿 Prompt）：同时输入 &lt;draft_v1&gt; 与 &lt;critique_list&gt;,输出可直接发布的定稿&lt;final_post&gt;（3 分）。</p>",

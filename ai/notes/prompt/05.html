@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>输出格式化与预填充引导 · 第 05 关 — AI 提示词工程：九关实战通关</title>
-<meta name="description" content="在自动化工作流或批量制作资料时，我们往往需要模型严格输出 JSON、Markdown 表格或特定…">
+<meta name="description" content="本关练习：批量商品评价结构化抽取器。">
 <link rel="canonical" href="https://gongjuhe.top/ai/notes/prompt/05">
 <meta property="og:type" content="article">
 <meta property="og:title" content="输出格式化与预填充引导 — AI 提示词工程：九关实战通关">
-<meta property="og:description" content="在自动化工作流或批量制作资料时，我们往往需要模型严格输出 JSON、Markdown 表格或特定…">
+<meta property="og:description" content="本关练习：批量商品评价结构化抽取器。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
 <link rel="stylesheet" href="/ai/notes/notes.css?v=4">
@@ -39,7 +39,7 @@
   <article class="article">
     <p class="kicker">PROMPT ENGINEERING / 05 · ENGINE v1</p>
     <h1>输出格式化与预填充引导</h1>
-    <p class="lede">在自动化工作流或批量制作资料时，我们往往需要模型严格输出 JSON、Markdown 表格或特定…</p>
+    <p class="lede">本关练习：批量商品评价结构化抽取器。</p>
     <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="lesson"><h3>核心原理</h3>
 <p>在自动化工作流或批量制作资料时，我们往往需要模型严格输出 JSON、Markdown 表格或特定XML 结构，且不能带有任何“好的，这是为您生成的 JSON:”之类的前后缀。Anthropic 教程第 5 章传授了两大杀手锏：一是在指令中明确指定输出外层标签或 JSON Schema;二是预填充模型回复开头(Speaking</p>
@@ -97,10 +97,14 @@
 <p>&lt;/review&gt;</p>
 <h2>JSON 结构与字段规范</h2>
 <div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code>{
-"sentiment": "必须从 ['正面', '负面', '褒贬参半'] 三个枚举值中选一",
-"pros": ["字符串数组,提取用户满意的优点"],
-"pain_points": ["字符串数组,提取用户抱怨的核心痛点"],
-"actionable_suggestion": "字符串,给产品研发部门的一句话改进建议(不超过25字)"
+  "sentiment": "必须从 ['正面', '负面', '褒贬参半'] 三个枚举值中选一",
+  "pros": [
+    "字符串数组,提取用户满意的优点"
+  ],
+  "pain_points": [
+    "字符串数组,提取用户抱怨的核心痛点"
+  ],
+  "actionable_suggestion": "字符串,给产品研发部门的一句话改进建议(不超过25字)"
 }</code></pre></div>
 <h2>强制输出约束</h2>
 <p>不要输出任何开场白、解释说明或 ```json 代码块标记。你的回复第一个字符必须是 "{",最后一个字符必须是</p>

@@ -3,7 +3,7 @@
   "trackId": "agents",
   "level": 2,
   "title": "工具调用设计模式",
-  "summary": "根据 Microsoft AI Agents for Beginners 第 4 课与 LLM Engineering 工具调用实验，大模型本身并…",
+  "summary": "本关练习：为售后退款智能体编写严谨的 Tool JSON Schema。",
   "source": "Microsoft AI Agents for Beginners (77.2k Stars)",
   "readMinutes": 5,
   "lessonHtml": "<h3>核心原理</h3>\n<p>根据 Microsoft AI Agents for Beginners 第 4 课与 LLM Engineering 工具调用实验，大模型本身并不会直接运行代码或查数据库，而是根据你提供的工具函数签名与文档字符串 ( Docstring / JSON Schema)，输出结构化的函数名与 JSON 参数，由宿主程序执行后再将结果返回给模型。工具调用成败的80% 取决于函数描述是否清晰说明了“何时该调、何时不该调”以及参数枚举/格式约束。</p>\n<p>踩坑 Schema vs. 高手 Schema 对比：</p>\n<p>新手踩坑写法：定义一个函数 def query_db(sql: str)，描述仅写“查询数据库”。结果模型自己瞎猜表名和字段名，拼出错误的 SQL 甚至引发删表风险。</p>\n<p>高手强类型工具定义：将模糊的通用查询拆解为语义明确的业务原子工具(如get_order_status_by_id(order_id: str))，并在参数描述中注明正则格式（如“必须是以 ORD- 开头的 12位订单号”）及错误返回值格式。</p>\n<h2>第 2 关实操练习题：为售后退款智能体编写严谨的 Tool JSON Schema</h2>\n<h3>任务背景</h3>\n<p>你要为客服 Agent 配备一个“查询订单物流与发起部分退款”的工具声明，防止模型在未核实物流状态前乱调退款接口。</p>\n<p>待改造劣质定义：{\"name\": \"refund\", \"description\": \"给客户退款\", \"parameters\": {\"id\": \"string\",</p>\n<div class=\"code-block\"><button class=\"copy-btn\" type=\"button\" data-copy>复制</button><pre><code>\"money\": \"number\"}}</code></pre></div>\n<h3>通关硬性要求（满分 12.5 分）</h3>\n<p>1. 编写完整的 OpenAI/Pydantic 兼容 JSON Schema,包含工具名、详细调用前提说明(description)与 required 必填字段列表（4.5 分）；</p>\n<p>2. 为 order_id、refund_amount_cny（设定单笔上限说明）、reason_category（设定枚举值 enum）三个参数提供精确类型与业务约束（5 分）；</p>\n<p>3. 设计当参数校验失败时返回给 Agent 的结构化错误提示格式，引导 Agent 向用户追问缺失信息而非盲目报错（3 分）。</p>\n<h3>第二阶段</h3>\n<p>核心能力篇（第 3‒4 关）——目标规划拆解与智能体记忆系统</p>",

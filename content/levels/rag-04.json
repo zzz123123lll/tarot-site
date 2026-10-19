@@ -3,7 +3,7 @@
   "trackId": "rag",
   "level": 4,
   "title": "混合检索与重排序优化",
-  "summary": "纯向量语义检索有一个致命短板：对精确专有名词、产品型号代码（如“错误码 ERR-4092-B”）、…",
+  "summary": "本关练习：手写 RRF 倒数排名融合算法与两阶段重排流水线。",
   "source": "StepByStep-RAG / GraphRAG / RAG 评估实践",
   "readMinutes": 4,
   "lessonHtml": "<h3>核心原理</h3>\n<p>纯向量语义检索有一个致命短板：对精确专有名词、产品型号代码（如“错误码 ERR-4092-B”）、人名与法规条文编号非常不敏感！根据 RAG Zero to Hero Guide 与 RAG All-in-One 的进阶架构，工业级知识库普遍采用“两阶段漏斗架构”:</p>\n<h3>第一阶段(粗排召回</h3>\n<p>BM25 关键词检索 + 向量稠密检索)：两路并行各取 Top-20,通过 RRF（Reciprocal Rank Fusion,倒数排名融合算法） 合并去重，兼顾精确型号匹配与语义泛化理解。</p>\n<h3>第二阶段(精排重排序</h3>\n<p>Cross-Encoder Reranker)：使用 BGE-Reranker 或 Cohere Rerank 等交叉编码模型，对粗排召回的 20 个片段与用户问题做深度交叉注意力打分，精选出真正最相关的 Top-3 喂给大模型。</p>\n<h2>第 4 关实操练习题：手写 RRF 倒数排名融合算法与两阶段重排流水线</h2>\n<h3>任务背景</h3>\n<p>售后工程师搜索“变频器报 E-017 故障怎么复位”,向量检索召回了第 [D3, D1, D8] 号文档，BM25 关键词检索召回了第 [D1, D5, D3] 号文档。</p>\n<h3>通关硬性要求（满分 12.5 分）</h3>\n<p>1. 写出标准 RRF(Reciprocal Rank Fusion)打分公式（含平滑常数 k = 60）及 Python 融合排序实现（5.5 分）；</p>\n<p>2. 设计粗排(Recall Top-20)→ Reranker 精排(Select Top-4)的两阶段调用流程（4 分）；</p>\n<p>3. 解释为什么不能直接用 Cross-Encoder Reranker 对全库 10 万篇文档做第一阶段暴力检索（3 分）。</p>\n<h3>第三阶段</h3>\n<p>生成演进篇（第 5‒6 关）——溯源生成闭环与多轮对话记忆</p>",

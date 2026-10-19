@@ -1,0 +1,24 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  content-and-grading:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Grading unit tests
+        run: node tests/grading.test.mjs
+      - name: All 26 levels
+        run: node tests/all-levels.test.mjs
+      - name: Rebuild from content
+        run: node build/render-all.mjs
+      - name: Generated pages must match content
+        run: git diff --exit-code

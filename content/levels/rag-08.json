@@ -3,7 +3,7 @@
   "trackId": "rag",
   "level": 8,
   "title": "流式交互应用与 RAG 黄金评估体系",
-  "summary": "在 StepByStep-RAG 的第五模块 RAGStream 中，我们将后台 RAG 引擎封装为支持自定义文档上…",
+  "summary": "本关练习：设计 RAG 线上质量诊断矩阵与 Streamlit 调试面板。",
   "source": "StepByStep-RAG / GraphRAG / RAG 评估实践",
   "readMinutes": 4,
   "lessonHtml": "<h3>核心原理</h3>\n<p>在 StepByStep-RAG 的第五模块 RAGStream 中，我们将后台 RAG 引擎封装为支持自定义文档上传、实时分块预览与打字机流式输出(Streaming)的 Streamlit 交互式 Web 应用。而要让客户心甘情愿为你的 RAG 系统买单，还必须掌握 RAG Zero to Hero Guide 中的 RAG Triad（RAG 黄金评估三元组）：</p>\n<p>上下文相关性(Context Precision / Recall)：衡量【检索器好不好】——检索出来的片段里，真正有用的信息占比高不高、有没有漏掉关键标准答案依据？</p>\n<p>忠实度 / 防幻觉度(Faithfulness / Groundedness)：衡量【生成器乖不乖】——模型生成的回答是否100% 源自检索出的上下文，有没有脱离上下文自由发挥？</p>\n<p>答案相关性(Answer Relevance)：衡量【端到端答没答对题】——最终生成的回答是否正面、完整地解决了用户的原始问题？</p>\n<h2>第 8 关实操练习题：设计 RAG 线上质量诊断矩阵与 Streamlit 调试面板</h2>\n<h3>任务背景</h3>\n<p>你交付给律所客户的合同知识库系统上线后，客户反馈有 15% 的问题回答不满意，你需要快速定位到底是“分块检索出了问题”还是“大模型生成提示词出了问题”。</p>\n<h3>通关硬性要求（满分 12.5 分）</h3>\n<p>1. 构建包含【Context Recall 低 vs. 高】与【Faithfulness 低 vs. 高】的 4 类故障现象诊断与对应修复方案矩阵（6 分）；</p>\n<p>2. 参照 RAGStream.py 架构，列出在 Streamlit 界面侧边栏或折叠面板(st.expander)中应向用户展示的 3项透明化调试信息（4 分）；</p>\n<p>3. 设计一条用于自动评测 Faithfulness（忠实度）的 LLM-as-a-Judge 裁判提示词（2.5 分）。</p>",
