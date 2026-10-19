@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>数据与指令分离 · 第 04 关 — 提示词工程</title>
 <meta name="description" content="当提示词中同时包含长篇背景文章、用户评论、代码片段以及你的处理指令时，模型很容易把待处">
-<link rel="canonical" href="https://gongjuhe.top/ai/notes/prompt/04.html">
+<link rel="canonical" href="https://gongjuhe.top/ai/notes/prompt/04">
 <meta property="og:type" content="article">
 <meta property="og:title" content="数据与指令分离 · 第 04 关 — 提示词工程">
 <meta property="og:description" content="当提示词中同时包含长篇背景文章、用户评论、代码片段以及你的处理指令时，模型很容易把待处">
@@ -32,7 +32,7 @@
 <div class="wrap article-shell">
   <aside class="side">
     <p class="side-label">PROMPT ENGINEERING</p>
-    <ol class="level-nav"><li><a href="/ai/notes/prompt/01.html"><span class="num">01</span><span>基础提示词结构</span></a></li><li><a href="/ai/notes/prompt/02.html"><span class="num">02</span><span>清晰直接原则</span></a></li><li><a href="/ai/notes/prompt/03.html"><span class="num">03</span><span>专家角色赋予</span></a></li><li><a href="/ai/notes/prompt/04.html" class="current"><span class="num">04</span><span>数据与指令分离</span></a></li><li><a href="/ai/notes/prompt/05.html"><span class="num">05</span><span>输出格式化与预填充引导</span></a></li><li><a href="/ai/notes/prompt/06.html"><span class="num">06</span><span>先思后答与思维链</span></a></li><li><a href="/ai/notes/prompt/07.html"><span class="num">07</span><span>少样本示例教学</span></a></li><li><a href="/ai/notes/prompt/08.html"><span class="num">08</span><span>消除 AI 幻觉</span></a></li><li><a href="/ai/notes/prompt/09.html"><span class="num">09</span><span>构建工业级复杂提示词</span></a></li><li><a href="/ai/notes/prompt/10.html"><span class="num">10</span><span>超越单次提问</span></a></li></ol>
+    <ol class="level-nav"><li><a href="/ai/notes/prompt/01"><span class="num">01</span><span>基础提示词结构</span></a></li><li><a href="/ai/notes/prompt/02"><span class="num">02</span><span>清晰直接原则</span></a></li><li><a href="/ai/notes/prompt/03"><span class="num">03</span><span>专家角色赋予</span></a></li><li><a href="/ai/notes/prompt/04" class="current"><span class="num">04</span><span>数据与指令分离</span></a></li><li><a href="/ai/notes/prompt/05"><span class="num">05</span><span>输出格式化与预填充引导</span></a></li><li><a href="/ai/notes/prompt/06"><span class="num">06</span><span>先思后答与思维链</span></a></li><li><a href="/ai/notes/prompt/07"><span class="num">07</span><span>少样本示例教学</span></a></li><li><a href="/ai/notes/prompt/08"><span class="num">08</span><span>消除 AI 幻觉</span></a></li><li><a href="/ai/notes/prompt/09"><span class="num">09</span><span>构建工业级复杂提示词</span></a></li><li><a href="/ai/notes/prompt/10"><span class="num">10</span><span>超越单次提问</span></a></li></ol>
     <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF ↗</a></div>
   </aside>
   <article class="article">
@@ -73,7 +73,7 @@
 <p>规范使用 &lt;return_policy&gt; 与 &lt;buyer_message&gt; 标签分离规则与动态数据（4 分）；加入防提示词注入声明并引用标签名称说明比对逻辑（3 分）；具备直接替换买家留言即可复用的模板结构（3 分）。</p></div>
 </details>
     <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">留邮箱，获取完整 PDF ↗</a></div>
-    <div class="nextprev"><a href="/ai/notes/prompt/03.html"><small>上一关</small>专家角色赋予</a><a class="right" href="/ai/notes/prompt/05.html"><small>下一关</small>输出格式化与预填充引导</a></div>
+    <div class="nextprev"><a href="/ai/notes/prompt/03"><small>上一关</small>专家角色赋予</a><a class="right" href="/ai/notes/prompt/05"><small>下一关</small>输出格式化与预填充引导</a></div>
   </article>
 </div>
 </main>
