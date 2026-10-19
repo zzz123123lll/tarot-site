@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>基础提示词结构 · 第 01 关 — 提示词工程</title>
-<meta name="description" content="根据 Anthropic 官方交互式教程第 1 章，大模型交互由两大核心通道构成：一是系统提示词">
+<meta name="description" content="先分清 System 与 User，再把任务事实、约束和字数写清楚。">
 <link rel="canonical" href="https://gongjuhe.top/ai/notes/prompt/01">
 <meta property="og:type" content="article">
 <meta property="og:title" content="基础提示词结构 · 第 01 关 — 提示词工程">
-<meta property="og:description" content="根据 Anthropic 官方交互式教程第 1 章，大模型交互由两大核心通道构成：一是系统提示词">
+<meta property="og:description" content="先分清 System 与 User，再把任务事实、约束和字数写清楚。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
 <link rel="stylesheet" href="/ai/notes/notes.css?v=2">
@@ -38,7 +38,7 @@
   <article class="article">
     <p class="kicker">PROMPT ENGINEERING / 01</p>
     <h1>基础提示词结构</h1>
-    <p class="lede">根据 Anthropic 官方交互式教程第 1 章，大模型交互由两大核心通道构成：一是系统提示词</p>
+    <p class="lede">先分清 System 与 User，再把任务事实、约束和字数写清楚。</p>
     <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="lesson"><h3>核心原理</h3>
 <p>根据 Anthropic 官方交互式教程第 1 章，大模型交互由两大核心通道构成：一是系统提示词(System Prompt)，用于定义全局规则、AI 身份背景与持久边界；二是用户与助手交替消息(User /Assistant Turns)，用于传递具体任务与上下文。新手常犯的错误是将背景规则、参考资料与具体问题胡乱揉成一句话，导致模型抓不住核心任务。</p>
@@ -55,7 +55,7 @@
 <p>1. 明确拆分【System 全局规范】与【User 任务指令】两部分（3 分）；</p>
 <p>2. 在任务指令中结构化列出时间、地点、核心亮点（如睡眠与心率无感监测）及媒体专属权益（4 分）；</p>
 <p>3. 明确邮件字数范围（如 150‒200 字）与结尾行动号召（RSVP 回复确认截止时间）（3 分）。</p></section>
-    <section class="practice" id="practice" data-key="/ai/notes/prompt/01" data-total="10" data-rules="[{&quot;text&quot;: &quot;1. 明确拆分【System 全局规范】与【User 任务指令】两部分（3 分）；&quot;, &quot;weight&quot;: 3, &quot;groups&quot;: [[&quot;system&quot;, &quot;系统提示词&quot;, &quot;system 设定&quot;], [&quot;user&quot;, &quot;用户指令&quot;, &quot;user 指令&quot;]]}, {&quot;text&quot;: &quot;2. 在任务指令中结构化列出时间、地点、核心亮点（如睡眠与心率无感监测）及媒体专属权益（4 分）；&quot;, &quot;weight&quot;: 4, &quot;groups&quot;: [[&quot;时间&quot;], [&quot;地点&quot;], [&quot;亮点&quot;, &quot;看点&quot;, &quot;心率&quot;, &quot;睡眠&quot;], [&quot;媒体&quot;, &quot;记者&quot;, &quot;权益&quot;]]}, {&quot;text&quot;: &quot;3. 明确邮件字数范围（如 150‒200 字）与结尾行动号召（RSVP 回复确认截止时间）（3 分）。&quot;, &quot;weight&quot;: 3, &quot;groups&quot;: [[&quot;字&quot;, &quot;字数&quot;, &quot;150&quot;, &quot;200&quot;], [&quot;rsvp&quot;, &quot;回复&quot;, &quot;截止&quot;]]}]">
+    <section class="practice" id="practice" data-key="/ai/notes/prompt/01" data-total="10" data-rules="[{&quot;text&quot;: &quot;1. 明确拆分【System 全局规范】与【User 任务指令】两部分（3 分）；&quot;, &quot;weight&quot;: 3, &quot;groups&quot;: [[&quot;system&quot;, &quot;系统提示词&quot;, &quot;system 设定&quot;], [&quot;user&quot;, &quot;用户指令&quot;, &quot;user 指令&quot;]], &quot;format&quot;: null}, {&quot;text&quot;: &quot;2. 在任务指令中结构化列出时间、地点、核心亮点（如睡眠与心率无感监测）及媒体专属权益（4 分）；&quot;, &quot;weight&quot;: 4, &quot;groups&quot;: [[&quot;时间&quot;], [&quot;地点&quot;], [&quot;亮点&quot;, &quot;看点&quot;, &quot;心率&quot;, &quot;睡眠&quot;], [&quot;媒体&quot;, &quot;记者&quot;, &quot;权益&quot;]], &quot;format&quot;: null}, {&quot;text&quot;: &quot;3. 明确邮件字数范围（如 150‒200 字）与结尾行动号召（RSVP 回复确认截止时间）（3 分）。&quot;, &quot;weight&quot;: 3, &quot;groups&quot;: [[&quot;字&quot;, &quot;字数&quot;, &quot;150&quot;, &quot;200&quot;], [&quot;rsvp&quot;, &quot;回复&quot;, &quot;截止&quot;]], &quot;format&quot;: null}]">
   <div class="practice-head">
     <p class="label">PRACTICE / 本关练习</p>
     <h2>先写你的答案，再对参考。</h2>

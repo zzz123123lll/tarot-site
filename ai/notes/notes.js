@@ -130,7 +130,7 @@
       var low = text.toLowerCase();
       var score = 0;
       var missing = [];
-      var tooShort = text.length < 20;
+      var tooShort = text.length < 40;
       ruleItems.forEach(function (item, i) {
         var r = rules[i] || { groups: [], weight: 1, text: '' };
         var miss = [];
@@ -143,6 +143,9 @@
           });
           if (!r.groups || !r.groups.length) {
             if (text.length < 60) miss.push('内容过短');
+          }
+          if (r.format === 'code' && !/(def |return |np\.|np\.linalg|function |\{|\s=\s)/i.test(text)) {
+            miss.push('代码/实现');
           }
         }
         var pass = !tooShort && miss.length === 0;
@@ -157,7 +160,7 @@
       if (!text) {
         if (feedback) feedback.textContent = '先写下你的答案，再检查。';
       } else if (tooShort) {
-        if (feedback) feedback.textContent = '答案太短：至少写出一段完整的 Prompt / 方案，再检查得分点。';
+        if (feedback) feedback.textContent = '答案太短：至少写出一段完整的 Prompt / 方案（不少于 40 字），再检查得分点。';
       } else if (score >= total) {
         if (feedback) feedback.textContent = '得分点结构已覆盖。最后对照参考答案，检查语义和细节是否真的成立。';
       } else {
