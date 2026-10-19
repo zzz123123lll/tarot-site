@@ -39,7 +39,7 @@
     <p class="kicker">PROMPT ENGINEERING / 02</p>
     <h1>清晰直接原则</h1>
     <p class="lede">Anthropic 教程第 2 章提出了著名的清晰提示词黄金法则(Golden Rule of Clear Prompting)：</p>
-    <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span></div>
+    <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="lesson"><h3>核心原理</h3>
 <p>Anthropic 教程第 2 章提出了著名的清晰提示词黄金法则(Golden Rule of Clear Prompting)：“把你的提示词拿给一位刚入职、完全不了解背景的人类同事看，如果同事看完觉得一头雾水或不知道具体交付标准，大模型也同样会困惑 。” 要让输出一针见血，必须明确指定：输出语言 、 是否允许客套前言(Preamble)、确定性立场（不打太极）以及量化长度。</p>
 <h3>踩坑写法 vs. 高手写法对比</h3>
@@ -53,6 +53,29 @@
 <p>1. 要求 AI 跳过任何“好的，我来为您分析”之类的开场寒暄，第一行直接给出明确二选一结论（3 分）；</p>
 <p>2. 明确限定评判维度（售后退货率、物流破损风险、受众复购或客单价利润空间）（4 分）；</p>
 <p>3. 严格限制输出为 3 条核心理由，每条不超过 40 字（3 分）。</p></section>
+    <section class="practice" id="practice" data-key="/ai/notes/prompt/02" data-total="10">
+  <div class="practice-head">
+    <p class="label">PRACTICE / 本关练习</p>
+    <h2>先写你的答案，再对参考。</h2>
+    <p>答案只保存在这台设备的浏览器里，不上传；勾选通关要求做自评。</p>
+  </div>
+  <div class="practice-grid">
+    <div class="practice-write">
+      <label for="practice-answer">我的答案</label>
+      <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案 / 代码写在这里…"></textarea>
+      <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
+    </div>
+    <div class="practice-check">
+      <p class="practice-label">通关要求 · 自评</p>
+      <div class="check-list"><label class="check-item"><input type="checkbox" data-req data-weight="3"><span>1. 要求 AI 跳过任何“好的，我来为您分析”之类的开场寒暄，第一行直接给出明确二选一结论（3 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="4"><span>2. 明确限定评判维度（售后退货率、物流破损风险、受众复购或客单价利润空间）（4 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="3"><span>3. 严格限制输出为 3 条核心理由，每条不超过 40 字（3 分）。</span></label></div>
+      <p class="practice-score">自评 <b data-score>0</b> / 10 分</p>
+    </div>
+  </div>
+  <div class="practice-actions">
+    <button type="button" data-reveal>对照参考答案 ↓</button>
+    <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
+  </div>
+</section>
     <details class="answer">
   <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
   <div class="answer-body"><p>我是一位预算有限（启动资金 3,000 美元以内）、缺乏硬件售后维修团队的跨境电商独立站新手卖家。现在需要在以下两个客单价 45 美元左右的商品中二选一作为首期主打测试品：</p>

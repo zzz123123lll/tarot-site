@@ -39,7 +39,7 @@
     <p class="kicker">PROMPT ENGINEERING / 08</p>
     <h1>消除 AI 幻觉</h1>
     <p class="lede">为什么大模型总喜欢“一本正经地胡说八道”?Anthropic 教程第 8 章揭示了根本原因：大模型在</p>
-    <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span></div>
+    <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="lesson"><h3>核心原理</h3>
 <p>为什么大模型总喜欢“一本正经地胡说八道”?Anthropic 教程第 8 章揭示了根本原因：大模型在默认训练中倾向于尽可能顺从、讨好用户(Helpful)，当遇到知识盲区或长文档中含有相似干扰信息（如教程中著名的 Matterport 财报订阅人数干扰测试）时，模型会强行拼凑答案。消除幻觉有两大黄金铁律：</p>
 <p>铁律一：给模型一条“诚实拒答的退路(Give the Model an Out)”——明确告知模型：“如果提供的资料中没有明确答案，或者你无法百分之百确认事实，请直接回答‘根据现有资料无法确认’,严禁猜测或外推。”铁律二：先摘录原文证据(Extract Quotes First)，再基于证据作答——要求模型在回答问题前，必须先在 &lt;quotes&gt; 标签内逐字复制原文中的支撑句；如果找不到原文支撑句，则自动触发拒答。</p>
@@ -51,6 +51,29 @@
 <p>1. 用 &lt;contract_text&gt; 隔离合同原文，并遵循最佳实践将具体提问放在文档标签之后（3 分）；</p>
 <p>2. 强制要求先在 &lt;evidence_quotes&gt; 标签中逐字摘录合同中涉及逾期违约责任的原句（4 分）；</p>
 <p>3. 明确加入“退路与防脑补条款”:凡是合同原文未明确提及的赔偿比例或解约天数，必须明确指出“合同未包含该条款”,严禁引入外部常识或自行推算（3 分）。</p></section>
+    <section class="practice" id="practice" data-key="/ai/notes/prompt/08" data-total="10">
+  <div class="practice-head">
+    <p class="label">PRACTICE / 本关练习</p>
+    <h2>先写你的答案，再对参考。</h2>
+    <p>答案只保存在这台设备的浏览器里，不上传；勾选通关要求做自评。</p>
+  </div>
+  <div class="practice-grid">
+    <div class="practice-write">
+      <label for="practice-answer">我的答案</label>
+      <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案 / 代码写在这里…"></textarea>
+      <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
+    </div>
+    <div class="practice-check">
+      <p class="practice-label">通关要求 · 自评</p>
+      <div class="check-list"><label class="check-item"><input type="checkbox" data-req data-weight="3"><span>1. 用 &lt;contract_text&gt; 隔离合同原文，并遵循最佳实践将具体提问放在文档标签之后（3 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="4"><span>2. 强制要求先在 &lt;evidence_quotes&gt; 标签中逐字摘录合同中涉及逾期违约责任的原句（4 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="3"><span>3. 明确加入“退路与防脑补条款”:凡是合同原文未明确提及的赔偿比例或解约天数，必须明确指出“合同未包含该条款”,严禁引入外部常识或自行推算（3 分）。</span></label></div>
+      <p class="practice-score">自评 <b data-score>0</b> / 10 分</p>
+    </div>
+  </div>
+  <div class="practice-actions">
+    <button type="button" data-reveal>对照参考答案 ↓</button>
+    <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
+  </div>
+</section>
     <details class="answer">
   <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
   <div class="answer-body"><p>你是一位极其严谨的法务合规审查助手。请仔细阅读 &lt;contract_text&gt; 标签内的合同条款原文，并回答下方的审查问题。</p>

@@ -39,7 +39,7 @@
     <p class="kicker">AI AGENTS / 02</p>
     <h1>工具调用设计模式</h1>
     <p class="lede">根据 Microsoft AI Agents for Beginners 第 4 课与 LLM Engineering 工具调用实验，大模型本身并</p>
-    <div class="meta"><span>约 5 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Microsoft AI Agents for Beginners (77.2k Stars)</span></div>
+    <div class="meta"><span>约 5 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Microsoft AI Agents for Beginners (77.2k Stars)</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="lesson"><h3>核心原理</h3>
 <p>根据 Microsoft AI Agents for Beginners 第 4 课与 LLM Engineering 工具调用实验，大模型本身并不会直接运行代码或查数据库，而是根据你提供的工具函数签名与文档字符串 ( Docstring / JSON Schema)，输出结构化的函数名与 JSON 参数，由宿主程序执行后再将结果返回给模型。工具调用成败的80% 取决于函数描述是否清晰说明了“何时该调、何时不该调”以及参数枚举/格式约束。</p>
 <p>踩坑 Schema vs. 高手 Schema 对比：</p>
@@ -56,6 +56,29 @@
 <p>3. 设计当参数校验失败时返回给 Agent 的结构化错误提示格式，引导 Agent 向用户追问缺失信息而非盲目报错（3 分）。</p>
 <h3>第二阶段</h3>
 <p>核心能力篇（第 3‒4 关）——目标规划拆解与智能体记忆系统</p></section>
+    <section class="practice" id="practice" data-key="/ai/notes/agents/02" data-total="12.5">
+  <div class="practice-head">
+    <p class="label">PRACTICE / 本关练习</p>
+    <h2>先写你的答案，再对参考。</h2>
+    <p>答案只保存在这台设备的浏览器里，不上传；勾选通关要求做自评。</p>
+  </div>
+  <div class="practice-grid">
+    <div class="practice-write">
+      <label for="practice-answer">我的答案</label>
+      <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案 / 代码写在这里…"></textarea>
+      <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
+    </div>
+    <div class="practice-check">
+      <p class="practice-label">通关要求 · 自评</p>
+      <div class="check-list"><label class="check-item"><input type="checkbox" data-req data-weight="4.5"><span>1. 编写完整的 OpenAI/Pydantic 兼容 JSON Schema,包含工具名、详细调用前提说明(description)与 required 必填字段列表（4.5 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="5"><span>2. 为 order_id、refund_amount_cny（设定单笔上限说明）、reason_category（设定枚举值 enum）三个参数提供精确类型与业务约束（5 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="3"><span>3. 设计当参数校验失败时返回给 Agent 的结构化错误提示格式，引导 Agent 向用户追问缺失信息而非盲目报错（3 分）。</span></label></div>
+      <p class="practice-score">自评 <b data-score>0</b> / 12.5 分</p>
+    </div>
+  </div>
+  <div class="practice-actions">
+    <button type="button" data-reveal>对照参考答案 ↓</button>
+    <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
+  </div>
+</section>
     <details class="answer">
   <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
   <div class="answer-body"><div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code>{

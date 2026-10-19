@@ -39,7 +39,7 @@
     <p class="kicker">PROMPT ENGINEERING / 05</p>
     <h1>输出格式化与预填充引导</h1>
     <p class="lede">在自动化工作流或批量制作资料时，我们往往需要模型严格输出 JSON、Markdown 表格或特定</p>
-    <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span></div>
+    <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="lesson"><h3>核心原理</h3>
 <p>在自动化工作流或批量制作资料时，我们往往需要模型严格输出 JSON、Markdown 表格或特定XML 结构，且不能带有任何“好的，这是为您生成的 JSON:”之类的前后缀。Anthropic 教程第 5 章传授了两大杀手锏：一是在指令中明确指定输出外层标签或 JSON Schema;二是预填充模型回复开头(Speaking</p>
 <div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code>for the Model / Assistant Prefill)——例如在 API 中将 Assistant 的第一个字符预填为 { 或 &lt;json&gt;,或在对
@@ -63,6 +63,29 @@
 <p>1. 用 XML 标签包裹待分析评论（2 分）；</p>
 <p>2. 明确定义输出 JSON 的精确键名与数据类型（如 sentiment 仅限枚举值，pain_points 为字符串数组）（4 分）；</p>
 <p>3. 加入首尾字符强约束或 XML 输出包裹约束，确保零多余前言后缀（4 分）。</p></section>
+    <section class="practice" id="practice" data-key="/ai/notes/prompt/05" data-total="10">
+  <div class="practice-head">
+    <p class="label">PRACTICE / 本关练习</p>
+    <h2>先写你的答案，再对参考。</h2>
+    <p>答案只保存在这台设备的浏览器里，不上传；勾选通关要求做自评。</p>
+  </div>
+  <div class="practice-grid">
+    <div class="practice-write">
+      <label for="practice-answer">我的答案</label>
+      <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案 / 代码写在这里…"></textarea>
+      <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
+    </div>
+    <div class="practice-check">
+      <p class="practice-label">通关要求 · 自评</p>
+      <div class="check-list"><label class="check-item"><input type="checkbox" data-req data-weight="2"><span>1. 用 XML 标签包裹待分析评论（2 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="4"><span>2. 明确定义输出 JSON 的精确键名与数据类型（如 sentiment 仅限枚举值，pain_points 为字符串数组）（4 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="4"><span>3. 加入首尾字符强约束或 XML 输出包裹约束，确保零多余前言后缀（4 分）。</span></label></div>
+      <p class="practice-score">自评 <b data-score>0</b> / 10 分</p>
+    </div>
+  </div>
+  <div class="practice-actions">
+    <button type="button" data-reveal>对照参考答案 ↓</button>
+    <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
+  </div>
+</section>
     <details class="answer">
   <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
   <div class="answer-body"><p>请从 &lt;review&gt; 标签内的用户商品评价中提取结构化洞察，并严格输出为合法的 JSON 对象。</p>

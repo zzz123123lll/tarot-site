@@ -39,7 +39,7 @@
     <p class="kicker">PROMPT ENGINEERING / 07</p>
     <h1>少样本示例教学</h1>
     <p class="lede">“千言万语的抽象解释，不如给 AI 看两个标准样例。</p>
-    <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span></div>
+    <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="lesson"><h3>核心原理</h3>
 <p>“千言万语的抽象解释，不如给 AI 看两个标准样例。”在 Anthropic 教程第 7 章与 DAIR.AI Few-Shot Prompting 指南（如著名的“whatpu / farduddle”新词造句实验）中，少样本提示(Few-Shot)是统一文风、对齐主观分类尺度以及规范固定输出排版的最强武器。提供示例时应包裹在 &lt;examples&gt; 与 &lt;example&gt;标签内，覆盖典型情况与容易混淆的边界情况。</p>
 <h3>踩坑写法 vs. 高手写法对比</h3>
@@ -61,6 +61,29 @@
 <p>3. 最后给出待转换的新主题并指定输出数量（2 分）。</p>
 <h3>第三阶段</h3>
 <p>高阶实战篇（第 8‒9 关 + 番外进阶）——防幻觉机制与工业级复合架构</p></section>
+    <section class="practice" id="practice" data-key="/ai/notes/prompt/07" data-total="10">
+  <div class="practice-head">
+    <p class="label">PRACTICE / 本关练习</p>
+    <h2>先写你的答案，再对参考。</h2>
+    <p>答案只保存在这台设备的浏览器里，不上传；勾选通关要求做自评。</p>
+  </div>
+  <div class="practice-grid">
+    <div class="practice-write">
+      <label for="practice-answer">我的答案</label>
+      <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案 / 代码写在这里…"></textarea>
+      <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
+    </div>
+    <div class="practice-check">
+      <p class="practice-label">通关要求 · 自评</p>
+      <div class="check-list"><label class="check-item"><input type="checkbox" data-req data-weight="5"><span>1. 在提示词中构建 &lt;examples&gt; 标签区块，提供至少 2 组完整的“原始平淡主题 → 爆款改写标题”示范样本（5 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="3"><span>2. 每个示范样本需清晰展示“目标人群标签 + 痛点反差 + 量化收益”的固定公式（3 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="2"><span>3. 最后给出待转换的新主题并指定输出数量（2 分）。</span></label></div>
+      <p class="practice-score">自评 <b data-score>0</b> / 10 分</p>
+    </div>
+  </div>
+  <div class="practice-actions">
+    <button type="button" data-reveal>对照参考答案 ↓</button>
+    <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
+  </div>
+</section>
     <details class="answer">
   <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
   <div class="answer-body"><p>你是一位百万粉小红书内容操盘手。请将我提供的“平淡干货主题”改写为 3 个高点击率的小红书爆款标题。</p>

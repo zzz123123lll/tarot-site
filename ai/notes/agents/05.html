@@ -39,7 +39,7 @@
     <p class="kicker">AI AGENTS / 05</p>
     <h1>元认知与自我反思机制</h1>
     <p class="lede">为什么顶级 Agent 写出的代码或报告极少出错？</p>
-    <div class="meta"><span>约 5 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Microsoft AI Agents for Beginners (77.2k Stars)</span></div>
+    <div class="meta"><span>约 5 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Microsoft AI Agents for Beginners (77.2k Stars)</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="lesson"><h3>核心原理</h3>
 <p>为什么顶级 Agent 写出的代码或报告极少出错？因为它们不会把第一次生成的结果直接丢给用户！根据 Microsoft AI Agents for Beginners 第 9 课(Metacognition) 与 Agentic AI Masterclass 的 Execution Hooks 机制，元认知(Metacognition)是指让 Agent 具备“自我监控、自我评估与自我纠错”能力。核心实现模式是构建 Actor-Critic（执行者-审查者）内部循环：当 Actor 生成初稿或 SQL/Python 代码后，先由验证器（确定性单元测试 / 语法检查器 + Critic 审查提示词）按评分标准打分；只有全部指标达标才放行输出，否则将具体报错信息喂回给 Actor 进行定向修复（上限 2‒3 轮）。</p>
 <h2>第 5 关实操练习题：构建“自然语言转 SQL 报表 Agent”的自检自愈闭环</h2>
@@ -49,6 +49,29 @@
 <p>1. 设计 Generator → Validator → Refiner 三步元认知工作流（4 分）；</p>
 <p>2. 在 Validator 阶段同时设置【确定性规则检查】（如拦截 DROP/DELETE/UPDATE、强制检查是否包含 LIMIT与分区日期过滤）与【语义对齐检查】（核对是否遗漏业务口径）（5.5 分）；</p>
 <p>3. 定义带着数据库报错堆栈(Error Traceback)回传给 Refiner 的结构化修复模板与最大重试上限（3分）。</p></section>
+    <section class="practice" id="practice" data-key="/ai/notes/agents/05" data-total="12.5">
+  <div class="practice-head">
+    <p class="label">PRACTICE / 本关练习</p>
+    <h2>先写你的答案，再对参考。</h2>
+    <p>答案只保存在这台设备的浏览器里，不上传；勾选通关要求做自评。</p>
+  </div>
+  <div class="practice-grid">
+    <div class="practice-write">
+      <label for="practice-answer">我的答案</label>
+      <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案 / 代码写在这里…"></textarea>
+      <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
+    </div>
+    <div class="practice-check">
+      <p class="practice-label">通关要求 · 自评</p>
+      <div class="check-list"><label class="check-item"><input type="checkbox" data-req data-weight="4"><span>1. 设计 Generator → Validator → Refiner 三步元认知工作流（4 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="5.5"><span>2. 在 Validator 阶段同时设置【确定性规则检查】（如拦截 DROP/DELETE/UPDATE、强制检查是否包含 LIMIT与分区日期过滤）与【语义对齐检查】（核对是否遗漏业务口径）（5.5 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="3"><span>3. 定义带着数据库报错堆栈(Error Traceback)回传给 Refiner 的结构化修复模板与最大重试上限（3分）。</span></label></div>
+      <p class="practice-score">自评 <b data-score>0</b> / 12.5 分</p>
+    </div>
+  </div>
+  <div class="practice-actions">
+    <button type="button" data-reveal>对照参考答案 ↓</button>
+    <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
+  </div>
+</section>
     <details class="answer">
   <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
   <div class="answer-body"><div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code>def run_self_healing_sql_agent(user_query: str, max_retries: int = 3):

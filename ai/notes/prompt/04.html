@@ -39,7 +39,7 @@
     <p class="kicker">PROMPT ENGINEERING / 04</p>
     <h1>数据与指令分离</h1>
     <p class="lede">当提示词中同时包含长篇背景文章、用户评论、代码片段以及你的处理指令时，模型很容易把待处</p>
-    <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span></div>
+    <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="lesson"><h3>核心原理</h3>
 <p>当提示词中同时包含长篇背景文章、用户评论、代码片段以及你的处理指令时，模型很容易把待处理文本里的一句话误认为新的指令。根据 Anthropic 教程第 4 章，最佳实践是使用语义化的 XML 标签（如&lt;article&gt;...&lt;/article&gt;、&lt;customer_review&gt;...&lt;/customer_review&gt;、&lt;rules&gt;...&lt;/rules&gt;）将动态数据严格包裹起来 。 这不仅能让提示词变成随时替换变量的工业级模板，还能有效防御提示词注入 ( Prompt Injection)。</p>
 <h3>踩坑写法 vs. 高手写法对比</h3>
@@ -56,6 +56,29 @@
 <p>1. 使用 &lt;return_policy&gt; 与 &lt;buyer_message&gt; 两个自定义 XML 标签彻底分离规则与买家原话（4 分）；</p>
 <p>2. 在指令中直接引用上述 XML 标签名称说明比对逻辑（3 分）；</p>
 <p>3. 把买家原话留出可随时替换的清晰结构，使其成为电商客服团队可复用的标准模板（3 分）。</p></section>
+    <section class="practice" id="practice" data-key="/ai/notes/prompt/04" data-total="10">
+  <div class="practice-head">
+    <p class="label">PRACTICE / 本关练习</p>
+    <h2>先写你的答案，再对参考。</h2>
+    <p>答案只保存在这台设备的浏览器里，不上传；勾选通关要求做自评。</p>
+  </div>
+  <div class="practice-grid">
+    <div class="practice-write">
+      <label for="practice-answer">我的答案</label>
+      <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案 / 代码写在这里…"></textarea>
+      <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
+    </div>
+    <div class="practice-check">
+      <p class="practice-label">通关要求 · 自评</p>
+      <div class="check-list"><label class="check-item"><input type="checkbox" data-req data-weight="4"><span>1. 使用 &lt;return_policy&gt; 与 &lt;buyer_message&gt; 两个自定义 XML 标签彻底分离规则与买家原话（4 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="3"><span>2. 在指令中直接引用上述 XML 标签名称说明比对逻辑（3 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="3"><span>3. 把买家原话留出可随时替换的清晰结构，使其成为电商客服团队可复用的标准模板（3 分）。</span></label></div>
+      <p class="practice-score">自评 <b data-score>0</b> / 10 分</p>
+    </div>
+  </div>
+  <div class="practice-actions">
+    <button type="button" data-reveal>对照参考答案 ↓</button>
+    <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
+  </div>
+</section>
     <details class="answer">
   <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
   <div class="answer-body"><p>你是一位严谨的电商平台售后仲裁专员。请严格对照 &lt;return_policy&gt; 标签内的店铺官方退换货规则，审核&lt;buyer_message&gt; 标签内的买家售后诉求是否符合“免运费退货”条件。</p>

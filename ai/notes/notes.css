@@ -42,6 +42,7 @@ h1{font-size:clamp(36px,5vw,60px);line-height:1.02;letter-spacing:-.06em;font-we
 .lede{font-size:17px;line-height:1.75;color:var(--muted);margin:0 0 22px;max-width:700px}
 .meta{display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:15px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-family:var(--mono);font-size:10px;letter-spacing:.04em;color:var(--muted)}
 .meta .dot{color:var(--line)}
+.meta .meta-jump{color:var(--accent);border-bottom:1px solid var(--accent)}
 .lesson{padding-top:34px}
 .lesson h2{font-size:26px;line-height:1.25;letter-spacing:-.035em;margin:40px 0 14px;font-weight:720}
 .lesson h3{font-size:17px;line-height:1.4;letter-spacing:-.02em;margin:28px 0 10px;font-weight:700}
@@ -105,6 +106,36 @@ h1{font-size:clamp(36px,5vw,60px);line-height:1.02;letter-spacing:-.06em;font-we
 .pdf-strip a{color:var(--accent);font-size:12px;font-weight:650;border-bottom:1px solid var(--accent);white-space:nowrap}
 footer{display:flex;justify-content:space-between;gap:20px;padding-top:28px;padding-bottom:40px;font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.04em}
 footer a:hover{color:var(--ink)}
+/* practice mode */
+.practice{margin-top:46px;padding-top:30px;border-top:1px solid var(--line)}
+.practice-head{margin-bottom:20px}
+.practice-head h2{font-size:30px;line-height:1.15;letter-spacing:-.04em;margin:0 0 8px;font-weight:720}
+.practice-head p{font-size:14px;line-height:1.7;color:var(--muted);margin:0}
+.practice-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:start}
+.practice-write label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--muted);margin-bottom:7px}
+.practice-write textarea{width:100%;min-height:240px;resize:vertical;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:14px;font-family:var(--mono);font-size:13px;line-height:1.75;outline:none}
+.practice-write textarea:focus{border-color:var(--accent)}
+.practice-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--muted)}
+.practice-meta button,.practice-actions button{border:1px solid var(--line);background:var(--surface);color:var(--ink);font-family:var(--mono);font-size:10px;padding:6px 9px;cursor:pointer}
+.practice-meta button:hover,.practice-actions button:hover{border-color:var(--accent);color:var(--accent)}
+.save-state{margin-left:auto;color:var(--muted)}
+.practice-check{background:var(--surface);border:1px solid var(--line);padding:16px}
+.practice-label{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--muted);margin:0 0 10px;text-transform:uppercase}
+.check-list{display:grid;gap:9px}
+.check-item{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.6;color:#252A32;cursor:pointer}
+.check-item input{width:14px;height:14px;margin-top:3px;accent-color:var(--accent);flex:none}
+.practice-score{font-family:var(--mono);font-size:11px;color:var(--muted);margin:16px 0 0;padding-top:10px;border-top:1px solid var(--line)}
+.practice-score b{font-size:18px;color:var(--accent);font-weight:650}
+.practice-actions{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.done-check{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);cursor:pointer}
+.done-check input{accent-color:var(--accent);width:14px;height:14px}
+.track-progress{display:flex;align-items:center;gap:12px;margin-top:18px;font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.03em}
+.track-progress .bar{flex:1;max-width:220px;height:3px;background:var(--line);overflow:hidden}
+.track-progress .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.level-row.is-done .num{color:var(--accent)}
+.level-row.is-done h3::after{content:" · 已完成";font-family:var(--mono);font-size:9px;font-weight:400;color:var(--accent);margin-left:5px}
+@media(max-width:700px){.practice-grid{grid-template-columns:1fr}.practice-head h2{font-size:24px}.practice-write textarea{min-height:200px}}
+
 @media(max-width:900px){
   .article-shell{grid-template-columns:1fr;gap:22px;padding-top:28px}
   .side{position:static;order:2;border-top:1px solid var(--line);padding-top:16px}

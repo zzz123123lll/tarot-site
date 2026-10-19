@@ -39,7 +39,7 @@
     <p class="kicker">PROMPT ENGINEERING / 10</p>
     <h1>超越单次提问</h1>
     <p class="lede">在 Anthropic 教程附录(Appendix: Beyond Standard Prompting) 与 DAIR.AI 高级指南中，当</p>
-    <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span></div>
+    <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="lesson"><h3>核心原理</h3>
 <p>在 Anthropic 教程附录(Appendix: Beyond Standard Prompting) 与 DAIR.AI 高级指南中，当一个任务过于庞大（例如：先从长篇访谈录中提炼痛点 → 再根据痛点撰写 5 篇不同角度的种草文案 → 最后审查文案是否包含违禁词并润色），哪怕写再长的单条 Prompt,模型也会顾此失彼。此时应当采用提示词链(Chaining Prompts)：将任务拆解为 2‒3 个串行的独立 Prompt,把上一步的输出标签（如 &lt;draft_copy&gt;）作为下一步的输入变量，形成自我纠错流水线(Generator → Critic → Refiner)。同时，针对实时计算或私有数据，应结合工具调用(Tool Use) 与检索增强生成(Search &amp; Retrieval / RAG)。</p>
 <h2>番外关实操练习题：设计“爆款文章生成与违禁词自检”三步提示词链</h2>
@@ -49,6 +49,29 @@
 <p>1. 设计 Step 1（初稿生成 Prompt）：输入产品资料 &lt;product_info&gt;,输出初稿 &lt;draft_v1&gt;（3 分）；</p>
 <p>2. 设计 Step 2（合规与质量毒舌审查 Prompt）：将 &lt;draft_v1&gt; 作为输入，专门查找极限违禁词、AI 套话与逻辑漏洞，输出修改清单 &lt;critique_list&gt;（4 分）；</p>
 <p>3. 设计 Step 3（终稿定稿 Prompt）：同时输入 &lt;draft_v1&gt; 与 &lt;critique_list&gt;,输出可直接发布的定稿&lt;final_post&gt;（3 分）。</p></section>
+    <section class="practice" id="practice" data-key="/ai/notes/prompt/10" data-total="10">
+  <div class="practice-head">
+    <p class="label">PRACTICE / 本关练习</p>
+    <h2>先写你的答案，再对参考。</h2>
+    <p>答案只保存在这台设备的浏览器里，不上传；勾选通关要求做自评。</p>
+  </div>
+  <div class="practice-grid">
+    <div class="practice-write">
+      <label for="practice-answer">我的答案</label>
+      <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案 / 代码写在这里…"></textarea>
+      <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
+    </div>
+    <div class="practice-check">
+      <p class="practice-label">通关要求 · 自评</p>
+      <div class="check-list"><label class="check-item"><input type="checkbox" data-req data-weight="3"><span>1. 设计 Step 1（初稿生成 Prompt）：输入产品资料 &lt;product_info&gt;,输出初稿 &lt;draft_v1&gt;（3 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="4"><span>2. 设计 Step 2（合规与质量毒舌审查 Prompt）：将 &lt;draft_v1&gt; 作为输入，专门查找极限违禁词、AI 套话与逻辑漏洞，输出修改清单 &lt;critique_list&gt;（4 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="3"><span>3. 设计 Step 3（终稿定稿 Prompt）：同时输入 &lt;draft_v1&gt; 与 &lt;critique_list&gt;,输出可直接发布的定稿&lt;final_post&gt;（3 分）。</span></label></div>
+      <p class="practice-score">自评 <b data-score>0</b> / 10 分</p>
+    </div>
+  </div>
+  <div class="practice-actions">
+    <button type="button" data-reveal>对照参考答案 ↓</button>
+    <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
+  </div>
+</section>
     <details class="answer">
   <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
   <div class="answer-body"><h2>Step 1:痛点种草初稿生成器（输入 &lt;product_info&gt; → 输出 &lt;draft_v1&gt;）</h2>

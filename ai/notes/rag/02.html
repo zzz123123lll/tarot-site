@@ -39,7 +39,7 @@
     <p class="kicker">RAG / KNOWLEDGE BASE / 02</p>
     <h1>文档解析与黄金分块策略</h1>
     <p class="lede">“垃圾进，垃圾出(Garbage In, Garbage Out)。</p>
-    <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 StepByStep-RAG / GraphRAG / RAG 评估实践</span></div>
+    <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 StepByStep-RAG / GraphRAG / RAG 评估实践</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="lesson"><h3>核心原理</h3>
 <p>“垃圾进，垃圾出(Garbage In, Garbage Out)。”在 RAG Zero to Hero Guide 与 RAG All-in-One的生产实践中，80% 的 RAG 回答错误源于粗暴的固定字符切分(Fixed-size Chunking)——比如把一句关键免责条款从中间劈成两半，或者把表格的表头切在第 1 块、第 15 行数据切在第 2 块，导致检索出来的第 2块完全丢失了表头上下文与所属章节标题！高手的黄金分块法则是：按 Markdown 章节层级递归切分 + 保留10%‒15% 滑动窗口重叠(Chunk Overlap) + 为每个分块头部自动注入所属文档名与章节面包屑路径(Metadata Header Injection)。</p>
 <h2>第 2 关实操练习题：重构人力资源考勤制度文档的抗截断分块器</h2>
@@ -51,6 +51,29 @@
 <p>3. 设计分块元数据注入模板：在每个 Chunk 文本开头自动拼接 【来源文档：员工手册v2 | 所属章节：第四章 &gt; 4.2 病假薪资标准】（4 分）。</p>
 <h3>第二阶段</h3>
 <p>核心引擎篇（第 3‒4 关）——语义检索引擎、混合检索与重排序</p></section>
+    <section class="practice" id="practice" data-key="/ai/notes/rag/02" data-total="12.5">
+  <div class="practice-head">
+    <p class="label">PRACTICE / 本关练习</p>
+    <h2>先写你的答案，再对参考。</h2>
+    <p>答案只保存在这台设备的浏览器里，不上传；勾选通关要求做自评。</p>
+  </div>
+  <div class="practice-grid">
+    <div class="practice-write">
+      <label for="practice-answer">我的答案</label>
+      <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案 / 代码写在这里…"></textarea>
+      <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
+    </div>
+    <div class="practice-check">
+      <p class="practice-label">通关要求 · 自评</p>
+      <div class="check-list"><label class="check-item"><input type="checkbox" data-req data-weight="4.5"><span>1. 设定分层切分优先级分隔符列表（优先按二级/三级标题、段落换行、句号切分，严禁在句子中间硬切）（4.5 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="4"><span>2. 配置合理的 chunk_size（如 400‒600 字符）、chunk_overlap（如 60‒80 字符）及表格整体保留策略（4分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="4"><span>3. 设计分块元数据注入模板：在每个 Chunk 文本开头自动拼接 【来源文档：员工手册v2 | 所属章节：第四章 &gt; 4.2 病假薪资标准】（4 分）。</span></label></div>
+      <p class="practice-score">自评 <b data-score>0</b> / 12.5 分</p>
+    </div>
+  </div>
+  <div class="practice-actions">
+    <button type="button" data-reveal>对照参考答案 ↓</button>
+    <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
+  </div>
+</section>
     <details class="answer">
   <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
   <div class="answer-body"><div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code>CHUNK_CONFIG = {

@@ -39,7 +39,7 @@
     <p class="kicker">RAG / KNOWLEDGE BASE / 06</p>
     <h1>多轮对话与查询改写</h1>
     <p class="lede">StepByStep-RAG 的第四模块 ConvoRAG 解决了单轮 RAG 走向真实聊天应用的最大拦路虎——多</p>
-    <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 StepByStep-RAG / GraphRAG / RAG 评估实践</span></div>
+    <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 StepByStep-RAG / GraphRAG / RAG 评估实践</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="lesson"><h3>核心原理</h3>
 <p>StepByStep-RAG 的第四模块 ConvoRAG 解决了单轮 RAG 走向真实聊天应用的最大拦路虎——多轮对话中的指代消解(Coreference Resolution)。例如：第 1 轮用户问“Grand Palace 酒店的豪华海景房多少钱一晚？”,第 2 轮用户紧接着问“那它包含免费双人早餐和机场接送吗？”。如果直接拿第 2 轮原话“那它包含免费双人早餐和机场接送吗？”去向量库检索，由于丢失了主语“Grand Palace 酒店豪华海景房”,检索器会把全库所有提到早餐的无关文档搜出来！因此，在检索之前必须增加一步独立查询改写器(Contextual Query Rewriter)，并可结合 RAG Zero to Hero Guide 中的 HyDE（假设性文档嵌入） 或Sub-Query Decomposition（多子问题拆解）。</p>
 <h2>第 6 关实操练习题：编写多轮对话指代消解与复杂对比问题拆解器</h2>
@@ -51,6 +51,29 @@
 <p>3. 说明若用户第 2 轮只是说“谢谢，讲得很清楚”,系统应如何跳过向量库检索以节省延迟（3 分）。</p>
 <h3>第四阶段</h3>
 <p>高阶生产篇（第 7‒8 关）——知识图谱 GraphRAG、流式应用与评估体系</p></section>
+    <section class="practice" id="practice" data-key="/ai/notes/rag/06" data-total="12.5">
+  <div class="practice-head">
+    <p class="label">PRACTICE / 本关练习</p>
+    <h2>先写你的答案，再对参考。</h2>
+    <p>答案只保存在这台设备的浏览器里，不上传；勾选通关要求做自评。</p>
+  </div>
+  <div class="practice-grid">
+    <div class="practice-write">
+      <label for="practice-answer">我的答案</label>
+      <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案 / 代码写在这里…"></textarea>
+      <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
+    </div>
+    <div class="practice-check">
+      <p class="practice-label">通关要求 · 自评</p>
+      <div class="check-list"><label class="check-item"><input type="checkbox" data-req data-weight="4.5"><span>1. 设计前置 Query Rewriter 提示词：结合历史对话 &lt;chat_history&gt; 与当前追问 &lt;latest_question&gt;,将含代词“它”的句子改写为主语完整、可独立检索的句子（4.5 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="5"><span>2. 针对“A 与 B 有什么区别”这类对比型问题，设计拆解为两条独立检索子查询(Sub-queries)的JSON 输出格式，避免单次检索只召回 A 而漏掉 B（5 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="3"><span>3. 说明若用户第 2 轮只是说“谢谢，讲得很清楚”,系统应如何跳过向量库检索以节省延迟（3 分）。</span></label></div>
+      <p class="practice-score">自评 <b data-score>0</b> / 12.5 分</p>
+    </div>
+  </div>
+  <div class="practice-actions">
+    <button type="button" data-reveal>对照参考答案 ↓</button>
+    <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
+  </div>
+</section>
     <details class="answer">
   <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
   <div class="answer-body"><h2>前置查询改写与拆解器 Prompt(Query Rewriter &amp; Decomposer)</h2>

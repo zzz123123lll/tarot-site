@@ -39,7 +39,7 @@
     <p class="kicker">RAG / KNOWLEDGE BASE / 05</p>
     <h1>核心 RAG 闭环与引用溯源控制</h1>
     <p class="lede">在 StepByStep-RAG 的第三模块 SimpleRAG 中，检索出 Top-K 文档块后，如何把它们与用户问题</p>
-    <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 StepByStep-RAG / GraphRAG / RAG 评估实践</span></div>
+    <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 StepByStep-RAG / GraphRAG / RAG 评估实践</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="lesson"><h3>核心原理</h3>
 <p>在 StepByStep-RAG 的第三模块 SimpleRAG 中，检索出 Top-K 文档块后，如何把它们与用户问题拼装成最终 Prompt 决定了生成的可靠性。许多初学者只是简单地把检索文本拼在问题前面，结果大模型把自己的预训练幻觉和知识库事实混在一起输出，用户根本分不清哪句话出自哪份文件。高标准的 RAG 生成指令必须强制执行“封闭域作答 + 句末角标溯源（如 `[来源1: 文件名#页码]`） + 证据冲突显式披露”。</p>
 <h2>第 5 关实操练习题：设计带强制角标溯源与防脑补护栏的 SimpleRAG 生成模板</h2>
@@ -49,6 +49,29 @@
 <p>1. 用带 id 与 source 属性的 XML 标签（如 &lt;context id="1" source="医保手册_p12.pdf"&gt;）结构化封装检索片段（4.5 分）；</p>
 <p>2. 强制规定输出中的每一个事实断言末尾必须紧跟 [来源X] 角标引用（4.5 分）；</p>
 <p>3. 规定当所有检索片段与问题无关时，直接输出固定拒答话术且不附带虚假引用（3.5 分）。</p></section>
+    <section class="practice" id="practice" data-key="/ai/notes/rag/05" data-total="12.5">
+  <div class="practice-head">
+    <p class="label">PRACTICE / 本关练习</p>
+    <h2>先写你的答案，再对参考。</h2>
+    <p>答案只保存在这台设备的浏览器里，不上传；勾选通关要求做自评。</p>
+  </div>
+  <div class="practice-grid">
+    <div class="practice-write">
+      <label for="practice-answer">我的答案</label>
+      <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案 / 代码写在这里…"></textarea>
+      <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
+    </div>
+    <div class="practice-check">
+      <p class="practice-label">通关要求 · 自评</p>
+      <div class="check-list"><label class="check-item"><input type="checkbox" data-req data-weight="4.5"><span>1. 用带 id 与 source 属性的 XML 标签（如 &lt;context id=&quot;1&quot; source=&quot;医保手册_p12.pdf&quot;&gt;）结构化封装检索片段（4.5 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="4.5"><span>2. 强制规定输出中的每一个事实断言末尾必须紧跟 [来源X] 角标引用（4.5 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="3.5"><span>3. 规定当所有检索片段与问题无关时，直接输出固定拒答话术且不附带虚假引用（3.5 分）。</span></label></div>
+      <p class="practice-score">自评 <b data-score>0</b> / 12.5 分</p>
+    </div>
+  </div>
+  <div class="practice-actions">
+    <button type="button" data-reveal>对照参考答案 ↓</button>
+    <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
+  </div>
+</section>
     <details class="answer">
   <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
   <div class="answer-body"><p>请严格依据下方 &lt;retrieved_contexts&gt; 标签内提供的知识库片段回答用户问题。</p>
