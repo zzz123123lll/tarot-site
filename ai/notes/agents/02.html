@@ -3,16 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>工具调用设计模式 · 第 02 关 — AI Agent</title>
-<meta name="description" content="根据 Microsoft AI Agents for Beginners 第 4 课与 LLM Engineering 工具调用实验，大模型本身并">
+<title>工具调用设计模式 · 第 02 关 — AI Agent 智能体：从零搭建实战</title>
+<meta name="description" content="根据 Microsoft AI Agents for Beginners 第 4 课与 LLM Engineering 工具调用实验，大模型本身并…">
 <link rel="canonical" href="https://gongjuhe.top/ai/notes/agents/02">
 <meta property="og:type" content="article">
-<meta property="og:title" content="工具调用设计模式 · 第 02 关 — AI Agent">
-<meta property="og:description" content="根据 Microsoft AI Agents for Beginners 第 4 课与 LLM Engineering 工具调用实验，大模型本身并">
+<meta property="og:title" content="工具调用设计模式 — AI Agent 智能体：从零搭建实战">
+<meta property="og:description" content="根据 Microsoft AI Agents for Beginners 第 4 课与 LLM Engineering 工具调用实验，大模型本身并…">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=2">
-<script src="/ai/notes/notes.js?v=3" defer></script>
+<link rel="stylesheet" href="/ai/notes/notes.css?v=3">
+<script src="/ai/notes/notes.js?v=4" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=1"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>
@@ -21,24 +22,24 @@
   <a class="brand" href="/">AI 实战通关 <small>KNOWLEDGE BASE</small></a>
   <nav class="nav" aria-label="主导航">
     <a href="/ai/notes/">全部课程</a>
-    <a class="hide-s" href="/#practice">怎么练</a>
-    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
+    <a href="/">知识库首页</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%20%E6%99%BA%E8%83%BD%E4%BD%93%EF%BC%9A%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E5%AE%9E%E6%88%98%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF</a>
   </nav>
 </header>
 <main id="main">
 <nav class="breadcrumb wrap" aria-label="面包屑">
-  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/agents/">AI Agent</a><span class="sep">/</span><span>第 02 关</span>
+  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/agents/">AI Agent 智能体：从零搭建实战</a><span class="sep">/</span><span>第 02 关</span>
 </nav>
 <div class="wrap article-shell">
   <aside class="side">
-    <p class="side-label">AI AGENTS</p>
+    <p class="side-label">AI Agent 智能体</p>
     <ol class="level-nav"><li><a href="/ai/notes/agents/01"><span class="num">01</span><span>Agent 核心循环与框架选型</span></a></li><li><a href="/ai/notes/agents/02" class="current"><span class="num">02</span><span>工具调用设计模式</span></a></li><li><a href="/ai/notes/agents/03"><span class="num">03</span><span>任务规划与动态拆解模式</span></a></li><li><a href="/ai/notes/agents/04"><span class="num">04</span><span>智能体检索与分层记忆管理</span></a></li><li><a href="/ai/notes/agents/05"><span class="num">05</span><span>元认知与自我反思机制</span></a></li><li><a href="/ai/notes/agents/06"><span class="num">06</span><span>多智能体协作编排模式</span></a></li><li><a href="/ai/notes/agents/07"><span class="num">07</span><span>智能体通信协议与上下文工程</span></a></li><li><a href="/ai/notes/agents/08"><span class="num">08</span><span>可信护栏与生产级安全架构</span></a></li></ol>
-    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF ↗</a></div>
+    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%20%E6%99%BA%E8%83%BD%E4%BD%93%EF%BC%9A%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E5%AE%9E%E6%88%98%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF ↗</a></div>
   </aside>
   <article class="article">
-    <p class="kicker">AI AGENTS / 02</p>
+    <p class="kicker">AI AGENTS / 02 · ENGINE v1</p>
     <h1>工具调用设计模式</h1>
-    <p class="lede">根据 Microsoft AI Agents for Beginners 第 4 课与 LLM Engineering 工具调用实验，大模型本身并</p>
+    <p class="lede">根据 Microsoft AI Agents for Beginners 第 4 课与 LLM Engineering 工具调用实验，大模型本身并…</p>
     <div class="meta"><span>约 5 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Microsoft AI Agents for Beginners (77.2k Stars)</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="lesson"><h3>核心原理</h3>
 <p>根据 Microsoft AI Agents for Beginners 第 4 课与 LLM Engineering 工具调用实验，大模型本身并不会直接运行代码或查数据库，而是根据你提供的工具函数签名与文档字符串 ( Docstring / JSON Schema)，输出结构化的函数名与 JSON 参数，由宿主程序执行后再将结果返回给模型。工具调用成败的80% 取决于函数描述是否清晰说明了“何时该调、何时不该调”以及参数枚举/格式约束。</p>
@@ -56,34 +57,34 @@
 <p>3. 设计当参数校验失败时返回给 Agent 的结构化错误提示格式，引导 Agent 向用户追问缺失信息而非盲目报错（3 分）。</p>
 <h3>第二阶段</h3>
 <p>核心能力篇（第 3‒4 关）——目标规划拆解与智能体记忆系统</p></section>
-    <section class="practice" id="practice" data-key="/ai/notes/agents/02" data-total="12.5" data-rules="[{&quot;text&quot;: &quot;1. 编写完整的 OpenAI/Pydantic 兼容 JSON Schema,包含工具名、详细调用前提说明(description)与 required 必填字段列表（4.5 分）；&quot;, &quot;weight&quot;: 4.5, &quot;groups&quot;: [[&quot;json schema&quot;], [&quot;description&quot;], [&quot;required&quot;]], &quot;format&quot;: null}, {&quot;text&quot;: &quot;2. 为 order_id、refund_amount_cny（设定单笔上限说明）、reason_category（设定枚举值 enum）三个参数提供精确类型与业务约束（5 分）；&quot;, &quot;weight&quot;: 5, &quot;groups&quot;: [[&quot;order_id&quot;], [&quot;refund_amount_cny&quot;], [&quot;reason_category&quot;], [&quot;enum&quot;]], &quot;format&quot;: null}, {&quot;text&quot;: &quot;3. 设计当参数校验失败时返回给 Agent 的结构化错误提示格式，引导 Agent 向用户追问缺失信息而非盲目报错（3 分）。&quot;, &quot;weight&quot;: 3, &quot;groups&quot;: [[&quot;结构化错误&quot;, &quot;error&quot;], [&quot;追问&quot;, &quot;缺失&quot;]], &quot;format&quot;: null}]">
-  <div class="practice-head">
-    <p class="label">PRACTICE / 本关练习</p>
-    <h2>先写你的答案，再对参考。</h2>
-    <p>答案只保存在这台设备的浏览器里，不上传；规则检查会告诉你缺了哪些得分点。</p>
-  </div>
-  <div class="practice-grid">
-    <div class="practice-write">
-      <label for="practice-answer">我的答案</label>
-      <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案 / 代码写在这里…"></textarea>
-      <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
-    </div>
-    <div class="practice-check">
-      <p class="practice-label">通关得分点 · 自动检查</p>
-      <div class="check-list"><div class="check-item" data-rule><span class="check-state" data-state>待检查</span><span class="check-text">1. 编写完整的 OpenAI/Pydantic 兼容 JSON Schema,包含工具名、详细调用前提说明(description)与 required 必填字段列表（4.5 分）；</span></div><div class="check-item" data-rule><span class="check-state" data-state>待检查</span><span class="check-text">2. 为 order_id、refund_amount_cny（设定单笔上限说明）、reason_category（设定枚举值 enum）三个参数提供精确类型与业务约束（5 分）；</span></div><div class="check-item" data-rule><span class="check-state" data-state>待检查</span><span class="check-text">3. 设计当参数校验失败时返回给 Agent 的结构化错误提示格式，引导 Agent 向用户追问缺失信息而非盲目报错（3 分）。</span></div></div>
-      <button type="button" class="check-answer" data-check>检查我的答案</button>
-      <div class="practice-feedback" data-feedback></div>
-      <p class="practice-score">结构分 <b data-score>—</b> / 12.5 分</p>
-    </div>
-  </div>
-  <div class="practice-actions">
-    <button type="button" data-reveal>对照参考答案 ↓</button>
-    <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
-  </div>
-</section>
+    <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/agents/02" data-exercise="/content/levels/agents-02.json">
+      <div class="practice-head">
+        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <h2>为售后退款智能体编写严谨的 Tool JSON Schema</h2>
+        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+      </div>
+      <div class="practice-grid">
+        <div class="practice-write">
+          <label for="practice-answer">我的答案</label>
+          <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案写在这里…"></textarea>
+          <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
+        </div>
+        <div class="practice-check">
+          <p class="practice-label">评分项</p>
+          <div class="check-list" data-criteria></div>
+          <button type="button" class="check-answer" data-check>检查我的答案</button>
+          <div class="practice-feedback" data-feedback></div>
+          <p class="practice-score">结构分 <b data-score>—</b> / 12.5 分</p>
+        </div>
+      </div>
+      <div class="practice-actions">
+        <button type="button" data-reveal>对照参考答案 ↓</button>
+        <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
+      </div>
+    </section>
     <details class="answer">
-  <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
-  <div class="answer-body"><div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code>{
+      <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
+      <div class="answer-body"><div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code>{
 "name": "initiate_partial_refund",
 "description": "向买家发起订单部分退款。调用前提:必须先调用 get_logistics_status 确认包裹已签收
 或存在核实的物流异常,严禁在未查询订单状态前直接调用本工具。单笔自动退款上限为 200 元人民币。",
@@ -117,8 +118,8 @@
 缺失,请礼貌询问买家提供以 ORD- 开头的 12 位订单号,切勿自行编造参数重试。"}</code></pre></div>
 <h3>得分要点拆解</h3>
 <p>完整声明 JSON Schema 与前置调用约束（4.5 分）；对订单号正则、金额上下限、原因枚举进行强类型锁定（5 分）；提供面向 Agent 的结构化错误回退指引（3 分）。</p></div>
-</details>
-    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">留邮箱，获取完整 PDF ↗</a></div>
+    </details>
+    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%20%E6%99%BA%E8%83%BD%E4%BD%93%EF%BC%9A%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E5%AE%9E%E6%88%98%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
     <div class="nextprev"><a href="/ai/notes/agents/01"><small>上一关</small>Agent 核心循环与框架选型</a><a class="right" href="/ai/notes/agents/03"><small>下一关</small>任务规划与动态拆解模式</a></div>
   </article>
 </div>

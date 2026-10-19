@@ -1,0 +1,73 @@
+{
+  "id": "agents",
+  "title": "AI Agent 智能体：从零搭建实战",
+  "subtitle": "从单次问答机器人，到自主规划与多智能体协作系统。",
+  "source": "Microsoft AI Agents for Beginners (77.2k Stars)",
+  "label": "AI AGENTS",
+  "levels": [
+    {
+      "id": "agents-01",
+      "level": 1,
+      "title": "Agent 核心循环与框架选型",
+      "summary": "先把 Agent 的循环、触发条件和熔断规则写完整。",
+      "readMinutes": 4,
+      "href": "/ai/notes/agents/01"
+    },
+    {
+      "id": "agents-02",
+      "level": 2,
+      "title": "工具调用设计模式",
+      "summary": "根据 Microsoft AI Agents for Beginners 第 4 课与 LLM Engineering 工具调用实验，大模型本身并…",
+      "readMinutes": 5,
+      "href": "/ai/notes/agents/02"
+    },
+    {
+      "id": "agents-03",
+      "level": 3,
+      "title": "任务规划与动态拆解模式",
+      "summary": "面对复杂目标（如“分析竞品最近三个月的定价变动并生成应对促销方案”），单步工具调用无法完…",
+      "readMinutes": 4,
+      "href": "/ai/notes/agents/03"
+    },
+    {
+      "id": "agents-04",
+      "level": 4,
+      "title": "智能体检索与分层记忆管理",
+      "summary": "传统 RAG 只是机械地把用户原话拿去搜一次向量库，而 Microsoft AI Agents for Beginners 第 5 课…",
+      "readMinutes": 3,
+      "href": "/ai/notes/agents/04"
+    },
+    {
+      "id": "agents-05",
+      "level": 5,
+      "title": "元认知与自我反思机制",
+      "summary": "为什么顶级 Agent 写出的代码或报告极少出错？",
+      "readMinutes": 5,
+      "href": "/ai/notes/agents/05"
+    },
+    {
+      "id": "agents-06",
+      "level": 6,
+      "title": "多智能体协作编排模式",
+      "summary": "当一个智能体挂载超过 15 个工具、系统提示词超过数千字时，它的工具选错率和指令遗忘率会急…",
+      "readMinutes": 4,
+      "href": "/ai/notes/agents/06"
+    },
+    {
+      "id": "agents-07",
+      "level": 7,
+      "title": "智能体通信协议与上下文工程",
+      "summary": "核心原理：在 Microsoft AI Agents for Beginners 第 11 课 ( Agentic Protocols ) 与第 12 课 ( Context…",
+      "readMinutes": 4,
+      "href": "/ai/notes/agents/07"
+    },
+    {
+      "id": "agents-08",
+      "level": 8,
+      "title": "可信护栏与生产级安全架构",
+      "summary": "给大模型赋予自动执行工具的权限是一把双刃剑。",
+      "readMinutes": 4,
+      "href": "/ai/notes/agents/08"
+    }
+  ]
+}

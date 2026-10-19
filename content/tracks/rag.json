@@ -1,0 +1,73 @@
+{
+  "id": "rag",
+  "title": "RAG 检索增强生成：个人知识库实操",
+  "subtitle": "从余弦相似度手算，到生产级混合检索与多轮知识库。",
+  "source": "StepByStep-RAG / GraphRAG / RAG 评估实践",
+  "label": "RAG / KNOWLEDGE BASE",
+  "levels": [
+    {
+      "id": "rag-01",
+      "level": 1,
+      "title": "向量表示与余弦相似度基础",
+      "summary": "先手算余弦相似度，再补上阈值、空结果和结构化返回。",
+      "readMinutes": 4,
+      "href": "/ai/notes/rag/01"
+    },
+    {
+      "id": "rag-02",
+      "level": 2,
+      "title": "文档解析与黄金分块策略",
+      "summary": "“垃圾进，垃圾出(Garbage In, Garbage Out)。",
+      "readMinutes": 3,
+      "href": "/ai/notes/rag/02"
+    },
+    {
+      "id": "rag-03",
+      "level": 3,
+      "title": "语义检索引擎构建",
+      "summary": "在 StepByStep-RAG 的第二模块 SemanticSeek 与 AI Infra Engineer Learning (Mod 110) 中，传…",
+      "readMinutes": 3,
+      "href": "/ai/notes/rag/03"
+    },
+    {
+      "id": "rag-04",
+      "level": 4,
+      "title": "混合检索与重排序优化",
+      "summary": "纯向量语义检索有一个致命短板：对精确专有名词、产品型号代码（如“错误码 ERR-4092-B”）、…",
+      "readMinutes": 4,
+      "href": "/ai/notes/rag/04"
+    },
+    {
+      "id": "rag-05",
+      "level": 5,
+      "title": "核心 RAG 闭环与引用溯源控制",
+      "summary": "在 StepByStep-RAG 的第三模块 SimpleRAG 中，检索出 Top-K 文档块后，如何把它们与用户问题…",
+      "readMinutes": 3,
+      "href": "/ai/notes/rag/05"
+    },
+    {
+      "id": "rag-06",
+      "level": 6,
+      "title": "多轮对话与查询改写",
+      "summary": "StepByStep-RAG 的第四模块 ConvoRAG 解决了单轮 RAG 走向真实聊天应用的最大拦路虎——多…",
+      "readMinutes": 4,
+      "href": "/ai/notes/rag/06"
+    },
+    {
+      "id": "rag-07",
+      "level": 7,
+      "title": "知识图谱增强检索",
+      "summary": "传统向量切片 RAG 擅长回答“局部细节查找题”,但在面对“跨全库全局归纳题”(例如：“综合这…",
+      "readMinutes": 4,
+      "href": "/ai/notes/rag/07"
+    },
+    {
+      "id": "rag-08",
+      "level": 8,
+      "title": "流式交互应用与 RAG 黄金评估体系",
+      "summary": "在 StepByStep-RAG 的第五模块 RAGStream 中，我们将后台 RAG 引擎封装为支持自定义文档上…",
+      "readMinutes": 4,
+      "href": "/ai/notes/rag/08"
+    }
+  ]
+}

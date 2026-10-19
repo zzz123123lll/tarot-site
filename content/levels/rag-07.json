@@ -1,0 +1,102 @@
+{
+  "id": "rag-07",
+  "trackId": "rag",
+  "level": 7,
+  "title": "知识图谱增强检索",
+  "summary": "传统向量切片 RAG 擅长回答“局部细节查找题”,但在面对“跨全库全局归纳题”(例如：“综合这…",
+  "source": "StepByStep-RAG / GraphRAG / RAG 评估实践",
+  "readMinutes": 4,
+  "lessonHtml": "<h3>核心原理</h3>\n<p>传统向量切片 RAG 擅长回答“局部细节查找题”,但在面对“跨全库全局归纳题”（例如：“综合这500 份客户投诉工单，今年最核心的三大系统性质量问题及其关联供应商分别是什么？”）时往往彻底失效，因为 Top-5 局部片段根本无法代表全部 500 份文档的全貌！微软开源的 Microsoft GraphRAG 提出了革命性解法：在索引阶段利用大模型从文本中抽取实体(Entities)与关系(Relationships)构建知识图谱，通过Leiden 社区发现算法对紧密关联的实体群落生成多层级的社区摘要(Community Summaries)。查询时：</p>\n<p>局部细节问题走 Local Search（实体邻域遍历 + 原文块），宏观全局问题走 Global Search（Map-Reduce汇总各社区摘要）。</p>\n<h2>第 7 关实操练习题：设计行业研报知识库的实体关系抽取与 Local/Global 路由策略</h2>\n<h3>任务背景</h3>\n<p>你正在为一家券商研究所搭建涵盖 200 份新能源产业链研报的 GraphRAG 知识库。</p>\n<h3>通关硬性要求（满分 12.5 分）</h3>\n<p>1. 定义面向产业链研报的实体类型（如公司、核心原材料、产能指标、技术路线）与关系三元组 (Head,Relation, Tail) 抽取 JSON 格式（5 分）；</p>\n<p>2. 设计查询路由器(Query Router)：准确判断哪些用户提问应路由至标准向量/Local Search,哪些宏观综述提问必须路由至 GraphRAG Global Search（4.5 分）；</p>\n<p>3. 简述 GraphRAG 索引构建成本高的原因及如何仅对高价值核心文档启用图谱抽取（3 分）。</p>",
+  "referenceAnswerHtml": "<p>// 1. 产业链研报图谱抽取 Schema 示例</p>\n<div class=\"code-block\"><button class=\"copy-btn\" type=\"button\" data-copy>复制</button><pre><code>{\n\"entities\": [\n{\"name\": \"宁德时代\", \"type\": \"COMPANY\", \"summary\": \"全球动力电池龙头企业,主营磷酸铁锂与三元锂\n电池\"},\n{\"name\": \"麒麟电池\", \"type\": \"PRODUCT_TECH\", \"summary\": \"第三代 CTP 无模组技术,体积利用率突破\n72%\"},\n{\"name\": \"碳酸锂\", \"type\": \"RAW_MATERIAL\", \"summary\": \"锂电池正极核心原材料\"}\n],\n\"relationships\": [\n{\"head\": \"宁德时代\", \"relation\": \"DEVELOPED_TECH\", \"tail\": \"麒麟电池\", \"weight\": 0.95},\n{\"head\": \"碳酸锂价格下跌\", \"relation\": \"REDUCES_COST_OF\", \"tail\": \"宁德时代\", \"weight\": 0.88}\n]\n}\n// 2. 查询路由判定规则(Query Router)\n- 路由至 Local Search(向量 + 实体一跳邻域):针对特定实体或具体数值的微观问题(如“麒麟电池的体积利\n用率是多少?”)。\n- 路由至 GraphRAG Global Search(社区摘要 Map-Reduce):针对跨多篇研报的宏观趋势、主题归纳与全集统计\n问题(如“总结这 200 份研报中提到的固态电池量产三大共性技术瓶颈”)。\n- 成本优化方案:仅对核心深度研报与长周期规范文档启用 LLM 图谱抽取,日常短资讯仍采用轻量向量索引。</code></pre></div>\n<h3>得分要点拆解</h3>\n<p>规范定义产业链实体与三元组关系 Schema（5 分）；清晰区分微观细节查询(Local Search)与跨全库全局归纳查询(Global Search)（4.5 分）；给出混合索引控本策略（3 分）。</p>",
+  "exercise": {
+    "id": "rag-07-ex",
+    "title": "设计行业研报知识库的实体关系抽取与 Local/Global 路由策略",
+    "minLength": 40,
+    "criteria": [
+      {
+        "id": "c1",
+        "label": "定义面向产业链研报的实体类型（如公司、核心原材料、产能指标、技术路线）与关系三元组 (Head,Relation, Tail) 抽取 JSON 格式",
+        "weight": 5.0,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "实体",
+            "terms": [
+              "实体",
+              "公司",
+              "原材料",
+              "产能"
+            ]
+          },
+          {
+            "label": "三元组",
+            "terms": [
+              "三元组",
+              "head",
+              "relation",
+              "tail"
+            ]
+          },
+          {
+            "label": "JSON",
+            "terms": [
+              "json"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "c2",
+        "label": "设计查询路由器(Query Router)：准确判断哪些用户提问应路由至标准向量/Local Search,哪些宏观综述提问必须路由至 GraphRAG Global Search",
+        "weight": 4.5,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "路由",
+            "terms": [
+              "路由",
+              "router"
+            ]
+          },
+          {
+            "label": "local search",
+            "terms": [
+              "local search",
+              "向量"
+            ]
+          },
+          {
+            "label": "graphrag",
+            "terms": [
+              "graphrag",
+              "global"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "c3",
+        "label": "简述 GraphRAG 索引构建成本高的原因及如何仅对高价值核心文档启用图谱抽取",
+        "weight": 3.0,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "成本",
+            "terms": [
+              "成本",
+              "索引"
+            ]
+          },
+          {
+            "label": "高价值",
+            "terms": [
+              "高价值",
+              "核心文档"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "next": "rag-08"
+}

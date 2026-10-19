@@ -3,16 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>语义检索引擎构建 · 第 03 关 — RAG 知识库</title>
-<meta name="description" content="在 StepByStep-RAG 的第二模块 SemanticSeek 与 AI Infra Engineer Learning (Mod 110) 中，传">
+<title>语义检索引擎构建 · 第 03 关 — RAG 检索增强生成：个人知识库实操</title>
+<meta name="description" content="在 StepByStep-RAG 的第二模块 SemanticSeek 与 AI Infra Engineer Learning (Mod 110) 中，传…">
 <link rel="canonical" href="https://gongjuhe.top/ai/notes/rag/03">
 <meta property="og:type" content="article">
-<meta property="og:title" content="语义检索引擎构建 · 第 03 关 — RAG 知识库">
-<meta property="og:description" content="在 StepByStep-RAG 的第二模块 SemanticSeek 与 AI Infra Engineer Learning (Mod 110) 中，传">
+<meta property="og:title" content="语义检索引擎构建 — RAG 检索增强生成：个人知识库实操">
+<meta property="og:description" content="在 StepByStep-RAG 的第二模块 SemanticSeek 与 AI Infra Engineer Learning (Mod 110) 中，传…">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=2">
-<script src="/ai/notes/notes.js?v=3" defer></script>
+<link rel="stylesheet" href="/ai/notes/notes.css?v=3">
+<script src="/ai/notes/notes.js?v=4" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=1"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>
@@ -21,24 +22,24 @@
   <a class="brand" href="/">AI 实战通关 <small>KNOWLEDGE BASE</small></a>
   <nav class="nav" aria-label="主导航">
     <a href="/ai/notes/">全部课程</a>
-    <a class="hide-s" href="/#practice">怎么练</a>
-    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
+    <a href="/">知识库首页</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8ARAG%20%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%9A%E4%B8%AA%E4%BA%BA%E7%9F%A5%E8%AF%86%E5%BA%93%E5%AE%9E%E6%93%8D%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF</a>
   </nav>
 </header>
 <main id="main">
 <nav class="breadcrumb wrap" aria-label="面包屑">
-  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/rag/">RAG 知识库</a><span class="sep">/</span><span>第 03 关</span>
+  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/rag/">RAG 检索增强生成：个人知识库实操</a><span class="sep">/</span><span>第 03 关</span>
 </nav>
 <div class="wrap article-shell">
   <aside class="side">
-    <p class="side-label">RAG / KNOWLEDGE BASE</p>
+    <p class="side-label">RAG 检索增强生成</p>
     <ol class="level-nav"><li><a href="/ai/notes/rag/01"><span class="num">01</span><span>向量表示与余弦相似度基础</span></a></li><li><a href="/ai/notes/rag/02"><span class="num">02</span><span>文档解析与黄金分块策略</span></a></li><li><a href="/ai/notes/rag/03" class="current"><span class="num">03</span><span>语义检索引擎构建</span></a></li><li><a href="/ai/notes/rag/04"><span class="num">04</span><span>混合检索与重排序优化</span></a></li><li><a href="/ai/notes/rag/05"><span class="num">05</span><span>核心 RAG 闭环与引用溯源控制</span></a></li><li><a href="/ai/notes/rag/06"><span class="num">06</span><span>多轮对话与查询改写</span></a></li><li><a href="/ai/notes/rag/07"><span class="num">07</span><span>知识图谱增强检索</span></a></li><li><a href="/ai/notes/rag/08"><span class="num">08</span><span>流式交互应用与 RAG 黄金评估体系</span></a></li></ol>
-    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8ARAG%20%E7%9F%A5%E8%AF%86%E5%BA%93%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF ↗</a></div>
+    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8ARAG%20%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%9A%E4%B8%AA%E4%BA%BA%E7%9F%A5%E8%AF%86%E5%BA%93%E5%AE%9E%E6%93%8D%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF ↗</a></div>
   </aside>
   <article class="article">
-    <p class="kicker">RAG / KNOWLEDGE BASE / 03</p>
+    <p class="kicker">RAG / KNOWLEDGE BASE / 03 · ENGINE v1</p>
     <h1>语义检索引擎构建</h1>
-    <p class="lede">在 StepByStep-RAG 的第二模块 SemanticSeek 与 AI Infra Engineer Learning (Mod 110) 中，传</p>
+    <p class="lede">在 StepByStep-RAG 的第二模块 SemanticSeek 与 AI Infra Engineer Learning (Mod 110) 中，传…</p>
     <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 StepByStep-RAG / GraphRAG / RAG 评估实践</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="lesson"><h3>核心原理</h3>
 <p>在 StepByStep-RAG 的第二模块 SemanticSeek 与 AI Infra Engineer Learning (Mod 110) 中，传统的 Ctrl+F 或关键词搜索在面对“用户问：电脑连不上公司内网怎么办”而知识库原文写的是“企业 VPN 客户端认证失败排查指南”时，会因为字面词汇零重合而完全搜不到结果。语义检索(Semantic Search)通过将文本块编码为稠密向量并存入向量数据库（如 Chroma、Qdrant、Weaviate），同时绑定结构化元数据过滤条件（Metadata Filtering,如 department == "IT" 且 year &gt;= 2025），实现“既懂弦外之音、又守精确边界”的高效检索。</p>
@@ -49,34 +50,34 @@
 <p>1. 设计文档入库(Upsert)时的三维结构：id、document_text、embedding 与 metadata（含版本号、生效状态 is_active、适用部门）（4.5 分）；</p>
 <p>2. 编写检索查询逻辑，在计算向量相似度前先通过 where={"is_active": True} 过滤掉历史废止文档（5分）；</p>
 <p>3. 说明为什么查询向量(Query Embedding)与文档入库向量必须使用完全相同的 Embedding 模型与归一化方式（3 分）。</p></section>
-    <section class="practice" id="practice" data-key="/ai/notes/rag/03" data-total="12.5" data-rules="[{&quot;text&quot;: &quot;1. 设计文档入库(Upsert)时的三维结构：id、document_text、embedding 与 metadata（含版本号、生效状态 is_active、适用部门）（4.5 分）；&quot;, &quot;weight&quot;: 4.5, &quot;groups&quot;: [[&quot;id&quot;], [&quot;document_text&quot;], [&quot;embedding&quot;], [&quot;metadata&quot;, &quot;is_active&quot;]], &quot;format&quot;: null}, {&quot;text&quot;: &quot;2. 编写检索查询逻辑，在计算向量相似度前先通过 where={\&quot;is_active\&quot;: True} 过滤掉历史废止文档（5分）；&quot;, &quot;weight&quot;: 5, &quot;groups&quot;: [[&quot;where&quot;, &quot;is_active&quot;, &quot;过滤&quot;]], &quot;format&quot;: null}, {&quot;text&quot;: &quot;3. 说明为什么查询向量(Query Embedding)与文档入库向量必须使用完全相同的 Embedding 模型与归一化方式（3 分）。&quot;, &quot;weight&quot;: 3, &quot;groups&quot;: [[&quot;同一个&quot;, &quot;相同&quot;], [&quot;embedding 模型&quot;, &quot;归一化&quot;]], &quot;format&quot;: null}]">
-  <div class="practice-head">
-    <p class="label">PRACTICE / 本关练习</p>
-    <h2>先写你的答案，再对参考。</h2>
-    <p>答案只保存在这台设备的浏览器里，不上传；规则检查会告诉你缺了哪些得分点。</p>
-  </div>
-  <div class="practice-grid">
-    <div class="practice-write">
-      <label for="practice-answer">我的答案</label>
-      <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案 / 代码写在这里…"></textarea>
-      <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
-    </div>
-    <div class="practice-check">
-      <p class="practice-label">通关得分点 · 自动检查</p>
-      <div class="check-list"><div class="check-item" data-rule><span class="check-state" data-state>待检查</span><span class="check-text">1. 设计文档入库(Upsert)时的三维结构：id、document_text、embedding 与 metadata（含版本号、生效状态 is_active、适用部门）（4.5 分）；</span></div><div class="check-item" data-rule><span class="check-state" data-state>待检查</span><span class="check-text">2. 编写检索查询逻辑，在计算向量相似度前先通过 where={&quot;is_active&quot;: True} 过滤掉历史废止文档（5分）；</span></div><div class="check-item" data-rule><span class="check-state" data-state>待检查</span><span class="check-text">3. 说明为什么查询向量(Query Embedding)与文档入库向量必须使用完全相同的 Embedding 模型与归一化方式（3 分）。</span></div></div>
-      <button type="button" class="check-answer" data-check>检查我的答案</button>
-      <div class="practice-feedback" data-feedback></div>
-      <p class="practice-score">结构分 <b data-score>—</b> / 12.5 分</p>
-    </div>
-  </div>
-  <div class="practice-actions">
-    <button type="button" data-reveal>对照参考答案 ↓</button>
-    <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
-  </div>
-</section>
+    <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/rag/03" data-exercise="/content/levels/rag-03.json">
+      <div class="practice-head">
+        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <h2>构建带元数据预过滤的本地 Chroma/Qdrant 语义检索管道</h2>
+        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+      </div>
+      <div class="practice-grid">
+        <div class="practice-write">
+          <label for="practice-answer">我的答案</label>
+          <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案写在这里…"></textarea>
+          <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
+        </div>
+        <div class="practice-check">
+          <p class="practice-label">评分项</p>
+          <div class="check-list" data-criteria></div>
+          <button type="button" class="check-answer" data-check>检查我的答案</button>
+          <div class="practice-feedback" data-feedback></div>
+          <p class="practice-score">结构分 <b data-score>—</b> / 12.5 分</p>
+        </div>
+      </div>
+      <div class="practice-actions">
+        <button type="button" data-reveal>对照参考答案 ↓</button>
+        <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
+      </div>
+    </section>
     <details class="answer">
-  <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
-  <div class="answer-body"><div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code># 1. 结构化入库结构(绑定版本与生效状态元数据)
+      <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
+      <div class="answer-body"><div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code># 1. 结构化入库结构(绑定版本与生效状态元数据)
 collection.upsert(
 ids=["policy_2026_chunk_01", "policy_2023_chunk_01"],
 embeddings=[embed_model.encode(text_2026), embed_model.encode(text_2023)],
@@ -94,8 +95,8 @@ where={"$and": [{"is_active": {"$eq": True}}, {"effective_year": {"$gte": 2026}}
 )</code></pre></div>
 <h3>得分要点拆解</h3>
 <p>完整定义四维入库结构与 `is_active` 元数据（4.5 分）；使用 `where` 过滤器在向量比对前剔除失效旧文档（5 分）；说明不同 Embedding 模型向量空间正交不可混用、必须保持同一模型与归一化标准（3 分）。</p></div>
-</details>
-    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8ARAG%20%E7%9F%A5%E8%AF%86%E5%BA%93%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">留邮箱，获取完整 PDF ↗</a></div>
+    </details>
+    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8ARAG%20%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%9A%E4%B8%AA%E4%BA%BA%E7%9F%A5%E8%AF%86%E5%BA%93%E5%AE%9E%E6%93%8D%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
     <div class="nextprev"><a href="/ai/notes/rag/02"><small>上一关</small>文档解析与黄金分块策略</a><a class="right" href="/ai/notes/rag/04"><small>下一关</small>混合检索与重排序优化</a></div>
   </article>
 </div>

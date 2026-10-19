@@ -1,0 +1,113 @@
+{
+  "id": "rag-01",
+  "trackId": "rag",
+  "level": 1,
+  "title": "向量表示与余弦相似度基础",
+  "summary": "先手算余弦相似度，再补上阈值、空结果和结构化返回。",
+  "source": "StepByStep-RAG / GraphRAG / RAG 评估实践",
+  "readMinutes": 4,
+  "lessonHtml": "<h3>核心原理</h3>\n<p>在 StepByStep-RAG 的第一模块 CosineExplorer 中，作者指出理解 RAG 的起点是搞懂计算机如何衡量两段文字“意思相近”。通过嵌入模型(Embedding Model)，每段文本被映射为高维空间中的数值向量A 与 B。衡量它们语义接近程度的核心指标是余弦相似度(Cosine Similarity)：即两个向量夹角的余弦值（点积除以各自模长的乘积），取值范围为 [-1, 1]。夹角越接近 0 度，余弦值越接近 1,代表语义高度重合；与向量绝对长度（文章字数多少）无关，只看方向是否一致。</p>\n<h2>第 1 关实操练习题：编写零第三方框架依赖的余弦相似度检索函数</h2>\n<h3>任务背景</h3>\n<p>参照 CosineExplorer.py 的教学精神，在不依赖重型黑盒框架的前提下，用基础 Python /NumPy 编写一个计算用户问题向量与知识库候选文档向量矩阵余弦相似度、并返回大于阈值(threshold&gt;= 0.75)的前 K 个文档索引与得分的核心函数。</p>\n<p>待改造劣质代码：def search(q, docs)：return sorted(docs, key=lambda d: sum(q*d))[:3]（缺陷：仅算点积未做模长归一化，长文档或数值偏大的向量会霸榜，且无最低相关度阈值过滤。）</p>\n<h3>通关硬性要求（满分 12.5 分）</h3>\n<p>1. 正确写出包含 L2 范数（模长）归一化的余弦相似度计算公式并防范除零异常（4.5 分）；</p>\n<p>2. 加入最低相似度阈值过滤(min_score = 0.75)，当所有候选文档得分均低于阈值时返回空列表而非强行凑够 Top-K（5 分）；</p>\n<p>3. 按相似度从高到低排序并返回包含 {\"doc_id\", \"score\", \"text\"} 的结构化列表（3 分）。</p>",
+  "referenceAnswerHtml": "<div class=\"code-block\"><button class=\"copy-btn\" type=\"button\" data-copy>复制</button><pre><code>import numpy as np\nfrom typing import List, Dict, Any\n\ndef cosine_similarity_search(\n    query_vec: np.ndarray,\n    doc_matrix: np.ndarray,\n    docs_meta: List[Dict[str, Any]],\n    top_k: int = 3,\n    min_score: float = 0.75\n) -> List[Dict[str, Any]]:\n    query_norm = np.linalg.norm(query_vec) + 1e-10\n    docs_norm = np.linalg.norm(doc_matrix, axis=1) + 1e-10\n    similarities = np.dot(doc_matrix, query_vec) / (docs_norm * query_norm)\n\n    valid_indices = np.where(similarities >= min_score)[0]\n    if len(valid_indices) == 0:\n        return []\n\n    sorted_indices = valid_indices[np.argsort(similarities[valid_indices])[::-1]][:top_k]\n    return [\n        {\n            \"doc_id\": docs_meta[i][\"id\"],\n            \"score\": round(float(similarities[i]), 4),\n            \"text\": docs_meta[i][\"text\"],\n        }\n        for i in sorted_indices\n    ]\n</code></pre></div>\n<h3>得分要点拆解</h3>\n<p>准确实现点积除以模长乘积并加 <code>1e-10</code> 防除零（4.5 分）；严格过滤低于 <code>0.75</code> 的噪音文档、支持返回空列表（5 分）；按降序输出结构化字典列表（3 分）。</p>",
+  "exercise": {
+    "id": "rag-01-ex",
+    "title": "编写零第三方框架依赖的余弦相似度检索函数",
+    "minLength": 40,
+    "criteria": [
+      {
+        "id": "c1",
+        "label": "正确写出包含 L2 范数（模长）归一化的余弦相似度计算公式并防范除零异常",
+        "weight": 4.5,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "L2 需确认",
+            "terms": [
+              "l2",
+              "范数",
+              "np.linalg.norm",
+              "norm"
+            ]
+          },
+          {
+            "label": "余弦",
+            "terms": [
+              "余弦",
+              "cosine",
+              "similarity"
+            ]
+          },
+          {
+            "label": "除零",
+            "terms": [
+              "除零",
+              "1e-10",
+              "epsilon"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "c2",
+        "label": "加入最低相似度阈值过滤(min_score = 0.75)，当所有候选文档得分均低于阈值时返回空列表而非强行凑够 Top-K",
+        "weight": 5.0,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "相似度阈值",
+            "terms": [
+              "阈值",
+              "min_score",
+              "0.75"
+            ]
+          },
+          {
+            "label": "空列表",
+            "terms": [
+              "空列表",
+              "返回空",
+              "return []",
+              "top_k",
+              "top-k"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "c3",
+        "label": "按相似度从高到低排序并返回包含 {\"doc_id\", \"score\", \"text\"} 的结构化列表",
+        "weight": 3.0,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "doc_id",
+            "terms": [
+              "doc_id"
+            ]
+          },
+          {
+            "label": "score",
+            "terms": [
+              "score"
+            ]
+          },
+          {
+            "label": "text",
+            "terms": [
+              "text"
+            ]
+          },
+          {
+            "label": "排序",
+            "terms": [
+              "排序",
+              "降序",
+              "argsort",
+              "[::-1]"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "next": "rag-02"
+}

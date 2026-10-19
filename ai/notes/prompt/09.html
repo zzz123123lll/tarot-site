@@ -3,16 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>构建工业级复杂提示词 · 第 09 关 — 提示词工程</title>
-<meta name="description" content="在真实的商业交付中(如 Anthropic 教程第 9 章涵盖的智能客服、法律咨询、金融财报分析与软">
+<title>构建工业级复杂提示词 · 第 09 关 — AI 提示词工程：九关实战通关</title>
+<meta name="description" content="在真实的商业交付中(如 Anthropic 教程第 9 章涵盖的智能客服、法律咨询、金融财报分析与软…">
 <link rel="canonical" href="https://gongjuhe.top/ai/notes/prompt/09">
 <meta property="og:type" content="article">
-<meta property="og:title" content="构建工业级复杂提示词 · 第 09 关 — 提示词工程">
-<meta property="og:description" content="在真实的商业交付中(如 Anthropic 教程第 9 章涵盖的智能客服、法律咨询、金融财报分析与软">
+<meta property="og:title" content="构建工业级复杂提示词 — AI 提示词工程：九关实战通关">
+<meta property="og:description" content="在真实的商业交付中(如 Anthropic 教程第 9 章涵盖的智能客服、法律咨询、金融财报分析与软…">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=2">
-<script src="/ai/notes/notes.js?v=3" defer></script>
+<link rel="stylesheet" href="/ai/notes/notes.css?v=3">
+<script src="/ai/notes/notes.js?v=4" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=1"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>
@@ -21,24 +22,24 @@
   <a class="brand" href="/">AI 实战通关 <small>KNOWLEDGE BASE</small></a>
   <nav class="nav" aria-label="主导航">
     <a href="/ai/notes/">全部课程</a>
-    <a class="hide-s" href="/#practice">怎么练</a>
-    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
+    <a href="/">知识库首页</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%EF%BC%9A%E4%B9%9D%E5%85%B3%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF</a>
   </nav>
 </header>
 <main id="main">
 <nav class="breadcrumb wrap" aria-label="面包屑">
-  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/prompt/">提示词工程</a><span class="sep">/</span><span>第 09 关</span>
+  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/prompt/">AI 提示词工程：九关实战通关</a><span class="sep">/</span><span>第 09 关</span>
 </nav>
 <div class="wrap article-shell">
   <aside class="side">
-    <p class="side-label">PROMPT ENGINEERING</p>
+    <p class="side-label">AI 提示词工程</p>
     <ol class="level-nav"><li><a href="/ai/notes/prompt/01"><span class="num">01</span><span>基础提示词结构</span></a></li><li><a href="/ai/notes/prompt/02"><span class="num">02</span><span>清晰直接原则</span></a></li><li><a href="/ai/notes/prompt/03"><span class="num">03</span><span>专家角色赋予</span></a></li><li><a href="/ai/notes/prompt/04"><span class="num">04</span><span>数据与指令分离</span></a></li><li><a href="/ai/notes/prompt/05"><span class="num">05</span><span>输出格式化与预填充引导</span></a></li><li><a href="/ai/notes/prompt/06"><span class="num">06</span><span>先思后答与思维链</span></a></li><li><a href="/ai/notes/prompt/07"><span class="num">07</span><span>少样本示例教学</span></a></li><li><a href="/ai/notes/prompt/08"><span class="num">08</span><span>消除 AI 幻觉</span></a></li><li><a href="/ai/notes/prompt/09" class="current"><span class="num">09</span><span>构建工业级复杂提示词</span></a></li><li><a href="/ai/notes/prompt/10"><span class="num">10</span><span>超越单次提问</span></a></li></ol>
-    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF ↗</a></div>
+    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%EF%BC%9A%E4%B9%9D%E5%85%B3%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF ↗</a></div>
   </aside>
   <article class="article">
-    <p class="kicker">PROMPT ENGINEERING / 09</p>
+    <p class="kicker">PROMPT ENGINEERING / 09 · ENGINE v1</p>
     <h1>构建工业级复杂提示词</h1>
-    <p class="lede">在真实的商业交付中(如 Anthropic 教程第 9 章涵盖的智能客服、法律咨询、金融财报分析与软</p>
+    <p class="lede">在真实的商业交付中(如 Anthropic 教程第 9 章涵盖的智能客服、法律咨询、金融财报分析与软…</p>
     <div class="meta"><span>约 5 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="lesson"><h3>核心原理</h3>
 <p>在真实的商业交付中（如 Anthropic 教程第 9 章涵盖的智能客服、法律咨询、金融财报分析与软件工程四大行业场景），一个售价数千元的商业级 Prompt 往往是由前 8 关的所有原子技巧按标准顺序组装而成的“十要素复合架构”。请熟记以下工业级排列顺序（长背景文档放在前面，具体指令与输出格式约束放在最后，可显著提升模型的指令遵循度）：</p>
@@ -65,34 +66,34 @@
 <p>1. 至少整合上述十要素中的 7 个核心模块（角色设定、XML 数据隔离、防幻觉退路、原文引证、&lt;thinking&gt; 思维链、固定输出结构、禁寒暄约束）（6 分）；</p>
 <p>2. 确保长文本输入区位于具体执行指令之前（2 分）；</p>
 <p>3. 规定最终报告输出为包含“核心财务指标核验”、“三大致命风险及原文依据”、“必问创始人的 3 个追问”的固定结构（2 分）。</p></section>
-    <section class="practice" id="practice" data-key="/ai/notes/prompt/09" data-total="10" data-rules="[{&quot;text&quot;: &quot;1. 至少整合上述十要素中的 7 个核心模块（角色设定、XML 数据隔离、防幻觉退路、原文引证、&lt;thinking&gt; 思维链、固定输出结构、禁寒暄约束）（6 分）；&quot;, &quot;weight&quot;: 6, &quot;groups&quot;: [[&quot;角色&quot;], [&quot;xml&quot;], [&quot;thinking&quot;], [&quot;引用&quot;], [&quot;输出&quot;], [&quot;寒暄&quot;], [&quot;退路&quot;]], &quot;format&quot;: null}, {&quot;text&quot;: &quot;2. 确保长文本输入区位于具体执行指令之前（2 分）；&quot;, &quot;weight&quot;: 2, &quot;groups&quot;: [[&quot;长文本&quot;, &quot;文档&quot;, &quot;输入&quot;], [&quot;指令&quot;, &quot;执行&quot;, &quot;之后&quot;]], &quot;format&quot;: null}, {&quot;text&quot;: &quot;3. 规定最终报告输出为包含“核心财务指标核验”、“三大致命风险及原文依据”、“必问创始人的 3 个追问”的固定结构（2 分）。&quot;, &quot;weight&quot;: 2, &quot;groups&quot;: [[&quot;核心财务指标&quot;, &quot;财务指标&quot;], [&quot;风险&quot;, &quot;原文依据&quot;], [&quot;追问&quot;, &quot;创始人&quot;]], &quot;format&quot;: null}]">
-  <div class="practice-head">
-    <p class="label">PRACTICE / 本关练习</p>
-    <h2>先写你的答案，再对参考。</h2>
-    <p>答案只保存在这台设备的浏览器里，不上传；规则检查会告诉你缺了哪些得分点。</p>
-  </div>
-  <div class="practice-grid">
-    <div class="practice-write">
-      <label for="practice-answer">我的答案</label>
-      <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案 / 代码写在这里…"></textarea>
-      <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
-    </div>
-    <div class="practice-check">
-      <p class="practice-label">通关得分点 · 自动检查</p>
-      <div class="check-list"><div class="check-item" data-rule><span class="check-state" data-state>待检查</span><span class="check-text">1. 至少整合上述十要素中的 7 个核心模块（角色设定、XML 数据隔离、防幻觉退路、原文引证、&lt;thinking&gt; 思维链、固定输出结构、禁寒暄约束）（6 分）；</span></div><div class="check-item" data-rule><span class="check-state" data-state>待检查</span><span class="check-text">2. 确保长文本输入区位于具体执行指令之前（2 分）；</span></div><div class="check-item" data-rule><span class="check-state" data-state>待检查</span><span class="check-text">3. 规定最终报告输出为包含“核心财务指标核验”、“三大致命风险及原文依据”、“必问创始人的 3 个追问”的固定结构（2 分）。</span></div></div>
-      <button type="button" class="check-answer" data-check>检查我的答案</button>
-      <div class="practice-feedback" data-feedback></div>
-      <p class="practice-score">结构分 <b data-score>—</b> / 10 分</p>
-    </div>
-  </div>
-  <div class="practice-actions">
-    <button type="button" data-reveal>对照参考答案 ↓</button>
-    <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
-  </div>
-</section>
+    <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/prompt/09" data-exercise="/content/levels/prompt-09.json">
+      <div class="practice-head">
+        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <h2>组装金融/商业尽调报告智能审阅官</h2>
+        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+      </div>
+      <div class="practice-grid">
+        <div class="practice-write">
+          <label for="practice-answer">我的答案</label>
+          <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案写在这里…"></textarea>
+          <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
+        </div>
+        <div class="practice-check">
+          <p class="practice-label">评分项</p>
+          <div class="check-list" data-criteria></div>
+          <button type="button" class="check-answer" data-check>检查我的答案</button>
+          <div class="practice-feedback" data-feedback></div>
+          <p class="practice-score">结构分 <b data-score>—</b> / 10 分</p>
+        </div>
+      </div>
+      <div class="practice-actions">
+        <button type="button" data-reveal>对照参考答案 ↓</button>
+        <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
+      </div>
+    </section>
     <details class="answer">
-  <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
-  <div class="answer-body"><h2>1. 角色与任务设定</h2>
+      <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
+      <div class="answer-body"><h2>1. 角色与任务设定</h2>
 <p>你是一位在一线风险投资机构(VC)拥有 12 年经验的投资合伙人兼首席财务尽调官。你的职责是以客观、审慎、基于证据的视角审阅初创企业的项目资料，帮助投资委员会识别财务水分与商业模式漏洞。</p>
 <h2>2. 审阅准则与防幻觉铁律</h2>
 <p>&lt;audit_principles&gt;</p>
@@ -115,8 +116,8 @@
 <p>- 第三节【尽调访谈必问创始人的 3 个犀利问题】：（直击数据盲区，每个问题附带验证目的）</p>
 <h3>得分要点拆解</h3>
 <p>完整融合角色、准则、Few-Shot 示例、数据隔离、防幻觉退路、先思后答与固定输出标签等7 大以上要素（6 分）；长文本输入区位于具体执行指令之前（2 分）；严格输出三节式尽调结构（2 分）。</p></div>
-</details>
-    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">留邮箱，获取完整 PDF ↗</a></div>
+    </details>
+    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%EF%BC%9A%E4%B9%9D%E5%85%B3%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
     <div class="nextprev"><a href="/ai/notes/prompt/08"><small>上一关</small>消除 AI 幻觉</a><a class="right" href="/ai/notes/prompt/10"><small>下一关</small>超越单次提问</a></div>
   </article>
 </div>

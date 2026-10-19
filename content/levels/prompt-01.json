@@ -14,9 +14,9 @@
     "minLength": 40,
     "criteria": [
       {
-        "id": "split",
-        "label": "拆分 System 与 User",
-        "weight": 3,
+        "id": "c1",
+        "label": "明确拆分【System 全局规范】与【User 任务指令】两部分",
+        "weight": 3.0,
         "type": "term_groups",
         "groups": [
           {
@@ -24,7 +24,7 @@
             "terms": [
               "system",
               "系统提示词",
-              "系统设定"
+              "system 设定"
             ]
           },
           {
@@ -32,15 +32,15 @@
             "terms": [
               "user",
               "用户指令",
-              "任务指令"
+              "user 指令"
             ]
           }
         ]
       },
       {
-        "id": "facts",
-        "label": "任务事实完整",
-        "weight": 4,
+        "id": "c2",
+        "label": "在任务指令中结构化列出时间、地点、核心亮点（如睡眠与心率无感监测）及媒体专属权益",
+        "weight": 4.0,
         "type": "term_groups",
         "groups": [
           {
@@ -59,27 +59,31 @@
             "label": "核心亮点",
             "terms": [
               "亮点",
-              "看点"
+              "看点",
+              "心率",
+              "睡眠"
             ]
           },
           {
             "label": "媒体权益",
             "terms": [
               "媒体",
+              "记者",
               "权益"
             ]
           }
         ]
       },
       {
-        "id": "format",
-        "label": "字数与 RSVP",
-        "weight": 3,
+        "id": "c3",
+        "label": "明确邮件字数范围（如 150‒200 字）与结尾行动号召（RSVP 回复确认截止时间）",
+        "weight": 3.0,
         "type": "term_groups",
         "groups": [
           {
             "label": "字数限制",
             "terms": [
+              "字",
               "字数",
               "150",
               "200"

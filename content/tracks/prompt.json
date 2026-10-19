@@ -3,6 +3,7 @@
   "title": "AI 提示词工程：九关实战通关",
   "subtitle": "从“凭感觉聊天”到“工业级精准控制”。",
   "source": "Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide",
+  "label": "PROMPT ENGINEERING",
   "levels": [
     {
       "id": "prompt-01",
@@ -16,7 +17,7 @@
       "id": "prompt-02",
       "level": 2,
       "title": "清晰直接原则",
-      "summary": "Anthropic 教程第 2 章提出了著名的清晰提示词黄金法则(Golden Rule of Clear Prompting)：",
+      "summary": "Anthropic 教程第 2 章提出了著名的清晰提示词黄金法则(Golden Rule of Clear Prompting)…",
       "readMinutes": 3,
       "href": "/ai/notes/prompt/02"
     },
@@ -24,7 +25,7 @@
       "id": "prompt-03",
       "level": 3,
       "title": "专家角色赋予",
-      "summary": "在 Anthropic 教程第 3 章与 Interactive Book of Prompting (prompts.chat) 中，角色设定(Role",
+      "summary": "在 Anthropic 教程第 3 章与 Interactive Book of Prompting (prompts.chat) 中，角色设定(Role…",
       "readMinutes": 3,
       "href": "/ai/notes/prompt/03"
     },
@@ -32,7 +33,7 @@
       "id": "prompt-04",
       "level": 4,
       "title": "数据与指令分离",
-      "summary": "当提示词中同时包含长篇背景文章、用户评论、代码片段以及你的处理指令时，模型很容易把待处",
+      "summary": "当提示词中同时包含长篇背景文章、用户评论、代码片段以及你的处理指令时，模型很容易把待处…",
       "readMinutes": 4,
       "href": "/ai/notes/prompt/04"
     },
@@ -40,7 +41,7 @@
       "id": "prompt-05",
       "level": 5,
       "title": "输出格式化与预填充引导",
-      "summary": "在自动化工作流或批量制作资料时，我们往往需要模型严格输出 JSON、Markdown 表格或特定",
+      "summary": "在自动化工作流或批量制作资料时，我们往往需要模型严格输出 JSON、Markdown 表格或特定…",
       "readMinutes": 3,
       "href": "/ai/notes/prompt/05"
     },
@@ -64,7 +65,7 @@
       "id": "prompt-08",
       "level": 8,
       "title": "消除 AI 幻觉",
-      "summary": "为什么大模型总喜欢“一本正经地胡说八道”?Anthropic 教程第 8 章揭示了根本原因：大模型在",
+      "summary": "为什么大模型总喜欢“一本正经地胡说八道”?Anthropic 教程第 8 章揭示了根本原因：大模型在…",
       "readMinutes": 4,
       "href": "/ai/notes/prompt/08"
     },
@@ -72,7 +73,7 @@
       "id": "prompt-09",
       "level": 9,
       "title": "构建工业级复杂提示词",
-      "summary": "在真实的商业交付中(如 Anthropic 教程第 9 章涵盖的智能客服、法律咨询、金融财报分析与软",
+      "summary": "在真实的商业交付中(如 Anthropic 教程第 9 章涵盖的智能客服、法律咨询、金融财报分析与软…",
       "readMinutes": 5,
       "href": "/ai/notes/prompt/09"
     },
@@ -80,7 +81,7 @@
       "id": "prompt-10",
       "level": 10,
       "title": "超越单次提问",
-      "summary": "在 Anthropic 教程附录(Appendix: Beyond Standard Prompting) 与 DAIR.AI 高级指南中，当",
+      "summary": "在 Anthropic 教程附录(Appendix: Beyond Standard Prompting) 与 DAIR.AI 高级指南中，当…",
       "readMinutes": 3,
       "href": "/ai/notes/prompt/10"
     }

@@ -1,17 +1,13 @@
-// 单关渲染器：内容只从 content/ 读取，页面 HTML 是构建产物。
+// 通用单关渲染器：页面只从 content/ 读取内容，HTML 是构建产物。
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const root = path.resolve(__dirname, '..');
-const levelPath = path.join(root, 'content/levels/prompt-01.json');
-const trackPath = path.join(root, 'content/tracks/prompt.json');
-const outPath = path.join(root, 'ai/notes/prompt/01.html');
+const ROOT = path.resolve(__dirname, '..');
 
 function fail(msg) {
-  console.error('CONTENT VALIDATION FAILED:', msg);
-  process.exit(1);
+  throw new Error('CONTENT VALIDATION FAILED: ' + msg);
 }
 function esc(s) {
   return String(s == null ? '' : s)
@@ -20,58 +16,69 @@ function esc(s) {
 }
 function assert(cond, msg) { if (!cond) fail(msg); }
 
-const track = JSON.parse(fs.readFileSync(trackPath, 'utf8'));
-const level = JSON.parse(fs.readFileSync(levelPath, 'utf8'));
+function loadTrack(trackId) {
+  return JSON.parse(fs.readFileSync(path.join(ROOT, 'content/tracks', trackId + '.json'), 'utf8'));
+}
+function loadLevel(trackId, levelId) {
+  return JSON.parse(fs.readFileSync(path.join(ROOT, 'content/levels', levelId + '.json'), 'utf8'));
+}
 
-assert(track.id && Array.isArray(track.levels) && track.levels.length === 10, 'track levels');
-assert(level.id === 'prompt-01', 'level id');
-assert(level.trackId === track.id, 'track id');
-assert(level.title && level.summary && level.lessonHtml && level.referenceAnswerHtml, 'required content');
-assert(level.exercise && Array.isArray(level.exercise.criteria), 'exercise criteria');
-assert(level.exercise.minLength >= 0, 'minLength');
-assert(level.exercise.criteria.length > 0, 'criteria empty');
-let total = 0;
-level.exercise.criteria.forEach((c, i) => {
-  assert(c.id && c.label, `criterion ${i} id/label`);
-  assert(Number(c.weight) > 0, `criterion ${i} weight`);
-  total += Number(c.weight);
-  assert(c.type === 'term_groups', `criterion ${i} type`);
-  assert(Array.isArray(c.groups) && c.groups.length > 0, `criterion ${i} groups`);
-  c.groups.forEach((g, j) => {
-    assert(g.label, `criterion ${i} group ${j} label`);
-    assert(Array.isArray(g.terms) && g.terms.length > 0, `criterion ${i} group ${j} terms`);
+function validate(track, level) {
+  assert(track.id === level.trackId, 'track id');
+  assert(level.id === track.id + '-' + String(level.level).padStart(2, '0'), 'level id');
+  assert(level.title && level.summary && level.lessonHtml && level.referenceAnswerHtml, 'required content');
+  assert(level.exercise && Array.isArray(level.exercise.criteria), 'exercise criteria');
+  assert(level.exercise.minLength >= 0, 'minLength');
+  assert(level.exercise.criteria.length > 0, 'criteria empty');
+  let total = 0;
+  level.exercise.criteria.forEach((c, i) => {
+    assert(c.id && c.label, 'criterion ' + i + ' id/label');
+    assert(Number(c.weight) > 0, 'criterion ' + i + ' weight');
+    total += Number(c.weight);
+    assert(c.type === 'term_groups', 'criterion ' + i + ' type');
+    assert(Array.isArray(c.groups) && c.groups.length > 0, 'criterion ' + i + ' groups');
+    c.groups.forEach((g, j) => {
+      assert(g.label, 'criterion ' + i + ' group ' + j + ' label');
+      assert(Array.isArray(g.terms) && g.terms.length > 0, 'criterion ' + i + ' group ' + j + ' terms');
+    });
   });
-});
-assert(level.id !== level.next, 'next self');
-const trackLevel = track.levels.find((l) => l.id === level.id);
-assert(trackLevel, 'level missing from track');
-assert(trackLevel.href === '/ai/notes/prompt/01', 'level href');
+  const expected = track.id === 'prompt' ? 10 : 12.5;
+  assert(Math.abs(total - expected) < 0.01, 'rubric total ' + total + ' != ' + expected);
+  const entry = track.levels.find((l) => l.id === level.id);
+  assert(entry, 'level missing from track');
+  assert(entry.href === '/ai/notes/' + track.id + '/' + String(level.level).padStart(2, '0'), 'level href');
+}
 
-const currentIndex = track.levels.findIndex((l) => l.id === level.id);
-const prev = currentIndex > 0 ? track.levels[currentIndex - 1] : null;
-const next = currentIndex >= 0 && currentIndex + 1 < track.levels.length ? track.levels[currentIndex + 1] : null;
+export function renderLevel(trackId, levelId) {
+  const track = loadTrack(trackId);
+  const level = loadLevel(trackId, levelId);
+  validate(track, level);
 
-const side = track.levels.map((l) => {
-  const current = l.id === level.id ? ' class="current"' : '';
-  return `<li><a href="${esc(l.href)}"${current}><span class="num">${String(l.level).padStart(2, '0')}</span><span>${esc(l.title)}</span></a></li>`;
-}).join('');
+  const currentIndex = track.levels.findIndex((l) => l.id === level.id);
+  const prev = currentIndex > 0 ? track.levels[currentIndex - 1] : null;
+  const next = currentIndex + 1 < track.levels.length ? track.levels[currentIndex + 1] : null;
+  const total = level.exercise.criteria.reduce((s, c) => s + Number(c.weight), 0);
+  const side = track.levels.map((l) => {
+    const current = l.id === level.id ? ' class="current"' : '';
+    return `<li><a href="${esc(l.href)}"${current}><span class="num">${String(l.level).padStart(2, '0')}</span><span>${esc(l.title)}</span></a></li>`;
+  }).join('');
+  const prevLink = prev
+    ? `<a href="${esc(prev.href)}"><small>上一关</small>${esc(prev.title)}</a>`
+    : `<a href="/ai/notes/${esc(track.id)}/"><small>返回系列</small>${esc(track.title)}</a>`;
+  const nextLink = next
+    ? `<a class="right" href="${esc(next.href)}"><small>下一关</small>${esc(next.title)}</a>`
+    : `<a class="right" href="/ai/notes/"><small>读完这一套</small>全部笔记 →</a>`;
+  const pdf = 'mailto:1336089899@qq.com?subject=' + encodeURIComponent('索取《' + track.title + '》完整 PDF');
+  const outPath = path.join(ROOT, 'ai', 'notes', track.id, String(level.level).padStart(2, '0') + '.html');
 
-const prevLink = prev
-  ? `<a href="${esc(prev.href)}"><small>上一关</small>${esc(prev.title)}</a>`
-  : `<a href="/ai/notes/prompt/"><small>返回系列</small>${esc(track.title)}</a>`;
-const nextLink = next
-  ? `<a class="right" href="${esc(next.href)}"><small>下一关</small>${esc(next.title)}</a>`
-  : `<a class="right" href="/ai/notes/"><small>读完这一套</small>全部笔记 →</a>`;
-
-const pdf = 'mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF';
-const page = `<!doctype html>
+  const page = `<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(level.title)} · 第 ${String(level.level).padStart(2, '0')} 关 — ${esc(track.title)}</title>
 <meta name="description" content="${esc(level.summary)}">
-<link rel="canonical" href="https://gongjuhe.top/ai/notes/prompt/01">
+<link rel="canonical" href="https://gongjuhe.top/ai/notes/${esc(track.id)}/${String(level.level).padStart(2, '0')}">
 <meta property="og:type" content="article">
 <meta property="og:title" content="${esc(level.title)} — ${esc(track.title)}">
 <meta property="og:description" content="${esc(level.summary)}">
@@ -94,7 +101,7 @@ const page = `<!doctype html>
 </header>
 <main id="main">
 <nav class="breadcrumb wrap" aria-label="面包屑">
-  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/prompt/">${esc(track.title)}</a><span class="sep">/</span><span>第 ${String(level.level).padStart(2, '0')} 关</span>
+  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/${esc(track.id)}/">${esc(track.title)}</a><span class="sep">/</span><span>第 ${String(level.level).padStart(2, '0')} 关</span>
 </nav>
 <div class="wrap article-shell">
   <aside class="side">
@@ -103,12 +110,12 @@ const page = `<!doctype html>
     <div class="side-cta">完整 PDF 留邮箱发。<br><a href="${pdf}">获取 PDF ↗</a></div>
   </aside>
   <article class="article">
-    <p class="kicker">PROMPT ENGINEERING / 01 · ENGINE v1</p>
+    <p class="kicker">${esc(track.label)} / ${String(level.level).padStart(2, '0')} · ENGINE v1</p>
     <h1>${esc(level.title)}</h1>
     <p class="lede">${esc(level.summary)}</p>
     <div class="meta"><span>约 ${level.readMinutes} 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 ${esc(level.source)}</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="lesson">${level.lessonHtml}</section>
-    <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/prompt/01" data-exercise="/content/levels/prompt-01.json">
+    <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/${esc(track.id)}/${String(level.level).padStart(2, '0')}" data-exercise="/content/levels/${esc(level.id)}.json">
       <div class="practice-head">
         <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
         <h2>${esc(level.exercise.title)}</h2>
@@ -149,6 +156,14 @@ const page = `<!doctype html>
 </body>
 </html>
 `;
+  fs.mkdirSync(path.dirname(outPath), { recursive: true });
+  fs.writeFileSync(outPath, page, 'utf8');
+  return { level: level.id, out: path.relative(ROOT, outPath), total };
+}
 
-fs.writeFileSync(outPath, page, 'utf8');
-console.log('BUILT', path.relative(root, outPath), 'chars=', page.length, 'rubricTotal=', total);
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const trackId = process.argv[2] || 'prompt';
+  const levelId = process.argv[3] || (trackId + '-01');
+  const result = renderLevel(trackId, levelId);
+  console.log('BUILT', result.level, '->', result.out, 'rubricTotal=', result.total);
+}

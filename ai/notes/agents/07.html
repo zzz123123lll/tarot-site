@@ -3,16 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>智能体通信协议与上下文工程 · 第 07 关 — AI Agent</title>
-<meta name="description" content="核心原理：在 Microsoft AI Agents for Beginners 第 11 课 ( Agentic Protocols ) 与第 12 课 ( Context">
+<title>智能体通信协议与上下文工程 · 第 07 关 — AI Agent 智能体：从零搭建实战</title>
+<meta name="description" content="核心原理：在 Microsoft AI Agents for Beginners 第 11 课 ( Agentic Protocols ) 与第 12 课 ( Context…">
 <link rel="canonical" href="https://gongjuhe.top/ai/notes/agents/07">
 <meta property="og:type" content="article">
-<meta property="og:title" content="智能体通信协议与上下文工程 · 第 07 关 — AI Agent">
-<meta property="og:description" content="核心原理：在 Microsoft AI Agents for Beginners 第 11 课 ( Agentic Protocols ) 与第 12 课 ( Context">
+<meta property="og:title" content="智能体通信协议与上下文工程 — AI Agent 智能体：从零搭建实战">
+<meta property="og:description" content="核心原理：在 Microsoft AI Agents for Beginners 第 11 课 ( Agentic Protocols ) 与第 12 课 ( Context…">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=2">
-<script src="/ai/notes/notes.js?v=3" defer></script>
+<link rel="stylesheet" href="/ai/notes/notes.css?v=3">
+<script src="/ai/notes/notes.js?v=4" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=1"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>
@@ -21,24 +22,24 @@
   <a class="brand" href="/">AI 实战通关 <small>KNOWLEDGE BASE</small></a>
   <nav class="nav" aria-label="主导航">
     <a href="/ai/notes/">全部课程</a>
-    <a class="hide-s" href="/#practice">怎么练</a>
-    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
+    <a href="/">知识库首页</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%20%E6%99%BA%E8%83%BD%E4%BD%93%EF%BC%9A%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E5%AE%9E%E6%88%98%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF</a>
   </nav>
 </header>
 <main id="main">
 <nav class="breadcrumb wrap" aria-label="面包屑">
-  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/agents/">AI Agent</a><span class="sep">/</span><span>第 07 关</span>
+  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/agents/">AI Agent 智能体：从零搭建实战</a><span class="sep">/</span><span>第 07 关</span>
 </nav>
 <div class="wrap article-shell">
   <aside class="side">
-    <p class="side-label">AI AGENTS</p>
+    <p class="side-label">AI Agent 智能体</p>
     <ol class="level-nav"><li><a href="/ai/notes/agents/01"><span class="num">01</span><span>Agent 核心循环与框架选型</span></a></li><li><a href="/ai/notes/agents/02"><span class="num">02</span><span>工具调用设计模式</span></a></li><li><a href="/ai/notes/agents/03"><span class="num">03</span><span>任务规划与动态拆解模式</span></a></li><li><a href="/ai/notes/agents/04"><span class="num">04</span><span>智能体检索与分层记忆管理</span></a></li><li><a href="/ai/notes/agents/05"><span class="num">05</span><span>元认知与自我反思机制</span></a></li><li><a href="/ai/notes/agents/06"><span class="num">06</span><span>多智能体协作编排模式</span></a></li><li><a href="/ai/notes/agents/07" class="current"><span class="num">07</span><span>智能体通信协议与上下文工程</span></a></li><li><a href="/ai/notes/agents/08"><span class="num">08</span><span>可信护栏与生产级安全架构</span></a></li></ol>
-    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF ↗</a></div>
+    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%20%E6%99%BA%E8%83%BD%E4%BD%93%EF%BC%9A%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E5%AE%9E%E6%88%98%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF ↗</a></div>
   </aside>
   <article class="article">
-    <p class="kicker">AI AGENTS / 07</p>
+    <p class="kicker">AI AGENTS / 07 · ENGINE v1</p>
     <h1>智能体通信协议与上下文工程</h1>
-    <p class="lede">核心原理：在 Microsoft AI Agents for Beginners 第 11 课 ( Agentic Protocols ) 与第 12 课 ( Context</p>
+    <p class="lede">核心原理：在 Microsoft AI Agents for Beginners 第 11 课 ( Agentic Protocols ) 与第 12 课 ( Context…</p>
     <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Microsoft AI Agents for Beginners (77.2k Stars)</span><span class="dot">·</span><span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="lesson"><h3>核心原理 </h3>
 <p>在 Microsoft AI Agents for Beginners 第 11 课 ( Agentic Protocols ) 与第 12 课 ( Context Engineering) 以及 12-Factor Agents 中，生产级智能体工程有两大前沿基石：</p>
@@ -51,34 +52,34 @@
 <p>1. 制定工具返回值的【入窗截断与摘要规则】（如超过 1,000 字符的原始日志先提取错误码与关键堆栈行，原始全量文件仅存本地路径引用）（5 分）；</p>
 <p>2. 设计历史轮次的【滑动窗口 + 里程碑状态压缩(State Compaction)】策略，保留已验证结论、丢弃冗余试错过程（4.5 分）；</p>
 <p>3. 说明如何利用子智能体上下文隔离(Sub-agent Context Isolation)让主控 Agent 只接收最终 200 字排查结论（3 分）。</p></section>
-    <section class="practice" id="practice" data-key="/ai/notes/agents/07" data-total="12.5" data-rules="[{&quot;text&quot;: &quot;1. 制定工具返回值的【入窗截断与摘要规则】（如超过 1,000 字符的原始日志先提取错误码与关键堆栈行，原始全量文件仅存本地路径引用）（5 分）；&quot;, &quot;weight&quot;: 5, &quot;groups&quot;: [[&quot;截断&quot;, &quot;摘要&quot;], [&quot;1000&quot;, &quot;1,000&quot;], [&quot;错误码&quot;, &quot;堆栈&quot;], [&quot;路径&quot;, &quot;引用&quot;]], &quot;format&quot;: null}, {&quot;text&quot;: &quot;2. 设计历史轮次的【滑动窗口 + 里程碑状态压缩(State Compaction)】策略，保留已验证结论、丢弃冗余试错过程（4.5 分）；&quot;, &quot;weight&quot;: 4.5, &quot;groups&quot;: [[&quot;滑动窗口&quot;], [&quot;压缩&quot;, &quot;compaction&quot;], [&quot;结论&quot;, &quot;试错&quot;]], &quot;format&quot;: null}, {&quot;text&quot;: &quot;3. 说明如何利用子智能体上下文隔离(Sub-agent Context Isolation)让主控 Agent 只接收最终 200 字排查结论（3 分）。&quot;, &quot;weight&quot;: 3, &quot;groups&quot;: [[&quot;子智能体&quot;, &quot;隔离&quot;], [&quot;200 字&quot;, &quot;200字&quot;]], &quot;format&quot;: null}]">
-  <div class="practice-head">
-    <p class="label">PRACTICE / 本关练习</p>
-    <h2>先写你的答案，再对参考。</h2>
-    <p>答案只保存在这台设备的浏览器里，不上传；规则检查会告诉你缺了哪些得分点。</p>
-  </div>
-  <div class="practice-grid">
-    <div class="practice-write">
-      <label for="practice-answer">我的答案</label>
-      <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案 / 代码写在这里…"></textarea>
-      <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
-    </div>
-    <div class="practice-check">
-      <p class="practice-label">通关得分点 · 自动检查</p>
-      <div class="check-list"><div class="check-item" data-rule><span class="check-state" data-state>待检查</span><span class="check-text">1. 制定工具返回值的【入窗截断与摘要规则】（如超过 1,000 字符的原始日志先提取错误码与关键堆栈行，原始全量文件仅存本地路径引用）（5 分）；</span></div><div class="check-item" data-rule><span class="check-state" data-state>待检查</span><span class="check-text">2. 设计历史轮次的【滑动窗口 + 里程碑状态压缩(State Compaction)】策略，保留已验证结论、丢弃冗余试错过程（4.5 分）；</span></div><div class="check-item" data-rule><span class="check-state" data-state>待检查</span><span class="check-text">3. 说明如何利用子智能体上下文隔离(Sub-agent Context Isolation)让主控 Agent 只接收最终 200 字排查结论（3 分）。</span></div></div>
-      <button type="button" class="check-answer" data-check>检查我的答案</button>
-      <div class="practice-feedback" data-feedback></div>
-      <p class="practice-score">结构分 <b data-score>—</b> / 12.5 分</p>
-    </div>
-  </div>
-  <div class="practice-actions">
-    <button type="button" data-reveal>对照参考答案 ↓</button>
-    <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
-  </div>
-</section>
+    <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/agents/07" data-exercise="/content/levels/agents-07.json">
+      <div class="practice-head">
+        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <h2>设计长周期研发排障 Agent 的上下文压缩与隔离方案</h2>
+        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+      </div>
+      <div class="practice-grid">
+        <div class="practice-write">
+          <label for="practice-answer">我的答案</label>
+          <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案写在这里…"></textarea>
+          <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
+        </div>
+        <div class="practice-check">
+          <p class="practice-label">评分项</p>
+          <div class="check-list" data-criteria></div>
+          <button type="button" class="check-answer" data-check>检查我的答案</button>
+          <div class="practice-feedback" data-feedback></div>
+          <p class="practice-score">结构分 <b data-score>—</b> / 12.5 分</p>
+        </div>
+      </div>
+      <div class="practice-actions">
+        <button type="button" data-reveal>对照参考答案 ↓</button>
+        <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
+      </div>
+    </section>
     <details class="answer">
-  <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
-  <div class="answer-body"><h2>1. 工具输出入窗过滤器(Tool Output Truncation &amp; Summarization Hook)</h2>
+      <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
+      <div class="answer-body"><h2>1. 工具输出入窗过滤器(Tool Output Truncation &amp; Summarization Hook)</h2>
 <p>当 fetch_server_logs 工具返回原始文本 &gt; 1,500 字符时：</p>
 <p>- 将完整原始日志保存至沙盒临时文件 /tmp/log_dump_01.txt;</p>
 <p>- 仅向主 Agent 上下文注入结构化摘要：{"log_file_ref": "/tmp/log_dump_01.txt", "total_lines": 4200,</p>
@@ -90,8 +91,8 @@ OrderService.java:142"}。</code></pre></div>
 <p>当需要深入分析 50MB 的堆转储文件时，主控 Agent 派生一个独立的 LogAnalyzerSubAgent,子智能体在独立上下文中完成数十次切片检索后销毁自身上下文，仅向主控 Agent 返回最终 200 字的根因定位结论。</p>
 <h3>得分要点拆解</h3>
 <p>设计长日志落盘引用 + 摘要入窗机制（5 分）；定期折叠历史试错轮次为里程碑状态（4.5分）；利用子智能体独立上下文避免污染主控窗口（3 分）。</p></div>
-</details>
-    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">留邮箱，获取完整 PDF ↗</a></div>
+    </details>
+    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%20%E6%99%BA%E8%83%BD%E4%BD%93%EF%BC%9A%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E5%AE%9E%E6%88%98%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
     <div class="nextprev"><a href="/ai/notes/agents/06"><small>上一关</small>多智能体协作编排模式</a><a class="right" href="/ai/notes/agents/08"><small>下一关</small>可信护栏与生产级安全架构</a></div>
   </article>
 </div>

@@ -1,0 +1,105 @@
+{
+  "id": "agents-07",
+  "trackId": "agents",
+  "level": 7,
+  "title": "智能体通信协议与上下文工程",
+  "summary": "核心原理：在 Microsoft AI Agents for Beginners 第 11 课 ( Agentic Protocols ) 与第 12 课 ( Context…",
+  "source": "Microsoft AI Agents for Beginners (77.2k Stars)",
+  "readMinutes": 4,
+  "lessonHtml": "<h3>核心原理 </h3>\n<p>在 Microsoft AI Agents for Beginners 第 11 课 ( Agentic Protocols ) 与第 12 课 ( Context Engineering) 以及 12-Factor Agents 中，生产级智能体工程有两大前沿基石：</p>\n<p>标准化协议(MCP / A2A / NLWeb)：通过 Model Context Protocol (MCP) 统一大模型与外部数据源/工具（GitHub、数据库、本地文件）的连接标准；通过 Agent-to-Agent (A2A) 协议实现跨框架智能体之间的发现与协作。</p>\n<p>上下文工程(Context Engineering)：模型的上下文窗口不是垃圾桶！如 12-Factor Agents(Own your context window) 所述，必须对传入模型的 Token 进行精细化筛选、修剪与隔离——当工具返回长达 5万字的原始网页或日志时，先在沙盒中提取关键摘要再塞入主对话上下文，避免“大海捞针”导致注意力稀释和高昂 Token 账单。</p>\n<h2>第 7 关实操练习题：设计长周期研发排障 Agent 的上下文压缩与隔离方案</h2>\n<h3>任务背景</h3>\n<p>一个运维排障 Agent 在连续调用了 10 次服务器日志查询工具后，上下文累积了 8 万 Token 的原始报错日志，导致模型开始遗忘最初的用户指令且响应极其缓慢。</p>\n<h3>通关硬性要求（满分 12.5 分）</h3>\n<p>1. 制定工具返回值的【入窗截断与摘要规则】（如超过 1,000 字符的原始日志先提取错误码与关键堆栈行，原始全量文件仅存本地路径引用）（5 分）；</p>\n<p>2. 设计历史轮次的【滑动窗口 + 里程碑状态压缩(State Compaction)】策略，保留已验证结论、丢弃冗余试错过程（4.5 分）；</p>\n<p>3. 说明如何利用子智能体上下文隔离(Sub-agent Context Isolation)让主控 Agent 只接收最终 200 字排查结论（3 分）。</p>",
+  "referenceAnswerHtml": "<h2>1. 工具输出入窗过滤器(Tool Output Truncation &amp; Summarization Hook)</h2>\n<p>当 fetch_server_logs 工具返回原始文本 &gt; 1,500 字符时：</p>\n<p>- 将完整原始日志保存至沙盒临时文件 /tmp/log_dump_01.txt;</p>\n<p>- 仅向主 Agent 上下文注入结构化摘要：{\"log_file_ref\": \"/tmp/log_dump_01.txt\", \"total_lines\": 4200,</p>\n<div class=\"code-block\"><button class=\"copy-btn\" type=\"button\" data-copy>复制</button><pre><code>\"error_summary\": \"共出现 37 次 OutOfMemoryError,首次发生于 03:14:02,核心堆栈位于\nOrderService.java:142\"}。</code></pre></div>\n<h2>2. 滑动窗口与里程碑状态压缩(State Compaction)</h2>\n<p>每执行完 3 轮工具调用，触发一次 Compaction:将前 3 轮的完整 Tool Call / Observation 折叠为一条 100字的【已验证排查里程碑】（如：“已排除数据库连接池满与 Redis 超时，确认问题锁定在订单导出服务的内存泄漏”）。</p>\n<h2>3. 子智能体上下文隔离(Sub-agent Delegation)</h2>\n<p>当需要深入分析 50MB 的堆转储文件时，主控 Agent 派生一个独立的 LogAnalyzerSubAgent,子智能体在独立上下文中完成数十次切片检索后销毁自身上下文，仅向主控 Agent 返回最终 200 字的根因定位结论。</p>\n<h3>得分要点拆解</h3>\n<p>设计长日志落盘引用 + 摘要入窗机制（5 分）；定期折叠历史试错轮次为里程碑状态（4.5分）；利用子智能体独立上下文避免污染主控窗口（3 分）。</p>",
+  "exercise": {
+    "id": "agents-07-ex",
+    "title": "设计长周期研发排障 Agent 的上下文压缩与隔离方案",
+    "minLength": 40,
+    "criteria": [
+      {
+        "id": "c1",
+        "label": "制定工具返回值的【入窗截断与摘要规则】（如超过 1,000 字符的原始日志先提取错误码与关键堆栈行，原始全量文件仅存本地路径引用）",
+        "weight": 5.0,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "截断",
+            "terms": [
+              "截断",
+              "摘要"
+            ]
+          },
+          {
+            "label": "1000",
+            "terms": [
+              "1000",
+              "1,000"
+            ]
+          },
+          {
+            "label": "错误码",
+            "terms": [
+              "错误码",
+              "堆栈"
+            ]
+          },
+          {
+            "label": "路径",
+            "terms": [
+              "路径",
+              "引用"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "c2",
+        "label": "设计历史轮次的【滑动窗口 + 里程碑状态压缩(State Compaction)】策略，保留已验证结论、丢弃冗余试错过程",
+        "weight": 4.5,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "滑动窗口",
+            "terms": [
+              "滑动窗口"
+            ]
+          },
+          {
+            "label": "压缩",
+            "terms": [
+              "压缩",
+              "compaction"
+            ]
+          },
+          {
+            "label": "结论",
+            "terms": [
+              "结论",
+              "试错"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "c3",
+        "label": "说明如何利用子智能体上下文隔离(Sub-agent Context Isolation)让主控 Agent 只接收最终 200 字排查结论",
+        "weight": 3.0,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "子智能体",
+            "terms": [
+              "子智能体",
+              "隔离"
+            ]
+          },
+          {
+            "label": "200 字",
+            "terms": [
+              "200 字",
+              "200字"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "next": "agents-08"
+}

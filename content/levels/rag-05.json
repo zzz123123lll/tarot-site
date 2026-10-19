@@ -1,0 +1,84 @@
+{
+  "id": "rag-05",
+  "trackId": "rag",
+  "level": 5,
+  "title": "核心 RAG 闭环与引用溯源控制",
+  "summary": "在 StepByStep-RAG 的第三模块 SimpleRAG 中，检索出 Top-K 文档块后，如何把它们与用户问题…",
+  "source": "StepByStep-RAG / GraphRAG / RAG 评估实践",
+  "readMinutes": 3,
+  "lessonHtml": "<h3>核心原理</h3>\n<p>在 StepByStep-RAG 的第三模块 SimpleRAG 中，检索出 Top-K 文档块后，如何把它们与用户问题拼装成最终 Prompt 决定了生成的可靠性。许多初学者只是简单地把检索文本拼在问题前面，结果大模型把自己的预训练幻觉和知识库事实混在一起输出，用户根本分不清哪句话出自哪份文件。高标准的 RAG 生成指令必须强制执行“封闭域作答 + 句末角标溯源（如 `[来源1: 文件名#页码]`） + 证据冲突显式披露”。</p>\n<h2>第 5 关实操练习题：设计带强制角标溯源与防脑补护栏的 SimpleRAG 生成模板</h2>\n<h3>任务背景</h3>\n<p>你将检索到的 3 个带编号的知识库片段注入大模型，要求模型回答客户的医保报销比例问题，且每一句结论都必须标明具体出处编号。</p>\n<h3>通关硬性要求（满分 12.5 分）</h3>\n<p>1. 用带 id 与 source 属性的 XML 标签（如 &lt;context id=\"1\" source=\"医保手册_p12.pdf\"&gt;）结构化封装检索片段（4.5 分）；</p>\n<p>2. 强制规定输出中的每一个事实断言末尾必须紧跟 [来源X] 角标引用（4.5 分）；</p>\n<p>3. 规定当所有检索片段与问题无关时，直接输出固定拒答话术且不附带虚假引用（3.5 分）。</p>",
+  "referenceAnswerHtml": "<p>请严格依据下方 &lt;retrieved_contexts&gt; 标签内提供的知识库片段回答用户问题。</p>\n<p>&lt;retrieved_contexts&gt;&lt;context id=\"1\" source=\"员工补充医疗手册_2026.pdf#第12页\"&gt;门诊医疗费用报销：起付线为每年累计 500 元，超过起付线部分按 90% 比例报销，年度封顶 2 万元。</p>\n<p>&lt;/context&gt;&lt;context id=\"2\" source=\"家属连带医疗福利说明.pdf#第4页\"&gt;员工子女门诊费用按 50% 比例报销，无起付线，年度封顶 5,000 元。</p>\n<p>&lt;/context&gt;&lt;/retrieved_contexts&gt;</p>\n<h2>生成与溯源硬性规则</h2>\n<p>1. 严禁使用外部常识：只能使用 &lt;retrieved_contexts&gt; 中的信息。若提供的片段无法回答问题，请直接输出：“抱歉，当前知识库中未检索到与该问题相关的明确规定。”</p>\n<p>2. 强制句末角标引用：回答中的每一条数据或结论末尾，必须标注对应的来源编号与文件名，格式严格为 [来源1: 员工补充医疗手册_2026.pdf#第12页]。</p>\n<p>3. 若不同片段之间存在条款冲突，必须在回答中同时列出双方表述并注明各自来源。用户问题：我自己看门诊和给孩子看门诊，报销比例和起付线分别是多少？</p>\n<h3>得分要点拆解</h3>\n<p>用带 `id` 和 `source` 属性的 XML 标签包裹片段（4.5 分）；强制要求句末附上 `[来源X: 文件名#页码]` 角标（4.5 分）；包含无证据拒答与条款冲突披露规则（3.5 分）。</p>",
+  "exercise": {
+    "id": "rag-05-ex",
+    "title": "设计带强制角标溯源与防脑补护栏的 SimpleRAG 生成模板",
+    "minLength": 40,
+    "criteria": [
+      {
+        "id": "c1",
+        "label": "用带 id 与 source 属性的 XML 标签（如 <context id=\"1\" source=\"医保手册_p12.pdf\">）结构化封装检索片段",
+        "weight": 4.5,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "context",
+            "terms": [
+              "context",
+              "xml"
+            ]
+          },
+          {
+            "label": "id",
+            "terms": [
+              "id"
+            ]
+          },
+          {
+            "label": "source",
+            "terms": [
+              "source"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "c2",
+        "label": "强制规定输出中的每一个事实断言末尾必须紧跟 [来源X] 角标引用",
+        "weight": 4.5,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "来源",
+            "terms": [
+              "来源",
+              "角标",
+              "引用"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "c3",
+        "label": "规定当所有检索片段与问题无关时，直接输出固定拒答话术且不附带虚假引用",
+        "weight": 3.5,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "拒答机制",
+            "terms": [
+              "拒答",
+              "无法"
+            ]
+          },
+          {
+            "label": "无",
+            "terms": [
+              "无",
+              "虚假引用"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "next": "rag-06"
+}

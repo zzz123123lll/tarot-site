@@ -13,10 +13,11 @@
 
 ```bash
 # 1. 校验内容并生成页面
-node build/render-level.mjs
+node build/render-all.mjs
 
 # 2. 跑判分回归
 node tests/grading.test.mjs
+node tests/all-levels.test.mjs
 ```
 
 ## 约束
@@ -28,5 +29,6 @@ node tests/grading.test.mjs
 
 ## 当前范围
 
-- 已迁移：`prompt/01`。
-- 其余 25 关仍是旧版页面，后续按同一套 Schema 逐关迁移。
+- 已迁移：全部 26 关（提示词 10 / RAG 8 / Agent 8）。
+- 所有文章页由 `build/render-all.mjs` 从 `content/` 生成。
+- 旧版页面里的 `data-rules` 已不再使用。
