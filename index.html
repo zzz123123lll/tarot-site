@@ -3,191 +3,72 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Alex — 独立开发者 / 创意开发者</title>
-<meta name="description" content="Alex的个人主页：作品、关于与联系。独立开发者与创意开发者，做产品、做界面，也做一些没什么用但很好玩的小东西。">
-<meta name="theme-color" content="#E7EBE1">
-<link rel="icon" href="/favicon.ico">
-<link rel="manifest" href="/manifest.webmanifest">
-<link rel="apple-touch-icon" href="/icons/icon-192.png">
-<meta name="author" content="Alex">
+<title>AI 实战通关 — 把 AI 学成自己的</title>
+<meta name="description" content="提示词、RAG、Agent 三套实战练习册，26 关免费阅读与自动检查。">
 <link rel="canonical" href="https://gongjuhe.top/">
-<meta property="og:type" content="profile">
-<meta property="og:site_name" content="Alex">
-<meta property="og:title" content="Alex — 独立开发者 / 创意开发者">
-<meta property="og:description" content="作品、关于与联系。做产品、做界面，也做一些没什么用但很好玩的小东西。">
-<meta property="og:image" content="https://gongjuhe.top/og-personal.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:url" content="https://gongjuhe.top/">
-<meta name="twitter:card" content="summary_large_image">
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"ProfilePage","mainEntity":{"@type":"Person","name":"Alex","jobTitle":"独立开发者 / 创意开发者","url":"https://gongjuhe.top/","description":"独立开发者与创意开发者，做产品、做界面，也做一些没什么用但很好玩的小东西。","email":"1336089899@qq.com","knowsAbout":["产品工程","前端与交互","设计系统"]}}
-</script>
-<link rel="stylesheet" href="/personal.css?v=3">
-  <noscript><style>.reveal{opacity:1 !important;transform:none !important}</style></noscript>
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI 实战通关 — 把 AI 学成自己的">
+<meta property="og:description" content="提示词、RAG、Agent 三套实战练习册，26 关免费阅读与自动检查。">
+<meta property="og:image" content="/og-personal.png">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/ai/notes/notes.css">
+<script src="/ai/notes/notes.js" defer></script>
 </head>
 <body>
-<a class="skip-link" href="#main">跳到主要内容</a>
-
-<header class="site-header">
-  <div class="container header-inner">
-    <a class="brand" href="/">Alex<small>PERSONAL ARCHIVE</small></a>
-    <nav class="site-nav" id="site-nav" aria-label="主导航">
-      <a href="/work/">作品</a>
-      <a href="/about/">关于</a>
-      <a href="/#contact">联系</a>
-      <a href="/ai/">AI 笔记</a>
-      <a class="nav-tools" href="/tools/">工具箱 ↗</a>
-    </nav>
-    <span class="header-meta">采集记录 / 2023—2026</span>
-    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">菜单</button>
-  </div>
-</header>
-
-<main id="main">
-
-  <section class="hero container">
-    <div class="hero-copy">
-      <h1>Alex<em>独立开发者 · 创意开发者</em></h1>
-      <p class="lead">把想法做成能看、能玩、能用的东西。</p>
-      <p class="note">做产品、做界面，也做一些没什么用但很好玩的小东西。下面是我这几年采集到的四份标本。</p>
-      <div class="actions">
-        <a class="btn" href="/work/">翻阅标本 <span aria-hidden="true">→</span></a>
-        <a class="btn btn--ghost" href="/about/">关于采集者</a>
-      </div>
-    </div>
-
-    <div class="collage">
-      <figure class="plate plate--a">
-        <img src="/assets/shots/star-map.webp" alt="纪念星图：私人星空海报" loading="eager" decoding="async">
-        <figcaption>纪念星图 · 生成设计 · 2025</figcaption>
-      </figure>
-      <figure class="plate plate--b">
-        <img src="/tarot/images/cards/major_17.jpg" alt="韦特塔罗牌：星星" loading="eager" decoding="async">
-        <figcaption>星辉塔罗 · 交互叙事 · 2025</figcaption>
-      </figure>
-      <span class="stamp" aria-hidden="true">采集于<br>浏览器</span>
-      <svg class="annotation" viewBox="0 0 420 120" aria-hidden="true">
-        <path d="M4 92 C 96 66, 138 30, 236 34 C 300 36, 336 58, 380 84" />
-        <text x="18" y="116">每一页都来自一次真实的采集</text>
-      </svg>
-    </div>
-  </section>
-
-  <section class="section container" id="specimens">
-    <div class="section-head reveal">
-      <div>
-        <p class="section-label">采集目录</p>
-        <h2 class="section-title">四份标本</h2>
-      </div>
-      <a class="section-link" href="/work/">全部作品 →</a>
-    </div>
-
-    <article class="specimen specimen--portrait reveal">
-      <div class="specimen-text">
-        <p class="meta">交互叙事 / 2025 / 独立完成</p>
-        <h2>星辉塔罗</h2>
-        <p>78 张韦特牌，逐张牌义，单页 305KB。把“随机”做成有依据的自我对话，而不是套话。</p>
-        <a class="link" href="/tarot/">观察记录：星辉塔罗 ↗</a>
-      </div>
-      <figure class="specimen-plate plate">
-        <img src="/tarot/images/cards/major_17.jpg" alt="韦特塔罗牌：星星" loading="lazy" decoding="async">
-        <figcaption>编号 17 · 星星 · 公有领域卡图</figcaption>
-      </figure>
-    </article>
-
-    <article class="specimen reveal">
-      <div class="specimen-text">
-        <p class="meta">声音与交互 / 2025 / 独立完成</p>
-        <h2>节奏标本</h2>
-        <p>上传自己的歌，自动生成四轨谱面；可换皮肤，导出歌曲标本卡。</p>
-        <a class="link" href="/beat-toy/">观察记录：节奏标本 ↗</a>
-      </div>
-      <figure class="specimen-plate plate">
-        <img src="/assets/shots/beat-toy.webp" alt="节奏标本：四轨谱面游戏界面" loading="lazy" decoding="async">
-        <figcaption>四轨自动谱 · 三套皮肤 + 自定义底图</figcaption>
-      </figure>
-    </article>
-
-    <article class="specimen reveal">
-      <div class="specimen-text">
-        <p class="meta">生成设计 / 2025 / 独立完成</p>
-        <h2>纪念星图</h2>
-        <p>一段话、一列名字或一封信，变成可打印的私人星图；同一段文字永远是同一片星空。</p>
-        <a class="link" href="/star-map/">观察记录：纪念星图 ↗</a>
-      </div>
-      <figure class="specimen-plate plate">
-        <img src="/assets/shots/star-map.webp" alt="纪念星图：私人星空海报" loading="lazy" decoding="async">
-        <figcaption>一段话 / 一列名字 / 一封信 · 可打印 A4</figcaption>
-      </figure>
-    </article>
-
-    <article class="specimen specimen--dark reveal">
-      <div class="specimen-text">
-        <p class="meta">产品工程 / 2025—至今 / 独立完成</p>
-        <h2>工具盒</h2>
-        <p>29 个本地运行的小工具，一个关于“不上传”的产品实验。它只是我的项目之一。</p>
-        <a class="link" href="/tools/">观察记录：工具盒 ↗</a>
-      </div>
-      <figure class="specimen-plate plate">
-        <img src="/assets/shots/img-compress.webp" alt="工具盒：图片压缩工具的真实界面" loading="lazy" decoding="async">
-        <figcaption>29 个工具 · 文件不上传 · 断网可用</figcaption>
-      </figure>
-    </article>
-  </section>
-
-  <section class="container" id="about">
-    <div class="about-band reveal">
-      <div>
-        <h2>关于采集者</h2>
-        <p><strong>我是Alex。</strong>独立开发者与创意开发者。做产品、做界面，也做一些没什么用但很好玩的小东西。</p>
-        <p>我喜欢把复杂的事情做得简单，把简单的事情做得有意思。比起“功能很多”，我更在意“打开就能用、用完能记住”。</p>
-        <ul class="skills">
-          <li>产品工程</li>
-          <li>前端与交互</li>
-          <li>设计系统</li>
-          <li>内容表达</li>
-        </ul>
-      </div>
-      <div>
-        <p class="margin-note">“把复杂的事做简单，<br>把简单的事做有意思。”</p>
-        <p style="margin-top:28px;color:var(--muted);font-size:14px">当前：在做 节奏标本 / 纪念星图 · 开放 合作 / 工作机会</p>
-        <p style="margin-top:18px"><a class="section-link" href="/about/">完整介绍 →</a></p>
-      </div>
-    </div>
-  </section>
-
-  <section class="container" id="contact">
-    <div class="contact-grid reveal">
-      <div class="postcard">
-        <h2>寄一封信</h2>
-        <p class="body">有项目、合作，或者只是想聊聊本地优先、设计和创作过程，都欢迎。</p>
-        <a class="contact-mail" href="mailto:1336089899@qq.com">1336089899@qq.com</a>
-      </div>
-      <div class="contact-aside">
-        <h3>也可以在别处找到我</h3>
-        <p>我通常 2–3 个工作日内回复。微信不公开，邮件里说。</p>
-        <div class="socials">
-          <a href="https://github.com/zzz123123lll" target="_blank" rel="noopener">GitHub ↗</a>
-          <a href="mailto:1336089899@qq.com">邮件 ↗</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<footer class="site-footer container">
-  <span>© <span class="js-year">2026</span> Alex · HERBARIUM</span>
-  <nav class="footer-nav" aria-label="页脚导航">
-    <a href="/work/">作品</a>
-    <a href="/about/">关于</a>
-    <a href="/contact/">联系</a>
-    <a href="/tools/">工具箱</a>
-    <a href="/verify/">怎么验证不上传</a>
+<a class="skip" href="#main">跳到主要内容</a>
+<div class="read-progress"></div>
+<header class="wrap top">
+  <a class="brand" href="/">AI 实战通关 <small>KNOWLEDGE BASE</small></a>
+  <nav class="nav" aria-label="主导航">
+    <a href="/ai/notes/">全部课程</a>
+    <a class="hide-s" href="/#practice">怎么练</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
   </nav>
+</header>
+<main id="main">
+<section class="wrap hero">
+  <p class="label">AI KNOWLEDGE BASE / 2026</p>
+  <h1>把 AI，<br>学成自己的。</h1>
+  <p class="lead">提示词、RAG、Agent 三套实战练习册。26 关可读可练；每关按通关得分点自动检查答案，告诉你缺什么。</p>
+  <div class="hero-actions"><a class="btn" href="/ai/notes/prompt/01">从第一关开始 →</a><a class="btn btn--ghost" href="/ai/notes/">全部课程</a></div>
+  <div class="hero-meta"><span>26 关</span><span>3 条通关线</span><span>免费 · 不登录</span><span data-overall>0 / 26 关完成</span></div>
+</section>
+<section class="wrap section">
+  <div class="section-head"><div><p class="label">THE TRACKS / 三条通关线</p><h2>从哪一条开始？</h2></div><a href="/ai/notes/">全部笔记 →</a></div>
+  <div class="series-grid"><a class="series-card" href="/ai/notes/prompt/" data-series="prompt" data-total="10">
+  <span class="num">01 / PROMPT ENGINEERING</span>
+  <h3>提示词工程</h3>
+  <p>从基础结构、角色、数据隔离，到思维链、少样本和工业级十要素。把提示词从“凭感觉”变成可复用的工程。</p>
+  <span class="meta-line"><span>10 关 · 免费</span><span data-series-progress>0 / 10 完成</span><span>开始阅读 ↗</span></span>
+</a><a class="series-card" href="/ai/notes/rag/" data-series="rag" data-total="8">
+  <span class="num">02 / RAG / KNOWLEDGE BASE</span>
+  <h3>RAG 知识库</h3>
+  <p>从余弦相似度、文档分块、语义检索，到混合检索、引用溯源、GraphRAG 与评估。把知识库 RAG 真正跑通。</p>
+  <span class="meta-line"><span>8 关 · 免费</span><span data-series-progress>0 / 8 完成</span><span>开始阅读 ↗</span></span>
+</a><a class="series-card" href="/ai/notes/agents/" data-series="agents" data-total="8">
+  <span class="num">03 / AI AGENTS</span>
+  <h3>AI Agent</h3>
+  <p>从 ReAct 闭环、工具调用、规划与记忆，到多智能体、MCP 与生产护栏。搭一个能上线的 Agent。</p>
+  <span class="meta-line"><span>8 关 · 免费</span><span data-series-progress>0 / 8 完成</span><span>开始阅读 ↗</span></span>
+</a></div>
+</section>
+<section class="wrap section" id="practice">
+  <div class="section-head"><div><p class="label">PRACTICE / 怎么练</p><h2>写完，系统告诉你缺什么。</h2></div></div>
+  <div class="series-grid">
+    <div class="series-card"><span class="num">01 / WRITE</span><h3>写答案</h3><p>每关末尾直接写 Prompt、方案或代码，草稿只保存在你的浏览器里。</p><span class="meta-line"><span>不上传</span></span></div>
+    <div class="series-card"><span class="num">02 / CHECK</span><h3>自动检查</h3><p>按本关的通关得分点检查结构、格式与关键词，列出没有覆盖的部分。</p><span class="meta-line"><span>结构分</span></span></div>
+    <div class="series-card"><span class="num">03 / FIX</span><h3>补缺项</h3><p>对照参考答案补齐缺的得分点。规则检查不代替语义判断，最终要自己读一遍。</p><span class="meta-line"><span>再检查一次</span></span></div>
+  </div>
+  <div class="pdf-strip"><p>自动检查不是“AI 打分”，它检查的是本关明确写出的得分点，所以会给你具体的缺项。</p><a href="/ai/notes/prompt/01">先做第一关 →</a></div>
+</section>
+<section class="wrap section">
+  <div class="section-head"><div><p class="label">PDF / 完整版</p><h2>网页免费，PDF 留邮箱。</h2></div></div>
+  <div class="pdf-strip"><p>三套完整练习册 PDF，整理好后按顺序发。只用于个人学习，不转售。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">留邮箱获取 PDF ↗</a></div>
+</section>
+</main>
+<footer class="wrap">
+  <span>AI 实战通关 · 2026</span>
+  <span>Alex 整理 · 免费 · 不卖 API</span>
 </footer>
-
-<script src="/personal.js"></script>
 </body>
 </html>

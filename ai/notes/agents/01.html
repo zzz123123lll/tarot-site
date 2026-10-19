@@ -18,16 +18,16 @@
 <a class="skip" href="#main">跳到主要内容</a>
 <div class="read-progress"></div>
 <header class="wrap top">
-  <a class="brand" href="/">Alex <small>AI NOTES</small></a>
+  <a class="brand" href="/">AI 实战通关 <small>KNOWLEDGE BASE</small></a>
   <nav class="nav" aria-label="主导航">
-    <a href="/ai/">AI 笔记</a>
-    <a class="hide-s" href="/ai/notes/" class="cta">通关笔记</a>
-    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
+    <a href="/ai/notes/">全部课程</a>
+    <a class="hide-s" href="/#practice">怎么练</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
   </nav>
 </header>
 <main id="main">
 <nav class="breadcrumb wrap" aria-label="面包屑">
-  <a href="/ai/">AI 笔记</a><span class="sep">/</span><a href="/ai/notes/">通关笔记</a><span class="sep">/</span><a href="/ai/notes/agents/">AI Agent</a><span class="sep">/</span><span>第 01 关</span>
+  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/agents/">AI Agent</a><span class="sep">/</span><span>第 01 关</span>
 </nav>
 <div class="wrap article-shell">
   <aside class="side">
@@ -53,11 +53,11 @@
 <p>1. 明确写出 Agent 的四步 ReAct 推理轨迹模板：Thought → Action → Observation → Final Decision（4.5 分）；</p>
 <p>2. 定义清晰的触发条件（差价 ≥ 200 元且扣除改签手续费后净省 &gt; 0 元）（4 分）；</p>
 <p>3. 设置防死循环与异常熔断规则（如查询接口连续失败 2 次或总步数达 4 步立即停止并告警）（4 分）。</p></section>
-    <section class="practice" id="practice" data-key="/ai/notes/agents/01" data-total="12.5">
+    <section class="practice" id="practice" data-key="/ai/notes/agents/01" data-total="12.5" data-rules="[{&quot;text&quot;: &quot;1. 明确写出 Agent 的四步 ReAct 推理轨迹模板：Thought → Action → Observation → Final Decision（4.5 分）；&quot;, &quot;weight&quot;: 4.5, &quot;groups&quot;: []}, {&quot;text&quot;: &quot;2. 定义清晰的触发条件（差价 ≥ 200 元且扣除改签手续费后净省 &gt; 0 元）（4 分）；&quot;, &quot;weight&quot;: 4, &quot;groups&quot;: []}, {&quot;text&quot;: &quot;3. 设置防死循环与异常熔断规则（如查询接口连续失败 2 次或总步数达 4 步立即停止并告警）（4 分）。&quot;, &quot;weight&quot;: 4, &quot;groups&quot;: [[&quot;熔断&quot;, &quot;死循环&quot;, &quot;停止&quot;, &quot;重试&quot;]]}]">
   <div class="practice-head">
     <p class="label">PRACTICE / 本关练习</p>
     <h2>先写你的答案，再对参考。</h2>
-    <p>答案只保存在这台设备的浏览器里，不上传；勾选通关要求做自评。</p>
+    <p>答案只保存在这台设备的浏览器里，不上传；规则检查会告诉你缺了哪些得分点。</p>
   </div>
   <div class="practice-grid">
     <div class="practice-write">
@@ -66,9 +66,11 @@
       <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
     </div>
     <div class="practice-check">
-      <p class="practice-label">通关要求 · 自评</p>
-      <div class="check-list"><label class="check-item"><input type="checkbox" data-req data-weight="4.5"><span>1. 明确写出 Agent 的四步 ReAct 推理轨迹模板：Thought → Action → Observation → Final Decision（4.5 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="4"><span>2. 定义清晰的触发条件（差价 ≥ 200 元且扣除改签手续费后净省 &gt; 0 元）（4 分）；</span></label><label class="check-item"><input type="checkbox" data-req data-weight="4"><span>3. 设置防死循环与异常熔断规则（如查询接口连续失败 2 次或总步数达 4 步立即停止并告警）（4 分）。</span></label></div>
-      <p class="practice-score">自评 <b data-score>0</b> / 12.5 分</p>
+      <p class="practice-label">通关得分点 · 自动检查</p>
+      <div class="check-list"><div class="check-item" data-rule><span class="check-state" data-state>待检查</span><span class="check-text">1. 明确写出 Agent 的四步 ReAct 推理轨迹模板：Thought → Action → Observation → Final Decision（4.5 分）；</span></div><div class="check-item" data-rule><span class="check-state" data-state>待检查</span><span class="check-text">2. 定义清晰的触发条件（差价 ≥ 200 元且扣除改签手续费后净省 &gt; 0 元）（4 分）；</span></div><div class="check-item" data-rule><span class="check-state" data-state>待检查</span><span class="check-text">3. 设置防死循环与异常熔断规则（如查询接口连续失败 2 次或总步数达 4 步立即停止并告警）（4 分）。</span></div></div>
+      <button type="button" class="check-answer" data-check>检查我的答案</button>
+      <div class="practice-feedback" data-feedback></div>
+      <p class="practice-score">结构分 <b data-score>—</b> / 12.5 分</p>
     </div>
   </div>
   <div class="practice-actions">
@@ -97,8 +99,8 @@
 </div>
 </main>
 <footer class="wrap">
-  <span>Alex · AI 实战通关笔记 · 2026</span>
-  <span><a href="/ai/">AI 笔记</a> · <a href="/">个人主页</a> · 不收费，不卖 API</span>
+  <span>AI 实战通关 · 2026</span>
+  <span>Alex 整理 · 免费 · 不卖 API</span>
 </footer>
 </body>
 </html>

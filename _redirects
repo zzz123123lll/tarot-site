@@ -1,3 +1,77 @@
+# 站点已切换为「AI 实战通关」知识库。旧个人页与工具页统一回到知识库首页。
+# 若要恢复旧工具，删除对应 301 即可。
+
+/ai/ / 301
+/about/ / 301
+/work/ / 301
+/contact/ / 301
+/tools/ / 301
+/beat-toy/ / 301
+/star-map/ / 301
+/cover-gen/ / 301
+/tarot/ / 301
+/verify/ / 301
+/licenses/ / 301
+/base64/ / 301
+/base64 / 301
+/beat-toy/ / 301
+/beat-toy / 301
+/color/ / 301
+/color / 301
+/cover-gen/ / 301
+/cover-gen / 301
+/date/ / 301
+/date / 301
+/exif-clean/ / 301
+/exif-clean / 301
+/hash/ / 301
+/hash / 301
+/id-photo/ / 301
+/id-photo / 301
+/image-convert/ / 301
+/image-convert / 301
+/images-to-pdf/ / 301
+/images-to-pdf / 301
+/img-compress/ / 301
+/img-compress / 301
+/invoice-check/ / 301
+/invoice-check / 301
+/invoice-nup/ / 301
+/invoice-nup / 301
+/json/ / 301
+/json / 301
+/jwt/ / 301
+/jwt / 301
+/md-wechat/ / 301
+/md-wechat / 301
+/pdf-compress/ / 301
+/pdf-compress / 301
+/pdf-merge/ / 301
+/pdf-merge / 301
+/pdf-render/ / 301
+/pdf-render / 301
+/pdf-split/ / 301
+/pdf-split / 301
+/qr/ / 301
+/qr / 301
+/receipt-clean/ / 301
+/receipt-clean / 301
+/regex/ / 301
+/regex / 301
+/star-map/ / 301
+/star-map / 301
+/tarot/ / 301
+/tarot / 301
+/text-clean/ / 301
+/text-clean / 301
+/url/ / 301
+/url / 301
+/uuid/ / 301
+/uuid / 301
+/watermark/ / 301
+/watermark / 301
+
+# 旧工具扁平化地址也回到知识库
 # 各工具均为真实静态页(每个 URL 一个 index.html),无需重写。
 # 404 由 Cloudflare Pages 自动使用 404.html。
 
