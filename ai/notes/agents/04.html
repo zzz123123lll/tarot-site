@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>智能体检索与分层记忆管理 · 第 04 关 — AI Agent</title>
+<meta name="description" content="传统 RAG 只是机械地把用户原话拿去搜一次向量库，而 Microsoft AI Agents for Beginners 第 5 课">
+<link rel="canonical" href="https://gongjuhe.top/ai/notes/agents/04.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="智能体检索与分层记忆管理 · 第 04 关 — AI Agent">
+<meta property="og:description" content="传统 RAG 只是机械地把用户原话拿去搜一次向量库，而 Microsoft AI Agents for Beginners 第 5 课">
+<meta property="og:image" content="/og-personal.png">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/ai/notes/notes.css">
+<script src="/ai/notes/notes.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<div class="read-progress"></div>
+<header class="wrap top">
+  <a class="brand" href="/">Alex <small>AI NOTES</small></a>
+  <nav class="nav" aria-label="主导航">
+    <a href="/ai/">AI 笔记</a>
+    <a class="hide-s" href="/ai/notes/" class="cta">通关笔记</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
+  </nav>
+</header>
+<main id="main">
+<nav class="breadcrumb wrap" aria-label="面包屑">
+  <a href="/ai/">AI 笔记</a><span class="sep">/</span><a href="/ai/notes/">通关笔记</a><span class="sep">/</span><a href="/ai/notes/agents/">AI Agent</a><span class="sep">/</span><span>第 04 关</span>
+</nav>
+<div class="wrap article-shell">
+  <aside class="side">
+    <p class="side-label">AI AGENTS</p>
+    <ol class="level-nav"><li><a href="/ai/notes/agents/01.html"><span class="num">01</span><span>Agent 核心循环与框架选型</span></a></li><li><a href="/ai/notes/agents/02.html"><span class="num">02</span><span>工具调用设计模式</span></a></li><li><a href="/ai/notes/agents/03.html"><span class="num">03</span><span>任务规划与动态拆解模式</span></a></li><li><a href="/ai/notes/agents/04.html" class="current"><span class="num">04</span><span>智能体检索与分层记忆管理</span></a></li><li><a href="/ai/notes/agents/05.html"><span class="num">05</span><span>元认知与自我反思机制</span></a></li><li><a href="/ai/notes/agents/06.html"><span class="num">06</span><span>多智能体协作编排模式</span></a></li><li><a href="/ai/notes/agents/07.html"><span class="num">07</span><span>智能体通信协议与上下文工程</span></a></li><li><a href="/ai/notes/agents/08.html"><span class="num">08</span><span>可信护栏与生产级安全架构</span></a></li></ol>
+    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF ↗</a></div>
+  </aside>
+  <article class="article">
+    <p class="kicker">AI AGENTS / 04</p>
+    <h1>智能体检索与分层记忆管理</h1>
+    <p class="lede">传统 RAG 只是机械地把用户原话拿去搜一次向量库，而 Microsoft AI Agents for Beginners 第 5 课</p>
+    <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Microsoft AI Agents for Beginners (77.2k Stars)</span></div>
+    <section class="lesson"><h3>核心原理</h3>
+<p>传统 RAG 只是机械地把用户原话拿去搜一次向量库，而 Microsoft AI Agents for Beginners 第 5 课(Agentic RAG)与第 13 课(Managing Agentic Memory) 强调了两大升级：</p>
+<p>Agentic RAG（主动式检索）：智能体会自己评估检索回来的文档够不够用——如果第一次搜到的资料相关性低，Agent 会自主改写查询词(Query Rewrite)、拆解多跳子问题或切换数据源重新检索，直到收集齐证据再作答。</p>
+<p>三层记忆架构(Memory Hierarchy)：将记忆划分为短期工作记忆（Working Memory / 当前会话上下文）、情景记忆（Episodic Memory / 历史历史交互摘要） 与长期语义记忆（Semantic Memory / 用户偏好、固定资产配置等结构化键值库）。</p>
+<h2>第 4 关实操练习题：设计私人理财顾问 Agent 的记忆读写与主动检索策略</h2>
+<h3>任务背景</h3>
+<p>用户对理财 Agent 说：“按我上个月告诉你的风险承受等级，帮我看看今天刚发布的这只新债券基金适不适合买？”</p>
+<h3>通关硬性要求（满分 12.5 分）</h3>
+<p>1. 设计检索分流逻辑：从【长期用户画像记忆库】读取用户的历史风险等级与持仓偏好，同时通过【主动文档检索工具】查询今日新基金招募说明书（4.5 分）；</p>
+<p>2. 设计 Agentic RAG 自检判定规则：若首次检索仅拿到基金名称而缺少“最大回撤、久期、信用评级分布”关键字段，自动生成二次精准检索词（5 分）；</p>
+<p>3. 设计对话结束后的记忆更新机制(Memory Write-back)：判断本次对话中哪些新信息值得写入长期记忆，哪些仅保留在短期会话中（3 分）。</p>
+<h3>第三阶段</h3>
+<p>进阶编排篇（第 5‒6 关）——元认知自我反思与多智能体协同</p></section>
+    <details class="answer">
+  <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
+  <div class="answer-body"><h2>Step 1: 跨源并行感知</h2>
+<p>- 读取长期语义记忆(Semantic Memory)：调用 get_user_profile(user_id) 获取 {"risk_tolerance": "R2_稳健型", "max_drawdown_limit": "3.5%", "investment_horizon": "6-12个月"}。</p>
+<p>- 初次文档检索：调用 search_fund_docs（query="新发债券基金招募说明书核心要素"）。</p>
+<h2>Step 2: Agentic RAG 充分性自检(Sufficiency Check)</h2>
+<p>评估初次检索片段是否同时包含以下 3 项硬指标：</p>
+<p>1. 基金风险等级(R1-R5)；2. 投资组合久期与信用债评级占比；3. 历史同类策略最大回撤。</p>
+<p>-&gt; 若缺失任一指标：自动触发二次精准检索 rewrite_query（"该债券基金信用债AA+占比组合久期风险等级"），最多追加检索 2 次。</p>
+<h2>Step 3: 记忆写回策略(Memory Write-back)</h2>
+<p>- 写入长期语义记忆：仅当用户明确表达新的长期偏好变更（如“我今年刚生了宝宝，以后只买保本型产品”）时，调用 update_semantic_memory()。</p>
+<p>- 保留在短期/情景记忆：本次关于特定单只基金的临时问答摘要存入会话历史，不污染长期画像核心键值。</p>
+<h3>得分要点拆解</h3>
+<p>双通道读取长期画像与外部基金文档（4.5 分）；设置 3 项关键指标完整性自检与自动重写查询机制（5 分）；严格区分长期偏好更新与临时会话存储（3 分）。</p></div>
+</details>
+    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">留邮箱，获取完整 PDF ↗</a></div>
+    <div class="nextprev"><a href="/ai/notes/agents/03.html"><small>上一关</small>任务规划与动态拆解模式</a><a class="right" href="/ai/notes/agents/05.html"><small>下一关</small>元认知与自我反思机制</a></div>
+  </article>
+</div>
+</main>
+<footer class="wrap">
+  <span>Alex · AI 实战通关笔记 · 2026</span>
+  <span><a href="/ai/">AI 笔记</a> · <a href="/">个人主页</a> · 不收费，不卖 API</span>
+</footer>
+</body>
+</html>

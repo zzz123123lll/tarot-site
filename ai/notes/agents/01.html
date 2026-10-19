@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent 核心循环与框架选型 · 第 01 关 — AI Agent</title>
+<meta name="description" content="在 Microsoft AI Agents for Beginners 第 1‒3 课与 Agentic AI Masterclass Exercise 1 中，智能体">
+<link rel="canonical" href="https://gongjuhe.top/ai/notes/agents/01.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Agent 核心循环与框架选型 · 第 01 关 — AI Agent">
+<meta property="og:description" content="在 Microsoft AI Agents for Beginners 第 1‒3 课与 Agentic AI Masterclass Exercise 1 中，智能体">
+<meta property="og:image" content="/og-personal.png">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/ai/notes/notes.css">
+<script src="/ai/notes/notes.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<div class="read-progress"></div>
+<header class="wrap top">
+  <a class="brand" href="/">Alex <small>AI NOTES</small></a>
+  <nav class="nav" aria-label="主导航">
+    <a href="/ai/">AI 笔记</a>
+    <a class="hide-s" href="/ai/notes/" class="cta">通关笔记</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
+  </nav>
+</header>
+<main id="main">
+<nav class="breadcrumb wrap" aria-label="面包屑">
+  <a href="/ai/">AI 笔记</a><span class="sep">/</span><a href="/ai/notes/">通关笔记</a><span class="sep">/</span><a href="/ai/notes/agents/">AI Agent</a><span class="sep">/</span><span>第 01 关</span>
+</nav>
+<div class="wrap article-shell">
+  <aside class="side">
+    <p class="side-label">AI AGENTS</p>
+    <ol class="level-nav"><li><a href="/ai/notes/agents/01.html" class="current"><span class="num">01</span><span>Agent 核心循环与框架选型</span></a></li><li><a href="/ai/notes/agents/02.html"><span class="num">02</span><span>工具调用设计模式</span></a></li><li><a href="/ai/notes/agents/03.html"><span class="num">03</span><span>任务规划与动态拆解模式</span></a></li><li><a href="/ai/notes/agents/04.html"><span class="num">04</span><span>智能体检索与分层记忆管理</span></a></li><li><a href="/ai/notes/agents/05.html"><span class="num">05</span><span>元认知与自我反思机制</span></a></li><li><a href="/ai/notes/agents/06.html"><span class="num">06</span><span>多智能体协作编排模式</span></a></li><li><a href="/ai/notes/agents/07.html"><span class="num">07</span><span>智能体通信协议与上下文工程</span></a></li><li><a href="/ai/notes/agents/08.html"><span class="num">08</span><span>可信护栏与生产级安全架构</span></a></li></ol>
+    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF ↗</a></div>
+  </aside>
+  <article class="article">
+    <p class="kicker">AI AGENTS / 01</p>
+    <h1>Agent 核心循环与框架选型</h1>
+    <p class="lede">在 Microsoft AI Agents for Beginners 第 1‒3 课与 Agentic AI Masterclass Exercise 1 中，智能体</p>
+    <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Microsoft AI Agents for Beginners (77.2k Stars)</span></div>
+    <section class="lesson"><h3>核心原理</h3>
+<p>在 Microsoft AI Agents for Beginners 第 1‒3 课与 Agentic AI Masterclass Exercise 1 中，智能体与普通大模型调用的本质区别在于 ReAct(Reasoning + Acting)循环：模型接收用户目标后，进入“思考(Thought)→ 决定调用工具(Action)→ 获取环境反馈(Observation)→ 再次思考”的循环，直至满足终止条件。在工程实现上，无论是使用 Pydantic AI、LangGraph、CrewAI 还是 OpenAI Agents SDK（详见ed-donner/agents），都必须明确定义四个核心组件：Model（底层推理模型）、Instructions（系统级行为准则）、Tools（可执行外部函数集）与 Loop Guard（最大循环步数限制，防死循环烧钱）。</p>
+<p>踩坑设计 vs. 工业级设计对比：</p>
+<p>新手踩坑设计：把所有业务逻辑硬塞进一个超长 Prompt,既不限制最大迭代步数(max_steps)，也不区分状态变量，一旦外部 API 报错，Agent 就陷入无限重试死循环，几分钟耗尽 API 额度。</p>
+<p>工业级结构化设计：显式声明智能体状态机，设置 max_iterations = 5,并严格规范每一步的 Thought /Action / Observation 输出格式。</p>
+<h2>第 1 关实操练习题：设计“电商机票差价监控与改签助手”的 ReAct 核心循环</h2>
+<h3>任务背景</h3>
+<p>你需要参照 Agentic AI Masterclass 的编码范式，为一个“自动查询航班实时价格并在低于历史购票价 200 元以上时生成改签方案”的智能体编写系统指令与循环终止条件。</p>
+<p>待改造劣质设计：“你是一个机票助手，帮我查一下用户买的航班现在多少钱，如果便宜了就帮他改签。”</p>
+<h3>通关硬性要求（满分 12.5 分）</h3>
+<p>1. 明确写出 Agent 的四步 ReAct 推理轨迹模板：Thought → Action → Observation → Final Decision（4.5 分）；</p>
+<p>2. 定义清晰的触发条件（差价 ≥ 200 元且扣除改签手续费后净省 &gt; 0 元）（4 分）；</p>
+<p>3. 设置防死循环与异常熔断规则（如查询接口连续失败 2 次或总步数达 4 步立即停止并告警）（4 分）。</p></section>
+    <details class="answer">
+  <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
+  <div class="answer-body"><h2>System Instructions: Flight Rebooking Agent</h2>
+<p>你是一个严谨的机票差价监控与改签评估智能体。请严格按照以下 ReAct 循环处理用户订单，最大循环步数限制为 max_steps = 4:</p>
+<p>每一步推理必须严格输出以下结构：</p>
+<p>- Thought: 分析当前已知的订单原价、退改签政策与还需获取的实时数据。</p>
+<p>- Action: 调用指定工具（如 get_Order_Info 或 fetch_Live_Flight_Price）。</p>
+<p>- Observation: 接收工具返回的真实 JSON 数据。</p>
+<h2>业务判定与熔断规则</h2>
+<p>1. 净收益计算公式：净节省金额 = （历史出票价 - 当前实时票价） - 改签手续费。</p>
+<p>2. 触发改签方案条件：必须同时满足 （历史出票价 - 当前实时票价） &gt;= 200 元，且净节省金额 &gt; 0 元。若不满足，立即进入 Final Decision 输出“暂不建议改签”及原因。</p>
+<p>3. 异常熔断机制：若外部航班价格接口返回超时或 5xx 错误，最多允许重试 1 次（累计失败达 2 次立即终止循环），严禁盲目重复调用或编造票价，直接输出接口异常告警。</p>
+<h3>得分要点拆解</h3>
+<p>清晰定义四步 ReAct 循环与步数上限（4.5 分）；准确列出差价 ≥ 200 元且扣费后净省 &gt; 0 的双重算式（4 分）；包含连续失败 2 次即熔断告警的防死循环机制（4 分）。</p></div>
+</details>
+    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">留邮箱，获取完整 PDF ↗</a></div>
+    <div class="nextprev"><a href="/ai/notes/agents/"><small>返回系列</small>AI Agent</a><a class="right" href="/ai/notes/agents/02.html"><small>下一关</small>工具调用设计模式</a></div>
+  </article>
+</div>
+</main>
+<footer class="wrap">
+  <span>Alex · AI 实战通关笔记 · 2026</span>
+  <span><a href="/ai/">AI 笔记</a> · <a href="/">个人主页</a> · 不收费，不卖 API</span>
+</footer>
+</body>
+</html>

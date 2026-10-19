@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>专家角色赋予 · 第 03 关 — 提示词工程</title>
+<meta name="description" content="在 Anthropic 教程第 3 章与 Interactive Book of Prompting (prompts.chat) 中，角色设定(Role">
+<link rel="canonical" href="https://gongjuhe.top/ai/notes/prompt/03.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="专家角色赋予 · 第 03 关 — 提示词工程">
+<meta property="og:description" content="在 Anthropic 教程第 3 章与 Interactive Book of Prompting (prompts.chat) 中，角色设定(Role">
+<meta property="og:image" content="/og-personal.png">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/ai/notes/notes.css">
+<script src="/ai/notes/notes.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<div class="read-progress"></div>
+<header class="wrap top">
+  <a class="brand" href="/">Alex <small>AI NOTES</small></a>
+  <nav class="nav" aria-label="主导航">
+    <a href="/ai/">AI 笔记</a>
+    <a class="hide-s" href="/ai/notes/" class="cta">通关笔记</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
+  </nav>
+</header>
+<main id="main">
+<nav class="breadcrumb wrap" aria-label="面包屑">
+  <a href="/ai/">AI 笔记</a><span class="sep">/</span><a href="/ai/notes/">通关笔记</a><span class="sep">/</span><a href="/ai/notes/prompt/">提示词工程</a><span class="sep">/</span><span>第 03 关</span>
+</nav>
+<div class="wrap article-shell">
+  <aside class="side">
+    <p class="side-label">PROMPT ENGINEERING</p>
+    <ol class="level-nav"><li><a href="/ai/notes/prompt/01.html"><span class="num">01</span><span>基础提示词结构</span></a></li><li><a href="/ai/notes/prompt/02.html"><span class="num">02</span><span>清晰直接原则</span></a></li><li><a href="/ai/notes/prompt/03.html" class="current"><span class="num">03</span><span>专家角色赋予</span></a></li><li><a href="/ai/notes/prompt/04.html"><span class="num">04</span><span>数据与指令分离</span></a></li><li><a href="/ai/notes/prompt/05.html"><span class="num">05</span><span>输出格式化与预填充引导</span></a></li><li><a href="/ai/notes/prompt/06.html"><span class="num">06</span><span>先思后答与思维链</span></a></li><li><a href="/ai/notes/prompt/07.html"><span class="num">07</span><span>少样本示例教学</span></a></li><li><a href="/ai/notes/prompt/08.html"><span class="num">08</span><span>消除 AI 幻觉</span></a></li><li><a href="/ai/notes/prompt/09.html"><span class="num">09</span><span>构建工业级复杂提示词</span></a></li><li><a href="/ai/notes/prompt/10.html"><span class="num">10</span><span>超越单次提问</span></a></li></ol>
+    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF ↗</a></div>
+  </aside>
+  <article class="article">
+    <p class="kicker">PROMPT ENGINEERING / 03</p>
+    <h1>专家角色赋予</h1>
+    <p class="lede">在 Anthropic 教程第 3 章与 Interactive Book of Prompting (prompts.chat) 中，角色设定(Role</p>
+    <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span></div>
+    <section class="lesson"><h3>核心原理</h3>
+<p>在 Anthropic 教程第 3 章与 Interactive Book of Prompting (prompts.chat) 中，角色设定(Role Prompting)不仅仅是加一句“你是一个专家”,而是要同时定义“专家身份 + 所处业务情境 + 目标对话受众”。同样是解释“通货膨胀”,设定为“向 8 岁小学生讲故事的儿童绘本作家”与“向董事会汇报对冲策略的首席宏观经济学家”,模型的词汇分布、推理框架和洞察深度会截然不同。</p>
+<h3>踩坑写法 vs. 高手写法对比</h3>
+<p>新手踩坑写法：“你是一个财务专家，帮我看看这家奶茶店月营收 8 万、房租 2.5 万、人工 2 万、原料 2.8万能不能盘下来？”高手三维角色写法（身份 + 立场 + 受众）：</p>
+<p>你是一位专注于餐饮连锁并购与门店防坑审计的资深财务顾问（身份），你的立场是帮缺乏经验的创业者识别隐性亏损风险、严防接盘死店（立场），你的沟通对象是一位手握 20 万积蓄、第一次开店的餐饮小白（受众）。请用通俗犀利的语言拆解该奶茶店的真实盈亏平衡点与 3 个致命财务隐患。</p>
+<h2>第 3 关实操练习题：用三维角色法改写简历诊断指令</h2>
+<h3>任务背景</h3>
+<p>你希望 AI 帮你挑出个人简历中的水分和短板，而不是一味夸奖你。待改造劣质 Prompt:“你是一个HR,帮我改改这段简历经历：负责公司公众号运营，发布过30篇推文，提升了粉丝活跃度。”</p>
+<h3>通关硬性要求（满分 10 分）</h3>
+<p>1. 构建包含【具体职级身份 + 严苛挑剔立场 + 目标岗位标准】的三维角色设定（4 分）；</p>
+<p>2. 要求先犀利指出原简历描述中的 3 处“无效空话/缺乏量化数据”缺陷（3 分）；</p>
+<p>3. 要求按照 STAR 法则（情境-任务-行动-结果）给出 2 个不同侧重点的高分改写版本（3 分）。</p>
+<h3>第二阶段</h3>
+<p>中级进阶篇（第 4‒7 关）——掌握结构化隔离、格式化控制与推理引导</p></section>
+    <details class="answer">
+  <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
+  <div class="answer-body"><h2>角色与立场设定</h2>
+<p>你是一位在头部互联网大厂拥有 10 年经验的新媒体招聘总监（身份）。你每天审阅超过 200 份简历，极其反感没有数据支撑的空洞套话，你的任务是以最严苛的标准帮求职者挑出简历漏洞并重构出能拿到面试邀约的高分表达（立场）。你的沟通对象是一位正在应聘“高级内容运营岗”的职场人（受众）。</p>
+<h2>待诊断简历原句</h2>
+<p>“负责公司公众号运营，发布过 30 篇推文，提升了粉丝活跃度。”</p>
+<h2>执行任务</h2>
+<p>1. 毒舌诊断：一针见血地指出原句中让面试官直接淘汰的 3 个核心缺陷（如缺乏基数对比、无爆款方法论、无转化结果）；</p>
+<p>2. 高分重写：严格按照 STAR 法则（背景-任务-行动-结果），分别针对“擅长流量增长”和“擅长私域转化”两个不同侧重点，给出 2 个包含具体数据占位符（如 [X]%）的专业改写版本。</p>
+<h3>得分要点拆解</h3>
+<p>完整构建“大厂招聘总监 + 严苛挑刺立场 + 目标岗位受众”三维角色（4 分）；要求先指出 3处空话缺陷（3 分）；要求按 STAR 法则输出 2 个差异化方向改写版（3 分）。</p></div>
+</details>
+    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">留邮箱，获取完整 PDF ↗</a></div>
+    <div class="nextprev"><a href="/ai/notes/prompt/02.html"><small>上一关</small>清晰直接原则</a><a class="right" href="/ai/notes/prompt/04.html"><small>下一关</small>数据与指令分离</a></div>
+  </article>
+</div>
+</main>
+<footer class="wrap">
+  <span>Alex · AI 实战通关笔记 · 2026</span>
+  <span><a href="/ai/">AI 笔记</a> · <a href="/">个人主页</a> · 不收费，不卖 API</span>
+</footer>
+</body>
+</html>

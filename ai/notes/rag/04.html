@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>混合检索与重排序优化 · 第 04 关 — RAG 知识库</title>
+<meta name="description" content="纯向量语义检索有一个致命短板：对精确专有名词、产品型号代码（如“错误码 ERR-4092-B”）、">
+<link rel="canonical" href="https://gongjuhe.top/ai/notes/rag/04.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="混合检索与重排序优化 · 第 04 关 — RAG 知识库">
+<meta property="og:description" content="纯向量语义检索有一个致命短板：对精确专有名词、产品型号代码（如“错误码 ERR-4092-B”）、">
+<meta property="og:image" content="/og-personal.png">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/ai/notes/notes.css">
+<script src="/ai/notes/notes.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<div class="read-progress"></div>
+<header class="wrap top">
+  <a class="brand" href="/">Alex <small>AI NOTES</small></a>
+  <nav class="nav" aria-label="主导航">
+    <a href="/ai/">AI 笔记</a>
+    <a class="hide-s" href="/ai/notes/" class="cta">通关笔记</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
+  </nav>
+</header>
+<main id="main">
+<nav class="breadcrumb wrap" aria-label="面包屑">
+  <a href="/ai/">AI 笔记</a><span class="sep">/</span><a href="/ai/notes/">通关笔记</a><span class="sep">/</span><a href="/ai/notes/rag/">RAG 知识库</a><span class="sep">/</span><span>第 04 关</span>
+</nav>
+<div class="wrap article-shell">
+  <aside class="side">
+    <p class="side-label">RAG / KNOWLEDGE BASE</p>
+    <ol class="level-nav"><li><a href="/ai/notes/rag/01.html"><span class="num">01</span><span>向量表示与余弦相似度基础</span></a></li><li><a href="/ai/notes/rag/02.html"><span class="num">02</span><span>文档解析与黄金分块策略</span></a></li><li><a href="/ai/notes/rag/03.html"><span class="num">03</span><span>语义检索引擎构建</span></a></li><li><a href="/ai/notes/rag/04.html" class="current"><span class="num">04</span><span>混合检索与重排序优化</span></a></li><li><a href="/ai/notes/rag/05.html"><span class="num">05</span><span>核心 RAG 闭环与引用溯源控制</span></a></li><li><a href="/ai/notes/rag/06.html"><span class="num">06</span><span>多轮对话与查询改写</span></a></li><li><a href="/ai/notes/rag/07.html"><span class="num">07</span><span>知识图谱增强检索</span></a></li><li><a href="/ai/notes/rag/08.html"><span class="num">08</span><span>流式交互应用与 RAG 黄金评估体系</span></a></li></ol>
+    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8ARAG%20%E7%9F%A5%E8%AF%86%E5%BA%93%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF ↗</a></div>
+  </aside>
+  <article class="article">
+    <p class="kicker">RAG / KNOWLEDGE BASE / 04</p>
+    <h1>混合检索与重排序优化</h1>
+    <p class="lede">纯向量语义检索有一个致命短板：对精确专有名词、产品型号代码（如“错误码 ERR-4092-B”）、</p>
+    <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 StepByStep-RAG / GraphRAG / RAG 评估实践</span></div>
+    <section class="lesson"><h3>核心原理</h3>
+<p>纯向量语义检索有一个致命短板：对精确专有名词、产品型号代码（如“错误码 ERR-4092-B”）、人名与法规条文编号非常不敏感！根据 RAG Zero to Hero Guide 与 RAG All-in-One 的进阶架构，工业级知识库普遍采用“两阶段漏斗架构”:</p>
+<h3>第一阶段(粗排召回</h3>
+<p>BM25 关键词检索 + 向量稠密检索)：两路并行各取 Top-20,通过 RRF（Reciprocal Rank Fusion,倒数排名融合算法） 合并去重，兼顾精确型号匹配与语义泛化理解。</p>
+<h3>第二阶段(精排重排序</h3>
+<p>Cross-Encoder Reranker)：使用 BGE-Reranker 或 Cohere Rerank 等交叉编码模型，对粗排召回的 20 个片段与用户问题做深度交叉注意力打分，精选出真正最相关的 Top-3 喂给大模型。</p>
+<h2>第 4 关实操练习题：手写 RRF 倒数排名融合算法与两阶段重排流水线</h2>
+<h3>任务背景</h3>
+<p>售后工程师搜索“变频器报 E-017 故障怎么复位”,向量检索召回了第 [D3, D1, D8] 号文档，BM25 关键词检索召回了第 [D1, D5, D3] 号文档。</p>
+<h3>通关硬性要求（满分 12.5 分）</h3>
+<p>1. 写出标准 RRF(Reciprocal Rank Fusion)打分公式（含平滑常数 k = 60）及 Python 融合排序实现（5.5 分）；</p>
+<p>2. 设计粗排(Recall Top-20)→ Reranker 精排(Select Top-4)的两阶段调用流程（4 分）；</p>
+<p>3. 解释为什么不能直接用 Cross-Encoder Reranker 对全库 10 万篇文档做第一阶段暴力检索（3 分）。</p>
+<h3>第三阶段</h3>
+<p>生成演进篇（第 5‒6 关）——溯源生成闭环与多轮对话记忆</p></section>
+    <details class="answer">
+  <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
+  <div class="answer-body"><div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code>from collections import defaultdict
+from typing import List
+def reciprocal_rank_fusion(
+dense_results: List[str], sparse_bm25_results: List[str], k: int = 60, top_n: int = 20
+) -&gt; List[str]:
+"""RRF 公式: score(d) = sum( 1 / (k + rank(d)) ),无需对两路异构得分做复杂的分布归一化"""
+rrf_scores = defaultdict(float)
+for rank, doc_id in enumerate(dense_results, start=1):
+rrf_scores[doc_id] += 1.0 / (k + rank)
+for rank, doc_id in enumerate(sparse_bm25_results, start=1):
+rrf_scores[doc_id] += 1.0 / (k + rank)
+sorted_docs = sorted(rrf_scores.items(), key=lambda x: x[1], reverse=True)
+return [doc_id for doc_id, _ in sorted_docs[:top_n]]
+# 两阶段检索精排调用:
+# Stage 1: 向量 Top-20 + BM25 Top-20 -&gt; RRF 融合选出 20 个候选块(D1 在两路分列第2和第1,得分最高稳
+居榜首)
+# Stage 2: 调用 cross_encoder_reranker.rank(query, candidate_20_chunks) 精排截取 Top-4
+# 原理解析:Cross-Encoder 需将 Query 与每篇文档拼接后过完整 Transformer 自注意力层,计算复杂度高,
+仅适合对粗排后的几十个候选块做精排,不可直接遍历 10 万全库。</code></pre></div>
+<h3>得分要点拆解</h3>
+<p>准确实现 `1 / (k + rank)` RRF 公式（5.5 分）；清晰构建粗排召回 + Cross-Encoder 精排两阶段流水线（4 分）；准确解释双塔 Bi-Encoder 与交叉编码器 Cross-Encoder 的计算开销差异（3 分）。</p></div>
+</details>
+    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8ARAG%20%E7%9F%A5%E8%AF%86%E5%BA%93%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">留邮箱，获取完整 PDF ↗</a></div>
+    <div class="nextprev"><a href="/ai/notes/rag/03.html"><small>上一关</small>语义检索引擎构建</a><a class="right" href="/ai/notes/rag/05.html"><small>下一关</small>核心 RAG 闭环与引用溯源控制</a></div>
+  </article>
+</div>
+</main>
+<footer class="wrap">
+  <span>Alex · AI 实战通关笔记 · 2026</span>
+  <span><a href="/ai/">AI 笔记</a> · <a href="/">个人主页</a> · 不收费，不卖 API</span>
+</footer>
+</body>
+</html>

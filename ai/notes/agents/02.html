@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>工具调用设计模式 · 第 02 关 — AI Agent</title>
+<meta name="description" content="根据 Microsoft AI Agents for Beginners 第 4 课与 LLM Engineering 工具调用实验，大模型本身并">
+<link rel="canonical" href="https://gongjuhe.top/ai/notes/agents/02.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="工具调用设计模式 · 第 02 关 — AI Agent">
+<meta property="og:description" content="根据 Microsoft AI Agents for Beginners 第 4 课与 LLM Engineering 工具调用实验，大模型本身并">
+<meta property="og:image" content="/og-personal.png">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/ai/notes/notes.css">
+<script src="/ai/notes/notes.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<div class="read-progress"></div>
+<header class="wrap top">
+  <a class="brand" href="/">Alex <small>AI NOTES</small></a>
+  <nav class="nav" aria-label="主导航">
+    <a href="/ai/">AI 笔记</a>
+    <a class="hide-s" href="/ai/notes/" class="cta">通关笔记</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
+  </nav>
+</header>
+<main id="main">
+<nav class="breadcrumb wrap" aria-label="面包屑">
+  <a href="/ai/">AI 笔记</a><span class="sep">/</span><a href="/ai/notes/">通关笔记</a><span class="sep">/</span><a href="/ai/notes/agents/">AI Agent</a><span class="sep">/</span><span>第 02 关</span>
+</nav>
+<div class="wrap article-shell">
+  <aside class="side">
+    <p class="side-label">AI AGENTS</p>
+    <ol class="level-nav"><li><a href="/ai/notes/agents/01.html"><span class="num">01</span><span>Agent 核心循环与框架选型</span></a></li><li><a href="/ai/notes/agents/02.html" class="current"><span class="num">02</span><span>工具调用设计模式</span></a></li><li><a href="/ai/notes/agents/03.html"><span class="num">03</span><span>任务规划与动态拆解模式</span></a></li><li><a href="/ai/notes/agents/04.html"><span class="num">04</span><span>智能体检索与分层记忆管理</span></a></li><li><a href="/ai/notes/agents/05.html"><span class="num">05</span><span>元认知与自我反思机制</span></a></li><li><a href="/ai/notes/agents/06.html"><span class="num">06</span><span>多智能体协作编排模式</span></a></li><li><a href="/ai/notes/agents/07.html"><span class="num">07</span><span>智能体通信协议与上下文工程</span></a></li><li><a href="/ai/notes/agents/08.html"><span class="num">08</span><span>可信护栏与生产级安全架构</span></a></li></ol>
+    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF ↗</a></div>
+  </aside>
+  <article class="article">
+    <p class="kicker">AI AGENTS / 02</p>
+    <h1>工具调用设计模式</h1>
+    <p class="lede">根据 Microsoft AI Agents for Beginners 第 4 课与 LLM Engineering 工具调用实验，大模型本身并</p>
+    <div class="meta"><span>约 5 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Microsoft AI Agents for Beginners (77.2k Stars)</span></div>
+    <section class="lesson"><h3>核心原理</h3>
+<p>根据 Microsoft AI Agents for Beginners 第 4 课与 LLM Engineering 工具调用实验，大模型本身并不会直接运行代码或查数据库，而是根据你提供的工具函数签名与文档字符串 ( Docstring / JSON Schema)，输出结构化的函数名与 JSON 参数，由宿主程序执行后再将结果返回给模型。工具调用成败的80% 取决于函数描述是否清晰说明了“何时该调、何时不该调”以及参数枚举/格式约束。</p>
+<p>踩坑 Schema vs. 高手 Schema 对比：</p>
+<p>新手踩坑写法：定义一个函数 def query_db(sql: str)，描述仅写“查询数据库”。结果模型自己瞎猜表名和字段名，拼出错误的 SQL 甚至引发删表风险。</p>
+<p>高手强类型工具定义：将模糊的通用查询拆解为语义明确的业务原子工具(如get_order_status_by_id(order_id: str))，并在参数描述中注明正则格式（如“必须是以 ORD- 开头的 12位订单号”）及错误返回值格式。</p>
+<h2>第 2 关实操练习题：为售后退款智能体编写严谨的 Tool JSON Schema</h2>
+<h3>任务背景</h3>
+<p>你要为客服 Agent 配备一个“查询订单物流与发起部分退款”的工具声明，防止模型在未核实物流状态前乱调退款接口。</p>
+<p>待改造劣质定义：{"name": "refund", "description": "给客户退款", "parameters": {"id": "string",</p>
+<div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code>"money": "number"}}</code></pre></div>
+<h3>通关硬性要求（满分 12.5 分）</h3>
+<p>1. 编写完整的 OpenAI/Pydantic 兼容 JSON Schema,包含工具名、详细调用前提说明(description)与 required 必填字段列表（4.5 分）；</p>
+<p>2. 为 order_id、refund_amount_cny（设定单笔上限说明）、reason_category（设定枚举值 enum）三个参数提供精确类型与业务约束（5 分）；</p>
+<p>3. 设计当参数校验失败时返回给 Agent 的结构化错误提示格式，引导 Agent 向用户追问缺失信息而非盲目报错（3 分）。</p>
+<h3>第二阶段</h3>
+<p>核心能力篇（第 3‒4 关）——目标规划拆解与智能体记忆系统</p></section>
+    <details class="answer">
+  <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
+  <div class="answer-body"><div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code>{
+"name": "initiate_partial_refund",
+"description": "向买家发起订单部分退款。调用前提:必须先调用 get_logistics_status 确认包裹已签收
+或存在核实的物流异常,严禁在未查询订单状态前直接调用本工具。单笔自动退款上限为 200 元人民币。",
+"parameters": {
+"type": "object",
+"properties": {
+"order_id": {
+"type": "string",
+"pattern": "^ORD-[0-9]{8}$",
+"description": "标准 12 位订单编号,必须以 'ORD-' 开头后跟 8 位数字(如 ORD-20261015)。若用
+户未提供,请先向用户追问。"
+},
+"refund_amount_cny": {
+"type": "number",
+"minimum": 0.01,
+"maximum": 200.00,
+"description": "退款金额(人民币元),保留两位小数,不得超过 200.00 元。"
+},
+"reason_category": {
+"type": "string",
+"enum": ["DELAYED_SHIPPING", "MINOR_DEFECT", "PRICE_MATCH", "MISSING_ACCESSORY"],
+"description": "退款原因分类枚举值,必须严格从四个预设枚举项中选择。"
+}
+},
+"required": ["order_id", "refund_amount_cny", "reason_category"],
+"additionalProperties": false
+}
+}
+// 参数校验失败时的结构化回退返回示例:
+{"status": "validation_error", "error_field": "order_id", "agent_instruction": "订单号格式不合法或
+缺失,请礼貌询问买家提供以 ORD- 开头的 12 位订单号,切勿自行编造参数重试。"}</code></pre></div>
+<h3>得分要点拆解</h3>
+<p>完整声明 JSON Schema 与前置调用约束（4.5 分）；对订单号正则、金额上下限、原因枚举进行强类型锁定（5 分）；提供面向 Agent 的结构化错误回退指引（3 分）。</p></div>
+</details>
+    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">留邮箱，获取完整 PDF ↗</a></div>
+    <div class="nextprev"><a href="/ai/notes/agents/01.html"><small>上一关</small>Agent 核心循环与框架选型</a><a class="right" href="/ai/notes/agents/03.html"><small>下一关</small>任务规划与动态拆解模式</a></div>
+  </article>
+</div>
+</main>
+<footer class="wrap">
+  <span>Alex · AI 实战通关笔记 · 2026</span>
+  <span><a href="/ai/">AI 笔记</a> · <a href="/">个人主页</a> · 不收费，不卖 API</span>
+</footer>
+</body>
+</html>

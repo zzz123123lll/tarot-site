@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>任务规划与动态拆解模式 · 第 03 关 — AI Agent</title>
+<meta name="description" content="面对复杂目标（如“分析竞品最近三个月的定价变动并生成应对促销方案”），单步工具调用无法完">
+<link rel="canonical" href="https://gongjuhe.top/ai/notes/agents/03.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="任务规划与动态拆解模式 · 第 03 关 — AI Agent">
+<meta property="og:description" content="面对复杂目标（如“分析竞品最近三个月的定价变动并生成应对促销方案”），单步工具调用无法完">
+<meta property="og:image" content="/og-personal.png">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/ai/notes/notes.css">
+<script src="/ai/notes/notes.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<div class="read-progress"></div>
+<header class="wrap top">
+  <a class="brand" href="/">Alex <small>AI NOTES</small></a>
+  <nav class="nav" aria-label="主导航">
+    <a href="/ai/">AI 笔记</a>
+    <a class="hide-s" href="/ai/notes/" class="cta">通关笔记</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
+  </nav>
+</header>
+<main id="main">
+<nav class="breadcrumb wrap" aria-label="面包屑">
+  <a href="/ai/">AI 笔记</a><span class="sep">/</span><a href="/ai/notes/">通关笔记</a><span class="sep">/</span><a href="/ai/notes/agents/">AI Agent</a><span class="sep">/</span><span>第 03 关</span>
+</nav>
+<div class="wrap article-shell">
+  <aside class="side">
+    <p class="side-label">AI AGENTS</p>
+    <ol class="level-nav"><li><a href="/ai/notes/agents/01.html"><span class="num">01</span><span>Agent 核心循环与框架选型</span></a></li><li><a href="/ai/notes/agents/02.html"><span class="num">02</span><span>工具调用设计模式</span></a></li><li><a href="/ai/notes/agents/03.html" class="current"><span class="num">03</span><span>任务规划与动态拆解模式</span></a></li><li><a href="/ai/notes/agents/04.html"><span class="num">04</span><span>智能体检索与分层记忆管理</span></a></li><li><a href="/ai/notes/agents/05.html"><span class="num">05</span><span>元认知与自我反思机制</span></a></li><li><a href="/ai/notes/agents/06.html"><span class="num">06</span><span>多智能体协作编排模式</span></a></li><li><a href="/ai/notes/agents/07.html"><span class="num">07</span><span>智能体通信协议与上下文工程</span></a></li><li><a href="/ai/notes/agents/08.html"><span class="num">08</span><span>可信护栏与生产级安全架构</span></a></li></ol>
+    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF ↗</a></div>
+  </aside>
+  <article class="article">
+    <p class="kicker">AI AGENTS / 03</p>
+    <h1>任务规划与动态拆解模式</h1>
+    <p class="lede">面对复杂目标（如“分析竞品最近三个月的定价变动并生成应对促销方案”），单步工具调用无法完</p>
+    <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Microsoft AI Agents for Beginners (77.2k Stars)</span></div>
+    <section class="lesson"><h3>核心原理</h3>
+<p>面对复杂目标（如“分析竞品最近三个月的定价变动并生成应对促销方案”），单步工具调用无法完成。Microsoft AI Agents for Beginners 第 7 课(Planning Design) 指出，高阶智能体必须具备“先规划后执行(Plan-and-Solve)”能力：先将宏大目标拆解为包含明确输入输出依赖关系的子任务列表(Sub-task DAG)，标记哪些子任务可以并行执行(Parallel)、哪些必须串行等待(Sequential)；且每完成一步后根据实际返回结果动态修正后续计划(Re-planning)。</p>
+<h2>第 3 关实操练习题：设计“企业新客户背景尽调 Agent”的分步规划器</h2>
+<h3>任务背景</h3>
+<p>B2B 销售团队输入一个潜在客户公司名称，希望 Agent 自动完成工商风险核查、近期高管新闻动态检索、主营产品匹配度评估，并输出一份拜访简报。</p>
+<h3>通关硬性要求（满分 12.5 分）</h3>
+<p>1. 设计 Planner 输出的结构化 JSON 计划表格式，每个子任务需包含 step_id、tool_name、depends_on（前置依赖数组）与 expected_output（5 分）；</p>
+<p>2. 准确区分并行阶段（工商信息查询、新闻检索、官网产品抓取互不依赖，可并发执行）与串行汇总阶段（4.5 分）；</p>
+<p>3. 设计动态重规划分支：若第一步工商核查发现该公司“已注销或被列为失信被执行人”,立即终止后续新闻检索并直接输出风险拦截报告（3 分）。</p></section>
+    <details class="answer">
+  <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
+  <div class="answer-body"><div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code>{
+"goal": "对目标企业【星云智造科技有限公司】进行销售前背景尽调并生成拜访简报",
+"execution_plan": [
+{
+"step_id": "step_1",
+"task": "核查工商注册状态、行政处罚与失信被执行人记录",
+"tool_name": "verify_business_registration",
+"depends_on": [],
+"execution_mode": "gatekeeper_first",
+"short_circuit_rule": "若返回 status 为 CANCELLED(已注销)或 DISHONEST_DEBTOR(失信被执行
+人),立即取消 step_2 至 step_4,直接跳至风险拦截总结。"
+},
+{
+"step_id": "step_2",
+"task": "检索最近 90 天公司高管公开发言、融资与业务扩张新闻",
+"tool_name": "search_company_news",
+"depends_on": ["step_1"],
+"execution_mode": "parallel_group_A"
+},
+{
+"step_id": "step_3",
+"task": "抓取企业官网核心产品线与技术栈介绍",
+"tool_name": "scrape_product_catalog",
+"depends_on": ["step_1"],
+"execution_mode": "parallel_group_A"
+},
+{
+"step_id": "step_4",
+"task": "结合我方产品矩阵,汇总生成定制化销售拜访破冰简报",
+"tool_name": "synthesize_sales_brief",
+"depends_on": ["step_2", "step_3"],
+"execution_mode": "sequential_final"
+}
+]
+}</code></pre></div>
+<h3>得分要点拆解</h3>
+<p>规范包含 `step_id`、`tool_name`、`depends_on` 的 DAG 结构（5 分）；先执行守门任务`step_1`,再并行执行 `step_2` 与 `step_3`,最后串行汇总 `step_4`（4.5 分）；具备失信/注销一键短路终止机制（3 分）。</p></div>
+</details>
+    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">留邮箱，获取完整 PDF ↗</a></div>
+    <div class="nextprev"><a href="/ai/notes/agents/02.html"><small>上一关</small>工具调用设计模式</a><a class="right" href="/ai/notes/agents/04.html"><small>下一关</small>智能体检索与分层记忆管理</a></div>
+  </article>
+</div>
+</main>
+<footer class="wrap">
+  <span>Alex · AI 实战通关笔记 · 2026</span>
+  <span><a href="/ai/">AI 笔记</a> · <a href="/">个人主页</a> · 不收费，不卖 API</span>
+</footer>
+</body>
+</html>

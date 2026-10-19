@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>多智能体协作编排模式 · 第 06 关 — AI Agent</title>
+<meta name="description" content="当一个智能体挂载超过 15 个工具、系统提示词超过数千字时，它的工具选错率和指令遗忘率会急">
+<link rel="canonical" href="https://gongjuhe.top/ai/notes/agents/06.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多智能体协作编排模式 · 第 06 关 — AI Agent">
+<meta property="og:description" content="当一个智能体挂载超过 15 个工具、系统提示词超过数千字时，它的工具选错率和指令遗忘率会急">
+<meta property="og:image" content="/og-personal.png">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/ai/notes/notes.css">
+<script src="/ai/notes/notes.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<div class="read-progress"></div>
+<header class="wrap top">
+  <a class="brand" href="/">Alex <small>AI NOTES</small></a>
+  <nav class="nav" aria-label="主导航">
+    <a href="/ai/">AI 笔记</a>
+    <a class="hide-s" href="/ai/notes/" class="cta">通关笔记</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
+  </nav>
+</header>
+<main id="main">
+<nav class="breadcrumb wrap" aria-label="面包屑">
+  <a href="/ai/">AI 笔记</a><span class="sep">/</span><a href="/ai/notes/">通关笔记</a><span class="sep">/</span><a href="/ai/notes/agents/">AI Agent</a><span class="sep">/</span><span>第 06 关</span>
+</nav>
+<div class="wrap article-shell">
+  <aside class="side">
+    <p class="side-label">AI AGENTS</p>
+    <ol class="level-nav"><li><a href="/ai/notes/agents/01.html"><span class="num">01</span><span>Agent 核心循环与框架选型</span></a></li><li><a href="/ai/notes/agents/02.html"><span class="num">02</span><span>工具调用设计模式</span></a></li><li><a href="/ai/notes/agents/03.html"><span class="num">03</span><span>任务规划与动态拆解模式</span></a></li><li><a href="/ai/notes/agents/04.html"><span class="num">04</span><span>智能体检索与分层记忆管理</span></a></li><li><a href="/ai/notes/agents/05.html"><span class="num">05</span><span>元认知与自我反思机制</span></a></li><li><a href="/ai/notes/agents/06.html" class="current"><span class="num">06</span><span>多智能体协作编排模式</span></a></li><li><a href="/ai/notes/agents/07.html"><span class="num">07</span><span>智能体通信协议与上下文工程</span></a></li><li><a href="/ai/notes/agents/08.html"><span class="num">08</span><span>可信护栏与生产级安全架构</span></a></li></ol>
+    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF ↗</a></div>
+  </aside>
+  <article class="article">
+    <p class="kicker">AI AGENTS / 06</p>
+    <h1>多智能体协作编排模式</h1>
+    <p class="lede">当一个智能体挂载超过 15 个工具、系统提示词超过数千字时，它的工具选错率和指令遗忘率会急</p>
+    <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Microsoft AI Agents for Beginners (77.2k Stars)</span></div>
+    <section class="lesson"><h3>核心原理</h3>
+<p>当一个智能体挂载超过 15 个工具、系统提示词超过数千字时，它的工具选错率和指令遗忘率会急剧上升。Microsoft AI Agents for Beginners 第 8 课(Multi-Agent) 与 Complete Agentic AI Engineering Course 给出的解法是“职责单一化与多智能体分治”。主流编排架构有三种：</p>
+<p>主管路由模式(Supervisor / Orchestrator-Workers)：由一个中央主管 Agent 接收任务、拆解分发给专门的“代码专家 Agent”、“数据分析 Agent”、“合规审查 Agent”,最后由主管汇总结果。</p>
+<p>交接接力模式(Handoffs / Swarm)：前台分诊 Agent 识别出具体诉求后，将对话控制权与精简上下文直接移交(Handoff)给对应的垂直专科 Agent。</p>
+<p>并发聚合模式(Concurrent Aggregation)：多个不同视角的专家 Agent 同时独立评估同一份方案（如乐观派、悲观风控派、法务派），最后由聚合器合并各方意见。</p>
+<h2>第 6 关实操练习题：设计“跨境电商全自动选品与上架团队”多智能体架构</h2>
+<h3>任务背景</h3>
+<p>你想用 4 个各司其职的专职 Agent 组成虚拟团队，自动完成“市场趋势挖掘 → 供应商 1688 比价利润核算 → 侵权与违禁词合规风控 → 多语种详情页生成”。</p>
+<h3>通关硬性要求（满分 12.5 分）</h3>
+<p>1. 明确定义 4 个子智能体的专属名称、唯一职责边界与各自挂载的独立工具集（严禁工具跨角色混用）（5 分）；</p>
+<p>2. 设计各 Agent 之间传递的结构化交接数据包(State Payload / Handoff Schema)，避免把冗长的无关思考过程传给下游（4.5 分）；</p>
+<p>3. 设计“一票否决回退机制”:若合规风控 Agent 发现外观专利侵权风险，如何直接打回选品阶段而非继续生成详情页（3 分）。</p>
+<h3>第四阶段</h3>
+<p>生产落地篇（第 7‒8 关）——标准化协议、上下文工程与安全护栏</p></section>
+    <details class="answer">
+  <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
+  <div class="answer-body"><h2>1. 四大专职 Agent 角色与独立工具集</h2>
+<p>- Agent A（趋势侦察兵 TrendScout）：仅挂载 [search_tiktok_trends, get_amazon_movers];职责：输出候选品类词。</p>
+<p>- Agent B（供应链精算师 MarginCalculator）：仅挂载 [search_1688_suppliers, calc_fba_shipping_fee];职责：核算毛利率是否 &gt;= 35%。</p>
+<p>- Agent C（合规风控官 ComplianceAuditor）：仅挂载 [check_uspto_patent, scan_prohibited_keywords];职责：排查外观专利与平台违禁词。</p>
+<p>- Agent D（多语种文案师 ListingWriter）：仅挂载 [generate_seo_listing, translate_localized_copy];职责：生成最终上架文案。</p>
+<h2>2. 标准化交接数据包(Handoff Payload Schema)</h2>
+<div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code>{
+"product_id": "CAND-089",
+"category_name": "Magnetic Portable Neck Fan",
+"unit_cost_usd": 4.20,
+"target_retail_usd": 24.99,
+"net_margin_pct": 41.5,
+"compliance_status": "REJECTED_PATENT_RISK",
+"rejection_evidence": "命中美国外观专利号 USD987654S1,扇叶无叶出风口结构高度近似"
+}</code></pre></div>
+<h2>3. 主管路由一票否决机制</h2>
+<p>Supervisor 检测到 Agent C 返回的 compliance_status != "APPROVED" 时，立即阻断向 Agent D 的交接，并将 rejection_evidence 回传给 Agent A 要求排除该专利结构重新选品。</p>
+<h3>得分要点拆解</h3>
+<p>4 个子 Agent 职责与工具严格隔离（5 分）；使用精简结构化 JSON Payload 交接状态、不传冗余历史对话（4.5 分）；设计合规一票否决打回重选机制（3 分）。</p></div>
+</details>
+    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">留邮箱，获取完整 PDF ↗</a></div>
+    <div class="nextprev"><a href="/ai/notes/agents/05.html"><small>上一关</small>元认知与自我反思机制</a><a class="right" href="/ai/notes/agents/07.html"><small>下一关</small>智能体通信协议与上下文工程</a></div>
+  </article>
+</div>
+</main>
+<footer class="wrap">
+  <span>Alex · AI 实战通关笔记 · 2026</span>
+  <span><a href="/ai/">AI 笔记</a> · <a href="/">个人主页</a> · 不收费，不卖 API</span>
+</footer>
+</body>
+</html>

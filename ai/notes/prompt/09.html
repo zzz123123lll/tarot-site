@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>构建工业级复杂提示词 · 第 09 关 — 提示词工程</title>
+<meta name="description" content="在真实的商业交付中(如 Anthropic 教程第 9 章涵盖的智能客服、法律咨询、金融财报分析与软">
+<link rel="canonical" href="https://gongjuhe.top/ai/notes/prompt/09.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="构建工业级复杂提示词 · 第 09 关 — 提示词工程">
+<meta property="og:description" content="在真实的商业交付中(如 Anthropic 教程第 9 章涵盖的智能客服、法律咨询、金融财报分析与软">
+<meta property="og:image" content="/og-personal.png">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/ai/notes/notes.css">
+<script src="/ai/notes/notes.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<div class="read-progress"></div>
+<header class="wrap top">
+  <a class="brand" href="/">Alex <small>AI NOTES</small></a>
+  <nav class="nav" aria-label="主导航">
+    <a href="/ai/">AI 笔记</a>
+    <a class="hide-s" href="/ai/notes/" class="cta">通关笔记</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
+  </nav>
+</header>
+<main id="main">
+<nav class="breadcrumb wrap" aria-label="面包屑">
+  <a href="/ai/">AI 笔记</a><span class="sep">/</span><a href="/ai/notes/">通关笔记</a><span class="sep">/</span><a href="/ai/notes/prompt/">提示词工程</a><span class="sep">/</span><span>第 09 关</span>
+</nav>
+<div class="wrap article-shell">
+  <aside class="side">
+    <p class="side-label">PROMPT ENGINEERING</p>
+    <ol class="level-nav"><li><a href="/ai/notes/prompt/01.html"><span class="num">01</span><span>基础提示词结构</span></a></li><li><a href="/ai/notes/prompt/02.html"><span class="num">02</span><span>清晰直接原则</span></a></li><li><a href="/ai/notes/prompt/03.html"><span class="num">03</span><span>专家角色赋予</span></a></li><li><a href="/ai/notes/prompt/04.html"><span class="num">04</span><span>数据与指令分离</span></a></li><li><a href="/ai/notes/prompt/05.html"><span class="num">05</span><span>输出格式化与预填充引导</span></a></li><li><a href="/ai/notes/prompt/06.html"><span class="num">06</span><span>先思后答与思维链</span></a></li><li><a href="/ai/notes/prompt/07.html"><span class="num">07</span><span>少样本示例教学</span></a></li><li><a href="/ai/notes/prompt/08.html"><span class="num">08</span><span>消除 AI 幻觉</span></a></li><li><a href="/ai/notes/prompt/09.html" class="current"><span class="num">09</span><span>构建工业级复杂提示词</span></a></li><li><a href="/ai/notes/prompt/10.html"><span class="num">10</span><span>超越单次提问</span></a></li></ol>
+    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF ↗</a></div>
+  </aside>
+  <article class="article">
+    <p class="kicker">PROMPT ENGINEERING / 09</p>
+    <h1>构建工业级复杂提示词</h1>
+    <p class="lede">在真实的商业交付中(如 Anthropic 教程第 9 章涵盖的智能客服、法律咨询、金融财报分析与软</p>
+    <div class="meta"><span>约 5 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Anthropic Prompt Engineering Interactive Tutorial / DAIR.AI Prompt Engineering Guide</span></div>
+    <section class="lesson"><h3>核心原理</h3>
+<p>在真实的商业交付中（如 Anthropic 教程第 9 章涵盖的智能客服、法律咨询、金融财报分析与软件工程四大行业场景），一个售价数千元的商业级 Prompt 往往是由前 8 关的所有原子技巧按标准顺序组装而成的“十要素复合架构”。请熟记以下工业级排列顺序（长背景文档放在前面，具体指令与输出格式约束放在最后，可显著提升模型的指令遵循度）：</p>
+<h3>模块顺序十要素模块名称作用说明与写法要点（参考 Anthropic Chapter 9 规范）</h3>
+<h3>要素 01 任务总览与角色设定在 System 或首段定义专家身份、沟通受众与核心职责边界。</h3>
+<h3>要素 02 静态背景与规则库用 &lt;context&gt; 或 &lt;policy&gt; 注入业务背景、产品手册或评分标准。</h3>
+<h3>要素 03 动态输入数据用 &lt;input_data&gt; 或 &lt;user_query&gt; 包裹本次待处理的文档或问题。</h3>
+<h3>要素 04 少样本示范(Few-</h3>
+<p>Shot)用 &lt;examples&gt; 提供 1‒2 个标准输入输出对，对齐颗粒度与风格。</p>
+<h3>要素 05 防幻觉与退路声明声明“仅依赖提供的数据，若信息不足请明确告知缺失项，严禁编</h3>
+<p>造”。</p>
+<h3>要素 06 详细任务指令与约束把文档放在前面、具体操作指令放在文档之后，分点列出硬性要求。</h3>
+<h3>要素 07 先思后答草稿区(CoT) 要求模型先在 &lt;thinking&gt; 与 &lt;quotes&gt; 中完成证据提取与逻辑推演。</h3>
+<h3>要素 08 输出格式规范明确指定最终输出包裹在 &lt;result&gt;、Markdown 表格或 JSON 结构</h3>
+<p>中。</p>
+<h3>要素 09 语气与负向清单明确禁止事项(如</h3>
+<p>不要开场寒暄、不要使用行业黑话、字数上限)。</p>
+<h3>要素 10 开头预填充(Prefill) 指定模型回复的起始标签（如直接从 &lt;thinking&gt; 开始输出）。</h3>
+<h2>第 9 关实操练习题：组装金融/商业尽调报告智能审阅官</h2>
+<h3>任务背景</h3>
+<p>你需要为投资经理或自由咨询师设计一套可售卖的“商业计划书(BP)与财报亮点风险自动审阅”主提示词。</p>
+<p>待改造劣质 Prompt:“你是个投资人，帮我看看这份项目介绍，分析一下它的商业模式、财务风险，再给创业者提几个尖锐的尽调问题。”</p>
+<h3>通关硬性要求（满分 10 分）</h3>
+<p>1. 至少整合上述十要素中的 7 个核心模块（角色设定、XML 数据隔离、防幻觉退路、原文引证、&lt;thinking&gt; 思维链、固定输出结构、禁寒暄约束）（6 分）；</p>
+<p>2. 确保长文本输入区位于具体执行指令之前（2 分）；</p>
+<p>3. 规定最终报告输出为包含“核心财务指标核验”、“三大致命风险及原文依据”、“必问创始人的 3 个追问”的固定结构（2 分）。</p></section>
+    <details class="answer">
+  <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
+  <div class="answer-body"><h2>1. 角色与任务设定</h2>
+<p>你是一位在一线风险投资机构(VC)拥有 12 年经验的投资合伙人兼首席财务尽调官。你的职责是以客观、审慎、基于证据的视角审阅初创企业的项目资料，帮助投资委员会识别财务水分与商业模式漏洞。</p>
+<h2>2. 审阅准则与防幻觉铁律</h2>
+<p>&lt;audit_principles&gt;</p>
+<p>- 仅根据 &lt;project_bp&gt; 中提供的事实与数据进行推演；</p>
+<p>- 凡是原文未披露的关键财务指标（如获客成本 CAC、客户生命周期价值 LTV、毛利率构成），必须在报告中明确标记为“【资料缺失待核实】”,严禁自行编造或估算数字；</p>
+<p>- 每一个风险判断都必须附带原文原句引用作为依据。&lt;/audit_principles&gt;</p>
+<h2>3. 示范输出标准</h2>
+<p>&lt;examples&gt;&lt;example&gt;风险点示例：营收高增长背后的现金流隐患原文依据：“公司 Q3 账面签约额达 1,200 万元，全部为账期 180 天的政企定制项目。”追问建议：请问目前账面现金储备能否支撑长达 6 个月的垫资开发周期？历史坏账率是多少？</p>
+<p>&lt;/example&gt;&lt;/examples&gt;</p>
+<h2>4. 待审阅项目资料</h2>
+<p>&lt;project_bp&gt;</p>
+<div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code>{{在此粘贴待审阅的商业计划书或财报摘要文本}}
+&lt;/project_bp&gt;</code></pre></div>
+<h2>5. 分步执行指令与输出结构</h2>
+<p>请严格按照以下顺序输出，不要包含任何开场寒暄，回复直接从 &lt;thinking&gt; 标签开始：</p>
+<p>1. 先在 &lt;thinking&gt; 标签内：逐字摘录原文中的核心业务数据与财务声明，核对是否存在口径矛盾或关键指标缺失；</p>
+<p>2. 再在 &lt;due_diligence_report&gt; 标签内按以下三个固定小节输出正式审阅报告：</p>
+<p>- 第一节【核心财务与业务指标核验表】：（列出已披露数据 vs. 缺失必查数据）</p>
+<p>- 第二节【三大潜在致命风险及原文证据】：（每条风险必须包含原文引用）</p>
+<p>- 第三节【尽调访谈必问创始人的 3 个犀利问题】：（直击数据盲区，每个问题附带验证目的）</p>
+<h3>得分要点拆解</h3>
+<p>完整融合角色、准则、Few-Shot 示例、数据隔离、防幻觉退路、先思后答与固定输出标签等7 大以上要素（6 分）；长文本输入区位于具体执行指令之前（2 分）；严格输出三节式尽调结构（2 分）。</p></div>
+</details>
+    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BB%BD%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">留邮箱，获取完整 PDF ↗</a></div>
+    <div class="nextprev"><a href="/ai/notes/prompt/08.html"><small>上一关</small>消除 AI 幻觉</a><a class="right" href="/ai/notes/prompt/10.html"><small>下一关</small>超越单次提问</a></div>
+  </article>
+</div>
+</main>
+<footer class="wrap">
+  <span>Alex · AI 实战通关笔记 · 2026</span>
+  <span><a href="/ai/">AI 笔记</a> · <a href="/">个人主页</a> · 不收费，不卖 API</span>
+</footer>
+</body>
+</html>

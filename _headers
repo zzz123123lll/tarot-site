@@ -71,3 +71,9 @@
 
 /ai/ai.css
   Cache-Control: public, max-age=0, must-revalidate
+
+/ai/notes/notes.css
+  Cache-Control: public, max-age=0, must-revalidate
+
+/ai/notes/notes.js
+  Cache-Control: public, max-age=0, must-revalidate
