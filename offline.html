@@ -1,45 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#ffffff">
-<title>这个工具还没被缓存 · 工具盒</title>
-<link rel="stylesheet" href="/base.css?v=7">
-<link rel="stylesheet" href="/fonts.css?v=4">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>离线 · AI 实战通关</title>
+<meta name="theme-color" content="#F5F7FA">
 <style>
-/* 离线兜底页:断网时打开一个"从没访问过"的页面会走到这里。
-   以前这个位置是"静默回退首页"——用户以为自己点开了工具,其实拿到的是首页,三引擎行为还不一致。
-   现在给一页说得清的说明:为什么打不开、怎么才能离线用、以及现在能打开哪些。 */
-body { font-family: "Geist", -apple-system, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif; color: var(--c-text); background: #fff; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-main { max-width: 620px; padding: var(--sp-6) var(--sp-4); }
-h1 { font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600; margin: 0 0 var(--sp-2); }
-p { font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-muted); margin: 0 0 var(--sp-3); }
-ul { padding-left: 1.2em; margin: 0 0 var(--sp-4); }
-li { font-size: var(--fs-small); line-height: var(--lh-small); margin: 0 0 6px; }
-code { font-family: "Geist Mono", ui-monospace, Menlo, Consolas, monospace; font-size: .92em; background: var(--c-band); border-radius: var(--r-1); padding: 1px 5px; }
-a.btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--sp-4); background: var(--c-accent); color: #fff; text-decoration: none; border-radius: var(--r-sm); font-size: var(--fs-small); }
-p.note { font-size: var(--fs-small); line-height: var(--lh-small); color: var(--c-muted); margin-top: var(--sp-4); }
+*{box-sizing:border-box}body{margin:0;background:#F5F7FA;color:#0D1219;font-family:"Helvetica Neue",Helvetica,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh;display:grid;place-items:center;padding:28px}
+main{max-width:640px;border-top:1px solid #DCE2E9;padding-top:24px}
+.kicker{font-family:ui-monospace,Consolas,monospace;font-size:10px;letter-spacing:.14em;color:#5D6673;text-transform:uppercase}
+h1{font-size:clamp(38px,7vw,60px);line-height:1.05;letter-spacing:-.06em;margin:18px 0 16px;font-weight:750}
+p{font-size:16px;line-height:1.8;color:#5D6673;margin:0 0 12px}
+a{color:#0D1219;text-decoration:none;border-bottom:1px solid #DCE2E9;margin-right:18px;font-size:14px}
+a:hover{color:#1E5BFF;border-color:#1E5BFF}
 </style>
 </head>
 <body>
 <main>
-  <h1>这个页面还没被缓存过</h1>
-  <p>你现在处于断网状态,而这个页面之前没有存进你的浏览器,所以打不开——我们不会假装能打开,也不会偷偷把你送到首页。</p>
-  <p><b>先说明:28 个工具页正常情况下不会走到这里。</b>你访问过一次工具盒之后,它们就已经存在浏览器里了,断网也能打开:</p>
-  <ul>
-    <li>图片压缩 / 证件照 / 图片转换 / 图片合成 PDF / 发票拼版 / PDF 合并 / 拆分 / 转图片 / 压缩;</li>
-    <li>JSON / Base64 / 正则 / 颜色 / 二维码 / JWT / Hash / URL / UUID / 日期。</li>
-  </ul>
-  <p>会走到这一页的,通常是这两种情况:</p>
-  <ul>
-    <li><b>塔罗页</b>:它是另一套页面(自己的 305KB 程序与字体),我们没有把它塞进预缓存——先联网打开它一次,之后断网就能用;</li>
-    <li><b>你还没访问过工具盒首页</b>:那样什么都还没存下来,先联网打开一次首页即可。</li>
-  </ul>
-  <p class="note">另外:压缩类工具要真正<b>处理文件</b>,还需要你「成功处理过一次文件」——压缩引擎(约 1MB)是那一步才存进浏览器的。</p>
-  <p><a class="btn" href="/">回到首页(已缓存,断网也能开)</a></p>
-  <p class="note">这条说明只在断网 + 页面未缓存时出现。联网状态下你不会看到它。</p>
+<p class="kicker">AI KNOWLEDGE BASE / OFFLINE</p>
+<h1>网络断了，<br>知识库还在。</h1>
+<p>已经缓存的课程仍然可以打开；没缓存过的页面，等联网后再试。</p>
+<p><a href="/">回到知识库</a><a href="/ai/notes/">全部课程</a></p>
 </main>
-  <script defer src="/assets/pointer-fx.js?v=1"></script>
 </body>
 </html>
