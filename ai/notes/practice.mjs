@@ -129,6 +129,29 @@ function init(root) {
     objectiveBox.querySelector('[data-objective-check]').addEventListener('click', checkObjective);
   }
 
+  function recordMistake(selected, result) {
+    var storeKey = 'gjh-mistakes';
+    var store = {};
+    try { store = JSON.parse(localStorage.getItem(storeKey) || '{}') || {}; } catch (e) { store = {}; }
+    if (result.correct) {
+      delete store[key];
+    } else {
+      var titleEl = document.querySelector('h1');
+      store[key] = {
+        key: key,
+        title: titleEl ? titleEl.textContent.trim() : key,
+        href: location.pathname.replace(/\.html$/, ''),
+        question: knowledgeCheck.question,
+        options: knowledgeCheck.options,
+        selected: selected,
+        answer: result.answer,
+        explanation: knowledgeCheck.explanation,
+        at: Date.now()
+      };
+    }
+    try { localStorage.setItem(storeKey, JSON.stringify(store)); } catch (e) {}
+  }
+
   function checkObjective() {
     const selected = selectedObjective();
     const resultEl = objectiveBox.querySelector('[data-objective-result]');
@@ -140,6 +163,7 @@ function init(root) {
     const result = gradeObjective(knowledgeCheck, selected);
     state.objective = selected;
     save();
+    recordMistake(selected, result);
     objectiveBox.querySelectorAll('.objective-option').forEach((el) => {
       const input = el.querySelector('input');
       el.classList.remove('is-correct', 'is-wrong');

@@ -87,9 +87,9 @@ export function renderLevel(trackId, levelId) {
 <meta property="og:description" content="${esc(level.summary)}">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=4">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=5">
 <script src="/ai/notes/notes.js?v=5" defer></script>
-<script type="module" src="/ai/notes/practice.mjs?v=2"></script>
+<script type="module" src="/ai/notes/practice.mjs?v=3"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>
@@ -98,6 +98,7 @@ export function renderLevel(trackId, levelId) {
   <a class="brand" href="/">AI 实战通关 <small>KNOWLEDGE BASE</small></a>
   <nav class="nav" aria-label="主导航">
     <a href="/ai/notes/">全部课程</a>
+    <a class="hide-s" href="/ai/notes/review/">错题本</a>
     <a href="/">知识库首页</a>
     <a class="cta" href="${pdf}">获取 PDF</a>
   </nav>

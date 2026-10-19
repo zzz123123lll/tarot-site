@@ -34,7 +34,7 @@ function head(title, description, canonical) {
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=4">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=5">
 <script src="/ai/notes/notes.js?v=5" defer></script>
 </head>`;
 }
@@ -45,6 +45,7 @@ function shellHeader() {
   <a class="brand" href="/">AI 实战通关 <small>KNOWLEDGE BASE</small></a>
   <nav class="nav" aria-label="主导航">
     <a href="/ai/notes/">全部课程</a>
+    <a class="hide-s" href="/ai/notes/review/">错题本</a>
     <a class="hide-s" href="/#practice">怎么练</a>
     <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
   </nav>
@@ -138,11 +139,39 @@ ${footer()}
   return out;
 }
 
+function renderReview() {
+  const page = `${head('错题本 — AI 实战通关', '本机保存的客观题错题，答对后自动移除。', 'https://gongjuhe.top/ai/notes/review/')}
+<body>
+${shellHeader()}
+<main id="main">
+<section class="wrap hero">
+  <p class="label">REVIEW / 错题本</p>
+  <h1>做错的题，<br>回来再看一遍。</h1>
+  <p class="lead">客观题答错会自动记在这台设备的浏览器里；之后答对会自动移出。只保存在本机，不上传。</p>
+  <div class="hero-meta"><span data-mistake-count>0 道错题</span><span>本机保存</span><button type="button" class="clear-mistakes" data-clear-mistakes>清空错题本</button></div>
+</section>
+<section class="wrap section">
+  <div class="section-head"><div><p class="label">MISTAKES / 需要回看</p><h2>先重做，再看解释。</h2></div><a href="/ai/notes/">回到全部课程 →</a></div>
+  <div class="mistake-list" data-mistakes></div>
+</section>
+</main>
+${footer()}
+<script src="/ai/notes/notes.js?v=5" defer></script>
+<script type="module" src="/ai/notes/review.mjs?v=1"></script>
+</body>
+</html>
+`;
+  const out = path.join(ROOT, 'ai/notes/review/index.html');
+  fs.mkdirSync(path.dirname(out), { recursive: true });
+  fs.writeFileSync(out, page, 'utf8');
+  return out;
+}
+
 export function renderCatalog() {
   const tracks = readTracks();
   const index = renderIndex(tracks);
   const pages = tracks.map(renderTrack);
-  return [index, ...pages];
+  return [index, ...pages, renderReview()];
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

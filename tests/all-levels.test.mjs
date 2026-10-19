@@ -80,6 +80,12 @@ for (const tf of trackFiles) {
   assert.equal((trackPage.match(/class="level-row"/g) || []).length, track.levels.length, track.id + ' level rows');
   for (const entry of track.levels) assert(trackPage.includes('data-url="' + entry.href + '"'), track.id + ' row ' + entry.id);
 }
+const review = fs.readFileSync(path.join(ROOT, 'ai/notes/review/index.html'), 'utf8');
+assert(review.includes('data-mistakes'), 'review mistakes container');
+assert(review.includes('review.mjs'), 'review module');
+assert(review.includes('/ai/notes/review/'), 'review canonical path');
+console.log('PASS review page');
+
 console.log('PASS catalog pages');
 
 assert.equal(levelCount, 26, 'expected 26 levels');
