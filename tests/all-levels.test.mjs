@@ -69,6 +69,19 @@ for (const tf of trackFiles) {
   }
 }
 
+const catalog = fs.readFileSync(path.join(ROOT, 'ai/notes/index.html'), 'utf8');
+assert.equal((catalog.match(/data-series="/g) || []).length, 3, 'index series cards');
+assert(catalog.includes('data-overall'), 'index overall progress');
+assert(catalog.includes('notes.js?v=5'), 'index script version');
+for (const tf of trackFiles) {
+  const track = JSON.parse(fs.readFileSync(path.join(tracksDir, tf), 'utf8'));
+  const trackPage = fs.readFileSync(path.join(ROOT, 'ai/notes', track.id, 'index.html'), 'utf8');
+  assert(trackPage.includes('data-track="' + track.id + '"'), track.id + ' track progress');
+  assert.equal((trackPage.match(/class="level-row"/g) || []).length, track.levels.length, track.id + ' level rows');
+  for (const entry of track.levels) assert(trackPage.includes('data-url="' + entry.href + '"'), track.id + ' row ' + entry.id);
+}
+console.log('PASS catalog pages');
+
 assert.equal(levelCount, 26, 'expected 26 levels');
 console.log('PASS all levels', levelCount, 'content + grading + pages');
 console.log('ALL-LEVEL TESTS PASSED');

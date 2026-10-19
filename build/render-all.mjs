@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { renderLevel } from './render-level.mjs';
+import { renderCatalog } from './render-catalog.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -15,5 +16,6 @@ for (const file of files) {
     results.push(renderLevel(track.id, level.id));
   }
 }
-console.log('BUILT', results.length, 'levels');
+const catalogs = renderCatalog();
+console.log('BUILT', results.length, 'levels +', catalogs.length, 'catalog pages');
 for (const r of results) console.log(' ', r.level, '->', r.out, 'rubric=', r.total);
