@@ -29,6 +29,6 @@ node tests/all-levels.test.mjs
 
 ## 当前范围
 
-- 已迁移：全部 26 关（提示词 10 / RAG 8 / Agent 8）。
+- 已迁移：全部 34 关（提示词 10 / RAG 8 / Agent 8 / LLM 微调 8）。
 - 所有文章页由 `build/render-all.mjs` 从 `content/` 生成。
 - 旧版页面里的 `data-rules` 已不再使用。

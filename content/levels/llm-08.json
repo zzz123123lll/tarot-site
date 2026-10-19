@@ -1,0 +1,214 @@
+{
+  "id": "llm-08",
+  "trackId": "llm",
+  "level": 8,
+  "title": "vLLM 高吞吐生产级部署(The LLM Engineer: vLLM & Production Serving)",
+  "summary": "本关练习：编写 vLLM 生产级多 LoRA 动态挂载启动脚本与压测指标规范。",
+  "source": "Maxime Labonne LLM Course / Modern LLM Notebook / LLM Fine-Tuning & RL Hands-on Lab / AI Infra Engineer Learning",
+  "readMinutes": 5,
+  "lessonHtml": "<h3>核心原理</h3><p>在 AI Infra Engineer Learning (Mod 110) 与 mlabonne/llm-course 的 The LLM Engineer 篇章 中,很多初学者用 Hugging Face 原生的 model.generate() 套个 FastAPI 就敢上线,结果 5 个用戶同时访问就 把服务器卡死!生产环境必须使用 vLLM 或 TGI 等专用推理引擎。vLLM 之所以能将吞吐量提升 10‒20 倍,核 心在于三大黑科技: PagedAttention(分页注意力机制):借鉴操作系统虚拟内存分页思想,将原本必须连续分配、浪费高达 60% 的 KV Cache 显存拆分为非连续的固定大小物理块(Blocks),将显存利用率推升至 95% 以上。 Continuous Batching(连续批处理 / Iteration-level Scheduling):不再等一个 Batch 里最慢的长句子 生成完才放新请求进来,只要批次里有任意一条请求生成结束(遇到 EOS),下一个排队请求立刻在下一 个 Token 迭代周期无缝插队补位。 Prefix Caching(自动前缀缓存)与 Multi-LoRA Serving:自动缓存所有请求共享的长 System Prompt 或 Few-Shot 示例的 KV Cache,无需重复计算首字延迟(TTFT);且支持在一个基座模型实例上同时挂载 数十个不同业务的轻量 LoRA 适配器动态切换。</p><h2>第 8 关实操练习题：编写 vLLM 生产级多 LoRA 动态挂载启动脚本与压测指标规范</h2><h3>任务背景</h3><p>你要在单张 24GB GPU 服务器上使用 vLLM 启动一个兼容 OpenAI API 协议的生产服务端,基 座采用 AWQ 4-bit 量化的 Qwen-2.5-14B,同时动态挂载“法务审查 LoRA”和“营销文案 LoRA”两个适 配器,并开启前缀缓存。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 写出完整的 vllm serve 启动命令及核心生产参数(含量化格式、最大上下文长度限制、GPU 显存预留 比例、前缀缓存开关与多 LoRA 模块路径映射)(</p><p>5.5 分);</p><p>2. 写出客戶端通过标准 OpenAI Python SDK 指定调用其中“法务审查 LoRA”的请求代码(</p><p>3.5 分);</p><p>3. 明确定义生产压测必看的三大核心性能指标:TTFT(首 Token 延迟)、TPOT / ITL(Token 间生成延 迟) 与 Throughput(系统总吞吐 tokens/s) 的含义与达标基线(</p><p>3.5 分)。</p>",
+  "referenceAnswerHtml": "<h3>参考答案与得分要点</h3><p>vLLM 生产级多 LoRA 动态部署命令与压测基线</p><p># 1. vLLM 生产级启动命令(开启 AWQ 量化、前缀缓存与多 LoRA 动态挂载)</p><p>vllm serve Qwen/Qwen2.5-14B-Instruct-AWQ \\</p><p>--quantization awq \\</p><p>--max-model-len 8192 \\</p><p>--gpu-memory-utilization 0.90 \\</p><p>--enable-prefix-caching \\</p><p>--enable-lora \\</p><p>--max-loras 4 \\</p><p>--max-lora-rank 32 \\</p><p>--lora-modules legal-lora=./adapters/legal_sft_v1 marketing-lora=./adapters/mkt_sft_v2 \\</p><p>--port 8000</p><p># 2. 客戶端通过 OpenAI SDK 动态指定调用“法务审查 LoRA”</p><p>from openai import OpenAI</p><p>client = OpenAI(base_url=\"http://localhost:8000/v1\", api_key=\"EMPTY\")</p><p>resp = client.chat.completions.create(</p><p>model=\"legal-lora\", # 直接传入 --lora-modules 中注册的适配器别名即可零停机切换!</p><p>messages=[{\"role\": \"user\", \"content\": \"请审查以下违约金条款是否合法...\"}],</p><p>temperature=0.0</p><p>)</p><p>生产压测三大核心指标定义:1 TTFT(Time To First Token,首字延迟):从发送请求到收到第一个输出</p><p>Token 的耗时,反映 Prompt 预填充(Prefill)与排队速度,交互式对话要求 &lt; 500ms(开启 --enable-</p><p>prefix-caching 可大幅降低 TTFT);2 TPOT / ITL(Time Per Output Token,单字生成间隔):解码阶段每</p><p>生 成 下 一 个 Token 的 平 均 耗 时 , 决 定 打 字 机 流 畅 度 , 人 类 阅 读 舒 适 线 要 求 &lt; 40ms/token ( 即 &gt; 25</p><p>tokens/s);3 System Throughput(系统总吞吐量):在高并发下每秒为所有用戶生成的总 Token 数,衡量</p><p>单卡商业承载力与单位 Token 成本。</p><p>得分要点拆解:完整写出含 `--quantization awq`、`--enable-prefix-caching`、`--enable-lora` 与 `--</p><p>lora-modules` 的启动命令(5.5 分);展示客戶端通过 `model=\"legal-lora\"` 动态路由的调用代码(3.5</p><p>分);准确定义 TTFT、TPOT 与 Throughput 三大压测指标(3.5 分)。</p>",
+  "exercise": {
+    "id": "llm-08-ex",
+    "title": "编写 vLLM 生产级多 LoRA 动态挂载启动脚本与压测指标规范",
+    "minLength": 40,
+    "criteria": [
+      {
+        "id": "c1",
+        "label": "vLLM 启动命令与参数",
+        "weight": 5.5,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "vllm serve",
+            "terms": [
+              "vllm serve"
+            ]
+          },
+          {
+            "label": "AWQ",
+            "terms": [
+              "awq"
+            ]
+          },
+          {
+            "label": "max-model-len",
+            "terms": [
+              "max-model-len"
+            ]
+          },
+          {
+            "label": "gpu-memory-utilization",
+            "terms": [
+              "gpu-memory-utilization"
+            ]
+          },
+          {
+            "label": "prefix-caching",
+            "terms": [
+              "prefix-caching"
+            ]
+          },
+          {
+            "label": "lora-modules",
+            "terms": [
+              "lora-modules"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "c2",
+        "label": "OpenAI SDK 指定 LoRA",
+        "weight": 3.5,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "OpenAI SDK",
+            "terms": [
+              "openai"
+            ]
+          },
+          {
+            "label": "client",
+            "terms": [
+              "client"
+            ]
+          },
+          {
+            "label": "model",
+            "terms": [
+              "model"
+            ]
+          },
+          {
+            "label": "base_url",
+            "terms": [
+              "base_url"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "c3",
+        "label": "三个生产指标",
+        "weight": 3.5,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "TTFT",
+            "terms": [
+              "ttft"
+            ]
+          },
+          {
+            "label": "TPOT/ITL",
+            "terms": [
+              "tpot",
+              "itl"
+            ]
+          },
+          {
+            "label": "Throughput",
+            "terms": [
+              "throughput",
+              "吞吐"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "knowledgeChecks": [
+    {
+      "id": "q1",
+      "question": "PagedAttention 主要借鉴了什么思想？",
+      "options": [
+        "操作系统虚拟内存分页",
+        "数据库索引",
+        "HTTP 缓存",
+        "模型蒸馏"
+      ],
+      "answer": 0,
+      "explanation": "来源：PagedAttention 借鉴虚拟内存分页，拆分非连续 KV Cache 块。"
+    },
+    {
+      "id": "q2",
+      "question": "Continuous Batching 的核心是？",
+      "options": [
+        "单条请求结束后立刻补入新请求",
+        "等整个 batch 都完成",
+        "只跑一个请求",
+        "关闭缓存"
+      ],
+      "answer": 0,
+      "explanation": "来源：只要有一条请求结束，下一排队请求立即补位。"
+    },
+    {
+      "id": "q3",
+      "question": "TTFT 指？",
+      "options": [
+        "首 Token 延迟",
+        "每秒 token 数",
+        "总吞吐",
+        "显存利用率"
+      ],
+      "answer": 0,
+      "explanation": "来源：TTFT=Time To First Token；TPOT/ITL 是 token 间延迟。"
+    }
+  ],
+  "reading": {
+    "quote": "vLLM 通过 PagedAttention、Continuous Batching、Prefix Caching 与 Multi-LoRA Serving 提升生产吞吐；压测要看 TTFT、TPOT/ITL 与 Throughput。",
+    "points": [
+      "PagedAttention 把 KV Cache 拆成非连续固定大小块。",
+      "Continuous Batching 在请求结束时立刻补入新请求。",
+      "Prefix Caching 复用共享 system/few-shot 前缀的 KV Cache。",
+      "Multi-LoRA 在一个基座上动态挂载多个适配器。"
+    ],
+    "guide": "读本关时把“显存管理、批处理、缓存、多 LoRA”分开，再看压测指标。",
+    "example": "来源实操题是 24GB GPU 上部署 AWQ Qwen-2.5-14B 并挂两个 LoRA；参考答案给出 vllm serve 命令。",
+    "takeaway": "生产部署的核心是吞吐、延迟和显存利用率。",
+    "refs": [
+      [
+        "PDF 第 8 关（用户提供）",
+        ""
+      ],
+      [
+        "mlabonne/llm-course",
+        "https://github.com/mlabonne/llm-course"
+      ]
+    ]
+  },
+  "explain": {
+    "summary": "这一关只解决一件事：用 vLLM 把模型部署成高吞吐、可压测的生产 API。",
+    "bullets": [
+      "PagedAttention 管理 KV Cache 分页",
+      "Continuous Batching 动态补位",
+      "Prefix Caching + Multi-LoRA 提升复用"
+    ],
+    "terms": [
+      {
+        "term": "PagedAttention",
+        "plain": "把 KV Cache 拆成非连续固定块，提升显存利用率。"
+      },
+      {
+        "term": "Continuous Batching",
+        "plain": "请求结束即补入新请求，不等待整批。"
+      },
+      {
+        "term": "TTFT",
+        "plain": "首 Token 延迟。"
+      }
+    ],
+    "why": "来源：原生 generate+FastAPI 并发差；vLLM 用分页、连续批处理和前缀缓存提升吞吐。",
+    "structure": "vllm serve → AWQ + max-model-len + gpu-memory-utilization\\n+ prefix-caching + lora-modules",
+    "check": "压测时 TTFT、TPOT/ITL、Throughput 分别衡量什么？",
+    "example": {
+      "label": "PDF 本关任务（来源）",
+      "input": "来源任务：你要在单张 24GB GPU 服务器上使用 vLLM 启动一个兼容 OpenAI API 协议的生产服务端,基 座采用 AWQ 4-bit 量化的 Qwen-2.5-14B,同时动态挂载“法务审查 LoRA”和“营销文案 LoRA”两个适 配器,并开启前缀缓存。",
+      "walkthrough": "来源要求：vLLM 启动命令与参数 / OpenAI SDK 指定 LoRA / 三个生产指标",
+      "output": "按这些通关要求组织答案；参考答案见本页下方。"
+    }
+  },
+  "next": ""
+}

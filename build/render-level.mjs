@@ -139,7 +139,7 @@ export function renderLevel(trackId, levelId) {
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
 <link rel="stylesheet" href="/ai/notes/notes.css?v=8">
-<script src="/ai/notes/notes.js?v=5" defer></script>
+<script src="/ai/notes/notes.js?v=6" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=4"></script>
 </head>
 <body>

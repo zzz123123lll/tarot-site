@@ -102,6 +102,7 @@
   var cards = document.querySelectorAll('.series-card[data-series]');
   if (cards.length) {
     var allDone = 0;
+    var allTotal = 0;
     cards.forEach(function (card) {
       var prefix = PREFIX + '/ai/notes/' + card.dataset.series + '/';
       var n = 0;
@@ -114,11 +115,12 @@
         }
       } catch (e) {}
       allDone += n;
+      allTotal += Number(card.dataset.total) || 0;
       var p = card.querySelector('[data-series-progress]');
       if (p) p.textContent = n + ' / ' + (card.dataset.total || '') + ' 完成';
     });
     var overall = document.querySelector('[data-overall]');
-    if (overall) overall.textContent = allDone + ' / 26 关完成';
+    if (overall) overall.textContent = allDone + ' / ' + allTotal + ' 关完成';
   }
   // 知识库外壳的离线缓存（旧站 SW 已被替换）
   if ('serviceWorker' in navigator) {

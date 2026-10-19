@@ -1,0 +1,73 @@
+{
+  "id": "llm",
+  "title": "大模型 LLM 微调与全栈工程：八关实战通关",
+  "subtitle": "从架构与数据清洗，到 LoRA/QLoRA、DPO 对齐、量化与 vLLM 部署。",
+  "source": "Maxime Labonne LLM Course / Modern LLM Notebook / LLM Fine-Tuning & RL Hands-on Lab / AI Infra Engineer Learning",
+  "label": "LLM / POST-TRAINING",
+  "levels": [
+    {
+      "id": "llm-01",
+      "level": 1,
+      "title": "现代 LLM 架构与解码采样策略(Scientist 1: LLM Architecture & Decoding)",
+      "summary": "本关练习：为三大迥异业务场景配置精准解码采样参数并核算显存。",
+      "readMinutes": 5,
+      "href": "/ai/notes/llm/01"
+    },
+    {
+      "id": "llm-02",
+      "level": 2,
+      "title": "后训练数据集构建与对话模板映射(Scientist 3: Post-Training Datasets)",
+      "summary": "本关练习：将原始业务问答修正为标准 ShareGPT/ChatML 微调样本。",
+      "readMinutes": 5,
+      "href": "/ai/notes/llm/02"
+    },
+    {
+      "id": "llm-03",
+      "level": 3,
+      "title": "LoRA 与 QLoRA 高效参数微调实战(Scientist 4: Supervised Fine-Tuning)",
+      "summary": "本关练习：编写单卡 16GB 显存微调 8B 模型的 Unsloth/TRL 配置脚本。",
+      "readMinutes": 5,
+      "href": "/ai/notes/llm/03"
+    },
+    {
+      "id": "llm-04",
+      "level": 4,
+      "title": "训练曲线诊断与过拟合排障(Training Monitoring & Loss Audit)",
+      "summary": "本关练习：诊断三组异常微调监控日志并开出调参处方。",
+      "readMinutes": 5,
+      "href": "/ai/notes/llm/04"
+    },
+    {
+      "id": "llm-05",
+      "level": 5,
+      "title": "人类偏好对⻬ DPO、ORPO 与 GRPO(Scientist 5: Preference Alignment)",
+      "summary": "本关练习：构建去“AI 说教味”的 DPO 偏好数据集与训练配置。",
+      "readMinutes": 5,
+      "href": "/ai/notes/llm/05"
+    },
+    {
+      "id": "llm-06",
+      "level": 6,
+      "title": "模型权重融合(MergeKit)与评测防污染(Scientist 6 & 8: Evaluation & Merging)",
+      "summary": "本关练习：编写 MergeKit 权重融合配置并设计无偏盲测评估方案。",
+      "readMinutes": 5,
+      "href": "/ai/notes/llm/06"
+    },
+    {
+      "id": "llm-07",
+      "level": 7,
+      "title": "低比特模型量化实战(Scientist 7: Quantization ― GGUF, AWQ & GPTQ)",
+      "summary": "本关练习：精准核算大模型推理显存账单并选型量化方案。",
+      "readMinutes": 5,
+      "href": "/ai/notes/llm/07"
+    },
+    {
+      "id": "llm-08",
+      "level": 8,
+      "title": "vLLM 高吞吐生产级部署(The LLM Engineer: vLLM & Production Serving)",
+      "summary": "本关练习：编写 vLLM 生产级多 LoRA 动态挂载启动脚本与压测指标规范。",
+      "readMinutes": 5,
+      "href": "/ai/notes/llm/08"
+    }
+  ]
+}

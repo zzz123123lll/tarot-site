@@ -83,9 +83,9 @@ for (const tf of trackFiles) {
 }
 
 const catalog = fs.readFileSync(path.join(ROOT, 'ai/notes/index.html'), 'utf8');
-assert.equal((catalog.match(/data-series="/g) || []).length, 3, 'index series cards');
+assert.equal((catalog.match(/data-series="/g) || []).length, 4, 'index series cards');
 assert(catalog.includes('data-overall'), 'index overall progress');
-assert(catalog.includes('notes.js?v=5'), 'index script version');
+assert(catalog.includes('notes.js?v=6'), 'index script version');
 for (const tf of trackFiles) {
   const track = JSON.parse(fs.readFileSync(path.join(tracksDir, tf), 'utf8'));
   const trackPage = fs.readFileSync(path.join(ROOT, 'ai/notes', track.id, 'index.html'), 'utf8');
@@ -101,6 +101,6 @@ console.log('PASS review page');
 
 console.log('PASS catalog pages');
 
-assert.equal(levelCount, 26, 'expected 26 levels');
+assert.equal(levelCount, 34, 'expected 34 levels');
 console.log('PASS all levels', levelCount, 'content + grading + pages');
 console.log('ALL-LEVEL TESTS PASSED');

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>低比特模型量化实战(Scientist 7: Quantization ― GGUF, AWQ &amp; GPTQ) · 第 07 关 — 大模型 LLM 微调与全栈工程：八关实战通关</title>
+<meta name="description" content="本关练习：精准核算大模型推理显存账单并选型量化方案。">
+<link rel="canonical" href="https://gongjuhe.top/ai/notes/llm/07">
+<meta property="og:type" content="article">
+<meta property="og:title" content="低比特模型量化实战(Scientist 7: Quantization ― GGUF, AWQ &amp; GPTQ) — 大模型 LLM 微调与全栈工程：八关实战通关">
+<meta property="og:description" content="本关练习：精准核算大模型推理显存账单并选型量化方案。">
+<meta property="og:image" content="/og-knowledge.png">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=8">
+<script src="/ai/notes/notes.js?v=6" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=4"></script>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<div class="read-progress"></div>
+<header class="wrap top">
+  <a class="brand" href="/">AI 实战通关 <small>KNOWLEDGE BASE</small></a>
+  <nav class="nav" aria-label="主导航">
+    <a href="/ai/notes/">全部课程</a>
+    <a class="hide-s" href="/ai/notes/review/">错题本</a>
+    <a href="/">知识库首页</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B%20LLM%20%E5%BE%AE%E8%B0%83%E4%B8%8E%E5%85%A8%E6%A0%88%E5%B7%A5%E7%A8%8B%EF%BC%9A%E5%85%AB%E5%85%B3%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF</a>
+  </nav>
+</header>
+<main id="main">
+<nav class="breadcrumb wrap" aria-label="面包屑">
+  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/llm/">大模型 LLM 微调与全栈工程：八关实战通关</a><span class="sep">/</span><span>第 07 关</span>
+</nav>
+<div class="wrap article-shell">
+  <aside class="side">
+    <p class="side-label">大模型 LLM 微调与全栈工程</p>
+    <ol class="level-nav"><li><a href="/ai/notes/llm/01"><span class="num">01</span><span>现代 LLM 架构与解码采样策略(Scientist 1: LLM Architecture &amp; Decoding)</span></a></li><li><a href="/ai/notes/llm/02"><span class="num">02</span><span>后训练数据集构建与对话模板映射(Scientist 3: Post-Training Datasets)</span></a></li><li><a href="/ai/notes/llm/03"><span class="num">03</span><span>LoRA 与 QLoRA 高效参数微调实战(Scientist 4: Supervised Fine-Tuning)</span></a></li><li><a href="/ai/notes/llm/04"><span class="num">04</span><span>训练曲线诊断与过拟合排障(Training Monitoring &amp; Loss Audit)</span></a></li><li><a href="/ai/notes/llm/05"><span class="num">05</span><span>人类偏好对⻬ DPO、ORPO 与 GRPO(Scientist 5: Preference Alignment)</span></a></li><li><a href="/ai/notes/llm/06"><span class="num">06</span><span>模型权重融合(MergeKit)与评测防污染(Scientist 6 &amp; 8: Evaluation &amp; Merging)</span></a></li><li><a href="/ai/notes/llm/07" class="current"><span class="num">07</span><span>低比特模型量化实战(Scientist 7: Quantization ― GGUF, AWQ &amp; GPTQ)</span></a></li><li><a href="/ai/notes/llm/08"><span class="num">08</span><span>vLLM 高吞吐生产级部署(The LLM Engineer: vLLM &amp; Production Serving)</span></a></li></ol>
+    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B%20LLM%20%E5%BE%AE%E8%B0%83%E4%B8%8E%E5%85%A8%E6%A0%88%E5%B7%A5%E7%A8%8B%EF%BC%9A%E5%85%AB%E5%85%B3%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF ↗</a></div>
+  </aside>
+  <article class="article">
+    <p class="kicker">LLM / POST-TRAINING / 07 · ENGINE v1</p>
+    <h1>低比特模型量化实战(Scientist 7: Quantization ― GGUF, AWQ &amp; GPTQ)</h1>
+    <p class="lede">本关练习：精准核算大模型推理显存账单并选型量化方案。</p>
+    <div class="meta"><span>约 5 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Maxime Labonne LLM Course / Modern LLM Notebook / LLM Fine-Tuning &amp; RL Hands-on Lab / AI Infra Engineer Learning</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <section class="explain" id="understand">
+    <div class="explain-fast">
+      <p class="label">30 SECONDS / 30 秒看懂</p>
+      <p class="explain-summary">这一关只解决一件事：算清显存，再按硬件环境选 GGUF/AWQ/GPTQ。</p>
+      <ul class="explain-bullets"><li>FP16 每参数 2 字节，4-bit 约 0.5 字节</li><li>显存=权重+KV Cache+激活</li><li>Mac 用 GGUF；GPU 高吞吐用 AWQ/GPTQ</li></ul>
+    </div>
+    <div class="explain-deep">
+      <p class="label">3 MINUTES / 3 分钟拆解</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
+      <div class="explain-example">
+        <div class="explain-code"><span>输入</span><pre>来源任务：客戶现场只有两类硬件环境:1 销售经理随身携带的 16GB 统一内存 MacBook Air(需断网离 线运行 8B 模型);2 公司机房一台配有单张 24GB 显存 RTX 4090 的服务器(需部署一个 32B 规模的模型 供内部 20 人并发调用)。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：推理显存公式与权重核算 / 两种环境的量化选型 / 校准集的原因与选择</p><h3>输出</h3><p>按这些通关要求组织答案；参考答案见本页下方。</p></div>
+      </div>
+      <div class="explain-two">
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>GGUF</dt><dd>配合 llama.cpp/Ollama 的本地量化格式。</dd></div><div><dt>AWQ</dt><dd>保护显著权重的 4-bit GPU 量化方法。</dd></div><div><dt>Calibration Dataset</dt><dd>用于观察激活分布、指导量化的样本集。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源：量化能在几乎不损失精度的情况下降显存；格式选择取决于 CPU/GPU 和并发。</p><h3>结构长什么样</h3><pre class="explain-structure">weights = params × bytes\nFP16: 2B/param\n4-bit: ~0.5B/param</pre></div>
+      </div>
+      <p class="explain-check">为什么 4-bit 量化仍需要校准集？</p>
+    </div>
+  </section>
+    <section class="source-reading" id="reading">
+    <p class="label">SOURCE READING / 来源精读</p>
+    <p class="reading-quote">量化把 FP16/BF16 权重压到 8-bit 或 4-bit；GGUF 适合 CPU/Apple Silicon，AWQ/GPTQ 适合纯 GPU 高吞吐。</p>
+    <div class="reading-grid">
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>FP16 每参数 2 字节，4-bit 约 0.5 字节。</li><li>推理显存 = 权重显存 + KV Cache + 激活开销。</li><li>GGUF 配合 llama.cpp/Ollama 适合 Mac 本地。</li><li>AWQ/GPTQ 需要校准集，保护显著权重、减少量化误差。</li></ol></div>
+      <div>
+        <h3>怎么对应本关练习</h3><p>读本关时先算权重显存，再看 KV Cache 和硬件环境，最后选格式。</p>
+        <h3>例子在哪</h3><p>来源实操题给出 MacBook Air 与 24GB 4090 两种环境；参考答案给出显存核算与选型。</p>
+      </div>
+    </div>
+    <p class="reading-takeaway">量化选型由硬件、并发和精度共同决定。</p>
+    <div class="reading-refs"><span class="label">SOURCES</span><span>PDF 第 7 关（用户提供）</span><a href="https://github.com/mlabonne/llm-course" target="_blank" rel="noopener">mlabonne/llm-course ↗</a></div>
+  </section>
+    <section class="lesson"><h3>核心原理</h3><p>模型训练好后,如何把它塞进普通笔记本电脑或低成本云服务器里高速运行?mlabonne/llm- course 第 7 章(Quantization) 给出了完整路线图:将原本占 16 位浮点数(FP16/BF16,每个参数占 2 字 节)的权重压缩为 8-bit 甚至 4-bit 整数(每个参数仅占 0.5 字节),在几乎不损失肉眼可见精度的前提下,将 显存占用直接砍掉 70% 以上!三大主流工业格式选型必须分清: GGUF(配合 llama.cpp / Ollama):专为 CPU + GPU 混合推理及苹果 Mac (Apple Silicon) 本地运行而 生,支持把词汇表、元数据与权重打包进单一文件(如 Q4_K_M、Q5_K_M 量化档位)。 AWQ(Activation-Aware Weight Quantization)与 GPTQ / EXL2:专为 纯 GPU 高吞吐生产推理设 计!AWQ 发现模型中仅有 1% 的显著权重(Salient Weights,对应激活值较大的通道)对精度至关重要, 通过对这 1% 通道做缩放保护,使 4-bit 量化模型在 GPU 上兼具高速度与高精度。</p><h2>第 7 关实操练习题：精准核算大模型推理显存账单并选型量化方案</h2><h3>任务背景</h3><p>客戶现场只有两类硬件环境:1 销售经理随身携带的 16GB 统一内存 MacBook Air(需断网离 线运行 8B 模型);2 公司机房一台配有单张 24GB 显存 RTX 4090 的服务器(需部署一个 32B 规模的模型 供内部 20 人并发调用)。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 写出大模型推理总显存占用的快速估算公式(模型权重显存 + KV Cache 动态显存 + 激活值开销),并 分别计算 8B 与 32B 模型在 FP16 与 4-bit 量化下的权重显存大小(</p><p>5.5 分);</p><p>2. 分别为环境1(Mac 本地离线)和环境2(单卡 24GB 4090 跑 32B 模型)指定最匹配的量化格式、推 荐量化档位及运行引擎(</p><p>4.5 分);</p><p>3. 说明为什么做 AWQ/GPTQ 4-bit 量化时需要提供一个校准数据集(Calibration Dataset),且校准集应 如何选取(</p><p>2.5 分)。</p></section>
+    <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/llm/07" data-exercise="/content/levels/llm-07.json">
+      <div class="practice-head">
+        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <h2>精准核算大模型推理显存账单并选型量化方案</h2>
+        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+      </div>
+      <div class="knowledge-check" data-objective></div>
+      <div class="practice-grid">
+        <div class="practice-write">
+          <label for="practice-answer">我的答案</label>
+          <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案写在这里…"></textarea>
+          <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
+        </div>
+        <div class="practice-check">
+          <p class="practice-label">评分项</p>
+          <div class="check-list" data-criteria></div>
+          <button type="button" class="check-answer" data-check>检查我的答案</button>
+          <div class="practice-feedback" data-feedback></div>
+          <p class="practice-score">结构分 <b data-score>—</b> / 12.5 分</p>
+        </div>
+      </div>
+      <div class="practice-actions">
+        <button type="button" data-reveal>对照参考答案 ↓</button>
+        <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
+      </div>
+    </section>
+    <details class="answer">
+      <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
+      <div class="answer-body"><h3>参考答案与得分要点</h3><p>推理显存精算公式与跨平台量化选型方案</p><p>【1. 推理显存快速估算公式】</p><p>总显存占用 ≈ 模型权重显存 + KV Cache 动态显存 + 运行时激活开销(约 10%~15% 冗余)</p><p>- FP16/BF16 权重显存 ≈ 参数量(B) × 2 Bytes</p><p>- INT4 (4-bit) 权重显存 ≈ 参数量(B) × 0.55~0.6 Bytes(含缩放因子元数据开销)</p><p>【2. 两种模型规格显存账单核算】</p><p>- 8B 模型:FP16 权重需 ~16GB;4-bit 量化后权重仅需 ~4.8GB,加上 4K 上下文 KV Cache 合计约 6.5GB。</p><p>- 32B 模型:FP16 权重需 ~64GB(单卡 24GB 4090 根本装不下);4-bit 量化后权重降至 ~18.5GB,剩余</p><p>~5.5GB 显存刚好容纳并发 KV Cache,完美塞入单张 24GB 4090!</p><p>【3. 两大硬件环境最优方案】</p><p>- 环境1(16GB MacBook Air 离线跑 8B):选用 GGUF 格式(推荐 Q4_K_M 或 Q5_K_M 档位),使用 llama.cpp</p><p>或 Ollama 运行,完美利用 Apple Silicon 统一内存加速。</p><p>- 环境2(单张 24GB RTX 4090 高并发跑 32B):选用 AWQ 4-bit 格式,搭配 vLLM 推理引擎运行。</p><p>- 校准集原则:AWQ/GPTQ 量化需 128~256 条与目标业务真实分布一致的文本(如中文金融/医疗语料)统计激活</p><p>值分布,切勿用纯英文维基百科去校准中文垂直模型。</p><p>得分要点拆解:准确写出显存估算公式并算出 8B(~4.8GB)与 32B(~18.5GB)4-bit 权重显存(5.5 分);为</p><p>Mac 选 GGUF+Ollama、为 4090 选 AWQ+vLLM(4.5 分);说明校准集保护显著激活通道的作用及同分布选取</p><p>原则(2.5 分)。</p></div>
+    </details>
+    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B%20LLM%20%E5%BE%AE%E8%B0%83%E4%B8%8E%E5%85%A8%E6%A0%88%E5%B7%A5%E7%A8%8B%EF%BC%9A%E5%85%AB%E5%85%B3%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
+    <div class="nextprev"><a href="/ai/notes/llm/06"><small>上一关</small>模型权重融合(MergeKit)与评测防污染(Scientist 6 &amp; 8: Evaluation &amp; Merging)</a><a class="right" href="/ai/notes/llm/08"><small>下一关</small>vLLM 高吞吐生产级部署(The LLM Engineer: vLLM &amp; Production Serving)</a></div>
+  </article>
+</div>
+</main>
+<footer class="wrap">
+  <span>AI 实战通关 · 2026</span>
+  <span>免费 · 不登录 · 不卖 API</span>
+</footer>
+</body>
+</html>

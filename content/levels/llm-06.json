@@ -1,0 +1,207 @@
+{
+  "id": "llm-06",
+  "trackId": "llm",
+  "level": 6,
+  "title": "模型权重融合(MergeKit)与评测防污染(Scientist 6 & 8: Evaluation & Merging)",
+  "summary": "本关练习：编写 MergeKit 权重融合配置并设计无偏盲测评估方案。",
+  "source": "Maxime Labonne LLM Course / Modern LLM Notebook / LLM Fine-Tuning & RL Hands-on Lab / AI Infra Engineer Learning",
+  "readMinutes": 5,
+  "lessonHtml": "<h3>核心原理</h3><p>在 mlabonne/llm-course 第 6 章(Evaluation)与第 8 章(Model Merging) 中,有两个极具性 价比的进阶秘籍: 零 GPU 算力的模型融合(Model Merging with MergeKit):如果你手里有一个“擅长写代码的微调模型 A”和一个“擅长中文创意写作的微调模型 B”(两者同源,如均基于 Qwen-2.5-7B 微调),无需重新训 练,直接用 mergekit 工具通过 SLERP(球面线性插值)、TIES 或 DARE 算法将两者的权重矩阵按比例融 合,甚至用 FrankenMoE 拼装成混合专家模型,往往能凭空诞生出一个综合能力超越两者的全能模型! 科学评估与 Goodhart 定律避坑:“当一个评测指标变成刷榜目标时,它就不再是一个好指标。”公开基准 (如 MMLU、GSM8K)极易遭受训练数据污染(Data Contamination);使用大模型当裁判(LLM-as-a- Judge)时,又存在显著的位置偏见(倾向选第一个回答)与长度偏见(倾向选长篇大论)。</p><h2>第 6 关实操练习题：编写 MergeKit 权重融合配置并设计无偏盲测评估方案</h2><h3>任务背景</h3><p>你想把同属于 Llama-3.1-8B 架构的“金融分析微调版”与“SQL 编程微调版”融合为一个模 型,并客观评测融合前后的真实业务表现。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模 型路径、density 与 weight 权重分配)(5 分);</p><p>2. 指出使用 GPT-4o / Claude 作为 LLM-as-a-Judge 评测两个模型胜率(Win Rate)时的三大常见偏见 (位置偏见、长度偏见、自我偏好偏见)(4 分);</p><p>3. 设计消除上述裁判偏见的实操对策(如正反交换 AB 顺序双次打分、字数归一化约束、构建业务私有黄 金测试集)(</p><p>3.5 分)。</p>",
+  "referenceAnswerHtml": "<h3>参考答案与得分要点</h3><p>MergeKit DARE-TIES 权重融合配置与无偏评测设计</p><p># merge_config.yaml ― 使用 DARE-TIES 融合金融微调版与 SQL 编程微调版</p><p>models:</p><p>- model: ./models/Llama-3.1-8B-Finance-SFT</p><p>parameters:</p><p>density: 0.55 # 随机丢弃 45% 微小增量参数,消除冗余冲突</p><p>weight: 0.60</p><p>- model: ./models/Llama-3.1-8B-SQL-SFT</p><p>parameters:</p><p>density: 0.55</p><p>weight: 0.40</p><p>merge_method: dare_ties</p><p>base_model: meta-llama/Meta-Llama-3.1-8B-Instruct</p><p>parameters:</p><p>int8_mask: true</p><p>dtype: bfloat16</p><p>LLM-as-a-Judge 三 大 偏 见 与 消 除 对 策 : 1 针 对 位 置 偏 见 ( Position Bias ): 对 每 一 道 测 试 题 分 别 按</p><p>`(Model_A, Model_B)` 与 `(Model_B, Model_A)` 交换顺序评测两次,仅当两次结果一致时才计分;2 针对</p><p>长度偏见(Verbosity Bias):在裁判 Prompt 中明确声明“严禁因为回答字数多而给高分,冗余废话应扣</p><p>分”,并统计长度归一化胜率(Length-Controlled Win Rate);3 针对基准数据污染:从真实线上脱敏日志中</p><p>抽取 200 道模型从未见过的私有黄金测试集(Golden Dataset)。</p><p>得分要点拆解:编写规范的 `dare_ties` MergeKit YAML 配置(5 分);准确指出位置、长度与自我偏好三大</p><p>裁判偏见(4 分);给出正反双评、长度约束与私有测试集方案(3.5 分)。</p>",
+  "exercise": {
+    "id": "llm-06-ex",
+    "title": "编写 MergeKit 权重融合配置并设计无偏盲测评估方案",
+    "minLength": 40,
+    "criteria": [
+      {
+        "id": "c1",
+        "label": "MergeKit 配置结构",
+        "weight": 5.0,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "MergeKit",
+            "terms": [
+              "mergekit"
+            ]
+          },
+          {
+            "label": "YAML",
+            "terms": [
+              "yaml"
+            ]
+          },
+          {
+            "label": "dare_ties/slerp",
+            "terms": [
+              "dare_ties",
+              "slerp"
+            ]
+          },
+          {
+            "label": "density",
+            "terms": [
+              "density"
+            ]
+          },
+          {
+            "label": "weight",
+            "terms": [
+              "weight"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "c2",
+        "label": "LLM-as-Judge 三大偏见",
+        "weight": 4.0,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "位置偏见",
+            "terms": [
+              "位置偏见"
+            ]
+          },
+          {
+            "label": "长度偏见",
+            "terms": [
+              "长度偏见"
+            ]
+          },
+          {
+            "label": "自我偏好",
+            "terms": [
+              "自我偏好",
+              "self-preference"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "c3",
+        "label": "消除裁判偏见",
+        "weight": 3.5,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "AB 交换",
+            "terms": [
+              "交换",
+              "ab",
+              "顺序"
+            ]
+          },
+          {
+            "label": "字数归一",
+            "terms": [
+              "归一",
+              "字数"
+            ]
+          },
+          {
+            "label": "私有黄金集",
+            "terms": [
+              "私有",
+              "黄金",
+              "测试集"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "knowledgeChecks": [
+    {
+      "id": "q1",
+      "question": "MergeKit 的 SLERP/TIES/DARE 属于？",
+      "options": [
+        "模型权重融合算法",
+        "量化格式",
+        "训练框架",
+        "评测指标"
+      ],
+      "answer": 0,
+      "explanation": "来源：MergeKit 用 SLERP/TIES/DARE 融合同源模型权重。"
+    },
+    {
+      "id": "q2",
+      "question": "LLM-as-a-Judge 常见的位置偏见是？",
+      "options": [
+        "倾向选第一个回答",
+        "倾向选更短的",
+        "倾向选用户的问题",
+        "没有偏见"
+      ],
+      "answer": 0,
+      "explanation": "来源：位置偏见、长度偏见、自我偏好偏见。"
+    },
+    {
+      "id": "q3",
+      "question": "避免评测数据污染的关键是？",
+      "options": [
+        "使用业务私有黄金测试集",
+        "只用公开榜单",
+        "让模型自己出题",
+        "只看训练 loss"
+      ],
+      "answer": 0,
+      "explanation": "来源：公开基准易污染；应构建私有黄金测试集并做盲测。"
+    }
+  ],
+  "reading": {
+    "quote": "MergeKit 可以零 GPU 训练融合同源代码模型；评测要防 Goodhart 与数据污染，LLM-as-a-Judge 存在位置、长度、自我偏好偏见。",
+    "points": [
+      "SLERP/TIES/DARE 按比例融合同源模型权重。",
+      "公开基准可能被训练数据污染。",
+      "Judge 倾向第一个回答、长篇回答、自己的风格。",
+      "对策包括 AB 交换、字数归一化、私有黄金测试集。"
+    ],
+    "guide": "读本关时把“融合”和“评测”分开：融合改权重，评测防偏见和污染。",
+    "example": "来源实操题是融合金融分析版与 SQL 编程版；参考答案给出 MergeKit YAML 与无偏盲测设计。",
+    "takeaway": "融合能组合能力，评测必须防污染和偏见。",
+    "refs": [
+      [
+        "PDF 第 6 关（用户提供）",
+        ""
+      ],
+      [
+        "mlabonne/llm-course",
+        "https://github.com/mlabonne/llm-course"
+      ]
+    ]
+  },
+  "explain": {
+    "summary": "这一关只解决一件事：用 MergeKit 融合同源模型，并用无偏评测验证效果。",
+    "bullets": [
+      "融合算法：SLERP/TIES/DARE",
+      "Judge 有位置、长度、自我偏好",
+      "用 AB 交换、字数归一、私有黄金集降偏"
+    ],
+    "terms": [
+      {
+        "term": "MergeKit",
+        "plain": "零训练融合模型权重的工具。"
+      },
+      {
+        "term": "LLM-as-a-Judge",
+        "plain": "用大模型给模型输出打分的评测方式。"
+      },
+      {
+        "term": "Data Contamination",
+        "plain": "评测数据混入训练数据，导致分数虚高。"
+      }
+    ],
+    "why": "来源指出公开基准易污染，Judge 有系统性偏见，需要盲测和私有测试集。",
+    "structure": "YAML: base + models + density/weight\\n评测: AB 交换 + 字数归一 + 私有黄金集",
+    "check": "为什么只看公开榜单分数不足以判断模型好坏？",
+    "example": {
+      "label": "PDF 本关任务（来源）",
+      "input": "来源任务：你想把同属于 Llama-3.1-8B 架构的“金融分析微调版”与“SQL 编程微调版”融合为一个模 型,并客观评测融合前后的真实业务表现。",
+      "walkthrough": "来源要求：MergeKit 配置结构 / LLM-as-Judge 三大偏见 / 消除裁判偏见",
+      "output": "按这些通关要求组织答案；参考答案见本页下方。"
+    }
+  },
+  "next": "llm-07"
+}

@@ -1,0 +1,200 @@
+{
+  "id": "llm-02",
+  "trackId": "llm",
+  "level": 2,
+  "title": "后训练数据集构建与对话模板映射(Scientist 3: Post-Training Datasets)",
+  "summary": "本关练习：将原始业务问答修正为标准 ShareGPT/ChatML 微调样本。",
+  "source": "Maxime Labonne LLM Course / Modern LLM Notebook / LLM Fine-Tuning & RL Hands-on Lab / AI Infra Engineer Learning",
+  "readMinutes": 5,
+  "lessonHtml": "<h3>核心原理</h3><p>正如 mlabonne/llm-course 第 3‒4 章 所言:“在微调中,数据质量永远比堆砌超参数重要十倍 (Always prioritize data quality over parameter optimization)。”新手做微调最常踩的两个致命大坑: 对话模板(Chat Template)错配与结束符(EOS Token)丢失:基座模型与指令模型遵循严格的特殊控 制符格式(如 ChatML 的 &lt;|im_start|&gt;user...&lt;|im_end|&gt; 或 Llama 3 的 &lt;|start_header_id|&gt;... &lt;|eot_id|&gt;)。如果在拼接训练样本时漏掉了助手回答末尾的 eos_token,微调后的模型在推理时永远不知 道何时停下来,会一直自言自语直到填满最大长度! 未只对 Assistant 回复计算 Loss(Completion-only Loss Masking):如果把用戶提问(Instruction) 也算进交叉熵损失,模型会浪费算力去背诵用戶的问题,甚至学会模仿用戶的语气反问用戶。</p><h2>第 2 关实操练习题：将原始业务问答修正为标准 ShareGPT/ChatML 微调样本</h2><h3>任务背景</h3><p>你想把中医问诊记录转化为微调数据集,参照 LLM Fine-Tuning Hands-on Lab 的数据准备规 范进行格式化与去重清洗。 待改造劣质样本:\"问:最近总是失眠多梦、手脚心发热怎么办?答:这属于典型的阴虚火旺证,建议滋阴降 火。\"(直接按纯文本塞入训练器,无角色边界、无系统提示、无结束符。)</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 将该样本重构为包含 system、user、assistant 三角色的 ShareGPT/OpenAI 标准 JSON 数组格式(</p><p>4.5 分);</p><p>2. 写出映射为 ChatML 模板后的完整纯文本字符串(必须显式包含 &lt;|im_start|&gt; 与 &lt;|im_end|&gt; 特殊标记) (</p><p>4.5 分);</p><p>3. 列出将数据集送入 SFTTrainer 前必做的 3 项数据清洗检查(如近重复去重 MinHash、长度截断检查、 低质回复过滤)(</p><p>3.5 分)。</p>",
+  "referenceAnswerHtml": "<h3>参考答案与得分要点</h3><p>ShareGPT/ChatML 标准微调格式转换与清洗清单</p><p>// 1. 标准 ShareGPT / OpenAI Messages JSON 格式</p><p>{</p><p>\"messages\": [</p><p>{\"role\": \"system\", \"content\": \"你是一位严谨的中医辅助问诊助手,请根据患者描述的症状进行辨证分析</p><p>并给出调理建议。\"},</p><p>{\"role\": \"user\", \"content\": \"最近总是失眠多梦、手脚心发热,舌红少苔,请问是怎么回事?\"},</p><p>{\"role\": \"assistant\", \"content\": \"根据您描述的失眠多梦、五心烦热及舌红少苔症状,中医辨证属于典</p><p>型的【阴虚火旺证】。调理原则应以滋阴降火、养心安神为主。\"}</p><p>]</p><p>}</p><p>// 2. 映射为 ChatML 模板后的底层训练文本(注意末尾必须包含 &lt;|im_end|&gt; 结束符!)</p><p>&lt;|im_start|&gt;system</p><p>你是一位严谨的中医辅助问诊助手,请根据患者描述的症状进行辨证分析并给出调理建议。&lt;|im_end|&gt;</p><p>&lt;|im_start|&gt;user</p><p>最近总是失眠多梦、手脚心发热,舌红少苔,请问是怎么回事?&lt;|im_end|&gt;</p><p>&lt;|im_start|&gt;assistant</p><p>根据您描述的失眠多梦、五心烦热及舌红少苔症状,中医辨证属于典型的【阴虚火旺证】。调理原则应以滋阴降</p><p>火、养心安神为主。&lt;|im_end|&gt;</p><p>数据清洗三步检查清单:1 使用 MinHash 或语义嵌入剔除相似度 &gt; 0.95 的近重复样本;2 过滤超出</p><p>max_seq_length 的 截断 残 缺 样 本 与 包 含 “ 抱 歉 我 无 法 回 答 ” 的 拒 答 废 样 本 ; 3 开 启</p><p>DataCollatorForCompletionOnlyLM,将 User 与 System 部分的标签设为 -100,仅对 Assistant 输出计算 Loss。</p><p>得分要点拆解:规范构建三角色 JSON 结构(4.5 分);准确写出含 `&lt;|im_start|&gt;` 与 `&lt;|im_end|&gt;` 的</p><p>ChatML 展开文本(4.5 分);涵盖去重、截断过滤与 Completion-only Loss Masking(3.5 分)。</p>",
+  "exercise": {
+    "id": "llm-02-ex",
+    "title": "将原始业务问答修正为标准 ShareGPT/ChatML 微调样本",
+    "minLength": 40,
+    "criteria": [
+      {
+        "id": "c1",
+        "label": "system/user/assistant 三角色 JSON",
+        "weight": 4.5,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "system",
+            "terms": [
+              "system"
+            ]
+          },
+          {
+            "label": "user",
+            "terms": [
+              "user"
+            ]
+          },
+          {
+            "label": "assistant",
+            "terms": [
+              "assistant"
+            ]
+          },
+          {
+            "label": "messages JSON",
+            "terms": [
+              "messages",
+              "json"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "c2",
+        "label": "ChatML 模板与结束符",
+        "weight": 4.5,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "<|im_start|>",
+            "terms": [
+              "im_start"
+            ]
+          },
+          {
+            "label": "<|im_end|>",
+            "terms": [
+              "im_end"
+            ]
+          },
+          {
+            "label": "EOS/结束符",
+            "terms": [
+              "eos",
+              "结束符"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "c3",
+        "label": "SFT 前数据清洗三项",
+        "weight": 3.5,
+        "type": "term_groups",
+        "groups": [
+          {
+            "label": "近重复去重",
+            "terms": [
+              "去重",
+              "minhash"
+            ]
+          },
+          {
+            "label": "长度检查",
+            "terms": [
+              "截断",
+              "长度",
+              "max_seq_length"
+            ]
+          },
+          {
+            "label": "Completion-only Loss",
+            "terms": [
+              "completion-only",
+              "-100"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "knowledgeChecks": [
+    {
+      "id": "q1",
+      "question": "微调数据准备中，来源强调的第一原则是？",
+      "options": [
+        "数据质量优先于堆参数",
+        "参数越多越好",
+        "训练越久越好",
+        "先删掉 system"
+      ],
+      "answer": 0,
+      "explanation": "来源引用：Always prioritize data quality over parameter optimization。"
+    },
+    {
+      "id": "q2",
+      "question": "漏掉 assistant 回答末尾的 EOS 会导致？",
+      "options": [
+        "模型不知道该停，可能一直生成",
+        "模型训练更快",
+        "JSON 更精确",
+        "显存更小"
+      ],
+      "answer": 0,
+      "explanation": "来源：漏掉 eos_token，推理时不知道何时停止。"
+    },
+    {
+      "id": "q3",
+      "question": "Completion-only Loss Masking 的作用是？",
+      "options": [
+        "只对 assistant 回复计算 loss",
+        "对 user 提问计算 loss",
+        "删除所有标签",
+        "只训练 embedding"
+      ],
+      "answer": 0,
+      "explanation": "来源：把 User/System 标签设为 -100，仅对 Assistant 输出计算 Loss。"
+    }
+  ],
+  "reading": {
+    "quote": "来源引用：在微调中，数据质量永远比堆砌超参数重要十倍；新手最常踩的两个坑是对话模板错配和 EOS 结束符丢失。",
+    "points": [
+      "基座/指令模型遵循严格特殊控制符格式，如 ChatML 与 Llama 3。",
+      "漏掉 assistant 末尾 eos_token，模型推理时不知道何时停止。",
+      "未只对 Assistant 回复计算 Loss 会让模型浪费算力背诵 User 问题。",
+      "标准做法：三角色 JSON、ChatML 展开、Completion-only Loss Masking。"
+    ],
+    "guide": "读本关时先检查数据格式，再看训练参数；格式错，参数再对也没用。",
+    "example": "来源任务是把中医问诊纯文本改成 ShareGPT/ChatML 样本；参考答案给出完整 JSON 与 ChatML 文本。",
+    "takeaway": "微调前先保证模板、EOS 和 loss mask 正确。",
+    "refs": [
+      [
+        "PDF 第 2 关（用户提供）",
+        ""
+      ],
+      [
+        "mlabonne/llm-course",
+        "https://github.com/mlabonne/llm-course"
+      ]
+    ]
+  },
+  "explain": {
+    "summary": "这一关只解决一件事：把业务问答变成带角色、模板和结束符的标准训练样本。",
+    "bullets": [
+      "三角色 JSON：system/user/assistant",
+      "展开为 ChatML 时必须带 im_start/im_end",
+      "只对 assistant 计算 loss"
+    ],
+    "terms": [
+      {
+        "term": "ChatML",
+        "plain": "用特殊控制符标记对话角色的模板格式。"
+      },
+      {
+        "term": "EOS",
+        "plain": "结束符；缺失会让模型不知道何时停止。"
+      },
+      {
+        "term": "Completion-only Loss",
+        "plain": "只对 assistant 回复计算损失。"
+      }
+    ],
+    "why": "来源强调数据质量优先，模板错配和 EOS 丢失是微调最常见的大坑。",
+    "structure": "messages: system→user→assistant\\nChatML: <|im_start|>role ... <|im_end|>",
+    "check": "如果漏掉 assistant 末尾的 EOS，推理时会发生什么？",
+    "example": {
+      "label": "PDF 本关任务（来源）",
+      "input": "来源任务：你想把中医问诊记录转化为微调数据集,参照 LLM Fine-Tuning Hands-on Lab 的数据准备规 范进行格式化与去重清洗。 待改造劣质样本:\"问:最近总是失眠多梦、手脚心发热怎么办?答:这属于典型的阴虚火旺证,建议滋阴降 火。\"(直接按纯文本塞入训练器,无角色边界、无系统提示、无结束符。)",
+      "walkthrough": "来源要求：system/user/assistant 三角色 JSON / ChatML 模板与结束符 / SFT 前数据清洗三项",
+      "output": "按这些通关要求组织答案；参考答案见本页下方。"
+    }
+  },
+  "next": "llm-03"
+}

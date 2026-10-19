@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>大模型 LLM 微调与全栈工程：八关实战通关 — AI 实战通关</title>
+<meta name="description" content="从架构与数据清洗，到 LoRA/QLoRA、DPO 对齐、量化与 vLLM 部署。">
+<link rel="canonical" href="https://gongjuhe.top/ai/notes/llm/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="大模型 LLM 微调与全栈工程：八关实战通关 — AI 实战通关">
+<meta property="og:description" content="从架构与数据清洗，到 LoRA/QLoRA、DPO 对齐、量化与 vLLM 部署。">
+<meta property="og:image" content="/og-knowledge.png">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=8">
+<script src="/ai/notes/notes.js?v=6" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<div class="read-progress"></div>
+<header class="wrap top">
+  <a class="brand" href="/">AI 实战通关 <small>KNOWLEDGE BASE</small></a>
+  <nav class="nav" aria-label="主导航">
+    <a href="/ai/notes/">全部课程</a>
+    <a class="hide-s" href="/ai/notes/review/">错题本</a>
+    <a class="hide-s" href="/#practice">怎么练</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
+  </nav>
+</header>
+<main id="main">
+<section class="wrap track-head">
+  <p class="label">LLM / POST-TRAINING / 8 关</p>
+  <h1>大模型 LLM 微调与全栈工程：八关实战通关</h1>
+  <p class="lead">从架构与数据清洗，到 LoRA/QLoRA、DPO 对齐、量化与 vLLM 部署。</p>
+  <p class="source">课程来源：Maxime Labonne LLM Course / Modern LLM Notebook / LLM Fine-Tuning &amp; RL Hands-on Lab / AI Infra Engineer Learning</p>
+  <div class="track-progress" data-track="llm" data-total="8"><span data-track-count>0 / 8 完成</span><span class="bar"><i></i></span></div>
+</section>
+<section class="wrap section">
+  <div class="section-head"><div><p class="label">LEVELS / 关卡</p><h2>按顺序读，或先挑你需要的那关。</h2></div></div>
+  <div class="level-list"><a class="level-row" href="/ai/notes/llm/01" data-url="/ai/notes/llm/01">
+  <span class="num">01</span>
+  <span><h3>现代 LLM 架构与解码采样策略(Scientist 1: LLM Architecture &amp; Decoding)</h3><p>本关练习：为三大迥异业务场景配置精准解码采样参数并核算显存。</p></span>
+  <span class="time">5 分钟</span>
+</a><a class="level-row" href="/ai/notes/llm/02" data-url="/ai/notes/llm/02">
+  <span class="num">02</span>
+  <span><h3>后训练数据集构建与对话模板映射(Scientist 3: Post-Training Datasets)</h3><p>本关练习：将原始业务问答修正为标准 ShareGPT/ChatML 微调样本。</p></span>
+  <span class="time">5 分钟</span>
+</a><a class="level-row" href="/ai/notes/llm/03" data-url="/ai/notes/llm/03">
+  <span class="num">03</span>
+  <span><h3>LoRA 与 QLoRA 高效参数微调实战(Scientist 4: Supervised Fine-Tuning)</h3><p>本关练习：编写单卡 16GB 显存微调 8B 模型的 Unsloth/TRL 配置脚本。</p></span>
+  <span class="time">5 分钟</span>
+</a><a class="level-row" href="/ai/notes/llm/04" data-url="/ai/notes/llm/04">
+  <span class="num">04</span>
+  <span><h3>训练曲线诊断与过拟合排障(Training Monitoring &amp; Loss Audit)</h3><p>本关练习：诊断三组异常微调监控日志并开出调参处方。</p></span>
+  <span class="time">5 分钟</span>
+</a><a class="level-row" href="/ai/notes/llm/05" data-url="/ai/notes/llm/05">
+  <span class="num">05</span>
+  <span><h3>人类偏好对⻬ DPO、ORPO 与 GRPO(Scientist 5: Preference Alignment)</h3><p>本关练习：构建去“AI 说教味”的 DPO 偏好数据集与训练配置。</p></span>
+  <span class="time">5 分钟</span>
+</a><a class="level-row" href="/ai/notes/llm/06" data-url="/ai/notes/llm/06">
+  <span class="num">06</span>
+  <span><h3>模型权重融合(MergeKit)与评测防污染(Scientist 6 &amp; 8: Evaluation &amp; Merging)</h3><p>本关练习：编写 MergeKit 权重融合配置并设计无偏盲测评估方案。</p></span>
+  <span class="time">5 分钟</span>
+</a><a class="level-row" href="/ai/notes/llm/07" data-url="/ai/notes/llm/07">
+  <span class="num">07</span>
+  <span><h3>低比特模型量化实战(Scientist 7: Quantization ― GGUF, AWQ &amp; GPTQ)</h3><p>本关练习：精准核算大模型推理显存账单并选型量化方案。</p></span>
+  <span class="time">5 分钟</span>
+</a><a class="level-row" href="/ai/notes/llm/08" data-url="/ai/notes/llm/08">
+  <span class="num">08</span>
+  <span><h3>vLLM 高吞吐生产级部署(The LLM Engineer: vLLM &amp; Production Serving)</h3><p>本关练习：编写 vLLM 生产级多 LoRA 动态挂载启动脚本与压测指标规范。</p></span>
+  <span class="time">5 分钟</span>
+</a></div>
+  <div class="pdf-strip"><p>想一次拿走整套？网页免费，完整 PDF 留邮箱发。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B%20LLM%20%E5%BE%AE%E8%B0%83%E4%B8%8E%E5%85%A8%E6%A0%88%E5%B7%A5%E7%A8%8B%EF%BC%9A%E5%85%AB%E5%85%B3%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱获取 PDF ↗</a></div>
+</section>
+</main>
+<footer class="wrap">
+  <span>AI 实战通关 · 2026</span>
+  <span>免费 · 不登录 · 不卖 API</span>
+</footer>
+</body>
+</html>

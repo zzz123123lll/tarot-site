@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模型权重融合(MergeKit)与评测防污染(Scientist 6 &amp; 8: Evaluation &amp; Merging) · 第 06 关 — 大模型 LLM 微调与全栈工程：八关实战通关</title>
+<meta name="description" content="本关练习：编写 MergeKit 权重融合配置并设计无偏盲测评估方案。">
+<link rel="canonical" href="https://gongjuhe.top/ai/notes/llm/06">
+<meta property="og:type" content="article">
+<meta property="og:title" content="模型权重融合(MergeKit)与评测防污染(Scientist 6 &amp; 8: Evaluation &amp; Merging) — 大模型 LLM 微调与全栈工程：八关实战通关">
+<meta property="og:description" content="本关练习：编写 MergeKit 权重融合配置并设计无偏盲测评估方案。">
+<meta property="og:image" content="/og-knowledge.png">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=8">
+<script src="/ai/notes/notes.js?v=6" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=4"></script>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<div class="read-progress"></div>
+<header class="wrap top">
+  <a class="brand" href="/">AI 实战通关 <small>KNOWLEDGE BASE</small></a>
+  <nav class="nav" aria-label="主导航">
+    <a href="/ai/notes/">全部课程</a>
+    <a class="hide-s" href="/ai/notes/review/">错题本</a>
+    <a href="/">知识库首页</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B%20LLM%20%E5%BE%AE%E8%B0%83%E4%B8%8E%E5%85%A8%E6%A0%88%E5%B7%A5%E7%A8%8B%EF%BC%9A%E5%85%AB%E5%85%B3%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF</a>
+  </nav>
+</header>
+<main id="main">
+<nav class="breadcrumb wrap" aria-label="面包屑">
+  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/llm/">大模型 LLM 微调与全栈工程：八关实战通关</a><span class="sep">/</span><span>第 06 关</span>
+</nav>
+<div class="wrap article-shell">
+  <aside class="side">
+    <p class="side-label">大模型 LLM 微调与全栈工程</p>
+    <ol class="level-nav"><li><a href="/ai/notes/llm/01"><span class="num">01</span><span>现代 LLM 架构与解码采样策略(Scientist 1: LLM Architecture &amp; Decoding)</span></a></li><li><a href="/ai/notes/llm/02"><span class="num">02</span><span>后训练数据集构建与对话模板映射(Scientist 3: Post-Training Datasets)</span></a></li><li><a href="/ai/notes/llm/03"><span class="num">03</span><span>LoRA 与 QLoRA 高效参数微调实战(Scientist 4: Supervised Fine-Tuning)</span></a></li><li><a href="/ai/notes/llm/04"><span class="num">04</span><span>训练曲线诊断与过拟合排障(Training Monitoring &amp; Loss Audit)</span></a></li><li><a href="/ai/notes/llm/05"><span class="num">05</span><span>人类偏好对⻬ DPO、ORPO 与 GRPO(Scientist 5: Preference Alignment)</span></a></li><li><a href="/ai/notes/llm/06" class="current"><span class="num">06</span><span>模型权重融合(MergeKit)与评测防污染(Scientist 6 &amp; 8: Evaluation &amp; Merging)</span></a></li><li><a href="/ai/notes/llm/07"><span class="num">07</span><span>低比特模型量化实战(Scientist 7: Quantization ― GGUF, AWQ &amp; GPTQ)</span></a></li><li><a href="/ai/notes/llm/08"><span class="num">08</span><span>vLLM 高吞吐生产级部署(The LLM Engineer: vLLM &amp; Production Serving)</span></a></li></ol>
+    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B%20LLM%20%E5%BE%AE%E8%B0%83%E4%B8%8E%E5%85%A8%E6%A0%88%E5%B7%A5%E7%A8%8B%EF%BC%9A%E5%85%AB%E5%85%B3%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF ↗</a></div>
+  </aside>
+  <article class="article">
+    <p class="kicker">LLM / POST-TRAINING / 06 · ENGINE v1</p>
+    <h1>模型权重融合(MergeKit)与评测防污染(Scientist 6 &amp; 8: Evaluation &amp; Merging)</h1>
+    <p class="lede">本关练习：编写 MergeKit 权重融合配置并设计无偏盲测评估方案。</p>
+    <div class="meta"><span>约 5 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Maxime Labonne LLM Course / Modern LLM Notebook / LLM Fine-Tuning &amp; RL Hands-on Lab / AI Infra Engineer Learning</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <section class="explain" id="understand">
+    <div class="explain-fast">
+      <p class="label">30 SECONDS / 30 秒看懂</p>
+      <p class="explain-summary">这一关只解决一件事：用 MergeKit 融合同源模型，并用无偏评测验证效果。</p>
+      <ul class="explain-bullets"><li>融合算法：SLERP/TIES/DARE</li><li>Judge 有位置、长度、自我偏好</li><li>用 AB 交换、字数归一、私有黄金集降偏</li></ul>
+    </div>
+    <div class="explain-deep">
+      <p class="label">3 MINUTES / 3 分钟拆解</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
+      <div class="explain-example">
+        <div class="explain-code"><span>输入</span><pre>来源任务：你想把同属于 Llama-3.1-8B 架构的“金融分析微调版”与“SQL 编程微调版”融合为一个模 型,并客观评测融合前后的真实业务表现。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：MergeKit 配置结构 / LLM-as-Judge 三大偏见 / 消除裁判偏见</p><h3>输出</h3><p>按这些通关要求组织答案；参考答案见本页下方。</p></div>
+      </div>
+      <div class="explain-two">
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>MergeKit</dt><dd>零训练融合模型权重的工具。</dd></div><div><dt>LLM-as-a-Judge</dt><dd>用大模型给模型输出打分的评测方式。</dd></div><div><dt>Data Contamination</dt><dd>评测数据混入训练数据，导致分数虚高。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源指出公开基准易污染，Judge 有系统性偏见，需要盲测和私有测试集。</p><h3>结构长什么样</h3><pre class="explain-structure">YAML: base + models + density/weight\n评测: AB 交换 + 字数归一 + 私有黄金集</pre></div>
+      </div>
+      <p class="explain-check">为什么只看公开榜单分数不足以判断模型好坏？</p>
+    </div>
+  </section>
+    <section class="source-reading" id="reading">
+    <p class="label">SOURCE READING / 来源精读</p>
+    <p class="reading-quote">MergeKit 可以零 GPU 训练融合同源代码模型；评测要防 Goodhart 与数据污染，LLM-as-a-Judge 存在位置、长度、自我偏好偏见。</p>
+    <div class="reading-grid">
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>SLERP/TIES/DARE 按比例融合同源模型权重。</li><li>公开基准可能被训练数据污染。</li><li>Judge 倾向第一个回答、长篇回答、自己的风格。</li><li>对策包括 AB 交换、字数归一化、私有黄金测试集。</li></ol></div>
+      <div>
+        <h3>怎么对应本关练习</h3><p>读本关时把“融合”和“评测”分开：融合改权重，评测防偏见和污染。</p>
+        <h3>例子在哪</h3><p>来源实操题是融合金融分析版与 SQL 编程版；参考答案给出 MergeKit YAML 与无偏盲测设计。</p>
+      </div>
+    </div>
+    <p class="reading-takeaway">融合能组合能力，评测必须防污染和偏见。</p>
+    <div class="reading-refs"><span class="label">SOURCES</span><span>PDF 第 6 关（用户提供）</span><a href="https://github.com/mlabonne/llm-course" target="_blank" rel="noopener">mlabonne/llm-course ↗</a></div>
+  </section>
+    <section class="lesson"><h3>核心原理</h3><p>在 mlabonne/llm-course 第 6 章(Evaluation)与第 8 章(Model Merging) 中,有两个极具性 价比的进阶秘籍: 零 GPU 算力的模型融合(Model Merging with MergeKit):如果你手里有一个“擅长写代码的微调模型 A”和一个“擅长中文创意写作的微调模型 B”(两者同源,如均基于 Qwen-2.5-7B 微调),无需重新训 练,直接用 mergekit 工具通过 SLERP(球面线性插值)、TIES 或 DARE 算法将两者的权重矩阵按比例融 合,甚至用 FrankenMoE 拼装成混合专家模型,往往能凭空诞生出一个综合能力超越两者的全能模型! 科学评估与 Goodhart 定律避坑:“当一个评测指标变成刷榜目标时,它就不再是一个好指标。”公开基准 (如 MMLU、GSM8K)极易遭受训练数据污染(Data Contamination);使用大模型当裁判(LLM-as-a- Judge)时,又存在显著的位置偏见(倾向选第一个回答)与长度偏见(倾向选长篇大论)。</p><h2>第 6 关实操练习题：编写 MergeKit 权重融合配置并设计无偏盲测评估方案</h2><h3>任务背景</h3><p>你想把同属于 Llama-3.1-8B 架构的“金融分析微调版”与“SQL 编程微调版”融合为一个模 型,并客观评测融合前后的真实业务表现。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模 型路径、density 与 weight 权重分配)(5 分);</p><p>2. 指出使用 GPT-4o / Claude 作为 LLM-as-a-Judge 评测两个模型胜率(Win Rate)时的三大常见偏见 (位置偏见、长度偏见、自我偏好偏见)(4 分);</p><p>3. 设计消除上述裁判偏见的实操对策(如正反交换 AB 顺序双次打分、字数归一化约束、构建业务私有黄 金测试集)(</p><p>3.5 分)。</p></section>
+    <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/llm/06" data-exercise="/content/levels/llm-06.json">
+      <div class="practice-head">
+        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <h2>编写 MergeKit 权重融合配置并设计无偏盲测评估方案</h2>
+        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+      </div>
+      <div class="knowledge-check" data-objective></div>
+      <div class="practice-grid">
+        <div class="practice-write">
+          <label for="practice-answer">我的答案</label>
+          <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案写在这里…"></textarea>
+          <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
+        </div>
+        <div class="practice-check">
+          <p class="practice-label">评分项</p>
+          <div class="check-list" data-criteria></div>
+          <button type="button" class="check-answer" data-check>检查我的答案</button>
+          <div class="practice-feedback" data-feedback></div>
+          <p class="practice-score">结构分 <b data-score>—</b> / 12.5 分</p>
+        </div>
+      </div>
+      <div class="practice-actions">
+        <button type="button" data-reveal>对照参考答案 ↓</button>
+        <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
+      </div>
+    </section>
+    <details class="answer">
+      <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
+      <div class="answer-body"><h3>参考答案与得分要点</h3><p>MergeKit DARE-TIES 权重融合配置与无偏评测设计</p><p># merge_config.yaml ― 使用 DARE-TIES 融合金融微调版与 SQL 编程微调版</p><p>models:</p><p>- model: ./models/Llama-3.1-8B-Finance-SFT</p><p>parameters:</p><p>density: 0.55 # 随机丢弃 45% 微小增量参数,消除冗余冲突</p><p>weight: 0.60</p><p>- model: ./models/Llama-3.1-8B-SQL-SFT</p><p>parameters:</p><p>density: 0.55</p><p>weight: 0.40</p><p>merge_method: dare_ties</p><p>base_model: meta-llama/Meta-Llama-3.1-8B-Instruct</p><p>parameters:</p><p>int8_mask: true</p><p>dtype: bfloat16</p><p>LLM-as-a-Judge 三 大 偏 见 与 消 除 对 策 : 1 针 对 位 置 偏 见 ( Position Bias ): 对 每 一 道 测 试 题 分 别 按</p><p>`(Model_A, Model_B)` 与 `(Model_B, Model_A)` 交换顺序评测两次,仅当两次结果一致时才计分;2 针对</p><p>长度偏见(Verbosity Bias):在裁判 Prompt 中明确声明“严禁因为回答字数多而给高分,冗余废话应扣</p><p>分”,并统计长度归一化胜率(Length-Controlled Win Rate);3 针对基准数据污染:从真实线上脱敏日志中</p><p>抽取 200 道模型从未见过的私有黄金测试集(Golden Dataset)。</p><p>得分要点拆解:编写规范的 `dare_ties` MergeKit YAML 配置(5 分);准确指出位置、长度与自我偏好三大</p><p>裁判偏见(4 分);给出正反双评、长度约束与私有测试集方案(3.5 分)。</p></div>
+    </details>
+    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B%20LLM%20%E5%BE%AE%E8%B0%83%E4%B8%8E%E5%85%A8%E6%A0%88%E5%B7%A5%E7%A8%8B%EF%BC%9A%E5%85%AB%E5%85%B3%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
+    <div class="nextprev"><a href="/ai/notes/llm/05"><small>上一关</small>人类偏好对⻬ DPO、ORPO 与 GRPO(Scientist 5: Preference Alignment)</a><a class="right" href="/ai/notes/llm/07"><small>下一关</small>低比特模型量化实战(Scientist 7: Quantization ― GGUF, AWQ &amp; GPTQ)</a></div>
+  </article>
+</div>
+</main>
+<footer class="wrap">
+  <span>AI 实战通关 · 2026</span>
+  <span>免费 · 不登录 · 不卖 API</span>
+</footer>
+</body>
+</html>

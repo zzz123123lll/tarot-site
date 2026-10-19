@@ -5,9 +5,9 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
-const TRACK_ORDER = ['prompt', 'rag', 'agents'];
-const SHORT = { prompt: '提示词工程', rag: 'RAG 知识库', agents: 'AI Agent' };
-const KICKER = { prompt: '01 / PROMPT ENGINEERING', rag: '02 / RAG / KNOWLEDGE BASE', agents: '03 / AI AGENTS' };
+const TRACK_ORDER = ['prompt', 'rag', 'agents', 'llm'];
+const SHORT = { prompt: '提示词工程', rag: 'RAG 知识库', agents: 'AI Agent', llm: 'LLM 微调' };
+const KICKER = { prompt: '01 / PROMPT ENGINEERING', rag: '02 / RAG / KNOWLEDGE BASE', agents: '03 / AI AGENTS', llm: '04 / LLM / POST-TRAINING' };
 
 function esc(s) {
   return String(s == null ? '' : s)
@@ -35,7 +35,7 @@ function head(title, description, canonical) {
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
 <link rel="stylesheet" href="/ai/notes/notes.css?v=8">
-<script src="/ai/notes/notes.js?v=5" defer></script>
+<script src="/ai/notes/notes.js?v=6" defer></script>
 </head>`;
 }
 function shellHeader() {
@@ -69,7 +69,7 @@ function renderIndex(tracks) {
 </a>`;
   }).join('');
   const total = tracks.reduce((s, t) => s + t.levels.length, 0);
-  const page = `${head('AI 实战通关笔记 — 26 关免费练习', '提示词工程、RAG、AI Agent 三套实战练习册，26 关免费阅读与自动检查。', 'https://gongjuhe.top/ai/notes/')}
+  const page = `${head('AI 实战通关笔记 — 34 关免费练习', '提示词工程、RAG、AI Agent、LLM 微调四套实战练习册，34 关免费阅读与自动检查。', 'https://gongjuhe.top/ai/notes/')}
 <body>
 ${shellHeader()}
 <main id="main">
@@ -156,7 +156,7 @@ ${shellHeader()}
 </section>
 </main>
 ${footer()}
-<script src="/ai/notes/notes.js?v=5" defer></script>
+<script src="/ai/notes/notes.js?v=6" defer></script>
 <script type="module" src="/ai/notes/review.mjs?v=1"></script>
 </body>
 </html>
