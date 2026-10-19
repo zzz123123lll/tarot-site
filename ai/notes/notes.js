@@ -178,7 +178,7 @@
     practice.querySelector('[data-check]').addEventListener('click', check);
     practice.querySelector('[data-clear]').addEventListener('click', function () {
       if (!window.confirm('清空本关答案？')) return;
-      answer.value = ''; resetCheck(); count(); save();
+      answer.value = ''; doneEl.checked = false; state.done = false; resetCheck(); count(); save();
     });
 
     var reveal = practice.querySelector('[data-reveal]');
