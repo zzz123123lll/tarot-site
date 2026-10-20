@@ -16,7 +16,7 @@ jobs:
           node-version: 20
       - name: Grading unit tests
         run: node tests/grading.test.mjs
-      - name: All 26 levels
+      - name: All 36 levels
         run: node tests/all-levels.test.mjs
       - name: Rebuild from content
         run: node build/render-all.mjs

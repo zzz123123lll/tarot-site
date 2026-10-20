@@ -109,7 +109,8 @@ for (const tf of trackFiles) {
 const catalog = fs.readFileSync(path.join(ROOT, 'ai/notes/index.html'), 'utf8');
 assert.equal((catalog.match(/data-series="/g) || []).length, 2, 'index series cards');
 assert(catalog.includes('data-overall'), 'index overall progress');
-assert(catalog.includes('notes.js?v=7'), 'index script version');
+assert(catalog.includes('notes.js?v=8'), 'index script version');
+assert(catalog.includes('data-nav-toggle'), 'mobile nav toggle');
 for (const tf of trackFiles) {
   const track = JSON.parse(fs.readFileSync(path.join(tracksDir, tf), 'utf8'));
   const trackPage = fs.readFileSync(path.join(ROOT, 'ai/notes', track.id, 'index.html'), 'utf8');
@@ -124,6 +125,18 @@ for (const tf of trackFiles) {
 const guide = fs.readFileSync(path.join(ROOT, 'ai/notes/guide/index.html'), 'utf8');
 assert(guide.includes('AI 现代必修课'), 'guide page');
 const searchPage = fs.readFileSync(path.join(ROOT, 'ai/notes/search/index.html'), 'utf8');
+assert(searchPage.includes('noindex'), 'search page noindex');
+const reviewPage = fs.readFileSync(path.join(ROOT, 'ai/notes/review/index.html'), 'utf8');
+assert(reviewPage.includes('noindex'), 'review page noindex');
+const privacyPage = fs.readFileSync(path.join(ROOT, 'ai/notes/privacy/index.html'), 'utf8');
+assert(privacyPage.includes('隐私说明'), 'privacy page');
+const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'manifest.webmanifest'), 'utf8'));
+assert(manifest.description.includes('36 关'), 'manifest current count');
+assert(manifest.theme_color === '#9C2E22', 'manifest theme');
+const sm = fs.readFileSync(path.join(ROOT, 'sitemap.xml'), 'utf8');
+assert(!sm.includes('/ai/notes/search/'), 'search not in sitemap');
+assert(!sm.includes('/ai/notes/review/'), 'review not in sitemap');
+assert(sm.includes('/ai/notes/privacy/'), 'privacy in sitemap');
 assert(searchPage.includes('data-search-results'), 'search page');
 const searchIndex = JSON.parse(fs.readFileSync(path.join(ROOT, 'ai/notes/search-index.json'), 'utf8'));
 assert(searchIndex.length >= 36, 'search index entries');

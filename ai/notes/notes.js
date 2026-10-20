@@ -50,6 +50,32 @@
     return n;
   }
 
+
+  /* ---------- mobile nav ---------- */
+  var navToggle = document.querySelector('[data-nav-toggle]');
+  var siteNav = document.getElementById('site-nav');
+  if (navToggle && siteNav) {
+    var setNav = function (open) {
+      navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      navToggle.textContent = open ? '关闭' : '菜单';
+      siteNav.classList.toggle('is-open', open);
+    };
+    navToggle.addEventListener('click', function (event) {
+      event.stopPropagation();
+      setNav(navToggle.getAttribute('aria-expanded') !== 'true');
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') { setNav(false); navToggle.focus(); }
+    });
+    document.addEventListener('click', function (event) {
+      if (!siteNav.contains(event.target) && !navToggle.contains(event.target)) setNav(false);
+    });
+    siteNav.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () { setNav(false); });
+    });
+    window.addEventListener('resize', function () { if (window.innerWidth > 900) setNav(false); });
+  }
+
   /* ---------- copy code ---------- */
   document.querySelectorAll('.code-block .copy-btn').forEach(function (btn) {
     btn.addEventListener('click', function () {

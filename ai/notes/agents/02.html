@@ -9,18 +9,20 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="工具调用设计模式(Lesson 04: Tool Use Design Pattern) — 内功06 · AI Agent 智能体">
 <meta property="og:description" content="本关练习：为售后退款智能体编写严谨的 Tool JSON Schema。">
-<meta property="og:image" content="/og-knowledge.png">
+<meta property="og:image" content="https://gongjuhe.top/og-knowledge.png?v=2"
+<meta property="og:image:alt" content="AI神功：内功心法 × 神兵利器，15 册 36 关">>
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=11">
-<script src="/ai/notes/notes.js?v=7" defer></script>
-<script type="module" src="/ai/notes/practice.mjs?v=5"></script>
+<link rel="stylesheet" href="/ai/notes/notes.css?v=12">
+<script src="/ai/notes/notes.js?v=8" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=6"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>
 <div class="read-progress"></div>
 <header class="wrap top">
   <a class="brand" href="/">AI神功 <small>KNOWLEDGE BASE</small></a>
-  <nav class="nav" aria-label="主导航">
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>菜单</button>
+  <nav class="nav" id="site-nav" aria-label="主导航">
     <a href="/ai/notes/">全部课程</a>
     <a class="hide-s" href="/ai/notes/review/">错题本</a>
     <a href="/">知识库首页</a>
@@ -95,9 +97,9 @@
         <div class="practice-check">
           <p class="practice-label">评分项</p>
           <div class="check-list" data-criteria></div>
-          <button type="button" class="check-answer" data-check>检查我的答案</button>
-          <div class="practice-feedback" data-feedback></div>
-          <p class="practice-score">结构分 <b data-score>—</b> / 12.5 分</p>
+          <button type="button" class="check-answer" data-check disabled>检查我的答案</button>
+          <div class="practice-feedback" data-feedback role="status" aria-live="polite">评分项加载中…</div>
+          <p class="practice-score" role="status" aria-live="polite">结构分 <b data-score>—</b> / 12.5 分</p>
         </div>
       </div>
       <div class="practice-actions">
@@ -116,7 +118,7 @@
 </main>
 <footer class="wrap">
   <span>AI神功 · 2026</span>
-  <span>免费 · 不登录 · 不卖 API</span>
+  <span><a href="/ai/notes/privacy/">隐私说明</a> · 免费 · 不登录 · 不卖 API</span>
 </footer>
 </body>
 </html>

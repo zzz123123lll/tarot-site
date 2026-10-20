@@ -269,7 +269,7 @@ footer a:hover{color:var(--ink)}
   --card:#FBF6EA;
   --ink:#211D16;
   --ink-2:#3C352A;
-  --muted:#776B58;
+  --muted:#655A49;
   --line:#D9CDB8;
   --line-strong:#B9A88C;
   --accent:#A33A2B;
@@ -448,3 +448,28 @@ footer a:hover{color:var(--seal)}
 @media(max-width:700px){.search-panel{padding:16px}.search-hit{grid-template-columns:42px minmax(0,1fr);gap:10px}.search-arrow{display:none}}
 
 .search-input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;display:none}
+
+/* 移动端菜单与可访问性修复 */
+.nav-toggle{display:none;align-items:center;justify-content:center;min-width:64px;min-height:44px;border:1px solid var(--line-strong);background:transparent;color:var(--ink);font-family:var(--mono);font-size:11px;letter-spacing:.08em;cursor:pointer}
+.nav-toggle:hover{border-color:var(--seal);color:var(--seal)}
+.nav-toggle[aria-expanded="true"]{background:var(--ink);color:#FBF6EA;border-color:var(--ink)}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
+.check-answer:disabled{opacity:.45;cursor:wait}
+.practice-feedback[role="status"]{min-height:18px}
+footer a{color:inherit;border-bottom:1px solid var(--line-strong);padding-bottom:1px}
+footer a:hover{color:var(--seal);border-color:var(--seal)}
+@media(max-width:900px){
+  .top{position:relative}
+  .nav-toggle{display:inline-flex}
+  .nav{display:none;position:absolute;left:20px;right:20px;top:calc(100% + 1px);z-index:50;background:rgba(251,246,234,.985);border:1px solid var(--line-strong);box-shadow:0 12px 30px rgba(33,29,22,.12);padding:8px;flex-direction:column;align-items:stretch;gap:0}
+  .nav.is-open{display:flex}
+  .nav a,.nav .hide-s{display:flex!important;align-items:center;justify-content:space-between;min-height:44px;padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px}
+  .nav a:last-child{border-bottom:0}
+  .nav .cta{margin-top:4px;border:1px solid var(--ink);justify-content:center}
+}
+@media(max-width:560px){
+  .nav{left:14px;right:14px}
+  .brand{font-size:20px}
+}
+
+.privacy-note{font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--muted);border-left:2px solid var(--seal);padding-left:12px;margin-top:26px}

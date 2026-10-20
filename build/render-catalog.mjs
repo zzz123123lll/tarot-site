@@ -33,7 +33,7 @@ function readTrack(id) {
 function pdf(track) {
   return 'mailto:1336089899@qq.com?subject=' + encodeURIComponent('索取《' + track.title + '》完整 PDF');
 }
-function head(title, description, canonical) {
+function head(title, description, canonical, noindex = false) {
   return `<!doctype html>
 <html lang="zh-CN">
 <head>
@@ -41,14 +41,16 @@ function head(title, description, canonical) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
+${noindex ? '<meta name="robots" content="noindex,follow">' : ''}
 <link rel="canonical" href="${esc(canonical)}">
 <meta property="og:type" content="website">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
-<meta property="og:image" content="/og-knowledge.png">
+<meta property="og:image" content="https://gongjuhe.top/og-knowledge.png?v=2"
+<meta property="og:image:alt" content="AI神功：内功心法 × 神兵利器，15 册 36 关">>
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=11">
-<script src="/ai/notes/notes.js?v=7" defer></script>
+<link rel="stylesheet" href="/ai/notes/notes.css?v=12">
+<script src="/ai/notes/notes.js?v=8" defer></script>
 </head>`;
 }
 function shellHeader() {
@@ -56,7 +58,8 @@ function shellHeader() {
 <div class="read-progress"></div>
 <header class="wrap top">
   <a class="brand" href="/">${BRAND} <small>KNOWLEDGE BASE</small></a>
-  <nav class="nav" aria-label="主导航">
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>菜单</button>
+  <nav class="nav" id="site-nav" aria-label="主导航">
     <a href="/ai/notes/">全部课程</a>
     <a class="hide-s" href="/ai/notes/search/">搜索</a>
     <a class="hide-s" href="/#guide">学习路线</a>
@@ -69,12 +72,12 @@ function shellHeader() {
 function footer() {
   return `<footer class="wrap">
   <span>${BRAND} · 2026</span>
-  <span>免费 · 不登录 · 不卖 API</span>
+  <span><a href="/ai/notes/privacy/">隐私说明</a> · 免费 · 不登录 · 不卖 API</span>
 </footer>`;
 }
 
 function renderIndex() {
-  const page = `${head('AI神功 — 内功心法 × 神兵利器', '内功心法 7 册（28 讲）+ 神兵利器 8 册（8 讲），从底层原理到工具实战的完整 AI 学习路线。', 'https://gongjuhe.top/ai/notes/')}
+  const page = `${head('全部课程 — AI神功', '内功心法 7 册（28 讲）+ 神兵利器 8 册（8 讲），从底层原理到工具实战的完整 AI 学习路线。', 'https://gongjuhe.top/ai/notes/')}
 <body>
 ${shellHeader()}
 <main id="main">
@@ -198,7 +201,7 @@ ${footer()}
 
 
 function renderSearch() {
-  const page = `${head('搜索 — AI神功', '搜索 AI神功 的 15 册、36 关课程；按标题、摘要和来源精读关键词查找。', 'https://gongjuhe.top/ai/notes/search/')}
+  const page = `${head('搜索 — AI神功', '搜索 AI神功 的 15 册、36 关课程；按标题、摘要和来源精读关键词查找。', 'https://gongjuhe.top/ai/notes/search/', true)}
 <body>
 ${shellHeader()}
 <main id="main">
@@ -211,8 +214,8 @@ ${shellHeader()}
   <div class="search-panel">
     <label class="search-label" for="search-input">SEARCH</label>
     <input id="search-input" class="search-input" type="search" placeholder="例如：余弦相似度 / DPO / MCP / 量化" autocomplete="off" autofocus>
-    <p class="search-meta" data-search-meta>输入关键词开始搜索。</p>
-    <div class="search-results" data-search-results></div>
+    <p class="search-meta" data-search-meta role="status" aria-live="polite">输入关键词开始搜索。</p>
+    <div class="search-results" data-search-results aria-live="polite"></div>
   </div>
 </section>
 </main>
@@ -252,8 +255,48 @@ function renderSearchIndex() {
   return out;
 }
 
+
+function renderPrivacy() {
+  const body = `
+<section class="wrap track-head">
+  <p class="label">PRIVACY / 隐私说明</p>
+  <h1>隐私说明</h1>
+  <p class="lead">本站是静态学习站，不要求账号，不在服务器保存你的练习答案。</p>
+  <p class="source">最后更新：2026-10-20</p>
+</section>
+<section class="wrap section">
+  <div class="article">
+    <h2>1. 存在你浏览器里的数据</h2>
+    <p>练习草稿、完成状态、客观题错题和“继续上次阅读”使用浏览器 localStorage 保存在本机。它们不会自动上传到服务器；清除本站浏览器数据后会删除。</p>
+    <h2>2. 页面分析</h2>
+    <p>本站页面可能加载 Cloudflare Web Analytics 的统计脚本，用于了解页面访问情况。具体是否启用、采集范围和保留周期取决于 Cloudflare 账户配置；本站代码不接入广告平台，也不出售用户数据。</p>
+    <h2>3. 搜索</h2>
+    <p>搜索在浏览器内对静态索引进行匹配，搜索词不会由本站服务端接收或保存。</p>
+    <h2>4. 邮件联系</h2>
+    <p>页面上的“获取 PDF”是邮件链接。只有你主动点击并发送邮件时，你的邮箱地址和邮件内容才会发送到页面标注的联系邮箱。</p>
+    <h2>5. 不收集什么</h2>
+    <p>本站没有注册、登录、支付、文件上传、评论或用户画像功能，不主动收集姓名、电话、身份证号等信息。</p>
+    <h2>6. 你的控制</h2>
+    <p>你可以通过浏览器的“清除站点数据”删除本机保存的进度和草稿；也可以不点击邮件链接、不使用搜索和练习功能。</p>
+    <p class="privacy-note">本页是技术说明，不构成法律意见；如面向特定地区正式运营，请由合规人员根据适用法律复核。</p>
+  </div>
+</section>`;
+  const page = `${head('隐私说明 — AI神功', 'AI神功隐私说明：本机存储、Cloudflare 分析、搜索和邮件联系说明。', 'https://gongjuhe.top/ai/notes/privacy/')}
+<body>
+${shellHeader()}
+<main id="main">${body}</main>
+${footer()}
+</body>
+</html>
+`;
+  const out = path.join(ROOT, 'ai/notes/privacy/index.html');
+  fs.mkdirSync(path.dirname(out), { recursive: true });
+  fs.writeFileSync(out, page, 'utf8');
+  return out;
+}
+
 function renderReview() {
-  const page = `${head('错题本 — AI神功', '本机保存的客观题错题，答对后自动移除。', 'https://gongjuhe.top/ai/notes/review/')}
+  const page = `${head('错题本 — AI神功', '本机保存的客观题错题，答对后自动移除。', 'https://gongjuhe.top/ai/notes/review/', true)}
 <body>
 ${shellHeader()}
 <main id="main">
@@ -269,7 +312,7 @@ ${shellHeader()}
 </section>
 </main>
 ${footer()}
-<script src="/ai/notes/notes.js?v=7" defer></script>
+<script src="/ai/notes/notes.js?v=8" defer></script>
 <script type="module" src="/ai/notes/review.mjs?v=1"></script>
 </body>
 </html>
@@ -281,7 +324,7 @@ ${footer()}
 }
 
 export function renderCatalog() {
-  const pages = [renderIndex(), renderNeigong(), renderSearch(), renderSearchIndex()];
+  const pages = [renderIndex(), renderNeigong(), renderSearch(), renderSearchIndex(), renderPrivacy()];
   for (const id of ['rag', 'agents', 'llm', 'tools']) pages.push(renderTrack(readTrack(id)));
   pages.push(renderReview());
   return pages;

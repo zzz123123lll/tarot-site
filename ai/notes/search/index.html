@@ -5,21 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>搜索 — AI神功</title>
 <meta name="description" content="搜索 AI神功 的 15 册、36 关课程；按标题、摘要和来源精读关键词查找。">
+<meta name="robots" content="noindex,follow">
 <link rel="canonical" href="https://gongjuhe.top/ai/notes/search/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="搜索 — AI神功">
 <meta property="og:description" content="搜索 AI神功 的 15 册、36 关课程；按标题、摘要和来源精读关键词查找。">
-<meta property="og:image" content="/og-knowledge.png">
+<meta property="og:image" content="https://gongjuhe.top/og-knowledge.png?v=2"
+<meta property="og:image:alt" content="AI神功：内功心法 × 神兵利器，15 册 36 关">>
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=11">
-<script src="/ai/notes/notes.js?v=7" defer></script>
+<link rel="stylesheet" href="/ai/notes/notes.css?v=12">
+<script src="/ai/notes/notes.js?v=8" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>
 <div class="read-progress"></div>
 <header class="wrap top">
   <a class="brand" href="/">AI神功 <small>KNOWLEDGE BASE</small></a>
-  <nav class="nav" aria-label="主导航">
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>菜单</button>
+  <nav class="nav" id="site-nav" aria-label="主导航">
     <a href="/ai/notes/">全部课程</a>
     <a class="hide-s" href="/ai/notes/search/">搜索</a>
     <a class="hide-s" href="/#guide">学习路线</a>
@@ -38,14 +41,14 @@
   <div class="search-panel">
     <label class="search-label" for="search-input">SEARCH</label>
     <input id="search-input" class="search-input" type="search" placeholder="例如：余弦相似度 / DPO / MCP / 量化" autocomplete="off" autofocus>
-    <p class="search-meta" data-search-meta>输入关键词开始搜索。</p>
-    <div class="search-results" data-search-results></div>
+    <p class="search-meta" data-search-meta role="status" aria-live="polite">输入关键词开始搜索。</p>
+    <div class="search-results" data-search-results aria-live="polite"></div>
   </div>
 </section>
 </main>
 <footer class="wrap">
   <span>AI神功 · 2026</span>
-  <span>免费 · 不登录 · 不卖 API</span>
+  <span><a href="/ai/notes/privacy/">隐私说明</a> · 免费 · 不登录 · 不卖 API</span>
 </footer>
 <script type="module" src="/ai/notes/search.mjs?v=1"></script>
 </body>

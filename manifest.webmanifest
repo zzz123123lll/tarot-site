@@ -1,13 +1,13 @@
 {
   "name": "AI神功 — 内功心法 × 神兵利器",
   "short_name": "AI神功",
-  "description": "提示词、RAG、Agent 三套实战练习册，26 关免费阅读与自动得分点检查。",
+  "description": "内功心法 7 册 + 神兵利器 8 册，15 册 36 关免费阅读与自动得分点检查。",
   "id": "/",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#F5F7FA",
-  "theme_color": "#1E5BFF",
+  "background_color": "#F3EDE1",
+  "theme_color": "#9C2E22",
   "lang": "zh-CN",
   "icons": [
     {

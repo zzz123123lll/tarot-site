@@ -19,6 +19,7 @@ function init(root) {
   const answerBox = document.querySelector('.answer');
   let exercise = null;
   let knowledgeChecks = [];
+  let loaded = false;
   let saveTimer = 0;
   let state = read();
 
@@ -75,6 +76,8 @@ function init(root) {
   }
   answer.value = state.answer;
   doneEl.checked = state.done;
+  if (feedback) feedback.textContent = '评分项加载中…';
+  if (checkBtn) checkBtn.disabled = true;
   count();
 
   answer.addEventListener('input', () => {
@@ -131,7 +134,7 @@ function init(root) {
         return `<div class="objective-card" data-check-id="${esc(q.id)}">
           <p class="objective-index">0${index + 1} / ${esc(q.question)}</p>
           <div class="objective-options">${options}</div>
-          <div class="objective-actions"><button type="button" class="check-answer" data-objective-check>检查这道题</button><span class="objective-result" data-objective-result></span></div>
+          <div class="objective-actions"><button type="button" class="check-answer" data-objective-check>检查这道题</button><span class="objective-result" data-objective-result role="status" aria-live="polite"></span></div>
           <p class="objective-explanation" data-objective-explanation></p>
         </div>`;
       }).join('');
@@ -213,7 +216,7 @@ function init(root) {
   }
 
   function check() {
-    if (!exercise) return;
+    if (!exercise || !loaded) return;
     const result = grade(exercise, answer.value);
     const byId = new Map(result.criteria.map((c) => [c.id, c]));
     criteriaBox.querySelectorAll('[data-criterion]').forEach((item) => {
@@ -254,12 +257,16 @@ function init(root) {
     .then((data) => {
       exercise = data.exercise;
       knowledgeChecks = Array.isArray(data.knowledgeChecks) ? data.knowledgeChecks : [];
+      loaded = true;
+      if (checkBtn) { checkBtn.disabled = false; checkBtn.removeAttribute('aria-busy'); }
+      if (feedback) feedback.textContent = '';
       renderCriteria();
       renderObjective();
       reset();
       setStatus(state.at ? '已从本机恢复' : '草稿保存在本机浏览器');
     })
     .catch((err) => {
-      feedback.textContent = '评分数据加载失败：' + err.message;
+      if (feedback) feedback.textContent = '评分数据加载失败：' + err.message + '。请刷新重试。';
+      if (checkBtn) checkBtn.disabled = true;
     });
 }
