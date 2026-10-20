@@ -1,21 +1,34 @@
-// 目录页渲染器：/ai/notes/ 与 /ai/notes/<track>/ 都从 content/tracks 生成。
+// 目录页渲染器：/ai/notes/ 与两个总系列页都从 content/tracks 生成。
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
-const TRACK_ORDER = ['neigong', 'rag', 'agents', 'llm', 'tools'];
-const SHORT = { neigong: '内功心法', rag: 'RAG 知识库', agents: 'AI Agent', llm: '模型定制', tools: '神兵利器' };
-const KICKER = { neigong: '01 / 内功心法', rag: '02 / 内功05 · RAG', agents: '03 / 内功06 · AGENT', llm: '04 / 内功07 · MODEL', tools: '05 / 神兵利器' };
+const ALL_TRACKS = ['neigong', 'rag', 'agents', 'llm', 'tools'];
+const TOP_ORDER = ['neigong', 'tools'];
+const SHORT = { neigong: '内功心法', tools: '神兵利器' };
+const NEIGONG_TOTAL = 28;
+const TOOLS_TOTAL = 8;
+const BRAND = 'AI神功';
+
+const NEIGONG_BOOKS = [
+  { id: '01', title: '大语言模型底层运作原理', href: '/ai/notes/neigong/01', count: 1, desc: '分词、向量、注意力、采样与三阶段训练。' },
+  { id: '02', title: '提示词工程科学', href: '/ai/notes/neigong/02', count: 1, desc: '用条件概率收窄空间：角色、XML 边界、少样本。' },
+  { id: '03', title: '深度推理模型与思维链', href: '/ai/notes/neigong/03', count: 1, desc: 'Test-Time Compute、CoT、GRPO 与混合推理。' },
+  { id: '04', title: '上下文工程与幻觉控制', href: '/ai/notes/neigong/04', count: 1, desc: '窗口、KV Cache、迷失中间与证据边界。' },
+  { id: '05', title: 'RAG 检索增强生成', href: '/ai/notes/rag/', count: 8, desc: '从余弦相似度到 GraphRAG 与量化评估，8 个模块。' },
+  { id: '06', title: 'AI Agent 智能体', href: '/ai/notes/agents/', count: 8, desc: 'ReAct、工具调用、规划、记忆与多智能体。' },
+  { id: '07', title: '模型定制与算力量化', href: '/ai/notes/llm/', count: 8, desc: 'SFT、LoRA/QLoRA、DPO、量化与 vLLM。' },
+];
 
 function esc(s) {
   return String(s == null ? '' : s)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
-function readTracks() {
-  return TRACK_ORDER.map((id) => JSON.parse(fs.readFileSync(path.join(ROOT, 'content/tracks', id + '.json'), 'utf8')));
+function readTrack(id) {
+  return JSON.parse(fs.readFileSync(path.join(ROOT, 'content/tracks', id + '.json'), 'utf8'));
 }
 function pdf(track) {
   return 'mailto:1336089899@qq.com?subject=' + encodeURIComponent('索取《' + track.title + '》完整 PDF');
@@ -42,59 +55,62 @@ function shellHeader() {
   return `<a class="skip" href="#main">跳到主要内容</a>
 <div class="read-progress"></div>
 <header class="wrap top">
-  <a class="brand" href="/">AI 实战通关 <small>KNOWLEDGE BASE</small></a>
+  <a class="brand" href="/">${BRAND} <small>KNOWLEDGE BASE</small></a>
   <nav class="nav" aria-label="主导航">
     <a href="/ai/notes/">全部课程</a>
+    <a class="hide-s" href="/#guide">学习路线</a>
     <a class="hide-s" href="/ai/notes/review/">错题本</a>
-    <a class="hide-s" href="/ai/notes/guide/">学习路线</a>
     <a class="hide-s" href="/#practice">怎么练</a>
-    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%E7%A5%9E%E5%8A%9F%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
   </nav>
 </header>`;
 }
 function footer() {
   return `<footer class="wrap">
-  <span>AI 实战通关 · 2026</span>
+  <span>${BRAND} · 2026</span>
   <span>免费 · 不登录 · 不卖 API</span>
 </footer>`;
 }
 
-function renderIndex(tracks) {
-  const cards = tracks.map((t, i) => {
-    const n = t.levels.length;
-    return `<a class="series-card" href="/ai/notes/${esc(t.id)}/" data-series="${esc(t.id)}" data-total="${n}">
-  <span class="num">${KICKER[t.id]}</span>
-  <h3>${esc(SHORT[t.id])}</h3>
-  <p>${esc(t.subtitle)}</p>
-  <span class="meta-line"><span>${n} 关 · 免费</span><span data-series-progress>0 / ${n} 完成</span><span>开始阅读 ↗</span></span>
-</a>`;
-  }).join('');
-  const total = tracks.reduce((s, t) => s + t.levels.length, 0);
-  const page = `${head('AI 现代必修课 — 36 关免费练习', '内功心法 7 册 + 神兵利器 8 册：LLM 原理、RAG、Agent、模型定制与 8 大 AI 工具，36 关免费阅读与自动检查。', 'https://gongjuhe.top/ai/notes/')}
+function renderIndex() {
+  const page = `${head('AI神功 — 内功心法 × 神兵利器', '内功心法 7 册（28 讲）+ 神兵利器 8 册（8 讲），从底层原理到工具实战的完整 AI 学习路线。', 'https://gongjuhe.top/ai/notes/')}
 <body>
 ${shellHeader()}
 <main id="main">
 <section class="wrap hero">
-  <p class="label">AI KNOWLEDGE BASE / 2026</p>
-  <h1>三套练习册，<br>按关卡读。</h1>
-  <p class="lead">提示词、RAG、Agent。每关一个具体问题，先读原理，再动手，最后对答案。网页免费；完整 PDF 留邮箱发。</p>
-  <div class="hero-meta"><span>${total} 关</span><span>全部免费</span><span>可在站内做题</span><span data-overall>0 / ${total} 关完成</span></div>
+  <p class="label">AI 现代必修课 / 2026</p>
+  <h1>两套功夫，<br>把 AI 练成自己的。</h1>
+  <p class="lead">先修内功心法：原理、提示词、推理、上下文、RAG、Agent、模型定制；再拿神兵利器：8 个主流 AI 工具。每关先读原理，再动手，最后自动检查。</p>
+  <div class="hero-meta"><span>2 大系列</span><span>15 册</span><span>36 关</span><span>全部免费</span><span data-overall>0 / 36 关完成</span></div>
 </section>
 <section class="wrap section">
-  <div class="section-head"><div><p class="label">THE TRACKS / 三条通关线</p><h2>从哪一条开始？</h2></div><a href="/">回到知识库 →</a></div>
-  <div class="series-grid">${cards}</div>
+  <div class="section-head"><div><p class="label">THE SERIES / 两大系列</p><h2>先内功，后利器。</h2></div><a href="/">回到总目录 →</a></div>
+  <div class="series-grid">
+    <a class="series-card" href="/ai/notes/neigong/" data-series="neigong" data-total="28">
+      <span class="num">01 / 内功心法</span>
+      <h3>内功心法</h3>
+      <p>7 册：LLM 底层、提示词、深度推理、上下文工程、RAG、Agent、模型定制。共 28 讲。</p>
+      <span class="meta-line"><span>7 册 · 28 关</span><span>先读原理</span><span>展开 ↗</span></span>
+    </a>
+    <a class="series-card" href="/ai/notes/tools/" data-series="tools" data-total="8">
+      <span class="num">02 / 神兵利器</span>
+      <h3>神兵利器</h3>
+      <p>8 册：云端模型、Deep Research、Cursor、终端 Agent、MCP、Dify、n8n、本地 RAG。</p>
+      <span class="meta-line"><span>8 册 · 8 关</span><span data-series-progress>0 / 8 完成</span><span>展开 ↗</span></span>
+    </a>
+  </div>
 </section>
 <section class="wrap section">
   <div class="section-head"><div><p class="label">HOW TO USE / 怎么读</p><h2>先做，再对答案。</h2></div></div>
   <div class="series-grid">
-    <div class="series-card"><span class="num">01 / READ</span><h3>读原理</h3><p>每关先讲清楚为什么，再给踩坑写法和更高手的写法。不要背模板，先理解结构。</p><span class="meta-line"><span>约 3–5 分钟</span></span></div>
-    <div class="series-card"><span class="num">02 / DO</span><h3>动手改写</h3><p>每关有一道客观题和一道实操题。客观题即时判对错；实操题按评分项给部分分和缺项。</p><span class="meta-line"><span>答案存在本机浏览器</span></span></div>
-    <div class="series-card"><span class="num">03 / REVIEW</span><h3>对答案</h3><p>客观题显示正确答案和解释；实操题打开参考答案，逐项对照评分项。</p><span class="meta-line"><span>${total} 关 · 全部免费</span></span></div>
+    <div class="series-card"><span class="num">01 / READ</span><h3>读原理</h3><p>每关先讲清楚为什么，再给来源任务和拆解。不要背模板，先理解结构。</p><span class="meta-line"><span>约 3–5 分钟</span></span></div>
+    <div class="series-card"><span class="num">02 / DO</span><h3>动手改写</h3><p>每关有客观题和实操题。客观题即时判对错；实操题按评分项给部分分和缺项。</p><span class="meta-line"><span>答案存在本机浏览器</span></span></div>
+    <div class="series-card"><span class="num">03 / REVIEW</span><h3>对答案</h3><p>客观题显示正确答案和解释；实操题打开参考答案，逐项对照评分项。</p><span class="meta-line"><span>36 关 · 全部免费</span></span></div>
   </div>
 </section>
 <section class="wrap section">
   <div class="section-head"><div><p class="label">PDF / 完整版</p><h2>网页免费，PDF 留邮箱。</h2></div></div>
-  <div class="pdf-strip"><p>十五册完整 PDF，整理好后按顺序发。只用于个人学习，不转售。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">留邮箱获取 PDF ↗</a></div>
+  <div class="pdf-strip"><p>十五册完整 PDF，整理好后按顺序发。只用于个人学习，不转售。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%E7%A5%9E%E5%8A%9F%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">留邮箱获取 PDF ↗</a></div>
 </section>
 </main>
 ${footer()}
@@ -106,6 +122,42 @@ ${footer()}
   return out;
 }
 
+function renderNeigong() {
+  const cards = NEIGONG_BOOKS.map((b) => `<a class="series-card" href="${esc(b.href)}">
+  <span class="num">内功${b.id}</span>
+  <h3>${esc(b.title)}</h3>
+  <p>${esc(b.desc)}</p>
+  <span class="meta-line"><span>${b.count === 1 ? '单册 · 1 讲' : b.count + ' 关'}</span><span>开始阅读 ↗</span></span>
+</a>`).join('');
+  const page = `${head('内功心法 — AI神功', '内功心法 7 册：LLM 底层、提示词、深度推理、上下文工程、RAG、Agent、模型定制。', 'https://gongjuhe.top/ai/notes/neigong/')}
+<body>
+${shellHeader()}
+<main id="main">
+<section class="wrap track-head">
+  <p class="label">INNER CRAFT / 7 BOOKS / 28 讲</p>
+  <h1>内功心法</h1>
+  <p class="lead">先修底层原理，再进入 RAG、Agent 与模型定制。7 册不是 7 个孤立的课，而是一条从“看懂模型”到“改造模型”的线。</p>
+  <p class="source">课程来源：AI 现代必修课 · 内功心法篇（7 册）</p>
+  <div class="track-progress" data-track="neigong" data-total="28"><span data-track-count>0 / 28 完成</span><span class="bar"><i></i></span></div>
+</section>
+<section class="wrap section">
+  <div class="section-head"><div><p class="label">BOOKS / 七册</p><h2>按顺序读，或先挑你需要的那一册。</h2></div><a href="/#guide">完整学习路线 →</a></div>
+  <div class="series-grid">${cards}</div>
+</section>
+<section class="wrap section">
+  <div class="pdf-strip"><p>内功心法 7 册，网页免费；完整 PDF 留邮箱发。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%E7%A5%9E%E5%8A%9F%20%E5%86%85%E5%8A%9F%E5%BF%83%E6%B3%95%20PDF">留邮箱获取 PDF ↗</a></div>
+</section>
+</main>
+${footer()}
+</body>
+</html>
+`;
+  const out = path.join(ROOT, 'ai/notes/neigong/index.html');
+  fs.mkdirSync(path.dirname(out), { recursive: true });
+  fs.writeFileSync(out, page, 'utf8');
+  return out;
+}
+
 function renderTrack(t) {
   const n = t.levels.length;
   const rows = t.levels.map((l) => `<a class="level-row" href="${esc(l.href)}" data-url="${esc(l.href)}">
@@ -113,7 +165,7 @@ function renderTrack(t) {
   <span><h3>${esc(l.title)}</h3><p>${esc(l.summary)}</p></span>
   <span class="time">${l.readMinutes} 分钟</span>
 </a>`).join('');
-  const page = `${head(t.title + ' — AI 实战通关', t.subtitle, 'https://gongjuhe.top/ai/notes/' + t.id + '/')}
+  const page = `${head(t.title + ' — AI神功', t.subtitle, 'https://gongjuhe.top/ai/notes/' + t.id + '/')}
 <body>
 ${shellHeader()}
 <main id="main">
@@ -122,6 +174,7 @@ ${shellHeader()}
   <h1>${esc(t.title)}</h1>
   <p class="lead">${esc(t.subtitle)}</p>
   <p class="source">课程来源：${esc(t.source)}</p>
+  <p class="source"><a href="/ai/notes/neigong/">← 回到内功心法</a></p>
   <div class="track-progress" data-track="${esc(t.id)}" data-total="${n}"><span data-track-count>0 / ${n} 完成</span><span class="bar"><i></i></span></div>
 </section>
 ${t.introHtml ? `<section class="wrap section"><div class="book-intro"><details><summary>本册导读 · 顿悟时刻</summary><div class="book-intro-body">${t.introHtml}</div></details></div></section>` : ''}
@@ -142,7 +195,7 @@ ${footer()}
 }
 
 function renderReview() {
-  const page = `${head('错题本 — AI 实战通关', '本机保存的客观题错题，答对后自动移除。', 'https://gongjuhe.top/ai/notes/review/')}
+  const page = `${head('错题本 — AI神功', '本机保存的客观题错题，答对后自动移除。', 'https://gongjuhe.top/ai/notes/review/')}
 <body>
 ${shellHeader()}
 <main id="main">
@@ -170,10 +223,10 @@ ${footer()}
 }
 
 export function renderCatalog() {
-  const tracks = readTracks();
-  const index = renderIndex(tracks);
-  const pages = tracks.map(renderTrack);
-  return [index, ...pages, renderReview()];
+  const pages = [renderIndex(), renderNeigong()];
+  for (const id of ['rag', 'agents', 'llm', 'tools']) pages.push(renderTrack(readTrack(id)));
+  pages.push(renderReview());
+  return pages;
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

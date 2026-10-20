@@ -146,7 +146,7 @@ export function renderLevel(trackId, levelId) {
 <a class="skip" href="#main">跳到主要内容</a>
 <div class="read-progress"></div>
 <header class="wrap top">
-  <a class="brand" href="/">AI 实战通关 <small>KNOWLEDGE BASE</small></a>
+  <a class="brand" href="/">AI神功 <small>KNOWLEDGE BASE</small></a>
   <nav class="nav" aria-label="主导航">
     <a href="/ai/notes/">全部课程</a>
     <a class="hide-s" href="/ai/notes/review/">错题本</a>
@@ -156,7 +156,7 @@ export function renderLevel(trackId, levelId) {
 </header>
 <main id="main">
 <nav class="breadcrumb wrap" aria-label="面包屑">
-  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/${esc(track.id)}/">${esc(track.title)}</a><span class="sep">/</span><span>第 ${String(level.level).padStart(2, '0')} 关</span>
+  <a href="/">AI神功</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/${esc(track.id)}/">${esc(track.title)}</a><span class="sep">/</span><span>第 ${String(level.level).padStart(2, '0')} 关</span>
 </nav>
 <div class="wrap article-shell">
   <aside class="side">
@@ -208,7 +208,7 @@ export function renderLevel(trackId, levelId) {
 </div>
 </main>
 <footer class="wrap">
-  <span>AI 实战通关 · 2026</span>
+  <span>AI神功 · 2026</span>
   <span>免费 · 不登录 · 不卖 API</span>
 </footer>
 </body>

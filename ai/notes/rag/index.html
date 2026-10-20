@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>内功05 · RAG 检索增强生成 — AI 实战通关</title>
+<title>内功05 · RAG 检索增强生成 — AI神功</title>
 <meta name="description" content="StepByStep-RAG 的 8 个模块：从余弦相似度、分块、语义检索到引用、GraphRAG 与评估。">
 <link rel="canonical" href="https://gongjuhe.top/ai/notes/rag/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="内功05 · RAG 检索增强生成 — AI 实战通关">
+<meta property="og:title" content="内功05 · RAG 检索增强生成 — AI神功">
 <meta property="og:description" content="StepByStep-RAG 的 8 个模块：从余弦相似度、分块、语义检索到引用、GraphRAG 与评估。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
@@ -18,13 +18,13 @@
 <a class="skip" href="#main">跳到主要内容</a>
 <div class="read-progress"></div>
 <header class="wrap top">
-  <a class="brand" href="/">AI 实战通关 <small>KNOWLEDGE BASE</small></a>
+  <a class="brand" href="/">AI神功 <small>KNOWLEDGE BASE</small></a>
   <nav class="nav" aria-label="主导航">
     <a href="/ai/notes/">全部课程</a>
+    <a class="hide-s" href="/#guide">学习路线</a>
     <a class="hide-s" href="/ai/notes/review/">错题本</a>
-    <a class="hide-s" href="/ai/notes/guide/">学习路线</a>
     <a class="hide-s" href="/#practice">怎么练</a>
-    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%E7%A5%9E%E5%8A%9F%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
   </nav>
 </header>
 <main id="main">
@@ -33,6 +33,7 @@
   <h1>内功05 · RAG 检索增强生成</h1>
   <p class="lead">StepByStep-RAG 的 8 个模块：从余弦相似度、分块、语义检索到引用、GraphRAG 与评估。</p>
   <p class="source">课程来源：AI 现代必修课 · rag</p>
+  <p class="source"><a href="/ai/notes/neigong/">← 回到内功心法</a></p>
   <div class="track-progress" data-track="rag" data-total="8"><span data-track-count>0 / 8 完成</span><span class="bar"><i></i></span></div>
 </section>
 <section class="wrap section"><div class="book-intro"><details><summary>本册导读 · 顿悟时刻</summary><div class="book-intro-body"><p>顿悟时刻:哦,原来 RAG 外挂知识库在底层是这么工作的! 很多学习者听说“用 RAG(Retrieval-Augmented Generation,检索增强生成)让 AI 读懂私有资料”,以为 只要把几十份 PDF 教材或技术文档往软件里一拖,大模型就能自动记住里面的每一个字;结果一提问,模型 要么答非所问,要么把 A 章节的参数张冠李戴到 B 章节头上。在进入八关实操之前,我们先用最通俗的语言把 RAG 的底层黑盒彻底拆开,让你一眼看穿它的核心奥秘。 真相一:大模型并没有“背下”你的文档,RAG 的本质是“开卷考试前先让图书管理员翻书抓药” 如我们在《内功04:上下文工程》中所学,直接把几百兆的文档塞进上下文窗口不仅昂贵缓慢,还会触发严重 的“迷失中间效应”。因此,RAG 系统把回答问题拆成了两个完全解耦的物理阶段: 第一阶段:切碎建卡与向量化(Chunking &amp; Embedding)——系统先把长文档切成一个个 400〜600 字 的“知识卡片(Chunk)”,再用嵌入模型(如 BAAI/bge-m3 或 text-embedding-3-large)把每张卡片翻译成 一串由 1024 个小数构成的“高维语义坐标”(如 [0.82, -0.15, 0.43, ...])。你可以把这个过程理解为: 在一座立体图书馆里,把所有意思相近的卡片(哪怕字面完全不同,比如“如何重置密码”和“登录凭证 遗忘找回流程”)全都摆在相邻的书架坐标上。 第二阶段:双路检索与开卷作答(Retrieval &amp; Generation)——当用戶提问时,系统先把问题也转成坐 标,去图书馆里把距离最近的 Top-5 张卡片抽出来,拼在提示词里发给大模型:“请仅根据这 5 张卡片的 原文回答问题。” 真相二:为什么 80% 的初级 RAG 系统会失灵?三大底层死穴与科学解药 看懂了“切卡片 → 算距离 → 抽卡片喂给模型”的全流程,你就会立刻顿悟为什么粗放搭建的知识库总是翻 车:</p><p>1. 死穴一:机械定长切分导致“主语丢失”(断章取义)——假设文档第 1 页大标题写着《Linux 内核内存管</p><p>理规范》,第 3 页有一段话写着“默认阈值为 60,调优时建议设为 10”。如果切片器按每 400 字一刀切, 第 3 页这段话脱离了标题,谁也不知道“60”到底指的是哪个内核参数(vm.swappiness)!解药:在每个 切片头部自动注入“文档标题 + 章节层级面包屑路径”(本册第 2 关核心实验)!</p><p>2. 死穴二:纯向量检索对“精确型号/代码符号/专有名词”是近视眼——稠密向量擅长模糊语义匹配,但对</p><p>ERR_CONNECTION_RESET 或特定型号编码的区分度远不如传统关键词匹配。解药:采用“稠密向量检索 (Dense)+ 稀疏关键词检索(BM25)”双路召回,并用 RRF(倒数排名融合)算法无损合并(本册第 4 关核心实验)!</p><p>3. 死穴三:双塔粗排召回的卡片存在排序偏差——Embedding 向量计算属于“双塔独立编码”,问题和卡片</p><p>没有做深层词对词交互。解药:在召回 Top-20 后,引入 Cross-Encoder 重排序模型(Reranker)对 “问题+卡片”做一对一深度交叉打分,只把最精准的 Top-5 喂给生成模型(本册第 4 关进阶实验)! RAG 核心流水线环 节 粗糙默认做法(为什么效果差?) 科学工程做法(本册对应通关关卡)</p><p>1. 文档切片</p><p>(Chunking) 按固定字符数硬切,劈裂代码块与表 格,丢失所属文档与章节标题。 第 2 关:语义边界递归切分 + 滑动窗口重叠 + 头部自动注入章节面包屑。</p><p>2. 检索引擎</p><p>(Retrieval) 只用单一向量检索,搜不到精确错误 码、专有名词与特定编号。 第 3‒4 关:Dense 向量 + Sparse BM25 混合 检索 + RRF 融合 + BGE-Reranker 精排。</p><p>3. 多轮追问</p><p>(Memory) 直接拿用戶的省略代词句(“那它的时间 复杂度呢?”)去搜向量库,完全搜偏。 第 5‒6 关:先将指代句改写为独立完整查询 (Query Rewriting),再检索并强制标注引 用来源 [Doc-ID]。</p><p>4. 全局跨文档归纳 提问“总结这 50 篇文献的三大技术流派</p><p>分歧”,Top-5 切片无法覆盖全局。 第 7‒8 关:引入微软 GraphRAG 知识图谱社 区摘要,结合 RAGAS 四维指标量化评测。</p><h3>一、全景导读:RAG 系统的八大核心知识模块与实验地图</h3><p>通用大模型无法读取你的私有合同、企业内部规章、最新行业研报或个人读书笔记,而微调(Fine-Tuning) 不仅成本高昂,还无法实时更新事实并容易产生幻觉。检索增强生成(Retrieval-Augmented Generation, RAG)通过“先从私有文档库精准检索证据片段,再交由大模型基于证据生成带引用溯源的回答”,成为企业 AI 落地与个人知识变现的第一刚需。本练习册融合了 StepByStep-RAG 的五大递进模块(CosineExplorer → SemanticSeek → SimpleRAG → ConvoRAG → RAGStream )、 RAG Zero to Hero Guide 、 RAG All-in-One 、 Microsoft GraphRAG 以及 AI Infra Engineer Learning (Mod 110),带你通过 8 关实操彻底攻克“搜不到、排 不准、答不对”三大痛点。 闯关阶段 关卡名称与对应开源模块 核心工程能力与攻克痛点 通关分值与自测 检索筑基篇 第 1 关:向量表示与余弦相 似度 (Module 1: CosineExplorer) 理解 Embedding 空间与余弦相似度公 式,手算与实现向量距离检索</p><p>12.5 分 / 得分:</p><p>____ 检索筑基篇 第 2 关:文档解析与黄金分 块策略 (Document Chunking &amp; Overlap) 解决表格/标题被生硬截断问题,掌握递 归分块与父子文档索引</p><p>12.5 分 / 得分:</p><p>____ 核心引擎篇 第 3 关:语义检索引擎构建 (Module 2: SemanticSeek) 搭建本地向量库(Chroma/Qdrant), 跨越词汇鸿沟实现同义语义召回</p><p>12.5 分 / 得分:</p><p>____ 闯关阶段 关卡名称与对应开源模块 核心工程能力与攻克痛点 通关分值与自测 核心引擎篇 第 4 关:混合检索与重排序 优化 (Hybrid Search &amp; Reranking) 融合 BM25 精确匹配与向量检索,用 Cross-Encoder 重排提升 Top-3 精度</p><p>12.5 分 / 得分:</p><p>____ 生成演进篇 第 5 关:核心 RAG 闭环与溯 源控制 (Module 3: SimpleRAG) 组装防幻觉 Context Prompt,强制标注 角标来源与低相关度拒答</p><p>12.5 分 / 得分:</p><p>____ 生成演进篇 第 6 关:多轮对话与查询改 写 (Module 4: ConvoRAG) 攻克多轮对话中的代词指代丢失,掌握 Query Rewrite 与 HyDE 技巧</p><p>12.5 分 / 得分:</p><p>____ 高阶生产篇 第 7 关:知识图谱增强检索 (Advanced: Microsoft GraphRAG) 利用实体关系图与社区摘要攻克“跨全 库全局总结型问题”</p><p>12.5 分 / 得分:</p><p>____ 高阶生产篇 第 8 关:流式交互应用与量 化评估 (Module 5: RAGStream &amp; Eval) 开发 Streamlit 实时文档问答界面,用 RAG 三元组指标诊断系统瓶颈</p><p>12.5 分 / 得分:</p><p>____ 第一阶段:检索筑基篇(第 1‒2 关)——打牢向量数学与高质量文档切片基础</p></div></details></div></section>
@@ -75,7 +76,7 @@
 </section>
 </main>
 <footer class="wrap">
-  <span>AI 实战通关 · 2026</span>
+  <span>AI神功 · 2026</span>
   <span>免费 · 不登录 · 不卖 API</span>
 </footer>
 </body>

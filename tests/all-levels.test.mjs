@@ -83,15 +83,19 @@ for (const tf of trackFiles) {
 }
 
 const catalog = fs.readFileSync(path.join(ROOT, 'ai/notes/index.html'), 'utf8');
-assert.equal((catalog.match(/data-series="/g) || []).length, 5, 'index series cards');
+assert.equal((catalog.match(/data-series="/g) || []).length, 2, 'index series cards');
 assert(catalog.includes('data-overall'), 'index overall progress');
 assert(catalog.includes('notes.js?v=6'), 'index script version');
 for (const tf of trackFiles) {
   const track = JSON.parse(fs.readFileSync(path.join(tracksDir, tf), 'utf8'));
   const trackPage = fs.readFileSync(path.join(ROOT, 'ai/notes', track.id, 'index.html'), 'utf8');
   assert(trackPage.includes('data-track="' + track.id + '"'), track.id + ' track progress');
-  assert.equal((trackPage.match(/class="level-row"/g) || []).length, track.levels.length, track.id + ' level rows');
-  for (const entry of track.levels) assert(trackPage.includes('data-url="' + entry.href + '"'), track.id + ' row ' + entry.id);
+  if (track.id === 'neigong') {
+    assert.equal((trackPage.match(/class="series-card"/g) || []).length, 7, 'neigong book cards');
+  } else {
+    assert.equal((trackPage.match(/class="level-row"/g) || []).length, track.levels.length, track.id + ' level rows');
+    for (const entry of track.levels) assert(trackPage.includes('data-url="' + entry.href + '"'), track.id + ' row ' + entry.id);
+  }
 }
 const guide = fs.readFileSync(path.join(ROOT, 'ai/notes/guide/index.html'), 'utf8');
 assert(guide.includes('AI 现代必修课'), 'guide page');
