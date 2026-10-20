@@ -446,3 +446,5 @@ footer a:hover{color:var(--seal)}
 .search-arrow{color:var(--seal);font-size:15px;padding-top:4px}
 .search-empty{border-bottom:1px solid var(--line);padding:26px 0;color:var(--muted);font-size:14px}
 @media(max-width:700px){.search-panel{padding:16px}.search-hit{grid-template-columns:42px minmax(0,1fr);gap:10px}.search-arrow{display:none}}
+
+.search-input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;display:none}
