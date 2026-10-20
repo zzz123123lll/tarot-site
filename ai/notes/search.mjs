@@ -1,6 +1,7 @@
 const input = document.getElementById('search-input');
 const results = document.querySelector('[data-search-results]');
 const meta = document.querySelector('[data-search-meta]');
+const trackSel = document.querySelector('[data-search-track]');
 let index = [];
 
 function esc(s) {
@@ -19,7 +20,8 @@ function render(query) {
     return;
   }
   const words = q.split(' ').filter(Boolean);
-  const hits = index.map((item) => {
+  const trackFilter = trackSel ? trackSel.value : '';
+  const hits = index.filter((item) => !trackFilter || item.track === trackFilter).map((item) => {
     const title = norm(item.title);
     const body = norm(item.summary + ' ' + item.text);
     let score = 0;
@@ -47,7 +49,9 @@ fetch('/ai/notes/search-index.json', { cache: 'no-cache' })
   .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
   .then((data) => {
     index = Array.isArray(data) ? data : [];
-    const q = new URLSearchParams(location.search).get('q') || '';
+    const params = new URLSearchParams(location.search);
+    const q = params.get('q') || '';
+    if (trackSel && params.get('track')) trackSel.value = params.get('track');
     if (input) input.value = q;
     render(q);
   })
@@ -56,6 +60,15 @@ fetch('/ai/notes/search-index.json', { cache: 'no-cache' })
   });
 
 let timer = 0;
+if (trackSel) {
+  trackSel.addEventListener('change', () => {
+    const q = input ? input.value.trim() : '';
+    const url = new URL(location.href);
+    if (trackSel.value) url.searchParams.set('track', trackSel.value); else url.searchParams.delete('track');
+    history.replaceState(null, '', url);
+    render(q);
+  });
+}
 if (input) {
   input.addEventListener('input', () => {
     clearTimeout(timer);

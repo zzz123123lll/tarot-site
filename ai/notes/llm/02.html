@@ -12,7 +12,7 @@
 <meta property="og:image" content="https://gongjuhe.top/og-knowledge.png?v=2"
 <meta property="og:image:alt" content="AI神功：内功心法 × 神兵利器，15 册 36 关">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=12">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=13">
 <script src="/ai/notes/notes.js?v=8" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=7"></script>
 </head>
@@ -45,6 +45,14 @@
     <h1>后训练数据集构建与对话模板映射(Scientist 3: Post-Training Datasets)</h1>
     <p class="lede">本关练习：将原始业务问答修正为标准 ShareGPT/ChatML 微调样本。</p>
     <div class="meta"><span>约 5 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 AI 现代必修课 · 内功07</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <nav class="page-toc" aria-label="本页目录">
+      <span class="page-toc-label">本页</span>
+      <a href="#understand">30秒 / 3分钟</a>
+      <a href="#reading">来源精读</a>
+      <a href="#lesson">原文</a>
+      <a href="#practice">练习</a>
+      <a href="#answer">答案</a>
+    </nav>
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
@@ -83,7 +91,7 @@
     <p class="reading-takeaway">本关先记住：将该样本重构为包含 system、user、assistant 三角色的 ShareGPT/OpenAI 标准 JSON 数组格式(</p>
     <div class="reading-refs"><span class="label">SOURCES</span><span>PDF 第 2 关（用户提供）</span><a href="https://github.com/mlabonne/llm-course" target="_blank" rel="noopener">mlabonne/llm-course ↗</a></div>
   </section>
-    <section class="lesson"><h3>核心原理</h3><p>正如 mlabonne/llm-course 第 3‒4 章 所言:“在微调中,数据质量永远比堆砌超参数重要十倍 (Always prioritize data quality over parameter optimization)。”新手做微调最常踩的两个致命大坑: 对话模板(Chat Template)错配与结束符(EOS Token)丢失:基座模型与指令模型遵循严格的特殊控 制符格式(如 ChatML 的 &lt;|im_start|&gt;user...&lt;|im_end|&gt; 或 Llama 3 的 &lt;|start_header_id|&gt;... &lt;|eot_id|&gt;)。如果在拼接训练样本时漏掉了助手回答末尾的 eos_token,微调后的模型在推理时永远不知 道何时停下来,会一直自言自语直到填满最大长度! 未只对 Assistant 回复计算 Loss(Completion-only Loss Masking):如果把用戶提问(Instruction) 也算进交叉熵损失,模型会浪费算力去背诵用戶的问题,甚至学会模仿用戶的语气反问用戶。</p><h2>第 2 关实操练习题：将原始业务问答修正为标准 ShareGPT/ChatML 微调样本</h2><h3>任务背景</h3><p>你想把中医问诊记录转化为微调数据集,参照 LLM Fine-Tuning Hands-on Lab 的数据准备规 范进行格式化与去重清洗。 待改造劣质样本:"问:最近总是失眠多梦、手脚心发热怎么办?答:这属于典型的阴虚火旺证,建议滋阴降 火。"(直接按纯文本塞入训练器,无角色边界、无系统提示、无结束符。)</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 将该样本重构为包含 system、user、assistant 三角色的 ShareGPT/OpenAI 标准 JSON 数组格式(</p><p>4.5 分);</p><p>2. 写出映射为 ChatML 模板后的完整纯文本字符串(必须显式包含 &lt;|im_start|&gt; 与 &lt;|im_end|&gt; 特殊标记) (</p><p>4.5 分);</p><p>3. 列出将数据集送入 SFTTrainer 前必做的 3 项数据清洗检查(如近重复去重 MinHash、长度截断检查、 低质回复过滤)(</p><p>3.5 分)。 第二阶段:微调核心篇(第 3‒4 关)——LoRA/QLoRA 高效微调与训练曲线排障</p></section>
+    <section class="lesson" id="lesson"><h3>核心原理</h3><p>正如 mlabonne/llm-course 第 3‒4 章 所言:“在微调中,数据质量永远比堆砌超参数重要十倍 (Always prioritize data quality over parameter optimization)。”新手做微调最常踩的两个致命大坑: 对话模板(Chat Template)错配与结束符(EOS Token)丢失:基座模型与指令模型遵循严格的特殊控 制符格式(如 ChatML 的 &lt;|im_start|&gt;user...&lt;|im_end|&gt; 或 Llama 3 的 &lt;|start_header_id|&gt;... &lt;|eot_id|&gt;)。如果在拼接训练样本时漏掉了助手回答末尾的 eos_token,微调后的模型在推理时永远不知 道何时停下来,会一直自言自语直到填满最大长度! 未只对 Assistant 回复计算 Loss(Completion-only Loss Masking):如果把用戶提问(Instruction) 也算进交叉熵损失,模型会浪费算力去背诵用戶的问题,甚至学会模仿用戶的语气反问用戶。</p><h2>第 2 关实操练习题：将原始业务问答修正为标准 ShareGPT/ChatML 微调样本</h2><h3>任务背景</h3><p>你想把中医问诊记录转化为微调数据集,参照 LLM Fine-Tuning Hands-on Lab 的数据准备规 范进行格式化与去重清洗。 待改造劣质样本:"问:最近总是失眠多梦、手脚心发热怎么办?答:这属于典型的阴虚火旺证,建议滋阴降 火。"(直接按纯文本塞入训练器,无角色边界、无系统提示、无结束符。)</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 将该样本重构为包含 system、user、assistant 三角色的 ShareGPT/OpenAI 标准 JSON 数组格式(</p><p>4.5 分);</p><p>2. 写出映射为 ChatML 模板后的完整纯文本字符串(必须显式包含 &lt;|im_start|&gt; 与 &lt;|im_end|&gt; 特殊标记) (</p><p>4.5 分);</p><p>3. 列出将数据集送入 SFTTrainer 前必做的 3 项数据清洗检查(如近重复去重 MinHash、长度截断检查、 低质回复过滤)(</p><p>3.5 分)。 第二阶段:微调核心篇(第 3‒4 关)——LoRA/QLoRA 高效微调与训练曲线排障</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/llm/02" data-exercise="/content/levels/llm-02.json">
       <div class="practice-head">
         <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
@@ -110,7 +118,7 @@
         <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
       </div>
     </section>
-    <details class="answer">
+    <details class="answer" id="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
       <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:ShareGPT/ChatML 标准微调格式转换与清洗清单 // 1. 标准 ShareGPT / OpenAI Messages JSON 格式 { "messages": [ {"role": "system", "content": "你是一位严谨的中医辅助问诊助手,请根据患者描述的症状进行辨证分析 并给出调理建议。"}, {"role": "user", "content": "最近总是失眠多梦、手脚心发热,舌红少苔,请问是怎么回事?"}, {"role": "assistant", "content": "根据您描述的失眠多梦、五心烦热及舌红少苔症状,中医辨证属于典 型的【阴虚火旺证】。调理原则应以滋阴降火、养心安神为主。"} ] } // 2. 映射为 ChatML 模板后的底层训练文本(注意末尾必须包含 &lt;|im_end|&gt; 结束符!) &lt;|im_start|&gt;system 你是一位严谨的中医辅助问诊助手,请根据患者描述的症状进行辨证分析并给出调理建议。&lt;|im_end|&gt; &lt;|im_start|&gt;user 最近总是失眠多梦、手脚心发热,舌红少苔,请问是怎么回事?&lt;|im_end|&gt; &lt;|im_start|&gt;assistant 根据您描述的失眠多梦、五心烦热及舌红少苔症状,中医辨证属于典型的【阴虚火旺证】。调理原则应以滋阴降 火、养心安神为主。&lt;|im_end|&gt; 数据清洗三步检查清单:1 使用 MinHash 或语义嵌入剔除相似度 &gt; 0.95 的近重复样本;2 过滤超出 max_seq_length 的 截断 残 缺 样 本 与 包 含 “ 抱 歉 我 无 法 回 答 ” 的 拒 答 废 样 本 ; 3 开 启 DataCollatorForCompletionOnlyLM,将 User 与 System 部分的标签设为 -100,仅对 Assistant 输出计算 Loss。 得分要点拆解:规范构建三角色 JSON 结构(4.5 分);准确写出含 `&lt;|im_start|&gt;` 与 `&lt;|im_end|&gt;` 的 ChatML 展开文本(4.5 分);涵盖去重、截断过滤与 Completion-only Loss Masking(3.5 分)。 第 3 关</p></div>
     </details>
@@ -121,7 +129,7 @@
 </main>
 <footer class="wrap">
   <span>AI神功 · 2026</span>
-  <span><a href="/ai/notes/privacy/">隐私说明</a> · 免费 · 不登录 · 不卖 API</span>
+  <span><a href="/ai/notes/privacy/">隐私说明</a> · <a href="/ai/notes/progress/">学习进度</a> · 免费 · 不登录 · 不卖 API</span>
 </footer>
 </body>
 </html>

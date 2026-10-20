@@ -46,7 +46,14 @@
           }
         ],
         "sourceRef": "内功05 · RAG 检索增强生成 · 第8关 · 通关要求 1",
-        "sourceQuote": "构建包含【Context Recall 低 vs. 高】与【Faithfulness 低 vs. 高】的 4 类故障现象诊断与对应修复方 案矩阵(6 分)"
+        "sourceQuote": "构建包含【Context Recall 低 vs. 高】与【Faithfulness 低 vs. 高】的 4 类故障现象诊断与对应修复方 案矩阵(6 分)",
+        "validator": {
+          "type": "code_static",
+          "required": [
+            "def",
+            "return"
+          ]
+        }
       },
       {
         "id": "c2",

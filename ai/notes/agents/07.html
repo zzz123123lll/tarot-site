@@ -12,7 +12,7 @@
 <meta property="og:image" content="https://gongjuhe.top/og-knowledge.png?v=2"
 <meta property="og:image:alt" content="AI神功：内功心法 × 神兵利器，15 册 36 关">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=12">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=13">
 <script src="/ai/notes/notes.js?v=8" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=7"></script>
 </head>
@@ -45,6 +45,14 @@
     <h1>智能体通信协议与上下文工程(Lessons 11‒12: Protocols &amp; Context Engineering)</h1>
     <p class="lede">本关练习：设计长周期研发排障 Agent 的上下文压缩与隔离方案。</p>
     <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 AI 现代必修课 · 内功06</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <nav class="page-toc" aria-label="本页目录">
+      <span class="page-toc-label">本页</span>
+      <a href="#understand">30秒 / 3分钟</a>
+      <a href="#reading">来源精读</a>
+      <a href="#lesson">原文</a>
+      <a href="#practice">练习</a>
+      <a href="#answer">答案</a>
+    </nav>
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
@@ -81,7 +89,7 @@
     <p class="reading-takeaway">本关先记住：制定工具返回值的【入窗截断与摘要规则】(如超过 1,000 字符的原始日志先提取错误码与关键堆栈 行,原始全量文件仅存本地路径引用);</p>
     <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/microsoft/ai-agents-for-beginners/blob/main/12-context-engineering/README.md" target="_blank" rel="noopener">Microsoft · Lesson 12 Context Engineering ↗</a><span>PDF 第 7 关</span></div>
   </section>
-    <section class="lesson"><h3>核心原理</h3><p>在 Microsoft AI Agents for Beginners 第 11 课 ( Agentic Protocols ) 与 第 12 课 ( Context Engineering) 以及 12-Factor Agents 中,生产级智能体工程有两大前沿基石: 标准化协议(MCP / A2A / NLWeb):通过 Model Context Protocol (MCP) 统一大模型与外部数据源/工 具(GitHub、数据库、本地文件)的连接标准;通过 Agent-to-Agent (A2A) 协议实现跨框架智能体之间 的发现与协作。 上下文工程(Context Engineering):模型的上下文窗口不是垃圾桶!如 12-Factor Agents(Own your context window) 所述,必须对传入模型的 Token 进行精细化筛选、修剪与隔离——当工具返回长达 5 万字的原始网页或日志时,先在沙盒中提取关键摘要再塞入主对话上下文,避免“大海捞针”导致注意力 稀释和高昂 Token 账单。</p><h2>第 7 关实操练习题：设计长周期研发排障 Agent 的上下文压缩与隔离方案</h2><h3>任务背景</h3><p>一个运维排障 Agent 在连续调用了 10 次服务器日志查询工具后,上下文累积了 8 万 Token 的 原始报错日志,导致模型开始遗忘最初的用戶指令且响应极其缓慢。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 制定工具返回值的【入窗截断与摘要规则】(如超过 1,000 字符的原始日志先提取错误码与关键堆栈 行,原始全量文件仅存本地路径引用)(5 分);</p><p>2. 设计历史轮次的【滑动窗口 + 里程碑状态压缩(State Compaction)】策略,保留已验证结论、丢弃冗 余试错过程(</p><p>4.5 分);</p><p>3. 说明如何利用子智能体上下文隔离(Sub-agent Context Isolation)让主控 Agent 只接收最终 200 字 排查结论(3 分)。</p></section>
+    <section class="lesson" id="lesson"><h3>核心原理</h3><p>在 Microsoft AI Agents for Beginners 第 11 课 ( Agentic Protocols ) 与 第 12 课 ( Context Engineering) 以及 12-Factor Agents 中,生产级智能体工程有两大前沿基石: 标准化协议(MCP / A2A / NLWeb):通过 Model Context Protocol (MCP) 统一大模型与外部数据源/工 具(GitHub、数据库、本地文件)的连接标准;通过 Agent-to-Agent (A2A) 协议实现跨框架智能体之间 的发现与协作。 上下文工程(Context Engineering):模型的上下文窗口不是垃圾桶!如 12-Factor Agents(Own your context window) 所述,必须对传入模型的 Token 进行精细化筛选、修剪与隔离——当工具返回长达 5 万字的原始网页或日志时,先在沙盒中提取关键摘要再塞入主对话上下文,避免“大海捞针”导致注意力 稀释和高昂 Token 账单。</p><h2>第 7 关实操练习题：设计长周期研发排障 Agent 的上下文压缩与隔离方案</h2><h3>任务背景</h3><p>一个运维排障 Agent 在连续调用了 10 次服务器日志查询工具后,上下文累积了 8 万 Token 的 原始报错日志,导致模型开始遗忘最初的用戶指令且响应极其缓慢。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 制定工具返回值的【入窗截断与摘要规则】(如超过 1,000 字符的原始日志先提取错误码与关键堆栈 行,原始全量文件仅存本地路径引用)(5 分);</p><p>2. 设计历史轮次的【滑动窗口 + 里程碑状态压缩(State Compaction)】策略,保留已验证结论、丢弃冗 余试错过程(</p><p>4.5 分);</p><p>3. 说明如何利用子智能体上下文隔离(Sub-agent Context Isolation)让主控 Agent 只接收最终 200 字 排查结论(3 分)。</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/agents/07" data-exercise="/content/levels/agents-07.json">
       <div class="practice-head">
         <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
@@ -108,7 +116,7 @@
         <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
       </div>
     </section>
-    <details class="answer">
+    <details class="answer" id="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
       <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:研发排障 Agent 的上下文工程与子智能体隔离方案</p><h3>【1. 工具输出入窗过滤器(Tool Output Truncation &amp; Summarization Hook)】</h3><p>当 fetch_server_logs 工具返回原始文本 &gt; 1,500 字符时: - 将完整原始日志保存至沙盒临时文件 /tmp/log_dump_01.txt; - 仅向主 Agent 上下文注入结构化摘要:{"log_file_ref": "/tmp/log_dump_01.txt", "total_lines": 4200, "error_summary": "共出现 37 次 OutOfMemoryError,首次发生于 03:14:02,核心堆栈位于 OrderService.java:142"}。</p><h3>【2. 滑动窗口与里程碑状态压缩(State Compaction)】</h3><p>每执行完 3 轮工具调用,触发一次 Compaction:将前 3 轮的完整 Tool Call / Observation 折叠为一条 100 字的【已验证排查里程碑】(如:“已排除数据库连接池满与 Redis 超时,确认问题锁定在订单导出服务的内存泄 漏”)。</p><h3>【3. 子智能体上下文隔离(Sub-agent Delegation)】</h3><p>当需要深入分析 50MB 的堆转储文件时,主控 Agent 派生一个独立的 LogAnalyzerSubAgent,子智能体在独立上 下文中完成数十次切片检索后销毁自身上下文,仅向主控 Agent 返回最终 200 字的根因定位结论。 得分要点拆解:设计长日志落盘引用 + 摘要入窗机制(5 分);定期折叠历史试错轮次为里程碑状态(4.5 分);利用子智能体独立上下文避免污染主控窗口(3 分)。 第 8 关</p></div>
     </details>
@@ -119,7 +127,7 @@
 </main>
 <footer class="wrap">
   <span>AI神功 · 2026</span>
-  <span><a href="/ai/notes/privacy/">隐私说明</a> · 免费 · 不登录 · 不卖 API</span>
+  <span><a href="/ai/notes/privacy/">隐私说明</a> · <a href="/ai/notes/progress/">学习进度</a> · 免费 · 不登录 · 不卖 API</span>
 </footer>
 </body>
 </html>

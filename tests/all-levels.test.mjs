@@ -25,7 +25,7 @@ function goodAnswerFor(level) {
     } else if (v.type === 'code_static') {
       parts.push(...(v.required || []));
     } else if (v.type === 'regex') {
-      parts.push('<context></context> [1]');
+      for (const p of v.patterns || []) parts.push(p.pattern || '');
     }
   }
   return parts.join('；') + '。这是一段刻意写长的完整答案，用于通过最低长度检查，并覆盖所有评分项。';
@@ -134,6 +134,10 @@ assert(searchPage.includes('noindex'), 'search page noindex');
 const reviewPage = fs.readFileSync(path.join(ROOT, 'ai/notes/review/index.html'), 'utf8');
 assert(reviewPage.includes('noindex'), 'review page noindex');
 const privacyPage = fs.readFileSync(path.join(ROOT, 'ai/notes/privacy/index.html'), 'utf8');
+const progressPage = fs.readFileSync(path.join(ROOT, 'ai/notes/progress/index.html'), 'utf8');
+assert(progressPage.includes('data-export-progress'), 'progress export');
+assert(progressPage.includes('data-import-progress'), 'progress import');
+assert(progressPage.includes('noindex'), 'progress noindex');
 assert(privacyPage.includes('隐私说明'), 'privacy page');
 const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'manifest.webmanifest'), 'utf8'));
 assert(manifest.description.includes('36 关'), 'manifest current count');

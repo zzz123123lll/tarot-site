@@ -45,7 +45,14 @@
           }
         ],
         "sourceRef": "内功05 · RAG 检索增强生成 · 第7关 · 通关要求 1",
-        "sourceQuote": "定义面向产业链研报的实体类型(如公司、核心原材料、产能指标、技术路线)与关系三元组 (Head, Relation, Tail) 抽取 JSON 格式(5 分)"
+        "sourceQuote": "定义面向产业链研报的实体类型(如公司、核心原材料、产能指标、技术路线)与关系三元组 (Head, Relation, Tail) 抽取 JSON 格式(5 分)",
+        "validator": {
+          "type": "code_static",
+          "required": [
+            "def",
+            "return"
+          ]
+        }
       },
       {
         "id": "c2",

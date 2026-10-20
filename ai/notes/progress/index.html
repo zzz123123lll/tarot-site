@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>学习进度 — AI神功</title>
+<meta name="description" content="导出/导入本机学习进度、错题和最近阅读记录。">
+<meta name="robots" content="noindex,follow">
+<link rel="canonical" href="https://gongjuhe.top/ai/notes/progress/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="学习进度 — AI神功">
+<meta property="og:description" content="导出/导入本机学习进度、错题和最近阅读记录。">
+<meta property="og:image" content="https://gongjuhe.top/og-knowledge.png?v=2"
+<meta property="og:image:alt" content="AI神功：内功心法 × 神兵利器，15 册 36 关">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=13">
+<script src="/ai/notes/notes.js?v=8" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<div class="read-progress"></div>
+<header class="wrap top">
+  <a class="brand" href="/">AI神功 <small>KNOWLEDGE BASE</small></a>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>菜单</button>
+  <nav class="nav" id="site-nav" aria-label="主导航">
+    <a href="/ai/notes/">全部课程</a>
+    <a class="hide-s" href="/ai/notes/search/">搜索</a>
+    <a class="hide-s" href="/#guide">学习路线</a>
+    <a class="hide-s" href="/ai/notes/review/">错题本</a>
+    <a class="hide-s" href="/#practice">怎么练</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%E7%A5%9E%E5%8A%9F%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
+  </nav>
+</header>
+<main id="main">
+<section class="wrap track-head">
+  <p class="label">PROGRESS / 学习进度</p>
+  <h1>学习进度与数据</h1>
+  <p class="lead">进度、错题和草稿只保存在本机浏览器。你可以导出备份，或换设备后导入。</p>
+  <div class="track-progress" data-progress-line><span data-progress-count>0 / 36 完成</span><span class="bar"><i></i></span></div>
+</section>
+<section class="wrap section">
+  <div class="progress-panel">
+    <h2>本机进度</h2>
+    <div class="progress-books" data-progress-books></div>
+    <div class="progress-actions">
+      <button type="button" class="btn" data-export-progress>导出进度 JSON</button>
+      <label class="btn btn--ghost" for="import-progress">导入进度 JSON</label>
+      <input id="import-progress" data-import-progress type="file" accept="application/json,.json" hidden>
+      <button type="button" class="btn btn--ghost" data-clear-local>清空本站数据</button>
+    </div>
+    <p class="practice-feedback" data-progress-status role="status" aria-live="polite"></p>
+  </div>
+</section>
+<section class="wrap section">
+  <div class="section-head"><div><p class="label">REVIEW QUEUE / 今日复习</p><h2>先看错题，再继续上次。</h2></div><a href="/ai/notes/review/">完整错题本 →</a></div>
+  <div class="review-queue" data-review-queue></div>
+</section>
+</main>
+<footer class="wrap">
+  <span>AI神功 · 2026</span>
+  <span><a href="/ai/notes/privacy/">隐私说明</a> · <a href="/ai/notes/progress/">学习进度</a> · 免费 · 不登录 · 不卖 API</span>
+</footer>
+<script type="module" src="/ai/notes/progress.mjs?v=1"></script>
+</body>
+</html>

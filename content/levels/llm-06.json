@@ -52,7 +52,16 @@
           }
         ],
         "sourceRef": "内功07 · 模型定制与算力量化 · 第6关 · 通关要求 1",
-        "sourceQuote": "编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模 型路径、density 与 weight 权重分配)(5 分)"
+        "sourceQuote": "编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模 型路径、density 与 weight 权重分配)(5 分)",
+        "validator": {
+          "type": "regex",
+          "patterns": [
+            {
+              "label": "MergeKit 配置",
+              "pattern": "(?i)merge_method|models|density"
+            }
+          ]
+        }
       },
       {
         "id": "c2",

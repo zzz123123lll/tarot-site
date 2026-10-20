@@ -149,7 +149,7 @@ const page = `<!doctype html>
 <meta property="og:image" content="https://gongjuhe.top/og-knowledge.png?v=2"
 <meta property="og:image:alt" content="AI神功：内功心法 × 神兵利器，15 册 36 关">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=12">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=13">
 <script src="/ai/notes/notes.js?v=8" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=7"></script>
 </head>
@@ -182,9 +182,17 @@ ${ld}
     <h1>${esc(level.title)}</h1>
     <p class="lede">${esc(level.summary)}</p>
     <div class="meta"><span>约 ${level.readMinutes} 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 ${esc(level.source)}</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <nav class="page-toc" aria-label="本页目录">
+      <span class="page-toc-label">本页</span>
+      <a href="#understand">30秒 / 3分钟</a>
+      <a href="#reading">来源精读</a>
+      <a href="#lesson">原文</a>
+      <a href="#practice">练习</a>
+      <a href="#answer">答案</a>
+    </nav>
     ${explain}
     ${reading}
-    <section class="lesson">${level.lessonHtml}</section>
+    <section class="lesson" id="lesson">${level.lessonHtml}</section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/${esc(track.id)}/${String(level.level).padStart(2, '0')}" data-exercise="/content/levels/${esc(level.id)}.json">
       <div class="practice-head">
         <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
@@ -211,7 +219,7 @@ ${ld}
         <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
       </div>
     </section>
-    <details class="answer">
+    <details class="answer" id="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
       <div class="answer-body">${level.referenceAnswerHtml}</div>
     </details>
@@ -222,7 +230,7 @@ ${ld}
 </main>
 <footer class="wrap">
   <span>AI神功 · 2026</span>
-  <span><a href="/ai/notes/privacy/">隐私说明</a> · 免费 · 不登录 · 不卖 API</span>
+  <span><a href="/ai/notes/privacy/">隐私说明</a> · <a href="/ai/notes/progress/">学习进度</a> · 免费 · 不登录 · 不卖 API</span>
 </footer>
 </body>
 </html>

@@ -9,7 +9,7 @@ const ROOT = path.resolve(__dirname, '..');
 const pages = [
   'index.html', '404.html', 'offline.html',
   'ai/notes/index.html', 'ai/notes/guide/index.html', 'ai/notes/search/index.html',
-  'ai/notes/review/index.html', 'ai/notes/privacy/index.html',
+  'ai/notes/review/index.html', 'ai/notes/privacy/index.html', 'ai/notes/progress/index.html',
   'ai/notes/neigong/index.html', 'ai/notes/rag/index.html',
   'ai/notes/agents/index.html', 'ai/notes/llm/index.html', 'ai/notes/tools/index.html',
   'ai/notes/rag/01.html', 'ai/notes/neigong/01.html', 'ai/notes/tools/01.html'

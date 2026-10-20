@@ -29,7 +29,16 @@
           }
         ],
         "sourceRef": "AI 现代必修课 · 深度推理模型与思维链机制 · 本册原文",
-        "sourceQuote": "这一册只解决一件事：深度推理模型为什么“先想再答”，以及为什么旧的分步提示词不再适用"
+        "sourceQuote": "这一册只解决一件事：深度推理模型为什么“先想再答”，以及为什么旧的分步提示词不再适用",
+        "validator": {
+          "type": "regex",
+          "patterns": [
+            {
+              "label": "推理机制",
+              "pattern": "(?i)cot|grpo|test-time"
+            }
+          ]
+        }
       },
       {
         "id": "c2",

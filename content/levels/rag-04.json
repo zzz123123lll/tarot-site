@@ -41,7 +41,16 @@
           }
         ],
         "sourceRef": "内功05 · RAG 检索增强生成 · 第4关 · 通关要求 1",
-        "sourceQuote": "写出标准 RRF(Reciprocal Rank Fusion)打分公式(含平滑常数 k = 60)及 Python 融合排序实现 (5.5 分)"
+        "sourceQuote": "写出标准 RRF(Reciprocal Rank Fusion)打分公式(含平滑常数 k = 60)及 Python 融合排序实现 (5.5 分)",
+        "validator": {
+          "type": "regex",
+          "patterns": [
+            {
+              "label": "RRF 公式",
+              "pattern": "(?i)rrf|reciprocal|60"
+            }
+          ]
+        }
       },
       {
         "id": "c2",

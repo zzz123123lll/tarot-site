@@ -29,7 +29,16 @@
           }
         ],
         "sourceRef": "AI 现代必修课 · 上下文工程与幻觉控制 · 本册原文",
-        "sourceQuote": "这一册只解决一件事：从“写好一句话”升级为“管理整个信息场”，包括窗口、缓存、记忆与幻觉"
+        "sourceQuote": "这一册只解决一件事：从“写好一句话”升级为“管理整个信息场”，包括窗口、缓存、记忆与幻觉",
+        "validator": {
+          "type": "regex",
+          "patterns": [
+            {
+              "label": "上下文机制",
+              "pattern": "(?i)kv cache|lost|context"
+            }
+          ]
+        }
       },
       {
         "id": "c2",

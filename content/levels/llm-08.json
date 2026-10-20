@@ -57,7 +57,16 @@
           }
         ],
         "sourceRef": "内功07 · 模型定制与算力量化 · 第8关 · 通关要求 1",
-        "sourceQuote": "写出完整的 vllm serve 启动命令及核心生产参数(含量化格式、最大上下文长度限制、GPU 显存预留 比例、前缀缓存开关与多 LoRA 模块路径映射)(5.5 分)"
+        "sourceQuote": "写出完整的 vllm serve 启动命令及核心生产参数(含量化格式、最大上下文长度限制、GPU 显存预留 比例、前缀缓存开关与多 LoRA 模块路径映射)(5.5 分)",
+        "validator": {
+          "type": "regex",
+          "patterns": [
+            {
+              "label": "vLLM 启动",
+              "pattern": "(?i)vllm serve|--model"
+            }
+          ]
+        }
       },
       {
         "id": "c2",

@@ -12,7 +12,7 @@
 <meta property="og:image" content="https://gongjuhe.top/og-knowledge.png?v=2"
 <meta property="og:image:alt" content="AI神功：内功心法 × 神兵利器，15 册 36 关">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=12">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=13">
 <script src="/ai/notes/notes.js?v=8" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=7"></script>
 </head>
@@ -45,6 +45,14 @@
     <h1>元认知与自我反思机制(Lesson 09: Metacognition Design Pattern)</h1>
     <p class="lede">本关练习：构建“自然语言转 SQL 报表 Agent”的自检自愈闭环。</p>
     <div class="meta"><span>约 5 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 AI 现代必修课 · 内功06</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <nav class="page-toc" aria-label="本页目录">
+      <span class="page-toc-label">本页</span>
+      <a href="#understand">30秒 / 3分钟</a>
+      <a href="#reading">来源精读</a>
+      <a href="#lesson">原文</a>
+      <a href="#practice">练习</a>
+      <a href="#answer">答案</a>
+    </nav>
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
@@ -81,7 +89,7 @@
     <p class="reading-takeaway">本关先记住：设计 Generator → Validator → Refiner 三步元认知工作流;</p>
     <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/microsoft/ai-agents-for-beginners/blob/main/09-metacognition/README.md" target="_blank" rel="noopener">Microsoft · Lesson 9 Metacognition ↗</a><span>PDF 第 5 关</span></div>
   </section>
-    <section class="lesson"><h3>核心原理</h3><p>为什么顶级 Agent 写出的代码或报告极少出错?因为它们不会把第一次生成的结果直接丢给用戶! 根据 Microsoft AI Agents for Beginners 第 9 课(Metacognition) 与 Agentic AI Masterclass 的 Execution Hooks 机制,元认知(Metacognition)是指让 Agent 具备“自我监控、自我评估与自我纠错”能力。核心实 现模式是构建 Actor-Critic(执行者-审查者)内部循环:当 Actor 生成初稿或 SQL/Python 代码后,先由验证 器(确定性单元测试 / 语法检查器 + Critic 审查提示词)按评分标准打分;只有全部指标达标才放行输出,否 则将具体报错信息喂回给 Actor 进行定向修复(上限 2‒3 轮)。</p><h2>第 5 关实操练习题：构建“自然语言转 SQL 报表 Agent”的自检自愈闭环</h2><h3>任务背景</h3><p>业务人员用自然语言让 Agent 查询数据库生成月度销售报表,直接执行模型生成的 SQL 极易出 现字段名拼写错误、漏加时间过滤条件或慢查询锁表。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设计 Generator → Validator → Refiner 三步元认知工作流(4 分);</p><p>2. 在 Validator 阶段同时设置【确定性规则检查】(如拦截 DROP/DELETE/UPDATE、强制检查是否包含 LIMIT 与分区日期过滤)与【语义对⻬检查】(核对是否遗漏业务口径)(</p><p>5.5 分);</p><p>3. 定义带着数据库报错堆栈(Error Traceback)回传给 Refiner 的结构化修复模板与最大重试上限(3 分)。</p></section>
+    <section class="lesson" id="lesson"><h3>核心原理</h3><p>为什么顶级 Agent 写出的代码或报告极少出错?因为它们不会把第一次生成的结果直接丢给用戶! 根据 Microsoft AI Agents for Beginners 第 9 课(Metacognition) 与 Agentic AI Masterclass 的 Execution Hooks 机制,元认知(Metacognition)是指让 Agent 具备“自我监控、自我评估与自我纠错”能力。核心实 现模式是构建 Actor-Critic(执行者-审查者)内部循环:当 Actor 生成初稿或 SQL/Python 代码后,先由验证 器(确定性单元测试 / 语法检查器 + Critic 审查提示词)按评分标准打分;只有全部指标达标才放行输出,否 则将具体报错信息喂回给 Actor 进行定向修复(上限 2‒3 轮)。</p><h2>第 5 关实操练习题：构建“自然语言转 SQL 报表 Agent”的自检自愈闭环</h2><h3>任务背景</h3><p>业务人员用自然语言让 Agent 查询数据库生成月度销售报表,直接执行模型生成的 SQL 极易出 现字段名拼写错误、漏加时间过滤条件或慢查询锁表。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设计 Generator → Validator → Refiner 三步元认知工作流(4 分);</p><p>2. 在 Validator 阶段同时设置【确定性规则检查】(如拦截 DROP/DELETE/UPDATE、强制检查是否包含 LIMIT 与分区日期过滤)与【语义对⻬检查】(核对是否遗漏业务口径)(</p><p>5.5 分);</p><p>3. 定义带着数据库报错堆栈(Error Traceback)回传给 Refiner 的结构化修复模板与最大重试上限(3 分)。</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/agents/05" data-exercise="/content/levels/agents-05.json">
       <div class="practice-head">
         <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
@@ -108,7 +116,7 @@
         <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
       </div>
     </section>
-    <details class="answer">
+    <details class="answer" id="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
       <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:Text-to-SQL 报表智能体的 Actor-Critic 自愈闭环 def run_self_healing_sql_agent(user_query: str, max_retries: int = 3): draft_sql = sql_generator_agent.run(user_query) for attempt in range(1, max_retries + 1): # 1. 确定性安全与性能护栏检查 (Deterministic Hook) if any(bad in draft_sql.upper() for bad in ["DROP ", "DELETE ", "UPDATE ", "TRUNCATE "]): return {"error": "安全拦截:禁止执行非只读 SQL 语句"} if "LIMIT" not in draft_sql.upper() or "dt &gt;=" not in draft_sql: feedback = "缺少分区字段 dt 过滤或未添加 LIMIT 限制,存在全表扫描⻛险,请修正。" draft_sql = sql_refiner_agent.run(query=user_query, bad_sql=draft_sql, error=feedback) continue # 2. 沙盒 EXPLAIN 语法与字段验证 + Critic 语义核对 exec_result = db_sandbox.explain_and_validate(draft_sql) if not exec_result.is_valid: # 将真实数据库报错堆栈喂回 Refiner 定向修复 draft_sql = sql_refiner_agent.run( query=user_query, bad_sql=draft_sql, error=exec_result.traceback ) continue critic_Check = sql_critic_agent.verify_business_logic(user_query, draft_sql) if critic_Check.passed: return db_sandbox.execute_readonly(draft_sql) draft_sql = sql_refiner_agent.run(query=user_query, bad_sql=draft_sql, error=critic_Check.reason) return {"error": "超过最大自愈重试次数,已转人工数据工程师处理"} 得分要点拆解:清晰实现 Generator → Validator → Refiner 循环(4 分);结合确定性正则/分区拦截与 Critic 业务逻辑核验(5.5 分);将真实 Traceback 注入修复提示并限制最大重试次数(3 分)。 第 6 关</p></div>
     </details>
@@ -119,7 +127,7 @@
 </main>
 <footer class="wrap">
   <span>AI神功 · 2026</span>
-  <span><a href="/ai/notes/privacy/">隐私说明</a> · 免费 · 不登录 · 不卖 API</span>
+  <span><a href="/ai/notes/privacy/">隐私说明</a> · <a href="/ai/notes/progress/">学习进度</a> · 免费 · 不登录 · 不卖 API</span>
 </footer>
 </body>
 </html>

@@ -49,7 +49,16 @@
           }
         ],
         "sourceRef": "内功07 · 模型定制与算力量化 · 第3关 · 通关要求 1",
-        "sourceQuote": "写出完整的 LoRA 配置字典(含 r、lora_alpha、target_modules 全 7 层挂载及 use_gradient_checkpointing)(5 分)"
+        "sourceQuote": "写出完整的 LoRA 配置字典(含 r、lora_alpha、target_modules 全 7 层挂载及 use_gradient_checkpointing)(5 分)",
+        "validator": {
+          "type": "regex",
+          "patterns": [
+            {
+              "label": "LoRA 配置",
+              "pattern": "(?i)r\\b|lora_alpha|target_modules"
+            }
+          ]
+        }
       },
       {
         "id": "c2",

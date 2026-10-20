@@ -45,7 +45,16 @@
           }
         ],
         "sourceRef": "内功06 · AI Agent 智能体 · 第1关 · 通关要求 1",
-        "sourceQuote": "明确写出 Agent 的四步 ReAct 推理轨迹模板:Thought → Action → Observation → Final Decision (4.5 分)"
+        "sourceQuote": "明确写出 Agent 的四步 ReAct 推理轨迹模板:Thought → Action → Observation → Final Decision (4.5 分)",
+        "validator": {
+          "type": "regex",
+          "patterns": [
+            {
+              "label": "ReAct 三要素",
+              "pattern": "(?i)thought|action|observation"
+            }
+          ]
+        }
       },
       {
         "id": "c2",

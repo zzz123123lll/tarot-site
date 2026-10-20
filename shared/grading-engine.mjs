@@ -82,7 +82,10 @@ function runValidator(spec, answerText) {
     const patterns = Array.isArray(spec.patterns) ? spec.patterns : [];
     for (const p of patterns) {
       let re;
-      try { re = new RegExp(p.pattern, p.flags || ''); } catch (e) { missing.push('校验规则无效：' + (p.label || p.pattern)); continue; }
+      let pattern = String(p.pattern || '');
+      let flags = String(p.flags || '');
+      if (pattern.startsWith('(?i)')) { pattern = pattern.slice(4); flags += 'i'; }
+      try { re = new RegExp(pattern, flags); } catch (e) { missing.push('校验规则无效：' + (p.label || p.pattern)); continue; }
       if (!re.test(String(answerText))) missing.push(p.label || ('缺少结构：' + p.pattern));
     }
     return { type: 'regex', pass: missing.length === 0, missing };

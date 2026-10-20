@@ -29,7 +29,16 @@
           }
         ],
         "sourceRef": "AI 现代必修课 · Cursor AI 原生编程 · 本册原文",
-        "sourceQuote": "这一册只解决一件事：Cursor 不是网页聊天框，而是带 AST 全仓索引、局部 Diff 和 Plan/Act 权限边界的编程环境"
+        "sourceQuote": "这一册只解决一件事：Cursor 不是网页聊天框，而是带 AST 全仓索引、局部 Diff 和 Plan/Act 权限边界的编程环境",
+        "validator": {
+          "type": "regex",
+          "patterns": [
+            {
+              "label": "Cursor 结构",
+              "pattern": "(?i)ast|diff|plan"
+            }
+          ]
+        }
       },
       {
         "id": "c2",

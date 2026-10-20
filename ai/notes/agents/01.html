@@ -12,7 +12,7 @@
 <meta property="og:image" content="https://gongjuhe.top/og-knowledge.png?v=2"
 <meta property="og:image:alt" content="AI神功：内功心法 × 神兵利器，15 册 36 关">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=12">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=13">
 <script src="/ai/notes/notes.js?v=8" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=7"></script>
 </head>
@@ -45,6 +45,14 @@
     <h1>Agent 核心循环与框架选型(Lessons 01‒03: Intro, Frameworks &amp; Patterns)</h1>
     <p class="lede">先把 Agent 的循环、触发条件和熔断规则写完整。</p>
     <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 AI 现代必修课 · 内功06</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <nav class="page-toc" aria-label="本页目录">
+      <span class="page-toc-label">本页</span>
+      <a href="#understand">30秒 / 3分钟</a>
+      <a href="#reading">来源精读</a>
+      <a href="#lesson">原文</a>
+      <a href="#practice">练习</a>
+      <a href="#answer">答案</a>
+    </nav>
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
@@ -81,7 +89,7 @@
     <p class="reading-takeaway">本关先记住：明确写出 Agent 的四步 ReAct 推理轨迹模板:Thought → Action → Observation → Final Decision (</p>
     <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/microsoft/ai-agents-for-beginners/blob/main/01-intro-to-ai-agents/README.md" target="_blank" rel="noopener">Microsoft · Lesson 1 Intro to AI Agents ↗</a><span>PDF 第 1 关</span></div>
   </section>
-    <section class="lesson"><h3>核心原理</h3><p>在 Microsoft AI Agents for Beginners 第 1‒3 课 与 Agentic AI Masterclass Exercise 1 中,智能体 与普通大模型调用的本质区别在于 ReAct(Reasoning + Acting)循环:模型接收用戶目标后,进入“思考 (Thought)→ 决定调用工具(Action)→ 获取环境反馈(Observation)→ 再次思考”的循环,直至满足 终止条件。在工程实现上,无论是使用 Pydantic AI、LangGraph、CrewAI 还是 OpenAI Agents SDK(详见 ed-donner/agents),都必须明确定义四个核心组件:Model(底层推理模型)、Instructions(系统级行为 准则)、Tools(可执行外部函数集)与 Loop Guard(最大循环步数限制,防死循环烧钱)。 踩坑设计 vs. 工业级设计对比: 新手踩坑设计:把所有业务逻辑硬塞进一个超长 Prompt,既不限制最大迭代步数(max_steps),也不区分 状态变量,一旦外部 API 报错,Agent 就陷入无限重试死循环,几分钟耗尽 API 额度。 工业级结构化设计:显式声明智能体状态机,设置 max_iterations = 5,并严格规范每一步的 Thought / Action / Observation 输出格式。</p><h2>第 1 关实操练习题：设计“电商机票差价监控与改签助手”的 ReAct 核心循环</h2><h3>任务背景</h3><p>你需要参照 Agentic AI Masterclass 的编码范式,为一个“自动查询航班实时价格并在低于历 史购票价 200 元以上时生成改签方案”的智能体编写系统指令与循环终止条件。 待改造劣质设计:“你是一个机票助手,帮我查一下用戶买的航班现在多少钱,如果便宜了就帮他改签。”</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 明确写出 Agent 的四步 ReAct 推理轨迹模板:Thought → Action → Observation → Final Decision (</p><p>4.5 分);</p><p>2. 定义清晰的触发条件(差价 ≥ 200 元且扣除改签手续费后净省 &gt; 0 元)(4 分);</p><p>3. 设置防死循环与异常熔断规则(如查询接口连续失败 2 次或总步数达 4 步立即停止并告警)(4 分)。</p></section>
+    <section class="lesson" id="lesson"><h3>核心原理</h3><p>在 Microsoft AI Agents for Beginners 第 1‒3 课 与 Agentic AI Masterclass Exercise 1 中,智能体 与普通大模型调用的本质区别在于 ReAct(Reasoning + Acting)循环:模型接收用戶目标后,进入“思考 (Thought)→ 决定调用工具(Action)→ 获取环境反馈(Observation)→ 再次思考”的循环,直至满足 终止条件。在工程实现上,无论是使用 Pydantic AI、LangGraph、CrewAI 还是 OpenAI Agents SDK(详见 ed-donner/agents),都必须明确定义四个核心组件:Model(底层推理模型)、Instructions(系统级行为 准则)、Tools(可执行外部函数集)与 Loop Guard(最大循环步数限制,防死循环烧钱)。 踩坑设计 vs. 工业级设计对比: 新手踩坑设计:把所有业务逻辑硬塞进一个超长 Prompt,既不限制最大迭代步数(max_steps),也不区分 状态变量,一旦外部 API 报错,Agent 就陷入无限重试死循环,几分钟耗尽 API 额度。 工业级结构化设计:显式声明智能体状态机,设置 max_iterations = 5,并严格规范每一步的 Thought / Action / Observation 输出格式。</p><h2>第 1 关实操练习题：设计“电商机票差价监控与改签助手”的 ReAct 核心循环</h2><h3>任务背景</h3><p>你需要参照 Agentic AI Masterclass 的编码范式,为一个“自动查询航班实时价格并在低于历 史购票价 200 元以上时生成改签方案”的智能体编写系统指令与循环终止条件。 待改造劣质设计:“你是一个机票助手,帮我查一下用戶买的航班现在多少钱,如果便宜了就帮他改签。”</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 明确写出 Agent 的四步 ReAct 推理轨迹模板:Thought → Action → Observation → Final Decision (</p><p>4.5 分);</p><p>2. 定义清晰的触发条件(差价 ≥ 200 元且扣除改签手续费后净省 &gt; 0 元)(4 分);</p><p>3. 设置防死循环与异常熔断规则(如查询接口连续失败 2 次或总步数达 4 步立即停止并告警)(4 分)。</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/agents/01" data-exercise="/content/levels/agents-01.json">
       <div class="practice-head">
         <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
@@ -108,7 +116,7 @@
         <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
       </div>
     </section>
-    <details class="answer">
+    <details class="answer" id="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
       <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:机票差价监控 Agent 的 ReAct 循环与熔断规范</p><h3>【System Instructions: Flight Rebooking Agent】</h3><p>你是一个严谨的机票差价监控与改签评估智能体。请严格按照以下 ReAct 循环处理用戶订单,最大循环步数限制 为 max_steps = 4: 每一步推理必须严格输出以下结构: - Thought: 分析当前已知的订单原价、退改签政策与还需获取的实时数据。 - Action: 调用指定工具(如 get_Order_Info 或 fetch_Live_Flight_Price)。 - Observation: 接收工具返回的真实 JSON 数据。</p><h3>【业务判定与熔断规则】</h3><p>1. 净收益计算公式:净节省金额 = (历史出票价 - 当前实时票价) - 改签手续费。</p><p>2. 触发改签方案条件:必须同时满足 (历史出票价 - 当前实时票价) &gt;= 200 元,且 净节省金额 &gt; 0 元。若不</p><p>满足,立即进入 Final Decision 输出“暂不建议改签”及原因。</p><p>3. 异常熔断机制:若外部航班价格接口返回超时或 5xx 错误,最多允许重试 1 次(累计失败达 2 次立即终止</p><p>循环),严禁盲目重复调用或编造票价,直接输出接口异常告警。 得分要点拆解:清晰定义四步 ReAct 循环与步数上限(4.5 分);准确列出差价 ≥ 200 元且扣费后净省 &gt; 0 的 双重算式(4 分);包含连续失败 2 次即熔断告警的防死循环机制(4 分)。 第 2 关</p></div>
     </details>
@@ -119,7 +127,7 @@
 </main>
 <footer class="wrap">
   <span>AI神功 · 2026</span>
-  <span><a href="/ai/notes/privacy/">隐私说明</a> · 免费 · 不登录 · 不卖 API</span>
+  <span><a href="/ai/notes/privacy/">隐私说明</a> · <a href="/ai/notes/progress/">学习进度</a> · 免费 · 不登录 · 不卖 API</span>
 </footer>
 </body>
 </html>

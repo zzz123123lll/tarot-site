@@ -12,7 +12,7 @@
 <meta property="og:image" content="https://gongjuhe.top/og-knowledge.png?v=2"
 <meta property="og:image:alt" content="AI神功：内功心法 × 神兵利器，15 册 36 关">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=12">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=13">
 <script src="/ai/notes/notes.js?v=8" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=7"></script>
 </head>
@@ -45,6 +45,14 @@
     <h1>训练曲线诊断与过拟合排障(Training Monitoring &amp; Loss Audit)</h1>
     <p class="lede">本关练习：诊断三组异常微调监控日志并开出调参处方。</p>
     <div class="meta"><span>约 5 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 AI 现代必修课 · 内功07</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <nav class="page-toc" aria-label="本页目录">
+      <span class="page-toc-label">本页</span>
+      <a href="#understand">30秒 / 3分钟</a>
+      <a href="#reading">来源精读</a>
+      <a href="#lesson">原文</a>
+      <a href="#practice">练习</a>
+      <a href="#answer">答案</a>
+    </nav>
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
@@ -83,7 +91,7 @@
     <p class="reading-takeaway">本关先记住：针对实验1(过拟合),给出至少 3 项具体的参数调整或数据改进措施(</p>
     <div class="reading-refs"><span class="label">SOURCES</span><span>PDF 第 4 关（用户提供）</span><a href="https://github.com/mlabonne/llm-course" target="_blank" rel="noopener">mlabonne/llm-course ↗</a></div>
   </section>
-    <section class="lesson"><h3>核心原理</h3><p>在 LLM Fine-Tuning Hands-on Lab 与 mlabonne/llm-course 中,启动微调脚本只是开始,能否 读懂 Weights &amp; Biases (WandB) 或 TensorBoard 上的 Train Loss(训练损失)、Eval Loss(验证损失)与 Gradient Norm(梯度范数) 曲线,才是区分新手与老手的分水岭: 典型过拟合(Overfitting):Train Loss 一路陡降趋近于 0.1,但 Eval Loss 在第 1 个 Epoch 后开始掉头向 上反弹!此时模型已经沦为“死记硬背训练集的复读机”,丧失了通用推理能力。 Loss 尖峰与梯度爆炸(Loss Spikes &amp; Gradient Explosion):训练中途梯度范数突然飙升、Loss 变成 NaN,通常是因为学习率过大、缺少 Warmup 预热步数,或混入了极长/格式损坏的脏数据样本。 注意 SFT 的能力边界:SFT 的本质是“教模型学会回答的格式与说话⻛格,激活预训练已有知识”,绝不 能靠少量 SFT 样本去强行灌输海量全新的实时事实(新事实应走 RAG,强行 SFT 只会加剧幻觉)。</p><h2>第 4 关实操练习题：诊断三组异常微调监控日志并开出调参处方</h2><h3>任务背景</h3><p>团队实习生跑了三次微调实验,分别出现了:1 第 2 轮起验证集 Loss 持续上升且模型回答变 成机械背诵;2 开局第 15 步 Loss 突变为 NaN 崩溃;3 微调了 500 条公司今年最新产品价格表后,模型 依然经常报价错误。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 针对实验1(过拟合),给出至少 3 项具体的参数调整或数据改进措施(</p><p>4.5 分);</p><p>2. 针对实验2(开局梯度爆炸 NaN),从学习率调度(Warmup)、梯度裁剪(max_grad_norm)与脏数据 排查三个角度给出修复方案(</p><p>4.5 分);</p><p>3. 针对实验3,从“SFT 与 RAG 的职责边界”角度解释为什么用 500 条问答微调记不住精确价格表,并 给出正确架构建议(</p><p>3.5 分)。 第三阶段:对⻬与融合篇(第 5‒6 关)——偏好对⻬(DPO/GRPO)、模型融合 与科学评测</p></section>
+    <section class="lesson" id="lesson"><h3>核心原理</h3><p>在 LLM Fine-Tuning Hands-on Lab 与 mlabonne/llm-course 中,启动微调脚本只是开始,能否 读懂 Weights &amp; Biases (WandB) 或 TensorBoard 上的 Train Loss(训练损失)、Eval Loss(验证损失)与 Gradient Norm(梯度范数) 曲线,才是区分新手与老手的分水岭: 典型过拟合(Overfitting):Train Loss 一路陡降趋近于 0.1,但 Eval Loss 在第 1 个 Epoch 后开始掉头向 上反弹!此时模型已经沦为“死记硬背训练集的复读机”,丧失了通用推理能力。 Loss 尖峰与梯度爆炸(Loss Spikes &amp; Gradient Explosion):训练中途梯度范数突然飙升、Loss 变成 NaN,通常是因为学习率过大、缺少 Warmup 预热步数,或混入了极长/格式损坏的脏数据样本。 注意 SFT 的能力边界:SFT 的本质是“教模型学会回答的格式与说话⻛格,激活预训练已有知识”,绝不 能靠少量 SFT 样本去强行灌输海量全新的实时事实(新事实应走 RAG,强行 SFT 只会加剧幻觉)。</p><h2>第 4 关实操练习题：诊断三组异常微调监控日志并开出调参处方</h2><h3>任务背景</h3><p>团队实习生跑了三次微调实验,分别出现了:1 第 2 轮起验证集 Loss 持续上升且模型回答变 成机械背诵;2 开局第 15 步 Loss 突变为 NaN 崩溃;3 微调了 500 条公司今年最新产品价格表后,模型 依然经常报价错误。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 针对实验1(过拟合),给出至少 3 项具体的参数调整或数据改进措施(</p><p>4.5 分);</p><p>2. 针对实验2(开局梯度爆炸 NaN),从学习率调度(Warmup)、梯度裁剪(max_grad_norm)与脏数据 排查三个角度给出修复方案(</p><p>4.5 分);</p><p>3. 针对实验3,从“SFT 与 RAG 的职责边界”角度解释为什么用 500 条问答微调记不住精确价格表,并 给出正确架构建议(</p><p>3.5 分)。 第三阶段:对⻬与融合篇(第 5‒6 关)——偏好对⻬(DPO/GRPO)、模型融合 与科学评测</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/llm/04" data-exercise="/content/levels/llm-04.json">
       <div class="practice-head">
         <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
@@ -110,7 +118,7 @@
         <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
       </div>
     </section>
-    <details class="answer">
+    <details class="answer" id="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
       <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:三大微调异常故障诊断与处方 故障1(第 2 轮起验证 Loss 反弹过拟合)处方:将训练轮数 num_train_epochs 从多轮缩减至 1‒2 轮;调 大 weight_decay = 0.05 或设置 lora_dropout = 0.05;降低 LoRA 秩 r(如从 64 降至 16),并在训练集中 混入 10%‒15% 的通用高质量指令样本防止灾难性遗忘。 故障2(开局第 15 步梯度爆炸 NaN)处方:将 warmup_ratio 设为 0.05‒0.10 让学习率从 0 平滑爬升;启 用梯度裁剪 max_grad_norm = 1.0;优先切换至动态范围更大的 bf16 混合精度,并排查第 15 步附近的批次 是否存在空答案或全是特殊乱码的脏样本。 故障3(微调 500 条价格表仍报价幻觉)处方:SFT 调整的是输出格式与分布概率而非精确键值数据库! 频繁变动的精确商品价格必须走 RAG 知识库检索或 Function Calling 查表工具;微调在此场景的正确用 法是“训练模型学会更精准地生成查表工具调用参数和标准客服话术格式”。 得分要点拆解:给出减 Epoch、加正则、混通用数据的防过拟合方案(4.5 分);给出 Warmup、梯度裁剪、 BF16 与脏数据排查方案(4.5 分);准确厘清 SFT 学⻛格格式 vs. RAG/Tool 查精确事实的工程边界(3.5 分)。 第 5 关</p></div>
     </details>
@@ -121,7 +129,7 @@
 </main>
 <footer class="wrap">
   <span>AI神功 · 2026</span>
-  <span><a href="/ai/notes/privacy/">隐私说明</a> · 免费 · 不登录 · 不卖 API</span>
+  <span><a href="/ai/notes/privacy/">隐私说明</a> · <a href="/ai/notes/progress/">学习进度</a> · 免费 · 不登录 · 不卖 API</span>
 </footer>
 </body>
 </html>

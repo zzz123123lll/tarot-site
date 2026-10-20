@@ -12,7 +12,7 @@
 <meta property="og:image" content="https://gongjuhe.top/og-knowledge.png?v=2"
 <meta property="og:image:alt" content="AI神功：内功心法 × 神兵利器，15 册 36 关">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=12">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=13">
 <script src="/ai/notes/notes.js?v=8" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=7"></script>
 </head>
@@ -45,6 +45,14 @@
     <h1>语义检索引擎构建(Module 2: SemanticSeek)</h1>
     <p class="lede">本关练习：构建带元数据预过滤的本地 Chroma/Qdrant 语义检索管道。</p>
     <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 AI 现代必修课 · 内功05</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <nav class="page-toc" aria-label="本页目录">
+      <span class="page-toc-label">本页</span>
+      <a href="#understand">30秒 / 3分钟</a>
+      <a href="#reading">来源精读</a>
+      <a href="#lesson">原文</a>
+      <a href="#practice">练习</a>
+      <a href="#answer">答案</a>
+    </nav>
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
@@ -81,7 +89,7 @@
     <p class="reading-takeaway">本关先记住：设计文档入库(Upsert)时的三维结构:id、document_text、embedding 与 metadata(含版本号、生效 状态 is_active、适用部门)(</p>
     <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/gurucharanmk/StepByStep-RAG/blob/main/SemanticSeek/README.md" target="_blank" rel="noopener">StepByStep-RAG · SemanticSeek ↗</a><span>PDF 第 3 关</span></div>
   </section>
-    <section class="lesson"><h3>核心原理</h3><p>在 StepByStep-RAG 的第二模块 SemanticSeek 与 AI Infra Engineer Learning (Mod 110) 中,传 统的 Ctrl+F 或关键词搜索在面对“用戶问:电脑连不上公司内网怎么办”而知识库原文写的是“企业 VPN 客 戶端认证失败排查指南”时,会因为字面词汇零重合而完全搜不到结果。语义检索(Semantic Search)通过 将文本块编码为稠密向量并存入向量数据库(如 Chroma、Qdrant、Weaviate),同时绑定结构化元数据过滤 条件(Metadata Filtering,如 department == "IT" 且 year &gt;= 2025),实现“既懂弦外之音、又守精确边界” 的高效检索。</p><h2>第 3 关实操练习题：构建带元数据预过滤的本地 Chroma/Qdrant 语义检索管道</h2><h3>任务背景</h3><p>知识库里同时存有 2023 年(已废止)和 2026 年(现行有效)的差旅报销标准,单纯靠向量相 似度检索经常把 2023 年的旧住宿标准排在第一名。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设计文档入库(Upsert)时的三维结构:id、document_text、embedding 与 metadata(含版本号、生效 状态 is_active、适用部门)(</p><p>4.5 分);</p><p>2. 编写检索查询逻辑,在计算向量相似度前先通过 where={"is_active": True} 过滤掉历史废止文档(5 分);</p><p>3. 说明为什么查询向量(Query Embedding)与文档入库向量必须使用完全相同的 Embedding 模型与 归一化方式(3 分)。</p></section>
+    <section class="lesson" id="lesson"><h3>核心原理</h3><p>在 StepByStep-RAG 的第二模块 SemanticSeek 与 AI Infra Engineer Learning (Mod 110) 中,传 统的 Ctrl+F 或关键词搜索在面对“用戶问:电脑连不上公司内网怎么办”而知识库原文写的是“企业 VPN 客 戶端认证失败排查指南”时,会因为字面词汇零重合而完全搜不到结果。语义检索(Semantic Search)通过 将文本块编码为稠密向量并存入向量数据库(如 Chroma、Qdrant、Weaviate),同时绑定结构化元数据过滤 条件(Metadata Filtering,如 department == "IT" 且 year &gt;= 2025),实现“既懂弦外之音、又守精确边界” 的高效检索。</p><h2>第 3 关实操练习题：构建带元数据预过滤的本地 Chroma/Qdrant 语义检索管道</h2><h3>任务背景</h3><p>知识库里同时存有 2023 年(已废止)和 2026 年(现行有效)的差旅报销标准,单纯靠向量相 似度检索经常把 2023 年的旧住宿标准排在第一名。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设计文档入库(Upsert)时的三维结构:id、document_text、embedding 与 metadata(含版本号、生效 状态 is_active、适用部门)(</p><p>4.5 分);</p><p>2. 编写检索查询逻辑,在计算向量相似度前先通过 where={"is_active": True} 过滤掉历史废止文档(5 分);</p><p>3. 说明为什么查询向量(Query Embedding)与文档入库向量必须使用完全相同的 Embedding 模型与 归一化方式(3 分)。</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/rag/03" data-exercise="/content/levels/rag-03.json">
       <div class="practice-head">
         <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
@@ -108,7 +116,7 @@
         <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
       </div>
     </section>
-    <details class="answer">
+    <details class="answer" id="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
       <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:带元数据过滤的 Chroma/Qdrant 向量入库与检索 # 1. 结构化入库结构(绑定版本与生效状态元数据) collection.upsert( ids=["policy_2026_chunk_01", "policy_2023_chunk_01"], embeddings=[embed_model.encode(text_2026), embed_model.encode(text_2023)], documents=[text_2026, text_2023], metadatas=[ {"doc_name": "差旅制度", "effective_year": 2026, "is_active": True, "dept": "ALL"}, {"doc_name": "差旅制度", "effective_year": 2023, "is_active": False, "dept": "ALL"} ] ) # 2. 检索时强制前置过滤 is_active == True,彻底屏蔽废止旧制度 results = collection.query( query_embeddings=[embed_model.encode("一线城市出差住宿报销上限是多少?")], n_results=3, where={"$and": [{"is_active": {"$eq": True}}, {"effective_year": {"$gte": 2026}}]} ) 得分要点拆解:完整定义四维入库结构与 `is_active` 元数据(4.5 分);使用 `where` 过滤器在向量比对前 剔除失效旧文档(5 分);说明不同 Embedding 模型向量空间正交不可混用、必须保持同一模型与归一化标准 (3 分)。 第 4 关</p></div>
     </details>
@@ -119,7 +127,7 @@
 </main>
 <footer class="wrap">
   <span>AI神功 · 2026</span>
-  <span><a href="/ai/notes/privacy/">隐私说明</a> · 免费 · 不登录 · 不卖 API</span>
+  <span><a href="/ai/notes/privacy/">隐私说明</a> · <a href="/ai/notes/progress/">学习进度</a> · 免费 · 不登录 · 不卖 API</span>
 </footer>
 </body>
 </html>

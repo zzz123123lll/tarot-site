@@ -29,7 +29,16 @@
           }
         ],
         "sourceRef": "AI 现代必修课 · Dify 可视化 AI 工作流 · 本册原文",
-        "sourceQuote": "这一册只解决一件事：能用确定性 DAG 工作流解决的任务，不要交给自由 Agent 随机决策"
+        "sourceQuote": "这一册只解决一件事：能用确定性 DAG 工作流解决的任务，不要交给自由 Agent 随机决策",
+        "validator": {
+          "type": "regex",
+          "patterns": [
+            {
+              "label": "DAG 工作流",
+              "pattern": "(?i)dag|workflow|节点"
+            }
+          ]
+        }
       },
       {
         "id": "c2",

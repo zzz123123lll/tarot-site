@@ -473,3 +473,38 @@ footer a:hover{color:var(--seal);border-color:var(--seal)}
 }
 
 .privacy-note{font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--muted);border-left:2px solid var(--seal);padding-left:12px;margin-top:26px}
+
+.page-toc{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin:12px 0 0;padding:10px 0;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:10px;letter-spacing:.03em}
+.page-toc-label{color:var(--seal);letter-spacing:.12em}
+.page-toc a{color:var(--muted);border-bottom:1px solid transparent;padding:2px 0}
+.page-toc a:hover{color:var(--seal);border-color:var(--seal)}
+.page-toc a:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
+@media(max-width:700px){.page-toc{gap:4px 10px;font-size:9px;overflow-x:auto;white-space:nowrap;flex-wrap:nowrap}}
+
+/* 学习进度与数据 */
+.progress-panel{border:1px solid var(--line-strong);background:rgba(251,246,234,.78);padding:24px}
+.progress-panel h2{font-family:var(--serif);font-size:26px;margin:0 0 16px}
+.progress-books{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
+.progress-book{display:grid;grid-template-columns:minmax(0,1fr) 120px 46px;gap:12px;align-items:center;padding:14px;background:var(--surface);color:var(--ink)}
+.progress-book:hover{background:#F6EEDF}
+.progress-book b{font-family:var(--serif);font-size:16px;font-weight:600;display:block}
+.progress-book small{font-family:var(--mono);font-size:9px;color:var(--muted);display:block;margin-top:3px}
+.progress-book i{display:block;height:3px;background:var(--line);overflow:hidden}
+.progress-book i em{display:block;height:100%;background:var(--seal)}
+.progress-pct{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:right}
+.progress-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.progress-actions .btn{cursor:pointer}
+.progress-actions input[type=file]{display:none}
+.review-queue{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.queue-card{display:block;border:1px solid var(--line);background:rgba(251,246,234,.72);padding:16px;min-height:122px}
+.queue-card:hover{border-color:var(--line-strong);background:#F7EFE1}
+.queue-label{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--seal);display:block;margin-bottom:10px}
+.queue-card strong{display:block;font-family:var(--serif);font-size:17px;font-weight:600;line-height:1.45;margin-bottom:10px}
+.queue-card small{font-family:var(--mono);font-size:9px;color:var(--muted);line-height:1.5}
+@media(max-width:900px){.progress-books{grid-template-columns:1fr}.review-queue{grid-template-columns:1fr}.progress-book{grid-template-columns:1fr 80px 42px}}
+@media(max-width:560px){.progress-panel{padding:16px}.progress-book{grid-template-columns:1fr 70px 38px;gap:8px;padding:12px}}
+
+.search-filter-row{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:16px;align-items:end}
+.search-filter{width:100%;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);font-family:var(--mono);font-size:10px;padding:10px;min-height:44px}
+.search-filter:focus{outline:2px solid var(--seal);outline-offset:2px}
+@media(max-width:700px){.search-filter-row{grid-template-columns:1fr}.search-filter{width:100%}}

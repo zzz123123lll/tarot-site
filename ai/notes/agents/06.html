@@ -12,7 +12,7 @@
 <meta property="og:image" content="https://gongjuhe.top/og-knowledge.png?v=2"
 <meta property="og:image:alt" content="AI神功：内功心法 × 神兵利器，15 册 36 关">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=12">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=13">
 <script src="/ai/notes/notes.js?v=8" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=7"></script>
 </head>
@@ -45,6 +45,14 @@
     <h1>多智能体协作编排模式(Lesson 08: Multi-Agent Design Pattern)</h1>
     <p class="lede">本关练习：设计“跨境电商全自动选品与上架团队”多智能体架构。</p>
     <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 AI 现代必修课 · 内功06</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <nav class="page-toc" aria-label="本页目录">
+      <span class="page-toc-label">本页</span>
+      <a href="#understand">30秒 / 3分钟</a>
+      <a href="#reading">来源精读</a>
+      <a href="#lesson">原文</a>
+      <a href="#practice">练习</a>
+      <a href="#answer">答案</a>
+    </nav>
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
@@ -81,7 +89,7 @@
     <p class="reading-takeaway">本关先记住：明确定义 4 个子智能体的专属名称、唯一职责边界与各自挂载的独立工具集(严禁工具跨角色混用) ;</p>
     <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/microsoft/ai-agents-for-beginners/blob/main/08-multi-agent/README.md" target="_blank" rel="noopener">Microsoft · Lesson 8 Multi-Agent ↗</a><span>PDF 第 6 关</span></div>
   </section>
-    <section class="lesson"><h3>核心原理</h3><p>当一个智能体挂载超过 15 个工具、系统提示词超过数千字时,它的工具选错率和指令遗忘率会急 剧上升。Microsoft AI Agents for Beginners 第 8 课(Multi-Agent) 与 Complete Agentic AI Engineering Course 给出的解法是“职责单一化与多智能体分治”。主流编排架构有三种: 主管路由模式(Supervisor / Orchestrator-Workers):由一个中央主管 Agent 接收任务、拆解分发给专 门的“代码专家 Agent”、“数据分析 Agent”、“合规审查 Agent”,最后由主管汇总结果。 交接接力模式(Handoffs / Swarm):前台分诊 Agent 识别出具体诉求后,将对话控制权与精简上下文直 接移交(Handoff)给对应的垂直专科 Agent。 并发聚合模式(Concurrent Aggregation):多个不同视角的专家 Agent 同时独立评估同一份方案(如乐 观派、悲观⻛控派、法务派),最后由聚合器合并各方意见。</p><h2>第 6 关实操练习题：设计“跨境电商全自动选品与上架团队”多智能体架构</h2><h3>任务背景</h3><p>你想用 4 个各司其职的专职 Agent 组成虚拟团队,自动完成“市场趋势挖掘 → 供应商 1688 比 价利润核算 → 侵权与违禁词合规⻛控 → 多语种详情页生成”。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 明确定义 4 个子智能体的专属名称、唯一职责边界与各自挂载的独立工具集(严禁工具跨角色混用) (5 分);</p><p>2. 设计各 Agent 之间传递的结构化交接数据包(State Payload / Handoff Schema),避免把冗长的无关 思考过程传给下游(</p><p>4.5 分);</p><p>3. 设计“一票否决回退机制”:若合规⻛控 Agent 发现外观专利侵权⻛险,如何直接打回选品阶段而非继 续生成详情页(3 分)。 第四阶段:生产落地篇(第 7‒8 关)——标准化协议、上下文工程与安全护栏</p></section>
+    <section class="lesson" id="lesson"><h3>核心原理</h3><p>当一个智能体挂载超过 15 个工具、系统提示词超过数千字时,它的工具选错率和指令遗忘率会急 剧上升。Microsoft AI Agents for Beginners 第 8 课(Multi-Agent) 与 Complete Agentic AI Engineering Course 给出的解法是“职责单一化与多智能体分治”。主流编排架构有三种: 主管路由模式(Supervisor / Orchestrator-Workers):由一个中央主管 Agent 接收任务、拆解分发给专 门的“代码专家 Agent”、“数据分析 Agent”、“合规审查 Agent”,最后由主管汇总结果。 交接接力模式(Handoffs / Swarm):前台分诊 Agent 识别出具体诉求后,将对话控制权与精简上下文直 接移交(Handoff)给对应的垂直专科 Agent。 并发聚合模式(Concurrent Aggregation):多个不同视角的专家 Agent 同时独立评估同一份方案(如乐 观派、悲观⻛控派、法务派),最后由聚合器合并各方意见。</p><h2>第 6 关实操练习题：设计“跨境电商全自动选品与上架团队”多智能体架构</h2><h3>任务背景</h3><p>你想用 4 个各司其职的专职 Agent 组成虚拟团队,自动完成“市场趋势挖掘 → 供应商 1688 比 价利润核算 → 侵权与违禁词合规⻛控 → 多语种详情页生成”。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 明确定义 4 个子智能体的专属名称、唯一职责边界与各自挂载的独立工具集(严禁工具跨角色混用) (5 分);</p><p>2. 设计各 Agent 之间传递的结构化交接数据包(State Payload / Handoff Schema),避免把冗长的无关 思考过程传给下游(</p><p>4.5 分);</p><p>3. 设计“一票否决回退机制”:若合规⻛控 Agent 发现外观专利侵权⻛险,如何直接打回选品阶段而非继 续生成详情页(3 分)。 第四阶段:生产落地篇(第 7‒8 关)——标准化协议、上下文工程与安全护栏</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/agents/06" data-exercise="/content/levels/agents-06.json">
       <div class="practice-head">
         <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
@@ -108,7 +116,7 @@
         <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
       </div>
     </section>
-    <details class="answer">
+    <details class="answer" id="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
       <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:跨境电商四智能体协作架构与交接协议</p><h3>【1. 四大专职 Agent 角色与独立工具集】</h3><p>- Agent A(趋势侦察兵 TrendScout):仅挂载 [search_tiktok_trends, get_amazon_movers];职责:输出候选 品类词。 - Agent B(供应链精算师 MarginCalculator):仅挂载 [search_1688_suppliers, calc_fba_shipping_fee]; 职责:核算毛利率是否 &gt;= 35%。 - Agent C(合规⻛控官 ComplianceAuditor):仅挂载 [check_uspto_patent, scan_prohibited_keywords];职 责:排查外观专利与平台违禁词。 - Agent D(多语种文案师 ListingWriter):仅挂载 [generate_seo_listing, translate_localized_copy];职 责:生成最终上架文案。</p><h3>【2. 标准化交接数据包(Handoff Payload Schema)】</h3><p>{ "product_id": "CAND-089", "category_name": "Magnetic Portable Neck Fan", "unit_cost_usd": 4.20, "target_retail_usd": 24.99, "net_margin_pct": 41.5, "compliance_status": "REJECTED_PATENT_RISK", "rejection_evidence": "命中美国外观专利号 USD987654S1,扇叶无叶出⻛口结构高度近似" }</p><h3>【3. 主管路由一票否决机制】</h3><p>Supervisor 检测到 Agent C 返回的 compliance_status != "APPROVED" 时,立即阻断向 Agent D 的交接,并 将 rejection_evidence 回传给 Agent A 要求排除该专利结构重新选品。 得分要点拆解:4 个子 Agent 职责与工具严格隔离(5 分);使用精简结构化 JSON Payload 交接状态、不传冗 余历史对话(4.5 分);设计合规一票否决打回重选机制(3 分)。 第 7 关</p></div>
     </details>
@@ -119,7 +127,7 @@
 </main>
 <footer class="wrap">
   <span>AI神功 · 2026</span>
-  <span><a href="/ai/notes/privacy/">隐私说明</a> · 免费 · 不登录 · 不卖 API</span>
+  <span><a href="/ai/notes/privacy/">隐私说明</a> · <a href="/ai/notes/progress/">学习进度</a> · 免费 · 不登录 · 不卖 API</span>
 </footer>
 </body>
 </html>

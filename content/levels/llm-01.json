@@ -63,7 +63,16 @@
           }
         ],
         "sourceRef": "内功07 · 模型定制与算力量化 · 第1关 · 通关要求 1",
-        "sourceQuote": "分别为上述三个场景配置最优的 temperature、top_p、repetition_penalty 参数组合并说明理由(6 分)"
+        "sourceQuote": "分别为上述三个场景配置最优的 temperature、top_p、repetition_penalty 参数组合并说明理由(6 分)",
+        "validator": {
+          "type": "regex",
+          "patterns": [
+            {
+              "label": "解码参数",
+              "pattern": "(?i)temperature|top_p"
+            }
+          ]
+        }
       },
       {
         "id": "c2",

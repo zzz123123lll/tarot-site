@@ -28,7 +28,16 @@
           }
         ],
         "sourceRef": "AI 现代必修课 · 大语言模型底层运作原理 · 本册原文",
-        "sourceQuote": "这一册只解决一件事：把大模型的黑盒拆成四层——分词、向量、注意力、采样。看懂后，计数、幻觉、随机性都能解释"
+        "sourceQuote": "这一册只解决一件事：把大模型的黑盒拆成四层——分词、向量、注意力、采样。看懂后，计数、幻觉、随机性都能解释",
+        "validator": {
+          "type": "regex",
+          "patterns": [
+            {
+              "label": "LLM 四层机制",
+              "pattern": "(?i)token|embedding|attention"
+            }
+          ]
+        }
       },
       {
         "id": "c2",

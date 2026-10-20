@@ -51,7 +51,16 @@
           }
         ],
         "sourceRef": "内功06 · AI Agent 智能体 · 第3关 · 通关要求 1",
-        "sourceQuote": "设计 Planner 输出的结构化 JSON 计划表格式,每个子任务需包含 step_id、tool_name、depends_on (前置依赖数组)与 expected_output(5 分)"
+        "sourceQuote": "设计 Planner 输出的结构化 JSON 计划表格式,每个子任务需包含 step_id、tool_name、depends_on (前置依赖数组)与 expected_output(5 分)",
+        "validator": {
+          "type": "regex",
+          "patterns": [
+            {
+              "label": "规划/步骤结构",
+              "pattern": "(?i)plan|步骤|step"
+            }
+          ]
+        }
       },
       {
         "id": "c2",

@@ -12,7 +12,7 @@
 <meta property="og:image" content="https://gongjuhe.top/og-knowledge.png?v=2"
 <meta property="og:image:alt" content="AI神功：内功心法 × 神兵利器，15 册 36 关">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=12">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=13">
 <script src="/ai/notes/notes.js?v=8" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=7"></script>
 </head>
@@ -45,6 +45,14 @@
     <h1>多轮对话与查询改写(Module 4: ConvoRAG &amp; Query Transformation)</h1>
     <p class="lede">本关练习：编写多轮对话指代消解与复杂对比问题拆解器。</p>
     <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 AI 现代必修课 · 内功05</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <nav class="page-toc" aria-label="本页目录">
+      <span class="page-toc-label">本页</span>
+      <a href="#understand">30秒 / 3分钟</a>
+      <a href="#reading">来源精读</a>
+      <a href="#lesson">原文</a>
+      <a href="#practice">练习</a>
+      <a href="#answer">答案</a>
+    </nav>
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
@@ -81,7 +89,7 @@
     <p class="reading-takeaway">本关先记住：设计前置 Query Rewriter 提示词:结合历史对话 &lt;chat_history&gt; 与当前追问 &lt;latest_question&gt;,将含 代词“它”的句子改写为主语完整、可独立检索的句子(</p>
     <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/gurucharanmk/StepByStep-RAG/blob/main/ConvoRAG/README.md" target="_blank" rel="noopener">StepByStep-RAG · ConvoRAG ↗</a><span>PDF 第 6 关</span></div>
   </section>
-    <section class="lesson"><h3>核心原理</h3><p>StepByStep-RAG 的第四模块 ConvoRAG 解决了单轮 RAG 走向真实聊天应用的最大拦路虎——多 轮对话中的指代消解(Coreference Resolution)。例如:第 1 轮用戶问“Grand Palace 酒店的豪华海景房 多少钱一晚?”,第 2 轮用戶紧接着问“那它包含免费双人早餐和机场接送吗?”。如果直接拿第 2 轮原话“那 它包含免费双人早餐和机场接送吗?”去向量库检索,由于丢失了主语“Grand Palace 酒店豪华海景房”,检 索 器 会 把 全 库 所 有 提 到 早 餐 的 无 关文 档 搜 出 来 ! 因 此 , 在 检索 之 前 必 须 增 加 一 步 独 立 查 询 改 写 器 (Contextual Query Rewriter),并可结合 RAG Zero to Hero Guide 中的 HyDE(假设性文档嵌入) 或 Sub-Query Decomposition(多子问题拆解)。</p><h2>第 6 关实操练习题：编写多轮对话指代消解与复杂对比问题拆解器</h2><h3>任务背景</h3><p>用戶在第 1 轮问了“Pro 版会员的年费是多少?”,第 2 轮追问:“那它跟企业旗舰版在 API 每 分钟调用限额上有什么区别?”</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设计前置 Query Rewriter 提示词:结合历史对话 &lt;chat_history&gt; 与当前追问 &lt;latest_question&gt;,将含 代词“它”的句子改写为主语完整、可独立检索的句子(</p><p>4.5 分);</p><p>2. 针对“A 与 B 有什么区别”这类对比型问题,设计拆解为两条独立检索子查询(Sub-queries)的 JSON 输出格式,避免单次检索只召回 A 而漏掉 B(5 分);</p><p>3. 说明若用戶第 2 轮只是说“谢谢,讲得很清楚”,系统应如何跳过向量库检索以节省延迟(3 分)。 第四阶段:高阶生产篇(第 7‒8 关)——知识图谱 GraphRAG、流式应用与评估 体系</p></section>
+    <section class="lesson" id="lesson"><h3>核心原理</h3><p>StepByStep-RAG 的第四模块 ConvoRAG 解决了单轮 RAG 走向真实聊天应用的最大拦路虎——多 轮对话中的指代消解(Coreference Resolution)。例如:第 1 轮用戶问“Grand Palace 酒店的豪华海景房 多少钱一晚?”,第 2 轮用戶紧接着问“那它包含免费双人早餐和机场接送吗?”。如果直接拿第 2 轮原话“那 它包含免费双人早餐和机场接送吗?”去向量库检索,由于丢失了主语“Grand Palace 酒店豪华海景房”,检 索 器 会 把 全 库 所 有 提 到 早 餐 的 无 关文 档 搜 出 来 ! 因 此 , 在 检索 之 前 必 须 增 加 一 步 独 立 查 询 改 写 器 (Contextual Query Rewriter),并可结合 RAG Zero to Hero Guide 中的 HyDE(假设性文档嵌入) 或 Sub-Query Decomposition(多子问题拆解)。</p><h2>第 6 关实操练习题：编写多轮对话指代消解与复杂对比问题拆解器</h2><h3>任务背景</h3><p>用戶在第 1 轮问了“Pro 版会员的年费是多少?”,第 2 轮追问:“那它跟企业旗舰版在 API 每 分钟调用限额上有什么区别?”</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设计前置 Query Rewriter 提示词:结合历史对话 &lt;chat_history&gt; 与当前追问 &lt;latest_question&gt;,将含 代词“它”的句子改写为主语完整、可独立检索的句子(</p><p>4.5 分);</p><p>2. 针对“A 与 B 有什么区别”这类对比型问题,设计拆解为两条独立检索子查询(Sub-queries)的 JSON 输出格式,避免单次检索只召回 A 而漏掉 B(5 分);</p><p>3. 说明若用戶第 2 轮只是说“谢谢,讲得很清楚”,系统应如何跳过向量库检索以节省延迟(3 分)。 第四阶段:高阶生产篇(第 7‒8 关)——知识图谱 GraphRAG、流式应用与评估 体系</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/rag/06" data-exercise="/content/levels/rag-06.json">
       <div class="practice-head">
         <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
@@ -108,7 +116,7 @@
         <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
       </div>
     </section>
-    <details class="answer">
+    <details class="answer" id="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
       <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:ConvoRAG 多轮指代消解与对比子查询拆解器</p><h3>【前置查询改写与拆解器 Prompt(Query Rewriter &amp; Decomposer)】</h3><p>请结合 &lt;chat_history&gt; 将用戶的 &lt;latest_question&gt; 转化为面向向量检索引擎的优化查询 JSON。 规则说明:</p><p>1. 闲聊豁免:若用戶最新输入仅为感谢、寒暄或确认(如“谢谢”、“明白了”),将 need_retrieval 设为</p><p>false,无需检索知识库。</p><p>2. 指代消解:将“它、这个、上述方案”等代词替换为历史对话中的完整专有名称。</p><p>3. 对比拆解:若问题涉及两个或多个对象的对比(如“A 和 B 在某方面的区别”),必须拆分为多条独立的单实</p><p>体检索语句放入 sub_queries 数组,确保两边资料都能被召回。 &lt;chat_history&gt; User: Pro 版会员的年费是多少? Assistant: Pro 版会员标准年费为 1,999 元/年。 &lt;/chat_history&gt; &lt;latest_question&gt;那它跟企业旗舰版在 API 每分钟调用限额上有什么区别?&lt;/latest_question&gt;</p><h3>【标准输出 JSON】</h3><p>{ "need_retrieval": true, "standalone_query": "Pro 版会员与企业旗舰版会员在 API 每分钟调用限额(RPM)上有什么区别?", "sub_queries": [ "Pro 版会员 API 每分钟调用限额 RPM 配额规定", "企业旗舰版会员 API 每分钟调用限额 RPM 配额规定" ] } 得分要点拆解:准确将代词“它”还原为“Pro 版会员”(4.5 分);将对比问题拆解为两条独立单实体检索语 句 `sub_queries`(5 分);设置 `need_retrieval` 布尔开关过滤纯闲聊轮次(3 分)。 第 7 关</p></div>
     </details>
@@ -119,7 +127,7 @@
 </main>
 <footer class="wrap">
   <span>AI神功 · 2026</span>
-  <span><a href="/ai/notes/privacy/">隐私说明</a> · 免费 · 不登录 · 不卖 API</span>
+  <span><a href="/ai/notes/privacy/">隐私说明</a> · <a href="/ai/notes/progress/">学习进度</a> · 免费 · 不登录 · 不卖 API</span>
 </footer>
 </body>
 </html>

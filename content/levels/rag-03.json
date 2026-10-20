@@ -46,7 +46,14 @@
           }
         ],
         "sourceRef": "内功05 · RAG 检索增强生成 · 第3关 · 通关要求 1",
-        "sourceQuote": "设计文档入库(Upsert)时的三维结构:id、document_text、embedding 与 metadata(含版本号、生效 状态 is_active、适用部门)(4.5 分)"
+        "sourceQuote": "设计文档入库(Upsert)时的三维结构:id、document_text、embedding 与 metadata(含版本号、生效 状态 is_active、适用部门)(4.5 分)",
+        "validator": {
+          "type": "code_static",
+          "required": [
+            "def",
+            "return"
+          ]
+        }
       },
       {
         "id": "c2",

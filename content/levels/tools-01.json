@@ -30,7 +30,16 @@
           }
         ],
         "sourceRef": "AI 现代必修课 · 主流云端大模型全景实操 · 本册原文",
-        "sourceQuote": "这一册只解决一件事：四大云端模型的能力边界不同，且它们早就不只是聊天框，而是带代码沙盒、画布和项目空间的工作台"
+        "sourceQuote": "这一册只解决一件事：四大云端模型的能力边界不同，且它们早就不只是聊天框，而是带代码沙盒、画布和项目空间的工作台",
+        "validator": {
+          "type": "regex",
+          "patterns": [
+            {
+              "label": "模型路由",
+              "pattern": "(?i)gemini|claude|chatgpt|deepseek"
+            }
+          ]
+        }
       },
       {
         "id": "c2",

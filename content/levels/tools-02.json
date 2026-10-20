@@ -29,7 +29,16 @@
           }
         ],
         "sourceRef": "AI 现代必修课 · 零代码个人智库与深度研究 · 本册原文",
-        "sourceQuote": "这一册只解决一件事：向内深读私有资料用源接地智库，向外做全网考证用 Deep Research"
+        "sourceQuote": "这一册只解决一件事：向内深读私有资料用源接地智库，向外做全网考证用 Deep Research",
+        "validator": {
+          "type": "regex",
+          "patterns": [
+            {
+              "label": "源接地",
+              "pattern": "(?i)source|引用|ground"
+            }
+          ]
+        }
       },
       {
         "id": "c2",

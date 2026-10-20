@@ -40,7 +40,16 @@
           }
         ],
         "sourceRef": "内功06 · AI Agent 智能体 · 第8关 · 通关要求 1",
-        "sourceQuote": "将 Agent 的全部工具划分为【L1 自动执行级】、【L2 需人类确认级(HITL)】与【L3 严禁外发敏感数据 级】三档(4.5 分)"
+        "sourceQuote": "将 Agent 的全部工具划分为【L1 自动执行级】、【L2 需人类确认级(HITL)】与【L3 严禁外发敏感数据 级】三档(4.5 分)",
+        "validator": {
+          "type": "regex",
+          "patterns": [
+            {
+              "label": "护栏分级",
+              "pattern": "(?i)hitl|l1|l2|l3|guard"
+            }
+          ]
+        }
       },
       {
         "id": "c2",

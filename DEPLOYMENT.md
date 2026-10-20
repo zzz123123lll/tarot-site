@@ -56,3 +56,6 @@ node build/render-all.mjs
 - Firefox/Safari/真实移动设备仍需回归。
 - Cloudflare 后台日志、告警、真实用户性能数据未取得。
 - PDF 再分发授权未在项目内证明。
+
+- `/ai/notes/progress/` 是本机进度导出/导入页，noindex，不进入 sitemap。
+- 36 关 c1 均有 validator；结构类型包括 code_static/json/regex。

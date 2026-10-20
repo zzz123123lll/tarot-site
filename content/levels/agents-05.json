@@ -39,7 +39,16 @@
           }
         ],
         "sourceRef": "内功06 · AI Agent 智能体 · 第5关 · 通关要求 1",
-        "sourceQuote": "设计 Generator → Validator → Refiner 三步元认知工作流(4 分)"
+        "sourceQuote": "设计 Generator → Validator → Refiner 三步元认知工作流(4 分)",
+        "validator": {
+          "type": "regex",
+          "patterns": [
+            {
+              "label": "反思结构",
+              "pattern": "(?i)reflect|反思|revise"
+            }
+          ]
+        }
       },
       {
         "id": "c2",

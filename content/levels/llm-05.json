@@ -39,7 +39,15 @@
           }
         ],
         "sourceRef": "内功07 · 模型定制与算力量化 · 第5关 · 通关要求 1",
-        "sourceQuote": "编写一条标准的 DPO 训练数据 JSON 样本,包含 prompt、chosen(干脆利落直奔主题的回答)与 rejected(充满 AI 套话与端水说教的回答)(5 分)"
+        "sourceQuote": "编写一条标准的 DPO 训练数据 JSON 样本,包含 prompt、chosen(干脆利落直奔主题的回答)与 rejected(充满 AI 套话与端水说教的回答)(5 分)",
+        "validator": {
+          "type": "json",
+          "required": [
+            "prompt",
+            "chosen",
+            "rejected"
+          ]
+        }
       },
       {
         "id": "c2",

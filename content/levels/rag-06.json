@@ -42,7 +42,16 @@
           }
         ],
         "sourceRef": "内功05 · RAG 检索增强生成 · 第6关 · 通关要求 1",
-        "sourceQuote": "设计前置 Query Rewriter 提示词:结合历史对话 <chat_history> 与当前追问 <latest_question>,将含 代词“它”的句子改写为主语完整、可独立检索的句子(4.5 分)"
+        "sourceQuote": "设计前置 Query Rewriter 提示词:结合历史对话 <chat_history> 与当前追问 <latest_question>,将含 代词“它”的句子改写为主语完整、可独立检索的句子(4.5 分)",
+        "validator": {
+          "type": "regex",
+          "patterns": [
+            {
+              "label": "查询改写",
+              "pattern": "(?i)rewrite|重写|sub.?quer"
+            }
+          ]
+        }
       },
       {
         "id": "c2",

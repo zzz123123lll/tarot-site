@@ -29,7 +29,16 @@
           }
         ],
         "sourceRef": "AI 现代必修课 · Claude Code 与 OpenAI Codex · 本册原文",
-        "sourceQuote": "这一册只解决一件事：网页版 AI 被困在浏览器沙盒，终端 Agent 才能直接操作你电脑上的文件、命令和项目"
+        "sourceQuote": "这一册只解决一件事：网页版 AI 被困在浏览器沙盒，终端 Agent 才能直接操作你电脑上的文件、命令和项目",
+        "validator": {
+          "type": "regex",
+          "patterns": [
+            {
+              "label": "终端 Agent",
+              "pattern": "(?i)cli|terminal|终端|agents\\.md"
+            }
+          ]
+        }
       },
       {
         "id": "c2",

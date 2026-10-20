@@ -49,7 +49,7 @@ ${noindex ? '<meta name="robots" content="noindex,follow">' : ''}
 <meta property="og:image" content="https://gongjuhe.top/og-knowledge.png?v=2"
 <meta property="og:image:alt" content="AI神功：内功心法 × 神兵利器，15 册 36 关">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=12">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=13">
 <script src="/ai/notes/notes.js?v=8" defer></script>
 </head>`;
 }
@@ -72,7 +72,7 @@ function shellHeader() {
 function footer() {
   return `<footer class="wrap">
   <span>${BRAND} · 2026</span>
-  <span><a href="/ai/notes/privacy/">隐私说明</a> · 免费 · 不登录 · 不卖 API</span>
+  <span><a href="/ai/notes/privacy/">隐私说明</a> · <a href="/ai/notes/progress/">学习进度</a> · 免费 · 不登录 · 不卖 API</span>
 </footer>`;
 }
 
@@ -217,14 +217,24 @@ ${shellHeader()}
 <section class="wrap section">
   <div class="search-panel">
     <label class="search-label" for="search-input">SEARCH</label>
-    <input id="search-input" class="search-input" type="search" placeholder="例如：余弦相似度 / DPO / MCP / 量化" autocomplete="off" autofocus>
+    <div class="search-filter-row">
+      <input id="search-input" class="search-input" type="search" placeholder="例如：余弦相似度 / DPO / MCP / 量化" autocomplete="off" autofocus>
+      <select class="search-filter" data-search-track aria-label="按册筛选">
+        <option value="">全部册</option>
+        <option value="rag">内功05 · RAG</option>
+        <option value="agents">内功06 · Agent</option>
+        <option value="llm">内功07 · 模型定制</option>
+        <option value="neigong">内功01–04</option>
+        <option value="tools">神兵利器</option>
+      </select>
+    </div>
     <p class="search-meta" data-search-meta role="status" aria-live="polite">输入关键词开始搜索。</p>
     <div class="search-results" data-search-results aria-live="polite"></div>
   </div>
 </section>
 </main>
 ${footer()}
-<script type="module" src="/ai/notes/search.mjs?v=1"></script>
+<script type="module" src="/ai/notes/search.mjs?v=2"></script>
 </body>
 </html>
 `;
@@ -281,7 +291,7 @@ function renderPrivacy() {
     <h2>5. 不收集什么</h2>
     <p>本站没有注册、登录、支付、文件上传、评论或用户画像功能，不主动收集姓名、电话、身份证号等信息。</p>
     <h2>6. 你的控制</h2>
-    <p>你可以通过浏览器的“清除站点数据”删除本机保存的进度和草稿；也可以不点击邮件链接、不使用搜索和练习功能。</p>
+    <p>你可以在“学习进度”页导出/导入本机数据，或通过浏览器的“清除站点数据”删除进度和草稿；也可以不点击邮件链接、不使用搜索和练习功能。</p>
     <p class="privacy-note">本页是技术说明，不构成法律意见；如面向特定地区正式运营，请由合规人员根据适用法律复核。</p>
   </div>
 </section>`;
@@ -295,6 +305,47 @@ ${footer()}
 </html>
 `;
   const out = path.join(ROOT, 'ai/notes/privacy/index.html');
+  fs.mkdirSync(path.dirname(out), { recursive: true });
+  fs.writeFileSync(out, page, 'utf8');
+  return out;
+}
+
+
+function renderProgress() {
+  const page = `${head('学习进度 — AI神功', '导出/导入本机学习进度、错题和最近阅读记录。', 'https://gongjuhe.top/ai/notes/progress/', true)}
+<body>
+${shellHeader()}
+<main id="main">
+<section class="wrap track-head">
+  <p class="label">PROGRESS / 学习进度</p>
+  <h1>学习进度与数据</h1>
+  <p class="lead">进度、错题和草稿只保存在本机浏览器。你可以导出备份，或换设备后导入。</p>
+  <div class="track-progress" data-progress-line><span data-progress-count>0 / 36 完成</span><span class="bar"><i></i></span></div>
+</section>
+<section class="wrap section">
+  <div class="progress-panel">
+    <h2>本机进度</h2>
+    <div class="progress-books" data-progress-books></div>
+    <div class="progress-actions">
+      <button type="button" class="btn" data-export-progress>导出进度 JSON</button>
+      <label class="btn btn--ghost" for="import-progress">导入进度 JSON</label>
+      <input id="import-progress" data-import-progress type="file" accept="application/json,.json" hidden>
+      <button type="button" class="btn btn--ghost" data-clear-local>清空本站数据</button>
+    </div>
+    <p class="practice-feedback" data-progress-status role="status" aria-live="polite"></p>
+  </div>
+</section>
+<section class="wrap section">
+  <div class="section-head"><div><p class="label">REVIEW QUEUE / 今日复习</p><h2>先看错题，再继续上次。</h2></div><a href="/ai/notes/review/">完整错题本 →</a></div>
+  <div class="review-queue" data-review-queue></div>
+</section>
+</main>
+${footer()}
+<script type="module" src="/ai/notes/progress.mjs?v=1"></script>
+</body>
+</html>
+`;
+  const out = path.join(ROOT, 'ai/notes/progress/index.html');
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, page, 'utf8');
   return out;
@@ -330,7 +381,7 @@ ${footer()}
 }
 
 export function renderCatalog() {
-  const pages = [renderIndex(), renderNeigong(), renderSearch(), renderSearchIndex(), renderPrivacy()];
+  const pages = [renderIndex(), renderNeigong(), renderSearch(), renderSearchIndex(), renderPrivacy(), renderProgress()];
   for (const id of ['rag', 'agents', 'llm', 'tools']) pages.push(renderTrack(readTrack(id)));
   pages.push(renderReview());
   return pages;

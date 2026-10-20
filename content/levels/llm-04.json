@@ -42,7 +42,16 @@
           }
         ],
         "sourceRef": "内功07 · 模型定制与算力量化 · 第4关 · 通关要求 1",
-        "sourceQuote": "针对实验1(过拟合),给出至少 3 项具体的参数调整或数据改进措施(4.5 分)"
+        "sourceQuote": "针对实验1(过拟合),给出至少 3 项具体的参数调整或数据改进措施(4.5 分)",
+        "validator": {
+          "type": "regex",
+          "patterns": [
+            {
+              "label": "损失诊断",
+              "pattern": "(?i)eval|loss|早停|overfit"
+            }
+          ]
+        }
       },
       {
         "id": "c2",

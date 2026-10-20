@@ -29,7 +29,16 @@
           }
         ],
         "sourceRef": "AI 现代必修课 · Ollama 与 RAGFlow 本地生态 · 本册原文",
-        "sourceQuote": "这一册只解决一件事：本地跑模型靠 GGUF 量化 + 异构卸载；解析复杂 PDF 靠 RAGFlow DeepDoc 的版面与表格识别"
+        "sourceQuote": "这一册只解决一件事：本地跑模型靠 GGUF 量化 + 异构卸载；解析复杂 PDF 靠 RAGFlow DeepDoc 的版面与表格识别",
+        "validator": {
+          "type": "regex",
+          "patterns": [
+            {
+              "label": "本地模型/解析",
+              "pattern": "(?i)gguf|ollama|ragflow"
+            }
+          ]
+        }
       },
       {
         "id": "c2",

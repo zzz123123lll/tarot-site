@@ -12,7 +12,7 @@
 <meta property="og:image" content="https://gongjuhe.top/og-knowledge.png?v=2"
 <meta property="og:image:alt" content="AI神功：内功心法 × 神兵利器，15 册 36 关">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=12">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=13">
 <script src="/ai/notes/notes.js?v=8" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=7"></script>
 </head>
@@ -45,6 +45,14 @@
     <h1>任务规划与动态拆解模式(Lesson 07: Planning Design Pattern)</h1>
     <p class="lede">本关练习：设计“企业新客户背景尽调 Agent”的分步规划器。</p>
     <div class="meta"><span>约 4 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 AI 现代必修课 · 内功06</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <nav class="page-toc" aria-label="本页目录">
+      <span class="page-toc-label">本页</span>
+      <a href="#understand">30秒 / 3分钟</a>
+      <a href="#reading">来源精读</a>
+      <a href="#lesson">原文</a>
+      <a href="#practice">练习</a>
+      <a href="#answer">答案</a>
+    </nav>
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
@@ -81,7 +89,7 @@
     <p class="reading-takeaway">本关先记住：设计 Planner 输出的结构化 JSON 计划表格式,每个子任务需包含 step_id、tool_name、depends_on (前置依赖数组)与 expected_output;</p>
     <div class="reading-refs"><span class="label">SOURCES</span><span>PDF 第 3 关（用户提供）</span><a href="https://github.com/microsoft/ai-agents-for-beginners/blob/main/07-planning-design/README.md" target="_blank" rel="noopener">Microsoft · Lesson 7 Planning ↗</a></div>
   </section>
-    <section class="lesson"><h3>核心原理</h3><p>面对复杂目标(如“分析竞品最近三个月的定价变动并生成应对促销方案”),单步工具调用无法完 成。Microsoft AI Agents for Beginners 第 7 课(Planning Design) 指出,高阶智能体必须具备“先规划后 执行(Plan-and-Solve)”能力:先将宏大目标拆解为包含明确输入输出依赖关系的子任务列表(Sub-task DAG),标记哪些子任务可以并行执行(Parallel)、哪些必须串行等待(Sequential);且每完成一步后根据 实际返回结果动态修正后续计划(Re-planning)。</p><h2>第 3 关实操练习题：设计“企业新客戶背景尽调 Agent”的分步规划器</h2><h3>任务背景</h3><p>B2B 销售团队输入一个潜在客戶公司名称,希望 Agent 自动完成工商⻛险核查、近期高管新闻 动态检索、主营产品匹配度评估,并输出一份拜访简报。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设计 Planner 输出的结构化 JSON 计划表格式,每个子任务需包含 step_id、tool_name、depends_on (前置依赖数组)与 expected_output(5 分);</p><p>2. 准确区分并行阶段(工商信息查询、新闻检索、官网产品抓取互不依赖,可并发执行)与串行汇总阶 段(</p><p>4.5 分);</p><p>3. 设计动态重规划分支:若第一步工商核查发现该公司“已注销或被列为失信被执行人”,立即终止后续 新闻检索并直接输出⻛险拦截报告(3 分)。</p></section>
+    <section class="lesson" id="lesson"><h3>核心原理</h3><p>面对复杂目标(如“分析竞品最近三个月的定价变动并生成应对促销方案”),单步工具调用无法完 成。Microsoft AI Agents for Beginners 第 7 课(Planning Design) 指出,高阶智能体必须具备“先规划后 执行(Plan-and-Solve)”能力:先将宏大目标拆解为包含明确输入输出依赖关系的子任务列表(Sub-task DAG),标记哪些子任务可以并行执行(Parallel)、哪些必须串行等待(Sequential);且每完成一步后根据 实际返回结果动态修正后续计划(Re-planning)。</p><h2>第 3 关实操练习题：设计“企业新客戶背景尽调 Agent”的分步规划器</h2><h3>任务背景</h3><p>B2B 销售团队输入一个潜在客戶公司名称,希望 Agent 自动完成工商⻛险核查、近期高管新闻 动态检索、主营产品匹配度评估,并输出一份拜访简报。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设计 Planner 输出的结构化 JSON 计划表格式,每个子任务需包含 step_id、tool_name、depends_on (前置依赖数组)与 expected_output(5 分);</p><p>2. 准确区分并行阶段(工商信息查询、新闻检索、官网产品抓取互不依赖,可并发执行)与串行汇总阶 段(</p><p>4.5 分);</p><p>3. 设计动态重规划分支:若第一步工商核查发现该公司“已注销或被列为失信被执行人”,立即终止后续 新闻检索并直接输出⻛险拦截报告(3 分)。</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/agents/03" data-exercise="/content/levels/agents-03.json">
       <div class="practice-head">
         <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
@@ -108,7 +116,7 @@
         <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
       </div>
     </section>
-    <details class="answer">
+    <details class="answer" id="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
       <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:企业尽调 Agent 的 DAG 任务规划与短路拦截器 { "goal": "对目标企业【星云智造科技有限公司】进行销售前背景尽调并生成拜访简报", "execution_plan": [ { "step_id": "step_1", "task": "核查工商注册状态、行政处罚与失信被执行人记录", "tool_name": "verify_business_registration", "depends_on": [], "execution_mode": "gatekeeper_first", "short_circuit_rule": "若返回 status 为 CANCELLED(已注销)或 DISHONEST_DEBTOR(失信被执行 人),立即取消 step_2 至 step_4,直接跳至⻛险拦截总结。" }, { "step_id": "step_2", "task": "检索最近 90 天公司高管公开发言、融资与业务扩张新闻", "tool_name": "search_company_news", "depends_on": ["step_1"], "execution_mode": "parallel_group_A" }, { "step_id": "step_3", "task": "抓取企业官网核心产品线与技术栈介绍", "tool_name": "scrape_product_catalog", "depends_on": ["step_1"], "execution_mode": "parallel_group_A" }, { "step_id": "step_4", "task": "结合我方产品矩阵,汇总生成定制化销售拜访破冰简报", "tool_name": "synthesize_sales_brief", "depends_on": ["step_2", "step_3"], "execution_mode": "sequential_final" } ] } 得分要点拆解:规范包含 `step_id`、`tool_name`、`depends_on` 的 DAG 结构(5 分);先执行守门任务 `step_1`,再并行执行 `step_2` 与 `step_3`,最后串行汇总 `step_4`(4.5 分);具备失信/注销一键短路 终止机制(3 分)。 第 4 关</p></div>
     </details>
@@ -119,7 +127,7 @@
 </main>
 <footer class="wrap">
   <span>AI神功 · 2026</span>
-  <span><a href="/ai/notes/privacy/">隐私说明</a> · 免费 · 不登录 · 不卖 API</span>
+  <span><a href="/ai/notes/privacy/">隐私说明</a> · <a href="/ai/notes/progress/">学习进度</a> · 免费 · 不登录 · 不卖 API</span>
 </footer>
 </body>
 </html>
