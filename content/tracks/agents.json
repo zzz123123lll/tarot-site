@@ -1,9 +1,9 @@
 {
   "id": "agents",
-  "title": "AI Agent 智能体：从零搭建实战",
-  "subtitle": "从单次问答机器人，到自主规划与多智能体协作系统。",
-  "source": "Microsoft AI Agents for Beginners (77.2k Stars)",
-  "label": "AI AGENTS",
+  "title": "内功06 · AI Agent 智能体",
+  "subtitle": "从 ReAct 闭环、工具调用、规划与记忆，到多智能体与生产护栏。",
+  "source": "AI 现代必修课 · 内功06",
+  "label": "INNER 06 / AGENT",
   "levels": [
     {
       "id": "agents-01",
@@ -69,5 +69,6 @@
       "readMinutes": 4,
       "href": "/ai/notes/agents/08"
     }
-  ]
+  ],
+  "scoreTotal": 12.5
 }

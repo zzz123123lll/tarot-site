@@ -1,9 +1,9 @@
 {
   "id": "rag",
-  "title": "RAG 检索增强生成：个人知识库实操",
-  "subtitle": "从余弦相似度手算，到生产级混合检索与多轮知识库。",
-  "source": "StepByStep-RAG / GraphRAG / RAG 评估实践",
-  "label": "RAG / KNOWLEDGE BASE",
+  "title": "内功05 · RAG 检索增强生成",
+  "subtitle": "StepByStep-RAG 的 8 个模块：从余弦相似度、分块、语义检索到引用、GraphRAG 与评估。",
+  "source": "AI 现代必修课 · 内功05",
+  "label": "INNER 05 / RAG",
   "levels": [
     {
       "id": "rag-01",
@@ -69,5 +69,6 @@
       "readMinutes": 4,
       "href": "/ai/notes/rag/08"
     }
-  ]
+  ],
+  "scoreTotal": 12.5
 }

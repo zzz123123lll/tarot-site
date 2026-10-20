@@ -57,7 +57,7 @@ function validate(track, level) {
       assert(Array.isArray(g.terms) && g.terms.length > 0, 'criterion ' + i + ' group ' + j + ' terms');
     });
   });
-  const expected = track.id === 'prompt' ? 10 : 12.5;
+  const expected = Number(track.scoreTotal) || (track.id === 'prompt' ? 10 : 12.5);
   assert(Math.abs(total - expected) < 0.01, 'rubric total ' + total + ' != ' + expected);
   const entry = track.levels.find((l) => l.id === level.id);
   assert(entry, 'level missing from track');

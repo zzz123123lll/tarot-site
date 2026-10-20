@@ -5,9 +5,9 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
-const TRACK_ORDER = ['prompt', 'rag', 'agents', 'llm'];
-const SHORT = { prompt: '提示词工程', rag: 'RAG 知识库', agents: 'AI Agent', llm: 'LLM 微调' };
-const KICKER = { prompt: '01 / PROMPT ENGINEERING', rag: '02 / RAG / KNOWLEDGE BASE', agents: '03 / AI AGENTS', llm: '04 / LLM / POST-TRAINING' };
+const TRACK_ORDER = ['neigong', 'rag', 'agents', 'llm', 'tools'];
+const SHORT = { neigong: '内功心法', rag: 'RAG 知识库', agents: 'AI Agent', llm: '模型定制', tools: '神兵利器' };
+const KICKER = { neigong: '01 / 内功心法', rag: '02 / 内功05 · RAG', agents: '03 / 内功06 · AGENT', llm: '04 / 内功07 · MODEL', tools: '05 / 神兵利器' };
 
 function esc(s) {
   return String(s == null ? '' : s)
@@ -46,6 +46,7 @@ function shellHeader() {
   <nav class="nav" aria-label="主导航">
     <a href="/ai/notes/">全部课程</a>
     <a class="hide-s" href="/ai/notes/review/">错题本</a>
+    <a class="hide-s" href="/ai/notes/guide/">学习路线</a>
     <a class="hide-s" href="/#practice">怎么练</a>
     <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
   </nav>
@@ -69,7 +70,7 @@ function renderIndex(tracks) {
 </a>`;
   }).join('');
   const total = tracks.reduce((s, t) => s + t.levels.length, 0);
-  const page = `${head('AI 实战通关笔记 — 34 关免费练习', '提示词工程、RAG、AI Agent、LLM 微调四套实战练习册，34 关免费阅读与自动检查。', 'https://gongjuhe.top/ai/notes/')}
+  const page = `${head('AI 现代必修课 — 36 关免费练习', '内功心法 7 册 + 神兵利器 8 册：LLM 原理、RAG、Agent、模型定制与 8 大 AI 工具，36 关免费阅读与自动检查。', 'https://gongjuhe.top/ai/notes/')}
 <body>
 ${shellHeader()}
 <main id="main">

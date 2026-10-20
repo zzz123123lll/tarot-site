@@ -43,7 +43,7 @@ for (const tf of trackFiles) {
     assert(level.exercise && level.exercise.minLength > 0, level.id + ' exercise');
     assert(level.exercise.criteria.length === 3, level.id + ' criteria count');
 
-    const expected = track.id === 'prompt' ? 10 : 12.5;
+    const expected = Number(track.scoreTotal) || (track.id === 'prompt' ? 10 : 12.5);
     const total = level.exercise.criteria.reduce((sum, c) => sum + Number(c.weight), 0);
     assert(Math.abs(total - expected) < 0.01, level.id + ' weight ' + total);
 
@@ -83,7 +83,7 @@ for (const tf of trackFiles) {
 }
 
 const catalog = fs.readFileSync(path.join(ROOT, 'ai/notes/index.html'), 'utf8');
-assert.equal((catalog.match(/data-series="/g) || []).length, 4, 'index series cards');
+assert.equal((catalog.match(/data-series="/g) || []).length, 5, 'index series cards');
 assert(catalog.includes('data-overall'), 'index overall progress');
 assert(catalog.includes('notes.js?v=6'), 'index script version');
 for (const tf of trackFiles) {
@@ -93,6 +93,8 @@ for (const tf of trackFiles) {
   assert.equal((trackPage.match(/class="level-row"/g) || []).length, track.levels.length, track.id + ' level rows');
   for (const entry of track.levels) assert(trackPage.includes('data-url="' + entry.href + '"'), track.id + ' row ' + entry.id);
 }
+const guide = fs.readFileSync(path.join(ROOT, 'ai/notes/guide/index.html'), 'utf8');
+assert(guide.includes('AI 现代必修课'), 'guide page');
 const review = fs.readFileSync(path.join(ROOT, 'ai/notes/review/index.html'), 'utf8');
 assert(review.includes('data-mistakes'), 'review mistakes container');
 assert(review.includes('review.mjs'), 'review module');
@@ -101,6 +103,6 @@ console.log('PASS review page');
 
 console.log('PASS catalog pages');
 
-assert.equal(levelCount, 34, 'expected 34 levels');
+assert.equal(levelCount, 36, 'expected 36 levels');
 console.log('PASS all levels', levelCount, 'content + grading + pages');
 console.log('ALL-LEVEL TESTS PASSED');

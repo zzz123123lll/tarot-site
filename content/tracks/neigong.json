@@ -1,0 +1,42 @@
+{
+  "title": "内功心法：AI 底层原理",
+  "subtitle": "内功 01–04：LLM 底层、提示词科学、深度推理、上下文工程。",
+  "source": "AI 现代必修课 · 内功心法篇",
+  "label": "INNER CRAFT / 7 BOOKS",
+  "id": "neigong",
+  "levels": [
+    {
+      "id": "neigong-01",
+      "level": 1,
+      "title": "大语言模型底层运作原理",
+      "summary": "本册：大语言模型底层运作原理",
+      "readMinutes": 8,
+      "href": "/ai/notes/neigong/01"
+    },
+    {
+      "id": "neigong-02",
+      "level": 2,
+      "title": "提示词工程科学",
+      "summary": "本册：提示词不是玄学，而是概率空间的窄化漏斗",
+      "readMinutes": 8,
+      "href": "/ai/notes/neigong/02"
+    },
+    {
+      "id": "neigong-03",
+      "level": 3,
+      "title": "深度推理模型与思维链机制",
+      "summary": "本册：深度推理模型的范式变化",
+      "readMinutes": 8,
+      "href": "/ai/notes/neigong/03"
+    },
+    {
+      "id": "neigong-04",
+      "level": 4,
+      "title": "上下文工程与幻觉控制",
+      "summary": "本册：上下文工程是信息场管理",
+      "readMinutes": 8,
+      "href": "/ai/notes/neigong/04"
+    }
+  ],
+  "scoreTotal": 60
+}

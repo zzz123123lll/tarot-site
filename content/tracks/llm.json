@@ -1,9 +1,9 @@
 {
   "id": "llm",
-  "title": "大模型 LLM 微调与全栈工程：八关实战通关",
-  "subtitle": "从架构与数据清洗，到 LoRA/QLoRA、DPO 对齐、量化与 vLLM 部署。",
-  "source": "Maxime Labonne LLM Course / Modern LLM Notebook / LLM Fine-Tuning & RL Hands-on Lab / AI Infra Engineer Learning",
-  "label": "LLM / POST-TRAINING",
+  "title": "内功07 · 模型定制与算力量化",
+  "subtitle": "从 SFT、LoRA/QLoRA、DPO 偏好对齐，到量化与 vLLM 部署。",
+  "source": "AI 现代必修课 · 内功07",
+  "label": "INNER 07 / MODEL",
   "levels": [
     {
       "id": "llm-01",
@@ -69,5 +69,6 @@
       "readMinutes": 5,
       "href": "/ai/notes/llm/08"
     }
-  ]
+  ],
+  "scoreTotal": 12.5
 }

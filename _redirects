@@ -98,3 +98,7 @@
 /tools/uuid /uuid/ 301
 /tools/date/ /date/ 301
 /tools/date /date/ 301
+
+# old prompt track superseded by 内功心法
+/ai/notes/prompt/* /ai/notes/neigong/02 301
+/ai/notes/prompt/ /ai/notes/neigong/02 301

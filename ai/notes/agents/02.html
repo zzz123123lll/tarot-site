@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>工具调用设计模式 · 第 02 关 — AI Agent 智能体：从零搭建实战</title>
+<title>工具调用设计模式 · 第 02 关 — 内功06 · AI Agent 智能体</title>
 <meta name="description" content="本关练习：为售后退款智能体编写严谨的 Tool JSON Schema。">
 <link rel="canonical" href="https://gongjuhe.top/ai/notes/agents/02">
 <meta property="og:type" content="article">
-<meta property="og:title" content="工具调用设计模式 — AI Agent 智能体：从零搭建实战">
+<meta property="og:title" content="工具调用设计模式 — 内功06 · AI Agent 智能体">
 <meta property="og:description" content="本关练习：为售后退款智能体编写严谨的 Tool JSON Schema。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
@@ -24,21 +24,21 @@
     <a href="/ai/notes/">全部课程</a>
     <a class="hide-s" href="/ai/notes/review/">错题本</a>
     <a href="/">知识库首页</a>
-    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%20%E6%99%BA%E8%83%BD%E4%BD%93%EF%BC%9A%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E5%AE%9E%E6%88%98%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%86%85%E5%8A%9F06%20%C2%B7%20AI%20Agent%20%E6%99%BA%E8%83%BD%E4%BD%93%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF</a>
   </nav>
 </header>
 <main id="main">
 <nav class="breadcrumb wrap" aria-label="面包屑">
-  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/agents/">AI Agent 智能体：从零搭建实战</a><span class="sep">/</span><span>第 02 关</span>
+  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/agents/">内功06 · AI Agent 智能体</a><span class="sep">/</span><span>第 02 关</span>
 </nav>
 <div class="wrap article-shell">
   <aside class="side">
-    <p class="side-label">AI Agent 智能体</p>
+    <p class="side-label">内功06 · AI Agent 智能体</p>
     <ol class="level-nav"><li><a href="/ai/notes/agents/01"><span class="num">01</span><span>Agent 核心循环与框架选型</span></a></li><li><a href="/ai/notes/agents/02" class="current"><span class="num">02</span><span>工具调用设计模式</span></a></li><li><a href="/ai/notes/agents/03"><span class="num">03</span><span>任务规划与动态拆解模式</span></a></li><li><a href="/ai/notes/agents/04"><span class="num">04</span><span>智能体检索与分层记忆管理</span></a></li><li><a href="/ai/notes/agents/05"><span class="num">05</span><span>元认知与自我反思机制</span></a></li><li><a href="/ai/notes/agents/06"><span class="num">06</span><span>多智能体协作编排模式</span></a></li><li><a href="/ai/notes/agents/07"><span class="num">07</span><span>智能体通信协议与上下文工程</span></a></li><li><a href="/ai/notes/agents/08"><span class="num">08</span><span>可信护栏与生产级安全架构</span></a></li></ol>
-    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%20%E6%99%BA%E8%83%BD%E4%BD%93%EF%BC%9A%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E5%AE%9E%E6%88%98%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF ↗</a></div>
+    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%86%85%E5%8A%9F06%20%C2%B7%20AI%20Agent%20%E6%99%BA%E8%83%BD%E4%BD%93%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF ↗</a></div>
   </aside>
   <article class="article">
-    <p class="kicker">AI AGENTS / 02 · ENGINE v1</p>
+    <p class="kicker">INNER 06 / AGENT / 02 · ENGINE v1</p>
     <h1>工具调用设计模式</h1>
     <p class="lede">本关练习：为售后退款智能体编写严谨的 Tool JSON Schema。</p>
     <div class="meta"><span>约 5 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Microsoft AI Agents for Beginners (77.2k Stars)</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
@@ -151,7 +151,7 @@
 <h3>得分要点拆解</h3>
 <p>完整声明 JSON Schema 与前置调用约束（4.5 分）；对订单号正则、金额上下限、原因枚举进行强类型锁定（5 分）；提供面向 Agent 的结构化错误回退指引（3 分）。</p></div>
     </details>
-    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8AAI%20Agent%20%E6%99%BA%E8%83%BD%E4%BD%93%EF%BC%9A%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E5%AE%9E%E6%88%98%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
+    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%86%85%E5%8A%9F06%20%C2%B7%20AI%20Agent%20%E6%99%BA%E8%83%BD%E4%BD%93%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
     <div class="nextprev"><a href="/ai/notes/agents/01"><small>上一关</small>Agent 核心循环与框架选型</a><a class="right" href="/ai/notes/agents/03"><small>下一关</small>任务规划与动态拆解模式</a></div>
   </article>
 </div>

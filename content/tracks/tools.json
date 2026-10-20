@@ -1,0 +1,74 @@
+{
+  "title": "神兵利器：AI 工具实操",
+  "subtitle": "利器 01–08：云端模型、深度研究、Cursor、终端 Agent、MCP、Dify、n8n、本地 RAG。",
+  "source": "AI 现代必修课 · 神兵利器篇",
+  "label": "TOOLS / 8 BOOKS",
+  "id": "tools",
+  "levels": [
+    {
+      "id": "tools-01",
+      "level": 1,
+      "title": "主流云端大模型全景实操",
+      "summary": "本册：四大云端模型的能力边界与内置工作台",
+      "readMinutes": 6,
+      "href": "/ai/notes/tools/01"
+    },
+    {
+      "id": "tools-02",
+      "level": 2,
+      "title": "零代码个人智库与深度研究",
+      "summary": "本册：源接地智库与深度研究 Agent",
+      "readMinutes": 6,
+      "href": "/ai/notes/tools/02"
+    },
+    {
+      "id": "tools-03",
+      "level": 3,
+      "title": "Cursor AI 原生编程",
+      "summary": "本册：Cursor 的三层底层机制",
+      "readMinutes": 6,
+      "href": "/ai/notes/tools/03"
+    },
+    {
+      "id": "tools-04",
+      "level": 4,
+      "title": "Claude Code 与 OpenAI Codex",
+      "summary": "本册：终端 Agent 的物理边界",
+      "readMinutes": 6,
+      "href": "/ai/notes/tools/04"
+    },
+    {
+      "id": "tools-05",
+      "level": 5,
+      "title": "MCP 模型上下文协议",
+      "summary": "本册：MCP 统一插件协议",
+      "readMinutes": 6,
+      "href": "/ai/notes/tools/05"
+    },
+    {
+      "id": "tools-06",
+      "level": 6,
+      "title": "Dify 可视化 AI 工作流",
+      "summary": "本册：DAG 工作流与 Agent 的边界",
+      "readMinutes": 6,
+      "href": "/ai/notes/tools/06"
+    },
+    {
+      "id": "tools-07",
+      "level": 7,
+      "title": "n8n 跨软件自动化",
+      "summary": "本册：n8n 的事件驱动与数组流",
+      "readMinutes": 6,
+      "href": "/ai/notes/tools/07"
+    },
+    {
+      "id": "tools-08",
+      "level": 8,
+      "title": "Ollama 与 RAGFlow 本地生态",
+      "summary": "本册：本地模型与本地知识库",
+      "readMinutes": 6,
+      "href": "/ai/notes/tools/08"
+    }
+  ],
+  "scoreTotal": 50
+}

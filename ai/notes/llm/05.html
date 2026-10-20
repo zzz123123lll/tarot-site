@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>人类偏好对⻬ DPO、ORPO 与 GRPO(Scientist 5: Preference Alignment) · 第 05 关 — 大模型 LLM 微调与全栈工程：八关实战通关</title>
+<title>人类偏好对⻬ DPO、ORPO 与 GRPO(Scientist 5: Preference Alignment) · 第 05 关 — 内功07 · 模型定制与算力量化</title>
 <meta name="description" content="本关练习：构建去“AI 说教味”的 DPO 偏好数据集与训练配置。">
 <link rel="canonical" href="https://gongjuhe.top/ai/notes/llm/05">
 <meta property="og:type" content="article">
-<meta property="og:title" content="人类偏好对⻬ DPO、ORPO 与 GRPO(Scientist 5: Preference Alignment) — 大模型 LLM 微调与全栈工程：八关实战通关">
+<meta property="og:title" content="人类偏好对⻬ DPO、ORPO 与 GRPO(Scientist 5: Preference Alignment) — 内功07 · 模型定制与算力量化">
 <meta property="og:description" content="本关练习：构建去“AI 说教味”的 DPO 偏好数据集与训练配置。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
@@ -24,21 +24,21 @@
     <a href="/ai/notes/">全部课程</a>
     <a class="hide-s" href="/ai/notes/review/">错题本</a>
     <a href="/">知识库首页</a>
-    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B%20LLM%20%E5%BE%AE%E8%B0%83%E4%B8%8E%E5%85%A8%E6%A0%88%E5%B7%A5%E7%A8%8B%EF%BC%9A%E5%85%AB%E5%85%B3%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%86%85%E5%8A%9F07%20%C2%B7%20%E6%A8%A1%E5%9E%8B%E5%AE%9A%E5%88%B6%E4%B8%8E%E7%AE%97%E5%8A%9B%E9%87%8F%E5%8C%96%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF</a>
   </nav>
 </header>
 <main id="main">
 <nav class="breadcrumb wrap" aria-label="面包屑">
-  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/llm/">大模型 LLM 微调与全栈工程：八关实战通关</a><span class="sep">/</span><span>第 05 关</span>
+  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/llm/">内功07 · 模型定制与算力量化</a><span class="sep">/</span><span>第 05 关</span>
 </nav>
 <div class="wrap article-shell">
   <aside class="side">
-    <p class="side-label">大模型 LLM 微调与全栈工程</p>
+    <p class="side-label">内功07 · 模型定制与算力量化</p>
     <ol class="level-nav"><li><a href="/ai/notes/llm/01"><span class="num">01</span><span>现代 LLM 架构与解码采样策略(Scientist 1: LLM Architecture &amp; Decoding)</span></a></li><li><a href="/ai/notes/llm/02"><span class="num">02</span><span>后训练数据集构建与对话模板映射(Scientist 3: Post-Training Datasets)</span></a></li><li><a href="/ai/notes/llm/03"><span class="num">03</span><span>LoRA 与 QLoRA 高效参数微调实战(Scientist 4: Supervised Fine-Tuning)</span></a></li><li><a href="/ai/notes/llm/04"><span class="num">04</span><span>训练曲线诊断与过拟合排障(Training Monitoring &amp; Loss Audit)</span></a></li><li><a href="/ai/notes/llm/05" class="current"><span class="num">05</span><span>人类偏好对⻬ DPO、ORPO 与 GRPO(Scientist 5: Preference Alignment)</span></a></li><li><a href="/ai/notes/llm/06"><span class="num">06</span><span>模型权重融合(MergeKit)与评测防污染(Scientist 6 &amp; 8: Evaluation &amp; Merging)</span></a></li><li><a href="/ai/notes/llm/07"><span class="num">07</span><span>低比特模型量化实战(Scientist 7: Quantization ― GGUF, AWQ &amp; GPTQ)</span></a></li><li><a href="/ai/notes/llm/08"><span class="num">08</span><span>vLLM 高吞吐生产级部署(The LLM Engineer: vLLM &amp; Production Serving)</span></a></li></ol>
-    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B%20LLM%20%E5%BE%AE%E8%B0%83%E4%B8%8E%E5%85%A8%E6%A0%88%E5%B7%A5%E7%A8%8B%EF%BC%9A%E5%85%AB%E5%85%B3%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF ↗</a></div>
+    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%86%85%E5%8A%9F07%20%C2%B7%20%E6%A8%A1%E5%9E%8B%E5%AE%9A%E5%88%B6%E4%B8%8E%E7%AE%97%E5%8A%9B%E9%87%8F%E5%8C%96%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF ↗</a></div>
   </aside>
   <article class="article">
-    <p class="kicker">LLM / POST-TRAINING / 05 · ENGINE v1</p>
+    <p class="kicker">INNER 07 / MODEL / 05 · ENGINE v1</p>
     <h1>人类偏好对⻬ DPO、ORPO 与 GRPO(Scientist 5: Preference Alignment)</h1>
     <p class="lede">本关练习：构建去“AI 说教味”的 DPO 偏好数据集与训练配置。</p>
     <div class="meta"><span>约 5 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Maxime Labonne LLM Course / Modern LLM Notebook / LLM Fine-Tuning &amp; RL Hands-on Lab / AI Infra Engineer Learning</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
@@ -107,7 +107,7 @@ GRPO: 同一题采样一组 → 规则打分 → 组内相对优势</pre></div>
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
       <div class="answer-body"><h3>参考答案与得分要点</h3><p>去“AI 说教腔”DPO 偏好样本与超参数规范</p><p>{</p><p>"prompt": "请问把 Python 列表里的重复元素去掉,同时保持原来的先后顺序不变,怎么写最简洁?",</p><p>"chosen": "直接使用 `dict.fromkeys()` 最简洁且保持原序(Python 3.7+ 字典默认保序):</p><p>\n```python\nitems = [3, 1, 2, 1, 3, 4]\nunique_items = list(dict.fromkeys(items)) # 输出: [3, 1,</p><p>2, 4]\n```\n时间复杂度为 O(n),比用 `list(set(items))` 更稳妥,因为 `set` 会打乱原有顺序。",</p><p>"rejected": "你好!这是一个非常棒的 Python 编程问题!在日常开发中,列表去重确实是一个经常遇到的需</p><p>求。作为一个 AI 助手,我很乐意为你从多个角度详细剖析这个问题。首先,让我们来看看什么是列表......(以</p><p>下省略 300 字废话寒暄)"</p><p>}</p><p>// DPO 训练核心参数规范:</p><p>// 1. learning_rate = 5e-6(必须在已收敛 SFT 模型上做微幅概率偏移,学习率过大会瞬间破坏语言连贯性导</p><p>致模型崩溃输出乱码)</p><p>// 2. beta = 0.1(KL 散度惩罚系数:控制新策略偏离原 SFT 参考模型的幅度,beta 越大越保守,beta 越小</p><p>对 chosen 偏好强化越激进)</p><p>// 3. 选型对比:主观文⻛对⻬、安全拒答与礼貌度优化选 DPO/ORPO;具备确定性验证器(如数学算式对错、代</p><p>码能否编译通过)的复杂逻辑推理增强选 GRPO。</p><p>得分要点拆解:构建对比鲜明的 `prompt / chosen / rejected` 三元组(5 分);解释极低学习率(`5e-6`)</p><p>与 KL 惩罚系数 `beta=0.1` 的防崩坏原理(4.5 分);准确区分主观偏好(DPO)与可验证推理强化(GRPO)</p><p>选型(3 分)。</p></div>
     </details>
-    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B%20LLM%20%E5%BE%AE%E8%B0%83%E4%B8%8E%E5%85%A8%E6%A0%88%E5%B7%A5%E7%A8%8B%EF%BC%9A%E5%85%AB%E5%85%B3%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
+    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%86%85%E5%8A%9F07%20%C2%B7%20%E6%A8%A1%E5%9E%8B%E5%AE%9A%E5%88%B6%E4%B8%8E%E7%AE%97%E5%8A%9B%E9%87%8F%E5%8C%96%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
     <div class="nextprev"><a href="/ai/notes/llm/04"><small>上一关</small>训练曲线诊断与过拟合排障(Training Monitoring &amp; Loss Audit)</a><a class="right" href="/ai/notes/llm/06"><small>下一关</small>模型权重融合(MergeKit)与评测防污染(Scientist 6 &amp; 8: Evaluation &amp; Merging)</a></div>
   </article>
 </div>

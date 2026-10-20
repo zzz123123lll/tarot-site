@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cursor AI 原生编程 · 第 03 关 — 神兵利器：AI 工具实操</title>
+<meta name="description" content="本册：Cursor 的三层底层机制">
+<link rel="canonical" href="https://gongjuhe.top/ai/notes/tools/03">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cursor AI 原生编程 — 神兵利器：AI 工具实操">
+<meta property="og:description" content="本册：Cursor 的三层底层机制">
+<meta property="og:image" content="/og-knowledge.png">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=8">
+<script src="/ai/notes/notes.js?v=6" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=4"></script>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<div class="read-progress"></div>
+<header class="wrap top">
+  <a class="brand" href="/">AI 实战通关 <small>KNOWLEDGE BASE</small></a>
+  <nav class="nav" aria-label="主导航">
+    <a href="/ai/notes/">全部课程</a>
+    <a class="hide-s" href="/ai/notes/review/">错题本</a>
+    <a href="/">知识库首页</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E7%A5%9E%E5%85%B5%E5%88%A9%E5%99%A8%EF%BC%9AAI%20%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%93%8D%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF</a>
+  </nav>
+</header>
+<main id="main">
+<nav class="breadcrumb wrap" aria-label="面包屑">
+  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/tools/">神兵利器：AI 工具实操</a><span class="sep">/</span><span>第 03 关</span>
+</nav>
+<div class="wrap article-shell">
+  <aside class="side">
+    <p class="side-label">神兵利器</p>
+    <ol class="level-nav"><li><a href="/ai/notes/tools/01"><span class="num">01</span><span>主流云端大模型全景实操</span></a></li><li><a href="/ai/notes/tools/02"><span class="num">02</span><span>零代码个人智库与深度研究</span></a></li><li><a href="/ai/notes/tools/03" class="current"><span class="num">03</span><span>Cursor AI 原生编程</span></a></li><li><a href="/ai/notes/tools/04"><span class="num">04</span><span>Claude Code 与 OpenAI Codex</span></a></li><li><a href="/ai/notes/tools/05"><span class="num">05</span><span>MCP 模型上下文协议</span></a></li><li><a href="/ai/notes/tools/06"><span class="num">06</span><span>Dify 可视化 AI 工作流</span></a></li><li><a href="/ai/notes/tools/07"><span class="num">07</span><span>n8n 跨软件自动化</span></a></li><li><a href="/ai/notes/tools/08"><span class="num">08</span><span>Ollama 与 RAGFlow 本地生态</span></a></li></ol>
+    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E7%A5%9E%E5%85%B5%E5%88%A9%E5%99%A8%EF%BC%9AAI%20%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%93%8D%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF ↗</a></div>
+  </aside>
+  <article class="article">
+    <p class="kicker">TOOLS / 8 BOOKS / 03 · ENGINE v1</p>
+    <h1>Cursor AI 原生编程</h1>
+    <p class="lede">本册：Cursor 的三层底层机制</p>
+    <div class="meta"><span>约 6 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 AI 现代必修课 · Cursor AI 原生编程</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <section class="explain" id="understand">
+    <div class="explain-fast">
+      <p class="label">30 SECONDS / 30 秒看懂</p>
+      <p class="explain-summary">本册讲 Cursor 的三层机制：AST 全仓索引、局部 Diff 补丁、Plan/Act 与 .mdc 规则。</p>
+      <ul class="explain-bullets"><li>AST 索引让 AI 看到整个项目</li><li>局部 Diff 只改必要位置</li><li>Plan/Act 和规则文件约束施工</li></ul>
+    </div>
+    <div class="explain-deep">
+      <p class="label">3 MINUTES / 3 分钟拆解</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本册实验/自测（来源）</p>
+      <div class="explain-example">
+        <div class="explain-code"><span>输入</span><pre>本册的动手实验与课后自测题见原文。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>按本册的顿悟→原理→实验→自测顺序阅读。</p><h3>输出</h3><p>参考答案见本页下方。</p></div>
+      </div>
+      <div class="explain-two">
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>AST</dt><dd>抽象语法树，代码结构表示</dd></div><div><dt>Fast Apply</dt><dd>局部 Diff 补丁应用</dd></div><div><dt>.mdc</dt><dd>Cursor 项目规则文件</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>本册原文把这一课题拆成顿悟、原理、实验、自测四步；这里只做导读，不添加原文外的事实。</p><h3>结构长什么样</h3><pre class="explain-structure">顿悟 → 原理深讲 → 动手实验 → 课后自测 → 参考答案</pre></div>
+      </div>
+      <p class="explain-check">本册自测题中，你能先用自己的话解释哪一条原理？</p>
+    </div>
+  </section>
+    <section class="source-reading" id="reading">
+    <p class="label">SOURCE READING / 来源精读</p>
+    <p class="reading-quote">本册讲 Cursor 的三层机制：AST 全仓索引、局部 Diff 补丁、Plan/Act 与 .mdc 规则。</p>
+    <div class="reading-grid">
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>AST 索引让 AI 看到整个项目</li><li>局部 Diff 只改必要位置</li><li>Plan/Act 和规则文件约束施工</li></ol></div>
+      <div>
+        <h3>怎么对应本关练习</h3><p>先读本册的顿悟时刻与原理，再做动手实验，最后用课后自测题检查；答案在页面下方。</p>
+        <h3>例子在哪</h3><p>本册的动手实验与自测题都在原文里；参考答案见本页下方。</p>
+      </div>
+    </div>
+    <p class="reading-takeaway">Cursor 的三层底层机制</p>
+    <div class="reading-refs"><span class="label">SOURCES</span><span>PDF 本册（用户提供）</span></div>
+  </section>
+    <section class="lesson"><h3>【第二辑:神兵利器篇 · 课题 03 / 08】AI 现代必修课 · 前沿工具深讲与动手实验讲义</h3><p>利器03:AI 原生编程编辑器——Cursor 从零入门到全栈 项目实战 即使一行代码没写过,也能用自然语言构建完整软件:吃透 AST 全仓索引、局部 Diff 补丁、Plan→Act 双模铁 律与 .mdc 规范锁死 核心知识参考:Cursor Official Platform、PatrickJS/awesome-cursorrules 与 Andrej Karpathy AI Coding Guidelines</p><h3>一、顿悟时刻:哦,原来用 Cursor 写程序和在网页里复制粘贴差在这三层底层机</h3><p>制! 很多想用 AI 做个小网站、写个自动化脚本或开发独立软件的订阅者,一开始都是在网页版聊天框里让 AI 写代 码,然后手动复制粘贴到本地文件里。但只要项目超过 2 个文件、代码超过 200 行,就会陷入噩梦:改了一个 按钮,结果原来的核心功能被 AI 弄丢了;报错信息贴过去改了五遍,越改 Bug 越多。 为什么换成 AI 原生编程 编辑器 Cursor 后,哪怕是编程新手也能稳稳当当做出几千行的完整项目?我们先用 3 分钟拆开它的三层底层黑 盒。 真相一:网页聊天框是“蒙着眼睛摸象的顾问”,而 Cursor 是“拿着全项目立体电路图的总工程师” 当你用 Cursor 打开电脑上的项目文件夹时,它在后台为你做好了三件网页版聊天框根本做不到的事: 第一件:基于 AST(抽象语法树)的全代码库索引(Codebase Indexing)——Cursor 并不是把你的代码 当普通散文切碎,而是按照编程语言的语法树结构(函数定义、类继承、跨文件 import 引用关系)在本地建 立了一张完整的语义图谱。当你问“登录逻辑在哪里校验密码?”时,它能顺着调用链精准定位到对应的文 件与行号。 第二件:外科手术式局部补丁(Surgical Diff Application)——网页版 AI 改代码时,要么重吐整个文件 (既慢又容易漏代码),要么偷懒写一句 // ... 其余代码保持不变(你一粘贴就把原代码冲掉了!)。而 Cursor 采用专门训练的底层 Fast Apply / Diff 模型,只精准定位需要修改的第 45〜52 行:红色高亮代表拟 删除的旧行,绿色高亮代表拟插入的新行,其余几百行代码纹丝不动,由你一眼看清改动后点击 Accept 确 认! 第三件:终端执行与报错堆栈自动闭环(Agent Terminal Loop)——在 Agent 模式下,Cursor 可以自己 在内置终端里运行测试命令、自己读取终端爆出的红色错误行号、自己定位源码并修复,直到测试通过。 真相二:为什么新手用 Cursor 也会把项目改崩?揭秘 Andrej Karpathy 的“先规划后动刀(Plan → Act)”铁律 前特斯拉 AI 总监、OpenAI 联合创始人 Andrej Karpathy 在总结他高强度使用 Cursor 开发项目的实战准则(收 录于 Andrej Karpathy Coding Guidelines)时指出:AI 编程助手就像一个手速快得惊人、但极其热心过头的年 轻程序员——如果你一上来就开着全自动 Agent 模式随口说一句“把界面改漂亮点”,它会不打招呼顺手把你的 数据结构也改了! 因此,把 Cursor 用成神兵只有两条核心心法:第一是严格分离“只读探讨(Ask / Plan)”与“动手改代码 (Agent / Edit)”两个阶段;第二是在项目里配置好 .cursor/rules/*.mdc 或 AGENTS.md 规范文件,从系统底层锁 死 AI 的修改边界! Cursor 三大核心交互 入口 快捷键与位置 底层权限边界与黄金使用时机</p><p>1. Ask 模式</p><p>(只读规划军师) 右侧面板切换为 Ask 只有阅读权,绝不直接修改任何文件! 每当开始新功能或排查复 杂 Bug 时,第一步永远先用 Ask 模式说:“请分析实现该功能需 要改哪几个文件、分哪三步走?暂时不要写代码。”</p><p>2. Inline Edit</p><p>(单点微创手术) 选中代码按 Ctrl+K (macOS Cmd+K) 严格限制在鼠标高亮选中的那几行代码内做局部修改! 比如只改 一个正则表达式、只给一个函数加注释或改一个按钮颜色, 100% 不会波及其他代码。</p><p>3. Agent 模式</p><p>(多文件全自动施工) 右侧面板切换为 Agent (Ctrl+I / Cmd+I) 具备跨文件增删改与终端命令执行权! 仅在 Ask 模式下确认修改 方案无误后,切到 Agent 模式让它按既定方案施工,每完成一个 小功能立即测试并保存检查点(Checkpoint)。</p><h3>二、核心操作深讲:@ 上下文制导与 .cursor/rules/*.mdc 现代规则配置</h3><p>1. 告别大海捞针:用好四个最关键的 @ 上下文锚点</p><p>在 Cursor 输入框中敲下 @ 键,可以直接为大模型戴上“聚光灯眼镜”(践行《内功04》的上下文信噪比优化): @Files 与 @Folders:当你明确知道本次修改只涉及 index.html 和 app.js 时,直接在提问里点名 请对照 @index.html 中的表单 ID 修改 @app.js 中的监听函数,既省 Token 又杜绝模型改错别的文件。 @Docs(挂载最新官方文档):大模型预训练语料可能会滞后于某个框架昨天刚发布的新版 API。通过 @Docs → Add new doc 粘贴该框架的最新官方文档 URL,Cursor 会自动抓取索引,彻底消除“用旧版废弃函数写代码” 的幻觉! 终端报错一键送检(Add to Chat):当下方终端报错时,不要手动复制,直接选中红色报错行点击浮现的 Add to Chat,报错上下文就会带着精确的文件路径与行号进入对话框。</p><p>2. 2026 现代项目规则标准:配置 .cursor/rules/project.mdc 与 AGENTS.md</p><p>在最新版本的 Cursor 中,传统的单一 .cursorrules 文件已全面升级为支持按文件类型按需激活的模块化规则目 录 .cursor/rules/*.mdc,同时原生兼容跨工具开放标准 AGENTS.md(参考 PatrickJS/awesome-cursorrules)。在 你的项目根目录下创建 .cursor/rules/core.mdc,写入以下带有 YAML 头部元数据的防改坏黄金规范: --- description: "全局协作与外科手术式防改坏规范" globs: "**/*" alwaysApply: true --- # Core AI Engineering Rules</p><p>1. 【Plan First 先谋后动】:当任务涉及修改 2 个及以上文件时,必须先列出受影响的文件与函数清单,确认后再执行</p><p>修改。</p><p>2. 【Surgical Edits 最小改动原则】:严格只修改与当前需求直接相关的代码行,严禁顺手删除、格式化或重构其他既</p><p>有的正常逻辑与注释。</p><p>3. 【No Placeholders 零省略原则】:输出代码补丁时必须完整可运行,严禁使用 "// ... rest of code" 省略原有逻</p><p>辑。</p><p>4. 【Environment Safety 密钥隔离】:所有 API 密钥与敏感配置一律从 .env 环境变量读取,严禁在源码中硬编码。</p><h3>三、动手实验(Hands-on Lab):零手敲构建一个完整交互应用并练习“时光倒流”</h3><p>实验 1:按“建规则 → Ask 规划 → Agent 施工”三步法零代码做出一个交互式作品</p><p>1. 第 1 步(准备空目录与规则):在桌面上新建一个名为 pomodoro_lab 的空文件夹,用 Cursor 打开它,并创建</p><p>上面的 .cursor/rules/core.mdc 规则文件。</p><p>2. 第 2 步(Ask 模式定架构):在右侧面板选择 Ask 模式,输入:“我想用纯 HTML + CSS + 原生 JavaScript 做一</p><p>个单页面版《艾宾浩斯记忆复习卡片与番茄钟工具》,数据自动保存在浏览器的 localStorage 中。请先帮我规划页面布 局结构与核心数据结构,暂时不要生成代码文件。”</p><p>3. 第 3 步(Agent 模式分步落地):审阅完它列出的结构后,将模式切换为 Agent,输入:“请按照上述方案,先</p><p>创建完整可运行的 index.html 实现核心复习卡片增删与翻转记忆功能。” 生成后直接在浏览器双击打开 index.html 验收效果! 实验 2:救命神技演练——用 Restore Checkpoint(恢复检查点) 一秒撤销改坏的代码 在实验 1 做好的网页基础上,故意向 Agent 下达一个含糊且破坏性的指令(如“把整个界面改成酷炫的3D 旋转动画”)。如果改完后页面布局乱了,千万不要继续打字让它在烂摊子上硬修! 直接将鼠标移到刚才那条 提问对话框的右上角,点击 Restore Checkpoint(回滚检查点),亲眼见证整个项目在 1 秒钟内完好无损地退回 到修改前的状态!</p><h3>四、课后自测习题与详细解析(5 关 50 分 · 检验你的 Cursor 实战内功)</h3><h3>【课后自测题(请先独立思考作答,再对照下方解析)】</h3><p>1. 第 1 题(底层机制理解 · 10 分):为什么在网页聊天框里修改一个 400 行的代码文件时极易漏掉原有功</p><p>能,而 Cursor 在修改同一个文件时既快又不会破坏上下文?请从底层技术机制解释原因。</p><p>2. 第 2 题(三模式精准选型 · 10 分):请判断以下三个场景分别应该使用 Cursor 的哪种模式(Ask / Ctrl+K</p><p>Inline Edit / Agent):1 你只想把第 28 行的一个正则表达式改得支持匹配手机号;2 你刚下载了一个别人 的开源项目,想先搞清楚它的入口文件和整体调用流程,绝不希望 AI 乱动任何文件;3 你已经确认好了修 改计划,需要同时新建 utils.py 并修改 main.py 和运行单元测试。</p><p>3. 第 3 题(模块化规则 .mdc 语法 · 10 分):在 .cursor/rules/ 目录下编写规则文件时,顶部 YAML</p><p>Frontmatter 中的 globs: "**/*.py" 和 alwaysApply: false 组合在一起代表什么意思?这相比以前把所有规则 塞进单个大文件有什么好处?</p><p>4. 第 4 题(死循环排错急救 · 10 分):当你让 Agent 修复一个 Bug,结果它连续改了 3 次不仅没修好,反而</p><p>报出了更多新错误。请问此时为什么绝对不能继续在当前对话里追问第 4 次?标准的三步急救流程是什么?</p><p>5. 第 5 题(过时 API 幻觉根治 · 10 分):你正在用 Cursor 开发一个基于最新第三方图表库的项目,发现 AI</p><p>总是写出三年前旧版本的已废弃函数。请问如何利用 Cursor 的 @ 上下文功能彻底解决这一问题?</p></section>
+    <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/tools/03" data-exercise="/content/levels/tools-03.json">
+      <div class="practice-head">
+        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <h2>本册课后自测与实验</h2>
+        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+      </div>
+      <div class="knowledge-check" data-objective></div>
+      <div class="practice-grid">
+        <div class="practice-write">
+          <label for="practice-answer">我的答案</label>
+          <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案写在这里…"></textarea>
+          <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
+        </div>
+        <div class="practice-check">
+          <p class="practice-label">评分项</p>
+          <div class="check-list" data-criteria></div>
+          <button type="button" class="check-answer" data-check>检查我的答案</button>
+          <div class="practice-feedback" data-feedback></div>
+          <p class="practice-score">结构分 <b data-score>—</b> / 50 分</p>
+        </div>
+      </div>
+      <div class="practice-actions">
+        <button type="button" data-reveal>对照参考答案 ↓</button>
+        <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
+      </div>
+    </section>
+    <details class="answer">
+      <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
+      <div class="answer-body"><h3>参考答案与解析</h3><p>1. 第 1 题解析:因为网页版聊天框每次修改往往需要重新生成整个文件或依赖人工手动定位粘贴,极易因上下</p><p>文截断或省略号注释丢失既有代码;而 Cursor 底层采用全代码库 AST 语法树索引 + 外科手术式局部 Diff 补 丁模型(Fast Apply),只针对需要变更的那几行生成增删补丁(Diff),其余数百行代码在物理文件上保持 原样不动。(答出 AST 索引与局部 Diff 补丁机制得 10 分)</p><p>2. 第 2 题解析:场景 1 应选中第 28 行按 Ctrl+K / Cmd+K(Inline Edit 行内微创编辑),作用范围锁定在单行;</p><p>场景 2 应使用 Ask 模式(只读军师模式),零文件修改⻛险;场景 3 应使用 Agent 模式,完成跨文件创建、修 改与终端自测闭环。(三个场景全部选对得 10 分)</p><p>3. 第 3 题解析:代表“按文件后缀动态按需挂载”:只有当你在编辑或引用匹配 **/*.py(即 Python 源码文件)</p><p>时,Cursor 才会把这份 Python 专属规则注入大模型的上下文窗口;而在编辑纯 HTML 或 Markdown 文件 时则不加载它。好处是大幅节省宝贵的上下文窗口空间,避免无关语言的规则互相干扰注意力(Context Rot)!(解释按需挂载机制得 5 分,答出节省上下文与提高注意力信噪比得 5 分)</p><p>4. 第 4 题解析:因为连续 3 次失败尝试的错误代码和报错日志已经严重污染了当前会话的上下文窗口,触发了</p><p>自回归模型的“错误路径依赖”。标准三步急救:1 立即点击第 1 次修改前的 Restore Checkpoint(恢复检查 点) 将代码还原到干净状态;2 开启一个全新的空白对话窗口(清除污染记忆);3 切到 Ask 模式,附上具 体报错信息,要求 AI 先列出 3 种可能的根本原因,由你确认后再改。(解释上下文污染得 4 分,写出回滚 Checkpoint + 新开会话 + Ask 先分析得 6 分)</p><p>5. 第 5 题解析:使用 @Docs 功能:在输入框敲 @Docs → 选择 Add new doc,将该第三方图表库最新版本的官方文</p><p>档网址填入让 Cursor 完成索引,随后在提问中显式挂载 @该库文档名称,强制模型依据最新官方 API 签名编 写代码。(准确答出 @Docs 挂载最新官方文档得 10 分)</p></div>
+    </details>
+    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E7%A5%9E%E5%85%B5%E5%88%A9%E5%99%A8%EF%BC%9AAI%20%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%93%8D%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
+    <div class="nextprev"><a href="/ai/notes/tools/02"><small>上一关</small>零代码个人智库与深度研究</a><a class="right" href="/ai/notes/tools/04"><small>下一关</small>Claude Code 与 OpenAI Codex</a></div>
+  </article>
+</div>
+</main>
+<footer class="wrap">
+  <span>AI 实战通关 · 2026</span>
+  <span>免费 · 不登录 · 不卖 API</span>
+</footer>
+</body>
+</html>

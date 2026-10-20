@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>大语言模型底层运作原理 · 第 01 关 — 内功心法：AI 底层原理</title>
+<meta name="description" content="本册：大语言模型底层运作原理">
+<link rel="canonical" href="https://gongjuhe.top/ai/notes/neigong/01">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大语言模型底层运作原理 — 内功心法：AI 底层原理">
+<meta property="og:description" content="本册：大语言模型底层运作原理">
+<meta property="og:image" content="/og-knowledge.png">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=8">
+<script src="/ai/notes/notes.js?v=6" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=4"></script>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<div class="read-progress"></div>
+<header class="wrap top">
+  <a class="brand" href="/">AI 实战通关 <small>KNOWLEDGE BASE</small></a>
+  <nav class="nav" aria-label="主导航">
+    <a href="/ai/notes/">全部课程</a>
+    <a class="hide-s" href="/ai/notes/review/">错题本</a>
+    <a href="/">知识库首页</a>
+    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%86%85%E5%8A%9F%E5%BF%83%E6%B3%95%EF%BC%9AAI%20%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF</a>
+  </nav>
+</header>
+<main id="main">
+<nav class="breadcrumb wrap" aria-label="面包屑">
+  <a href="/">AI 实战通关</a><span class="sep">/</span><a href="/ai/notes/">全部课程</a><span class="sep">/</span><a href="/ai/notes/neigong/">内功心法：AI 底层原理</a><span class="sep">/</span><span>第 01 关</span>
+</nav>
+<div class="wrap article-shell">
+  <aside class="side">
+    <p class="side-label">内功心法</p>
+    <ol class="level-nav"><li><a href="/ai/notes/neigong/01" class="current"><span class="num">01</span><span>大语言模型底层运作原理</span></a></li><li><a href="/ai/notes/neigong/02"><span class="num">02</span><span>提示词工程科学</span></a></li><li><a href="/ai/notes/neigong/03"><span class="num">03</span><span>深度推理模型与思维链机制</span></a></li><li><a href="/ai/notes/neigong/04"><span class="num">04</span><span>上下文工程与幻觉控制</span></a></li></ol>
+    <div class="side-cta">完整 PDF 留邮箱发。<br><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%86%85%E5%8A%9F%E5%BF%83%E6%B3%95%EF%BC%9AAI%20%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">获取 PDF ↗</a></div>
+  </aside>
+  <article class="article">
+    <p class="kicker">INNER CRAFT / 7 BOOKS / 01 · ENGINE v1</p>
+    <h1>大语言模型底层运作原理</h1>
+    <p class="lede">本册：大语言模型底层运作原理</p>
+    <div class="meta"><span>约 8 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 AI 现代必修课 · 大语言模型底层运作原理</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <section class="explain" id="understand">
+    <div class="explain-fast">
+      <p class="label">30 SECONDS / 30 秒看懂</p>
+      <p class="explain-summary">本册从 Tokenizer、Embedding、Self-Attention 与三阶段训练讲清 LLM 的黑盒；来源强调看懂这些机制后，许多 AI 现象都能解释。</p>
+      <ul class="explain-bullets"><li>Token 不是字；Embedding 把语义放进高维空间</li><li>Self-Attention 用 Query-Key 权重建立上下文关联</li><li>Temperature/Top-p 决定从概率榜单里怎么选词</li></ul>
+    </div>
+    <div class="explain-deep">
+      <p class="label">3 MINUTES / 3 分钟拆解</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本册实验/自测（来源）</p>
+      <div class="explain-example">
+        <div class="explain-code"><span>输入</span><pre>本册的动手实验与课后自测题见原文。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>按本册的顿悟→原理→实验→自测顺序阅读。</p><h3>输出</h3><p>参考答案见本页下方。</p></div>
+      </div>
+      <div class="explain-two">
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Token</dt><dd>文本被分词器切成的单位</dd></div><div><dt>Embedding</dt><dd>把 token 映射成向量</dd></div><div><dt>Self-Attention</dt><dd>让 token 互相计算注意力权重</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>本册原文把这一课题拆成顿悟、原理、实验、自测四步；这里只做导读，不添加原文外的事实。</p><h3>结构长什么样</h3><pre class="explain-structure">顿悟 → 原理深讲 → 动手实验 → 课后自测 → 参考答案</pre></div>
+      </div>
+      <p class="explain-check">本册自测题中，你能先用自己的话解释哪一条原理？</p>
+    </div>
+  </section>
+    <section class="source-reading" id="reading">
+    <p class="label">SOURCE READING / 来源精读</p>
+    <p class="reading-quote">本册从 Tokenizer、Embedding、Self-Attention 与三阶段训练讲清 LLM 的黑盒；来源强调看懂这些机制后，许多 AI 现象都能解释。</p>
+    <div class="reading-grid">
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>Token 不是字；Embedding 把语义放进高维空间</li><li>Self-Attention 用 Query-Key 权重建立上下文关联</li><li>Temperature/Top-p 决定从概率榜单里怎么选词</li></ol></div>
+      <div>
+        <h3>怎么对应本关练习</h3><p>先读本册的顿悟时刻与原理，再做动手实验，最后用课后自测题检查；答案在页面下方。</p>
+        <h3>例子在哪</h3><p>本册的动手实验与自测题都在原文里；参考答案见本页下方。</p>
+      </div>
+    </div>
+    <p class="reading-takeaway">大语言模型底层运作原理</p>
+    <div class="reading-refs"><span class="label">SOURCES</span><span>PDF 本册（用户提供）</span></div>
+  </section>
+    <section class="lesson"><h3>【第一辑:内功心法篇 · 课题 01 / 07】AI 现代必修课 · 纯粹理论深讲与动手实验讲义</h3><p>内功01:大语言模型(LLM)底层运作原理——从分词、 高维向量到概率接⻰ 把大模型的黑盒彻底拆开:搞懂 Token 分词机制、Embedding 语义空间、Self-Attention 自注意力、温度采 样与三阶段训练全流程 核 心 知 识 参 考 : Microsoft Generative AI for Beginners 、 Maxime Labonne LLM Course 与 Modern LLM Notebook</p><h3>一、顿悟时刻:哦,原来大模型在底层是这么工作的!</h3><p>很多刚接触 AI 的学习者常把大语言模型(Large Language Model, LLM)想象成一个装满标准答案的数据库, 或者一个像人类一样用逻辑思考的大脑。其实,当你把 ChatGPT、Claude、Gemini 或 DeepSeek 的外壳拆 开,你会发现它的底层运行建立在三个极其优美且直观的数学机制之上。看懂这三个真相,你以后遇到任何奇 怪的 AI 现象都能一眼看穿本质。 真相一:大模型根本不认识汉字和英文字母,它眼里只有“词表编号(Token ID)” 计算机无法直接把文字放进神经网络做乘法运算。当你向模型输入一句话时,门口的第一道工序叫 Tokenizer (分词器,主流采用 BPE 字节对编码算法)。分词器手里有一本固定大小的“新华字典”(比如 OpenAI o200k_base 词表约 20 万个词元,DeepSeek-V4 / V4.1 词表与 Qwen3.8 多模态词表约 15.1 万个词元)。 它是怎么切词的? 高频词(如 apple 或 人工智能)直接对应字典里的 1 个编号(Token ID);生僻词或长单词 则会被拆成几个子词碎片(Subwords)。在现代多语言词表中,1 个英文单词平均约合 1.3 个 Token,1 个 常用汉字平均约合 0.6〜1 个 Token。 顿悟经典怪象:为什么曾经几乎所有大模型都会答错“strawberry 里有几个字母 r”? 因为在分词器眼 里,strawberry 根本不是 10 个独立字母,而是直接被换成了两个整数编号 [3412, 19845](对应 straw + berry)喂给了模型!这就像蒙住你的眼睛递给你两块拼图,让你不拆开拼图直接说出里面有几笔竖弯钩一样 困难。只有当你让模型“把每个字母用空格隔开写出来(s t r a w b e r r y)”时,每个字母才变成独立的 Token,模型立刻就能数对了! 真相二:什么是 Embedding 与 Self-Attention?“给每个词发一个高维空间坐标,再根据上下文动态 变形” 拿到一串整数编号后,模型怎么理解它们的意思?分两步走:</p><p>1. 静态语义坐标(Embedding 层):模型把每个 Token ID 映射为一串由几千个小数构成的数组(例如 4096</p><p>维向量)。你可以把它想象成一个“超级立体超市的经纬度坐标”:在这个空间里,“猫”和“小狗”的坐标 挨得极近,“苹果”和“香蕉”挨得极近。</p><p>2. 动态语境聚合(Self-Attention 自注意力机制):同一个词在不同句子里意思完全不同。比如“我去银行存</p><p>钱,看见银行门口走着一行人”——里面的“行”字到底指金融机构还是队伍?Transformer 架构的核心武 器就是自注意力机制(Query-Key-Value 矩阵运算):句子里的每一个词都会伸出“雷达触手(Query)”去 扫描句子里的所有其他词(Key),计算相关性权重。当第一个“银行”扫描到后面的“存钱”时,它的注意 力权重瞬间锁死在“存钱”上,从而把自己的向量坐标动态拉向“金融金库”区域! 真相三:大模型是怎样“吐字”的?自回归下一个词概率接⻰(Autoregressive Generation) 经过几十层自注意力网络与前馈神经网络(FFN)的计算后,模型在最后一层做的事情极其纯粹:给词表里的全 部 15 万个候选 Token 分别打一个概率分(加起来等于 100%)。比如输入“床前明月”,模型算出下一个词是 “光”的概率为 99.2%,“饼”的概率为 0.01%。选出“光”之后,模型把“床前明月光”作为新的完整输入, 重新跑一遍网络去猜第六个字“疑”——如此循环往复、每次只往前接⻰一个 Token,直到吐出代表结束的特 殊符号 &lt;|endoftext|&gt; 为止! 底层核心组件 一句话直觉比喻(“哦,原来是这样!”) 对日常使用 AI 的直接启示 Tokenizer(分词器) 把自然语言切成固定编号积木块的“切菜 机”。 处理字符级任务(字数精确统计、字母倒 序、密码校验)时,必须让模型先显式拆开 字符或调用 Python 工具。 Embedding(嵌入向 量) 把所有概念按意思远近摆放在高维空间里 的“语义坐标系”。 使用精准的专业术语能直接把模型的起始坐 标定位到高水平知识簇,避免滑入通俗水文 区。 Self-Attention(自注 意力) 让每个词回头看遍全文、弄清指代关系与 重点的“聚光灯矩阵”。 上下文越杂乱,注意力聚光灯越分散;用结 构化标签和清晰标题能帮模型把注意力集中 在核心指令上。 Sampler(温度与核采 样) 从候选词概率榜单里摇号抽签的“随机转 盘控制器”。 写代码、提数据选低温(T=0~0.2)只拿榜 首;写创意故事选高温(T=0.7~0.9)允许爆 冷门好词。</p><h3>二、核心概念与机制深拆:大模型是怎么被训练出来的?采样参数怎么调?</h3><p>1. 一颗顶级大模型诞生的三部曲(为什么基座模型只会续写,而对话模型能听懂指令?)</p><p>很多学习者分不清 Base Model(基座模型,如 DeepSeek-V4-Base / Qwen3.8-Base) 与 Instruct / Chat Model(指令/推理模型) 的区别。实际上,任何现代大模型都经历了三个截然不同的训练阶段(参考 Andrej Karpathy 的 LLM 经典拆解与 Maxime Labonne LLM Course): 第一阶段:预训练(Pre-training · 博览群书的野蛮生长)——动用数千乃至数万张 GPU,让模型在十万 亿(Trillions)Token 的互联网网页、书籍、代码库上做一件事:“遮住后一个词猜它是啥”。这一阶段耗费 了 95% 以上的算力,产出的是基座模型(Base Model)。它肚子里装满了人类知识,但它还不会回答问题 ——如果你对基座模型输入“请问感冒了怎么办?”,它会以为你在列考试卷子,顺手给你往下续写:“请问 发烧了怎么办?请问咳嗽了怎么办?” 第二阶段:监督微调(Supervised Fine-Tuning, SFT · 名师手把手教说话规矩)——为了让模型学会 “有问必答”,研究人员精心编写几万到几十万条高质量的【用戶指令 User → 理想专家回答 Assistant】对话 样本喂给模型。只用短短几天,模型就学会了遵循人类指令、按特定格式作答。 第三阶段:偏好对⻬与强化学习后训练(RLHF / DPO / GRPO · 价值观校准与深度推理进化)——通过对 比“好回答 vs 差回答”(DPO 直接偏好优化),让模型学会拒绝有害请求、减少幻觉;而在 2025‒2026 年最 前沿的推理模型(如 DeepSeek-R1、OpenAI o 系列、Claude Fable 5.1 / Opus 5.5)中,更进一步引入了 基于可验证奖励的强化学习(RLVR / GRPO)——给模型成千上万道数学与编程难题,只要最终答案算对就 给正向奖励,让模型自己摸索出多步验证、自我纠错的深度思考能力!</p><p>2. 彻底看懂两个最重要的生成控制旋钮:Temperature(温度) 与 Top-P(核采样)</p><p>无论是调用 API、配置本地模型还是使用开发者工作台,你都会看到这两个核心采样参数。它们直接决定了模型 从“概率分布榜单”里挑词的策略: 参数名称 数学作用机理(它是怎么改变概率榜单的?) 不同场景下的黄金设置值 Temperature (温度,0.0 ~</p><p>2.0)</p><p>在归一化(Softmax)前对原始得分(Logits) 做缩放:低温(趋近 0)会把第一名的优势无限 放大(让 60% 概率变成 99.9%,近乎每次都选 同一个最稳妥的词);高温(&gt; 0.8)会把榜单削 平,让排名第 5、第 10 的冷门词也有机会被抽 中。 · 代码生成 / 数学推理 / JSON 提取:设为</p><p>0.0 ~ 0.2(追求最高确定性,零花哨)</p><p>· 通用问答 / 翻译 / 知识讲解:设为 0.3 ~</p><p>0.6</p><p>· 头脑⻛暴 / 小说故事创作:设为 0.7 ~ 1.0 Top-P (核采样,0.0 ~</p><p>1.0)</p><p>从概率最高的词开始往下累加,一旦累计概率达 到 P(例如 0.9 即 90%),就直接砍掉后面所有 低概率长尾词,绝不允许模型抽到最后 10% 那 些胡言乱语的词。 · 工业界黄金准则:通常修改 Temperature 或 Top-P 两者之一即可,不要同时大幅改动。 常规保持 Top-P = 0.9 或 0.95。</p><h3>三、动手实验(Hands-on Lab):亲眼验证分词盲区与采样温度差异</h3><p>请打开任意一款大模型对话界面(ChatGPT / Claude / Gemini / DeepSeek),亲手完成以下两个 3 分钟实验: 实验 1:亲手打破 Token 分词器的“字符黑盒盲区” 对照实验 A(直接提问):在不开启深度思考模式(如普通快速对话模式)下,输入:请直接回答,不要展开拼 写:单词 "immunoelectrophoresis" 中一共有几个字母 o,分别在第几个位置? 观察模型是否出现计数或位置偏 差。 对照实验 B(强制 Token 颗粒度对⻬):输入:请先把单词 "immunoelectrophoresis" 的每一个字母按 "1-i, 2- m, 3-m..." 的格式逐个编号列出,然后再统计其中字母 o 的个数与准确序号。 实验结论:当你强制模型把单个字母拆成携带序号的独立 Token 输出到上下文中时,自注意力机制就能精确 对准每一个字母位置,准确率瞬间达到 100%。 实验 2:观察不同采样策略下的概率分布坍缩 实验步骤:在支持调节参数的平台(如 OpenAI Playground、Anthropic Console、Google AI Studio 或本 地 Open WebUI)中,输入同一句未完待续的话:推开那扇尘封了三十年的木门,我看到桌子上放着一个。 对比观察:先将 Temperature 设为 0.0,连续点击生成 3 次,你会发现模型 3 次给出的续写几乎一字不差(例 如全是“落满灰尘的旧木盒”);再将 Temperature 调至 1.1,连续生成 3 次,观察模型如何跳出平庸均值,给 出截然不同的意象。</p><h3>四、课后自测习题与详细解析(6 关 60 分 · 检验你是否真学懂了)</h3><h3>【课后自测题(请先独立思考作答,再对照下方解析)】</h3><p>1. 第 1 题(分词机制理解 · 10 分):为什么大模型能够极其流利地把一篇英文学术论文翻译成中文,却在被</p><p>要求“严格写出一首每句恰好 7 个汉字、且第 3 个字必须全部押 an 韵的藏头诗”时经常出错?请从 Tokenizer 与自回归生成机制解释原因。</p><p>2. 第 2 题(自注意力机制 · 10 分):在句子“小李把自己的笔记本电脑借给了小王,因为他的电脑昨天进水</p><p>坏了”中,大模型在底层是通过什么机制判断出“他”指的是“小王”而不是“小李”的?</p><p>3. 第 3 题(训练三阶段辨析 · 10 分):如果你从 Hugging Face 下载了一个名为 Qwen3.8-27B-Base 的基座模型</p><p>直接用来做问答机器人,会发生什么现象?它缺少了哪两个后训练阶段?</p><p>4. 第 4 题(采样参数调优 · 10 分):你正在编写一个自动从医疗化验单文本中提取指标并输出标准 JSON 的</p><p>程序,发现模型偶尔会把字段名 "blood_glucose" 自由发挥改写成 "sugar_level"。请问此时你应该如何调整 Temperature 参数?为什么?</p><p>5. 第 5 题(自回归时间复杂度 · 10 分):为什么让大模型“阅读一篇 5,000 字的文章”只需要不到 1 秒钟</p><p>(首字响应很快),而让大模型“写出一篇 5,000 字的长文”却需要几十秒钟?</p><p>6. 第 6 题(知识截止与幻觉根源 · 10 分):如果一个未开启联网搜索的大模型被问到“昨天刚刚发布的某款</p><p>冷门开源软件的第 3 个命令行参数是什么”,为什么它有时候不直接说不知道,反而会编造一个看起来非常 像真的参数名(如 --config-path)?</p></section>
+    <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/neigong/01" data-exercise="/content/levels/neigong-01.json">
+      <div class="practice-head">
+        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <h2>本册课后自测与实验</h2>
+        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+      </div>
+      <div class="knowledge-check" data-objective></div>
+      <div class="practice-grid">
+        <div class="practice-write">
+          <label for="practice-answer">我的答案</label>
+          <textarea id="practice-answer" data-answer spellcheck="false" placeholder="把你的 Prompt / 方案写在这里…"></textarea>
+          <div class="practice-meta"><span data-count>0 字</span><button type="button" data-save>保存草稿</button><button type="button" data-clear>清空</button><span class="save-state" data-status>未保存</span></div>
+        </div>
+        <div class="practice-check">
+          <p class="practice-label">评分项</p>
+          <div class="check-list" data-criteria></div>
+          <button type="button" class="check-answer" data-check>检查我的答案</button>
+          <div class="practice-feedback" data-feedback></div>
+          <p class="practice-score">结构分 <b data-score>—</b> / 60 分</p>
+        </div>
+      </div>
+      <div class="practice-actions">
+        <button type="button" data-reveal>对照参考答案 ↓</button>
+        <label class="done-check"><input type="checkbox" data-done> 标记本关完成</label>
+      </div>
+    </section>
+    <details class="answer">
+      <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
+      <div class="answer-body"><h3>参考答案与解析</h3><p>1. 第 1 题解析:有两个底层原因:1 分词器不含字数与拼音声韵母直接映射——模型看到的不是汉字笔画和拼</p><p>音字母,而是直接映射后的语义 Token ID(一个双字词可能只占 1 个 Token),导致模型在内部很难精确对 ⻬“第几个汉字”和“拼音韵母”;2 自回归单向生成不可逆——模型是从左往右逐词接⻰的,一旦前两个 词选定,后面为了凑⻬语义通顺,往往顾不上格律约束。(答出分词器编码颗粒度得 5 分,答出自回归单向 接⻰限制得 5 分)</p><p>2. 第 2 题解析:依靠 Self-Attention(自注意力机制)。当处理代词“他”时,“他”的 Query 向量会与前文</p><p>所有词的 Key 向量计算内积注意力分数;由于预训练语料中习得的因果常识(“借给某人,是因为借入方的 东西坏了”),多层注意力头会将“他”的注意力权重高比例分配给受事者“小王”,从而在深层隐藏状态中 完成指代消解。(准确答出自注意力 Query-Key 权重聚合机制得 10 分)</p><p>3. 第 3 题解析:Base 基座模型只会顺着你的输入做“文本续写”(比如把你的问题当成文章开头继续往下编问</p><p>题),而不会礼貌地回答问题。因为它只完成了第一阶段预训练(Pre-training),缺少了第二阶段 SFT(监 督指令微调,教模型学会问答对话格式) 与第三阶段 偏好对⻬/强化学习后训练(RLHF / DPO / GRPO)。 (答出只会续写不会遵循指令得 4 分,准确写出缺少的两阶段得 6 分)</p><p>4. 第 4 题解析:应将 Temperature 调低至 0.0(或 0.1)。因为 JSON 数据提取属于零容错的确定性结构化任务,</p><p>低温能使 Softmax 概率分布高度尖锐化(Greedy Decoding 贪婪解码),强制模型始终选择完全符合提示词 Schema 约束的最高概率 Token,杜绝高温度带来的随机同义词替换。(答出调至 0~0.1 得 5 分,解释尖锐 化概率分布抑制随机发散得 5 分)</p><p>5. 第 5 题解析:这源于 Transformer 推理的两个阶段差异:1 阅读输入阶段(Prefill 预填充阶段)是可以高</p><p>度并行计算的——GPU 可以同时在一个矩阵乘法里把输入的 5,000 个词全部算完;2 生成输出阶段 (Decode 解码阶段)是严格串行的自回归过程——模型必须先算出第 1 个字,才能把第 1 个字拼回去算第 2 个字,写 5,000 个 Token 就必须串行循环跑 5,000 次前向传播,受限于显存带宽(Memory-bound),因 此耗时得多!(答出 Prefill 并行与 Decode 自回归串行差异得 10 分)</p><p>6. 第 6 题解析:因为大模型的本质是基于统计分布的条件概率补全机,它内部并没有一个天然的“数据库查无</p><p>此人报错开关”。当遇到训练语料之外的陌生软件名时,自注意力机制会根据上下文里的“开源软件、命令 行参数”等词汇,激活所有常见 CLI 软件的高频参数概率分布(而在 Linux/Python 语料中,--config、-- verbose 出现频率极高),于是模型顺着最高条件概率“接⻰”出了一个看似合理实则虚构的参数名。(准确 用条件概率平滑/接⻰本能解释幻觉成因得 10 分)</p></div>
+    </details>
+    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%86%85%E5%8A%9F%E5%BF%83%E6%B3%95%EF%BC%9AAI%20%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
+    <div class="nextprev"><a href="/ai/notes/neigong/"><small>返回系列</small>内功心法：AI 底层原理</a><a class="right" href="/ai/notes/neigong/02"><small>下一关</small>提示词工程科学</a></div>
+  </article>
+</div>
+</main>
+<footer class="wrap">
+  <span>AI 实战通关 · 2026</span>
+  <span>免费 · 不登录 · 不卖 API</span>
+</footer>
+</body>
+</html>
