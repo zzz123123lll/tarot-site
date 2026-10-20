@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>文档解析与黄金分块策略 · 第 02 关 — 内功05 · RAG 检索增强生成</title>
+<title>文档解析与黄金分块策略(Document Chunking &amp; Overlap) · 第 02 关 — 内功05 · RAG 检索增强生成</title>
 <meta name="description" content="本关练习：重构人力资源考勤制度文档的抗截断分块器。">
 <link rel="canonical" href="https://gongjuhe.top/ai/notes/rag/02">
 <meta property="og:type" content="article">
-<meta property="og:title" content="文档解析与黄金分块策略 — 内功05 · RAG 检索增强生成">
+<meta property="og:title" content="文档解析与黄金分块策略(Document Chunking &amp; Overlap) — 内功05 · RAG 检索增强生成">
 <meta property="og:description" content="本关练习：重构人力资源考勤制度文档的抗截断分块器。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=8">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=9">
 <script src="/ai/notes/notes.js?v=6" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=4"></script>
 </head>
@@ -39,9 +39,9 @@
   </aside>
   <article class="article">
     <p class="kicker">INNER 05 / RAG / 02 · ENGINE v1</p>
-    <h1>文档解析与黄金分块策略</h1>
+    <h1>文档解析与黄金分块策略(Document Chunking &amp; Overlap)</h1>
     <p class="lede">本关练习：重构人力资源考勤制度文档的抗截断分块器。</p>
-    <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 StepByStep-RAG / GraphRAG / RAG 评估实践</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 AI 现代必修课 · 内功05</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
@@ -77,17 +77,7 @@
     <p class="reading-takeaway">分块要同时考虑片段独立性和边界上下文。</p>
     <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/gurucharanmk/StepByStep-RAG/blob/main/RAGStream/README.md" target="_blank" rel="noopener">StepByStep-RAG · RAGStream ↗</a><span>PDF 第 2 关</span></div>
   </section>
-    <section class="lesson"><h3>核心原理</h3>
-<p>“垃圾进，垃圾出(Garbage In, Garbage Out)。”在 RAG Zero to Hero Guide 与 RAG All-in-One的生产实践中，80% 的 RAG 回答错误源于粗暴的固定字符切分(Fixed-size Chunking)——比如把一句关键免责条款从中间劈成两半，或者把表格的表头切在第 1 块、第 15 行数据切在第 2 块，导致检索出来的第 2块完全丢失了表头上下文与所属章节标题！高手的黄金分块法则是：按 Markdown 章节层级递归切分 + 保留10%‒15% 滑动窗口重叠(Chunk Overlap) + 为每个分块头部自动注入所属文档名与章节面包屑路径(Metadata Header Injection)。</p>
-<h2>第 2 关实操练习题：重构人力资源考勤制度文档的抗截断分块器</h2>
-<h3>任务背景</h3>
-<p>公司《员工手册》第 4 章“带薪年假与病假管理”长达 3,000 字，包含多级子标题和一张薪资扣减比例表。直接按每 300 字硬切后，员工问“司龄满 5 年请病假怎么发工资”,系统搜出的片段只有“按 80% 发放”,却不知道这属于产假还是病假。</p>
-<h3>通关硬性要求（满分 12.5 分）</h3>
-<p>1. 设定分层切分优先级分隔符列表（优先按二级/三级标题、段落换行、句号切分，严禁在句子中间硬切）（4.5 分）；</p>
-<p>2. 配置合理的 chunk_size（如 400‒600 字符）、chunk_overlap（如 60‒80 字符）及表格整体保留策略（4分）；</p>
-<p>3. 设计分块元数据注入模板：在每个 Chunk 文本开头自动拼接 【来源文档：员工手册v2 | 所属章节：第四章 &gt; 4.2 病假薪资标准】（4 分）。</p>
-<h3>第二阶段</h3>
-<p>核心引擎篇（第 3‒4 关）——语义检索引擎、混合检索与重排序</p></section>
+    <section class="lesson"><h3>核心原理</h3><p>“垃圾进,垃圾出(Garbage In, Garbage Out)。”在 RAG Zero to Hero Guide 与 RAG All-in-One 的生产实践中,80% 的 RAG 回答错误源于粗暴的固定字符切分(Fixed-size Chunking)——比如把一句关 键免责条款从中间劈成两半,或者把表格的表头切在第 1 块、第 15 行数据切在第 2 块,导致检索出来的第 2 块完全丢失了表头上下文与所属章节标题!高手的黄金分块法则是:按 Markdown 章节层级递归切分 + 保留 10%‒15% 滑动窗口重叠(Chunk Overlap) + 为每个分块头部自动注入所属文档名与章节面包屑路径 (Metadata Header Injection)。</p><h2>第 2 关实操练习题：重构人力资源考勤制度文档的抗截断分块器</h2><h3>任务背景</h3><p>公司《员工手册》第 4 章“带薪年假与病假管理”长达 3,000 字,包含多级子标题和一张薪资 扣减比例表。直接按每 300 字硬切后,员工问“司龄满 5 年请病假怎么发工资”,系统搜出的片段只有 “按 80% 发放”,却不知道这属于产假还是病假。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设定分层切分优先级分隔符列表(优先按二级/三级标题、段落换行、句号切分,严禁在句子中间硬切) (</p><p>4.5 分);</p><p>2. 配置合理的 chunk_size(如 400‒600 字符)、chunk_overlap(如 60‒80 字符)及表格整体保留策略(4 分);</p><p>3. 设计分块元数据注入模板:在每个 Chunk 文本开头自动拼接 【来源文档:员工手册v2 | 所属章节:第 四章 &gt;</p><p>4.2 病假薪资标准】(4 分)。 第二阶段:核心引擎篇(第 3‒4 关)——语义检索引擎、混合检索与重排序</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/rag/02" data-exercise="/content/levels/rag-02.json">
       <div class="practice-head">
         <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
@@ -116,25 +106,7 @@
     </section>
     <details class="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
-      <div class="answer-body"><div class="code-block"><button class="copy-btn" type="button" data-copy>复制</button><pre><code>CHUNK_CONFIG = {
-    "separators": ["\n## ", "\n### ", "\n\n", "。", ";", " "],
-    "chunk_size": 500,
-    "chunk_overlap": 75,  # 15% 滑动重叠，确保跨块句子语义不断裂
-    "keep_tables_intact": True,  # 检测 Markdown 表格语法 |---| 时整体保留不拆行
-}
-
-
-def inject_breadcrumb_header(doc_title: str, section_path: str, raw_chunk: str) -&gt; str:
-    """在每个分块头部注入文档与章节层级上下文，再送入 Embedding 模型编码"""
-    header = f"【来源文档：{doc_title} | 所属章节：{section_path}】\n"
-    return header + raw_chunk.strip()
-
-
-# 注入后效果示例：
-# 【来源文档：员工手册2026版.pdf | 所属章节：第四章考勤与休假 &gt; 4.2 病假薪资发放标准】
-# 员工连续司龄满 5 年不满 10 年的，病假期间基础工资按本人标准薪资的 80% 计发。</code></pre></div>
-<h3>得分要点拆解</h3>
-<p>按标题、段落、句号层级递归切分且不拆散表格（4.5 分）；设置 `chunk_size=500` 与 `15%overlap`（4 分）；在文本块头部显式拼接文档名与章节路径（4 分）。</p></div>
+      <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:抗截断递归分块与章节面包屑注入器 CHUNK_CONFIG = { "separators": ["\n## ", "\n### ", "\n\n", "。", ";", " "], "chunk_size": 500, "chunk_overlap": 75, # 15% 滑动重叠,确保跨块句子语义不断裂 "keep_tables_intact": True # 检测 Markdown 表格语法 |---| 时整体保留不拆行 } def inject_breadcrumb_header(doc_title: str, section_path: str, raw_chunk: str) -&gt; str: """在每个分块头部注入文档与章节层级上下文,再送入 Embedding 模型编码""" header = f"【来源文档:{doc_title} | 所属章节:{section_path}】\n" return header + raw_chunk.strip() # 注入后效果示例: # 【来源文档:员工手册2026版.pdf | 所属章节:第四章 考勤与休假 &gt; 4.2 病假薪资发放标准】 # 员工连续司龄满 5 年不满 10 年的,病假期间基础工资按本人标准薪资的 80% 计发。 得分要点拆解:按标题、段落、句号层级递归切分且不拆散表格(4.5 分);设置 `chunk_size=500` 与 `15% overlap`(4 分);在文本块头部显式拼接文档名与章节路径(4 分)。 第 3 关</p></div>
     </details>
     <div class="pdf-box"><p>网页永久免费。完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%86%85%E5%8A%9F05%20%C2%B7%20RAG%20%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
     <div class="nextprev"><a href="/ai/notes/rag/01"><small>上一关</small>向量表示与余弦相似度基础</a><a class="right" href="/ai/notes/rag/03"><small>下一关</small>语义检索引擎构建</a></div>

@@ -34,7 +34,7 @@ function head(title, description, canonical) {
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=8">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=9">
 <script src="/ai/notes/notes.js?v=6" defer></script>
 </head>`;
 }
@@ -124,6 +124,7 @@ ${shellHeader()}
   <p class="source">课程来源：${esc(t.source)}</p>
   <div class="track-progress" data-track="${esc(t.id)}" data-total="${n}"><span data-track-count>0 / ${n} 完成</span><span class="bar"><i></i></span></div>
 </section>
+${t.introHtml ? `<section class="wrap section"><div class="book-intro"><details><summary>本册导读 · 顿悟时刻</summary><div class="book-intro-body">${t.introHtml}</div></details></div></section>` : ''}
 <section class="wrap section">
   <div class="section-head"><div><p class="label">LEVELS / 关卡</p><h2>按顺序读，或先挑你需要的那关。</h2></div></div>
   <div class="level-list">${rows}</div>

@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>智能体检索与分层记忆管理 · 第 04 关 — 内功06 · AI Agent 智能体</title>
+<title>智能体检索与分层记忆管理(Lessons 05 &amp; 13: Agentic RAG &amp; Agent Memory) · 第 04 关 — 内功06 · AI Agent 智能体</title>
 <meta name="description" content="本关练习：设计私人理财顾问 Agent 的记忆读写与主动检索策略。">
 <link rel="canonical" href="https://gongjuhe.top/ai/notes/agents/04">
 <meta property="og:type" content="article">
-<meta property="og:title" content="智能体检索与分层记忆管理 — 内功06 · AI Agent 智能体">
+<meta property="og:title" content="智能体检索与分层记忆管理(Lessons 05 &amp; 13: Agentic RAG &amp; Agent Memory) — 内功06 · AI Agent 智能体">
 <meta property="og:description" content="本关练习：设计私人理财顾问 Agent 的记忆读写与主动检索策略。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=8">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=9">
 <script src="/ai/notes/notes.js?v=6" defer></script>
 <script type="module" src="/ai/notes/practice.mjs?v=4"></script>
 </head>
@@ -39,9 +39,9 @@
   </aside>
   <article class="article">
     <p class="kicker">INNER 06 / AGENT / 04 · ENGINE v1</p>
-    <h1>智能体检索与分层记忆管理</h1>
+    <h1>智能体检索与分层记忆管理(Lessons 05 &amp; 13: Agentic RAG &amp; Agent Memory)</h1>
     <p class="lede">本关练习：设计私人理财顾问 Agent 的记忆读写与主动检索策略。</p>
-    <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 Microsoft AI Agents for Beginners (77.2k Stars)</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
+    <div class="meta"><span>约 3 分钟</span><span class="dot">·</span><span>免费阅读</span><span class="dot">·</span><span>整理自 AI 现代必修课 · 内功06</span><span class="dot">·</span><span><a class="meta-jump" href="#reading">来源精读 ↓</a><span class="dot">·</span><a class="meta-jump" href="#practice">直接做题 ↓</a></span></div>
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
@@ -75,19 +75,7 @@
     <p class="reading-takeaway">记忆的关键是分层和写回策略，不是存得越多越好。</p>
     <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/microsoft/ai-agents-for-beginners/blob/main/05-agentic-rag/README.md" target="_blank" rel="noopener">Microsoft · Lesson 5 Agentic RAG ↗</a><a href="https://github.com/microsoft/ai-agents-for-beginners/blob/main/13-agent-memory/README.md" target="_blank" rel="noopener">Microsoft · Lesson 13 Agentic Memory ↗</a><span>PDF 第 4 关</span></div>
   </section>
-    <section class="lesson"><h3>核心原理</h3>
-<p>传统 RAG 只是机械地把用户原话拿去搜一次向量库，而 Microsoft AI Agents for Beginners 第 5 课(Agentic RAG)与第 13 课(Managing Agentic Memory) 强调了两大升级：</p>
-<p>Agentic RAG（主动式检索）：智能体会自己评估检索回来的文档够不够用——如果第一次搜到的资料相关性低，Agent 会自主改写查询词(Query Rewrite)、拆解多跳子问题或切换数据源重新检索，直到收集齐证据再作答。</p>
-<p>三层记忆架构(Memory Hierarchy)：将记忆划分为短期工作记忆（Working Memory / 当前会话上下文）、情景记忆（Episodic Memory / 历史历史交互摘要） 与长期语义记忆（Semantic Memory / 用户偏好、固定资产配置等结构化键值库）。</p>
-<h2>第 4 关实操练习题：设计私人理财顾问 Agent 的记忆读写与主动检索策略</h2>
-<h3>任务背景</h3>
-<p>用户对理财 Agent 说：“按我上个月告诉你的风险承受等级，帮我看看今天刚发布的这只新债券基金适不适合买？”</p>
-<h3>通关硬性要求（满分 12.5 分）</h3>
-<p>1. 设计检索分流逻辑：从【长期用户画像记忆库】读取用户的历史风险等级与持仓偏好，同时通过【主动文档检索工具】查询今日新基金招募说明书（4.5 分）；</p>
-<p>2. 设计 Agentic RAG 自检判定规则：若首次检索仅拿到基金名称而缺少“最大回撤、久期、信用评级分布”关键字段，自动生成二次精准检索词（5 分）；</p>
-<p>3. 设计对话结束后的记忆更新机制(Memory Write-back)：判断本次对话中哪些新信息值得写入长期记忆，哪些仅保留在短期会话中（3 分）。</p>
-<h3>第三阶段</h3>
-<p>进阶编排篇（第 5‒6 关）——元认知自我反思与多智能体协同</p></section>
+    <section class="lesson"><h3>核心原理</h3><p>传统 RAG 只是机械地把用戶原话拿去搜一次向量库,而 Microsoft AI Agents for Beginners 第 5 课 (Agentic RAG)与第 13 课(Managing Agentic Memory) 强调了两大升级: Agentic RAG(主动式检索):智能体会自己评估检索回来的文档够不够用——如果第一次搜到的资料相关 性低,Agent 会自主改写查询词(Query Rewrite)、拆解多跳子问题或切换数据源重新检索,直到收集⻬ 证据再作答。 三层记忆架构(Memory Hierarchy):将记忆划分为 短期工作记忆(Working Memory / 当前会话上下 文)、情景记忆(Episodic Memory / 历史历史交互摘要) 与 长期语义记忆(Semantic Memory / 用戶 偏好、固定资产配置等结构化键值库)。</p><h2>第 4 关实操练习题：设计私人理财顾问 Agent 的记忆读写与主动检索策略</h2><h3>任务背景</h3><p>用戶对理财 Agent 说:“按我上个月告诉你的⻛险承受等级,帮我看看今天刚发布的这只新债 券基金适不适合买?”</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设计检索分流逻辑:从【长期用戶画像记忆库】读取用戶的历史⻛险等级与持仓偏好,同时通过【主 动文档检索工具】查询今日新基金招募说明书(</p><p>4.5 分);</p><p>2. 设计 Agentic RAG 自检判定规则:若首次检索仅拿到基金名称而缺少“最大回撤、久期、信用评级分 布”关键字段,自动生成二次精准检索词(5 分);</p><p>3. 设计对话结束后的记忆更新机制(Memory Write-back):判断本次对话中哪些新信息值得写入长期记 忆,哪些仅保留在短期会话中(3 分)。 第三阶段:进阶编排篇(第 5‒6 关)——元认知自我反思与多智能体协同</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/agents/04" data-exercise="/content/levels/agents-04.json">
       <div class="practice-head">
         <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
@@ -116,18 +104,7 @@
     </section>
     <details class="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
-      <div class="answer-body"><h2>Step 1: 跨源并行感知</h2>
-<p>- 读取长期语义记忆(Semantic Memory)：调用 get_user_profile(user_id) 获取 {"risk_tolerance": "R2_稳健型", "max_drawdown_limit": "3.5%", "investment_horizon": "6-12个月"}。</p>
-<p>- 初次文档检索：调用 search_fund_docs（query="新发债券基金招募说明书核心要素"）。</p>
-<h2>Step 2: Agentic RAG 充分性自检(Sufficiency Check)</h2>
-<p>评估初次检索片段是否同时包含以下 3 项硬指标：</p>
-<p>1. 基金风险等级(R1-R5)；2. 投资组合久期与信用债评级占比；3. 历史同类策略最大回撤。</p>
-<p>-&gt; 若缺失任一指标：自动触发二次精准检索 rewrite_query（"该债券基金信用债AA+占比组合久期风险等级"），最多追加检索 2 次。</p>
-<h2>Step 3: 记忆写回策略(Memory Write-back)</h2>
-<p>- 写入长期语义记忆：仅当用户明确表达新的长期偏好变更（如“我今年刚生了宝宝，以后只买保本型产品”）时，调用 update_semantic_memory()。</p>
-<p>- 保留在短期/情景记忆：本次关于特定单只基金的临时问答摘要存入会话历史，不污染长期画像核心键值。</p>
-<h3>得分要点拆解</h3>
-<p>双通道读取长期画像与外部基金文档（4.5 分）；设置 3 项关键指标完整性自检与自动重写查询机制（5 分）；严格区分长期偏好更新与临时会话存储（3 分）。</p></div>
+      <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:理财顾问 Agent 的三层记忆与主动检索工作流</p><h3>【Step 1: 跨源并行感知】</h3><p>- 读取长期语义记忆(Semantic Memory):调用 get_user_profile(user_id) 获取 {"risk_tolerance": "R2_稳 健型", "max_drawdown_limit": "3.5%", "investment_horizon": "6-12个月"}。 - 初次文档检索:调用 search_fund_docs(query="新发债券基金 招募说明书 核心要素")。</p><h3>【Step 2: Agentic RAG 充分性自检(Sufficiency Check)】</h3><p>评估初次检索片段是否同时包含以下 3 项硬指标:</p><p>1. 基金⻛险等级(R1-R5);2. 投资组合久期与信用债评级占比;3. 历史同类策略最大回撤。</p><p>-&gt; 若缺失任一指标:自动触发二次精准检索 rewrite_query("该债券基金 信用债AA+占比 组合久期 ⻛险等 级"),最多追加检索 2 次。</p><h3>【Step 3: 记忆写回策略(Memory Write-back)】</h3><p>- 写入长期语义记忆:仅当用戶明确表达新的长期偏好变更(如“我今年刚生了宝宝,以后只买保本型产品”) 时,调用 update_semantic_memory()。 - 保留在短期/情景记忆:本次关于特定单只基金的临时问答摘要存入会话历史,不污染长期画像核心键值。 得分要点拆解:双通道读取长期画像与外部基金文档(4.5 分);设置 3 项关键指标完整性自检与自动重写查询 机制(5 分);严格区分长期偏好更新与临时会话存储(3 分)。 第 5 关</p></div>
     </details>
     <div class="pdf-box"><p>网页永久免费。完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%86%85%E5%8A%9F06%20%C2%B7%20AI%20Agent%20%E6%99%BA%E8%83%BD%E4%BD%93%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
     <div class="nextprev"><a href="/ai/notes/agents/03"><small>上一关</small>任务规划与动态拆解模式</a><a class="right" href="/ai/notes/agents/05"><small>下一关</small>元认知与自我反思机制</a></div>

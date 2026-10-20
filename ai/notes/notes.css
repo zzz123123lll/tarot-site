@@ -255,3 +255,9 @@ footer a:hover{color:var(--ink)}
 .explain-structure{margin-top:8px}
 .explain-check{margin:24px 0 0!important;border-left:2px solid var(--accent);padding-left:12px;font-size:14px!important;line-height:1.8!important;font-weight:600;color:var(--ink)!important}
 @media(max-width:800px){.explain-fast,.explain-deep{padding:18px}.explain-example,.explain-two{grid-template-columns:1fr}.explain-summary{font-size:24px}}
+
+.book-intro{border:1px solid var(--line);background:var(--surface);padding:0}
+.book-intro summary{cursor:pointer;padding:16px 18px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--ink)}
+.book-intro-body{padding:0 18px 18px;border-top:1px solid var(--line)}
+.book-intro-body h3{font-size:15px;margin:18px 0 8px;letter-spacing:-.02em}
+.book-intro-body p{font-size:13px;line-height:1.85;color:var(--ink-2);margin:0 0 10px}
