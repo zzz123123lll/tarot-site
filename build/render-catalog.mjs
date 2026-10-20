@@ -174,7 +174,7 @@ ${shellHeader()}
   <h1>${esc(t.title)}</h1>
   <p class="lead">${esc(t.subtitle)}</p>
   <p class="source">课程来源：${esc(t.source)}</p>
-  <p class="source"><a href="/ai/notes/neigong/">← 回到内功心法</a></p>
+  <p class="source"><a href="${t.id === 'tools' ? '/ai/notes/' : '/ai/notes/neigong/'}">${t.id === 'tools' ? '← 回到全部课程' : '← 回到内功心法'}</a></p>
   <div class="track-progress" data-track="${esc(t.id)}" data-total="${n}"><span data-track-count>0 / ${n} 完成</span><span class="bar"><i></i></span></div>
 </section>
 ${t.introHtml ? `<section class="wrap section"><div class="book-intro"><details><summary>本册导读 · 顿悟时刻</summary><div class="book-intro-body">${t.introHtml}</div></details></div></section>` : ''}
