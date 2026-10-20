@@ -45,21 +45,21 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">本册讲 Cursor 的三层机制：AST 全仓索引、局部 Diff 补丁、Plan/Act 与 .mdc 规则。</p>
-      <ul class="explain-bullets"><li>AST 索引让 AI 看到整个项目</li><li>局部 Diff 只改必要位置</li><li>Plan/Act 和规则文件约束施工</li></ul>
+      <p class="explain-summary">这一册只解决一件事：Cursor 不是网页聊天框，而是带 AST 全仓索引、局部 Diff 和 Plan/Act 权限边界的编程环境。</p>
+      <ul class="explain-bullets"><li>AST 索引让 AI 理解跨文件调用关系</li><li>Fast Apply 只改需要改的行，不重写整个文件</li><li>Ask 只读规划、Agent 施工，.mdc/AGENTS.md 锁边界</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
-      <p class="explain-example-title">先看来源里的例子：PDF 本册实验/自测（来源）</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本册核心例子（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>本册的动手实验与课后自测题见原文。</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>按本册的顿悟→原理→实验→自测顺序阅读。</p><h3>输出</h3><p>参考答案见本页下方。</p></div>
+        <div class="explain-code"><span>输入</span><pre>网页版让 AI 改一个按钮，重新生成整个文件，结果核心功能被弄丢。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>网页版缺少 AST 和局部补丁，容易截断或省略旧代码；Cursor 用 AST 定位，再只对目标行做红/绿 Diff。</p><h3>输出</h3><p>来源做法：先 Ask 规划改哪几个文件，再切 Agent 按 Diff 施工，逐个小功能测试。</p></div>
       </div>
       <div class="explain-two">
-        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>AST</dt><dd>抽象语法树，代码结构表示</dd></div><div><dt>Fast Apply</dt><dd>局部 Diff 补丁应用</dd></div><div><dt>.mdc</dt><dd>Cursor 项目规则文件</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>本册原文把这一课题拆成顿悟、原理、实验、自测四步；这里只做导读，不添加原文外的事实。</p><h3>结构长什么样</h3><pre class="explain-structure">顿悟 → 原理深讲 → 动手实验 → 课后自测 → 参考答案</pre></div>
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>AST</dt><dd>抽象语法树，代码的结构化表示。</dd></div><div><dt>Fast Apply</dt><dd>局部 Diff 补丁应用，只改目标代码。</dd></div><div><dt>.mdc/AGENTS.md</dt><dd>约束 AI 修改边界的项目规则文件。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源指出：网页版是“蒙眼顾问”，Cursor 是拿到全项目电路图的总工程师；但权限过大也会改崩，所以要先规划再动刀。</p><h3>结构长什么样</h3><pre class="explain-structure">打开项目 → AST 索引 → Ask/Plan → 局部 Diff → Agent 施工 → 测试/检查点</pre></div>
       </div>
-      <p class="explain-check">本册自测题中，你能先用自己的话解释哪一条原理？</p>
+      <p class="explain-check">为什么“让 AI 重写整个文件”在真实项目里很危险？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
@@ -68,8 +68,8 @@
     <div class="reading-grid">
       <div><h3>逐点读懂</h3><ol class="reading-points"><li>AST 索引让 AI 看到整个项目</li><li>局部 Diff 只改必要位置</li><li>Plan/Act 和规则文件约束施工</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>先读本册的顿悟时刻与原理，再做动手实验，最后用课后自测题检查；答案在页面下方。</p>
-        <h3>例子在哪</h3><p>本册的动手实验与自测题都在原文里；参考答案见本页下方。</p>
+        <h3>怎么对应本关练习</h3><p>先用 30 秒看懂抓四层结构，再读本册的‘顿悟时刻/原理/动手实验’，最后做课后自测；答案在下方。</p>
+        <h3>例子在哪</h3><p>本册的动手实验与课后自测都在原文；参考答案见本页下方。</p>
       </div>
     </div>
     <p class="reading-takeaway">Cursor 的三层底层机制</p>

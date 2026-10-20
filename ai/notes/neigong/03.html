@@ -45,21 +45,21 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">本册解释 CoT、Test-Time Compute、GRPO 与混合推理：为什么深度推理模型要先思考，以及旧提示词为什么不再适用。</p>
-      <ul class="explain-bullets"><li>推理能力来自更多推理时计算</li><li>CoT 是可见的中间推演</li><li>GRPO 用规则奖励和组内相对优势训练</li></ul>
+      <p class="explain-summary">这一册只解决一件事：深度推理模型为什么“先想再答”，以及为什么旧的分步提示词不再适用。</p>
+      <ul class="explain-bullets"><li>不写草稿时，模型只有一次前向传播的算力</li><li>CoT 用输出长度换推理深度，是 Test-Time Compute</li><li>原生推理模型由 GRPO 等强化学习训练，提示词应给目标和边界，不要硬塞步骤</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
-      <p class="explain-example-title">先看来源里的例子：PDF 本册实验/自测（来源）</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本册原理例子（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>本册的动手实验与课后自测题见原文。</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>按本册的顿悟→原理→实验→自测顺序阅读。</p><h3>输出</h3><p>参考答案见本页下方。</p></div>
+        <div class="explain-code"><span>输入</span><pre>一道需要转 5 个弯的逻辑题：要求模型第一个字直接给答案 vs 允许先写 500 字推演。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>直接给答案时，模型最多跑一次 80 层网络；允许推演时，每多输出一个思考 Token 就多跑一次完整网络，中间结论还留在上下文里。</p><h3>输出</h3><p>来源结论：把思考过程变成可见文字，本质是用输出长度换取算力深度。</p></div>
       </div>
       <div class="explain-two">
-        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Test-Time Compute</dt><dd>推理阶段投入的额外计算</dd></div><div><dt>CoT</dt><dd>显式写出中间推理步骤</dd></div><div><dt>GRPO</dt><dd>Group Relative Policy Optimization</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>本册原文把这一课题拆成顿悟、原理、实验、自测四步；这里只做导读，不添加原文外的事实。</p><h3>结构长什么样</h3><pre class="explain-structure">顿悟 → 原理深讲 → 动手实验 → 课后自测 → 参考答案</pre></div>
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Test-Time Compute</dt><dd>推理阶段投入的额外计算量。</dd></div><div><dt>CoT</dt><dd>显式写出中间推理步骤。</dd></div><div><dt>GRPO</dt><dd>用规则奖励和组内相对优势训练推理的强化学习方法。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源指出：Prompted CoT 是外置模仿；R1 之后的原生推理模型通过强化学习自己学会了回溯、验算和边界检查。</p><h3>结构长什么样</h3><pre class="explain-structure">问题 → 更多思考 Token → 多次前向传播 → 可见中间结论 → 最终答案</pre></div>
       </div>
-      <p class="explain-check">本册自测题中，你能先用自己的话解释哪一条原理？</p>
+      <p class="explain-check">为什么对原生推理模型硬塞“第一步、第二步”可能反而干扰它？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
@@ -68,8 +68,8 @@
     <div class="reading-grid">
       <div><h3>逐点读懂</h3><ol class="reading-points"><li>推理能力来自更多推理时计算</li><li>CoT 是可见的中间推演</li><li>GRPO 用规则奖励和组内相对优势训练</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>先读本册的顿悟时刻与原理，再做动手实验，最后用课后自测题检查；答案在页面下方。</p>
-        <h3>例子在哪</h3><p>本册的动手实验与自测题都在原文里；参考答案见本页下方。</p>
+        <h3>怎么对应本关练习</h3><p>先用 30 秒看懂抓四层结构，再读本册的‘顿悟时刻/原理/动手实验’，最后做课后自测；答案在下方。</p>
+        <h3>例子在哪</h3><p>本册的动手实验与课后自测都在原文；参考答案见本页下方。</p>
       </div>
     </div>
     <p class="reading-takeaway">深度推理模型的范式变化</p>

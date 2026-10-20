@@ -45,21 +45,21 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">本册讲 Claude Code/Codex 如何从云端模型变成能操作本地终端的 Agent，以及权限、沙盒与项目规范。</p>
-      <ul class="explain-bullets"><li>浏览器沙盒不能碰本地文件</li><li>终端 Agent 是云端推理加本地执行</li><li>项目规范文件决定 Agent 行为</li></ul>
+      <p class="explain-summary">这一册只解决一件事：网页版 AI 被困在浏览器沙盒，终端 Agent 才能直接操作你电脑上的文件、命令和项目。</p>
+      <ul class="explain-bullets"><li>云端模型负责推理，本地终端负责执行</li><li>AGENTS.md/CLAUDE.md 给终端 Agent 项目规范</li><li>三级权限：建议、自动编辑、全自动，危险命令需确认</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
-      <p class="explain-example-title">先看来源里的例子：PDF 本册实验/自测（来源）</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本册核心例子（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>本册的动手实验与课后自测题见原文。</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>按本册的顿悟→原理→实验→自测顺序阅读。</p><h3>输出</h3><p>参考答案见本页下方。</p></div>
+        <div class="explain-code"><span>输入</span><pre>对 Claude Code/Codex 说：“扫描桌面 messy_invoices 文件夹，按日期重命名并汇总成 Excel。”</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>网页版无法访问本地文件系统；终端 Agent 在本机进程中调用文件读写、Python、Git 等工具，完成后文件直接落在桌面。</p><h3>输出</h3><p>来源结论：大脑在云端，手脚在本机；授权边界和审批模式决定安全。</p></div>
       </div>
       <div class="explain-two">
-        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Local CLI Agent</dt><dd>运行在本机终端的智能体</dd></div><div><dt>Sandbox</dt><dd>限制文件/命令访问的隔离层</dd></div><div><dt>AGENTS.md</dt><dd>项目级 Agent 规范</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>本册原文把这一课题拆成顿悟、原理、实验、自测四步；这里只做导读，不添加原文外的事实。</p><h3>结构长什么样</h3><pre class="explain-structure">顿悟 → 原理深讲 → 动手实验 → 课后自测 → 参考答案</pre></div>
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Local CLI Agent</dt><dd>运行在本机终端的智能体。</dd></div><div><dt>Sandbox</dt><dd>限制文件/命令访问的隔离层。</dd></div><div><dt>HITL</dt><dd>关键操作由人类确认。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源指出：浏览器同源策略禁止网页访问本地磁盘；终端 Agent 是本地进程，因此能操系统，但必须配沙盒和权限。</p><h3>结构长什么样</h3><pre class="explain-structure">云端模型 → 本地 Harness → 文件/终端/脚本 → 审批/沙盒 → 结果</pre></div>
       </div>
-      <p class="explain-check">本册自测题中，你能先用自己的话解释哪一条原理？</p>
+      <p class="explain-check">为什么网页版 AI 不能直接在你的桌面创建文件？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
@@ -68,8 +68,8 @@
     <div class="reading-grid">
       <div><h3>逐点读懂</h3><ol class="reading-points"><li>浏览器沙盒不能碰本地文件</li><li>终端 Agent 是云端推理加本地执行</li><li>项目规范文件决定 Agent 行为</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>先读本册的顿悟时刻与原理，再做动手实验，最后用课后自测题检查；答案在页面下方。</p>
-        <h3>例子在哪</h3><p>本册的动手实验与自测题都在原文里；参考答案见本页下方。</p>
+        <h3>怎么对应本关练习</h3><p>先用 30 秒看懂抓四层结构，再读本册的‘顿悟时刻/原理/动手实验’，最后做课后自测；答案在下方。</p>
+        <h3>例子在哪</h3><p>本册的动手实验与课后自测都在原文；参考答案见本页下方。</p>
       </div>
     </div>
     <p class="reading-takeaway">终端 Agent 的物理边界</p>

@@ -45,21 +45,21 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">本册对比 ChatGPT、Claude、Gemini、DeepSeek 的能力边界，以及 Code Interpreter、Artifacts/Canvas、Projects 和 API 统一推理。</p>
-      <ul class="explain-bullets"><li>不同模型在长视频、长文风、代码画布上各有偏科</li><li>CSV 精确计算来自后台代码沙盒</li><li>Projects 用固定知识区替代无限长对话</li></ul>
+      <p class="explain-summary">这一册只解决一件事：四大云端模型的能力边界不同，且它们早就不只是聊天框，而是带代码沙盒、画布和项目空间的工作台。</p>
+      <ul class="explain-bullets"><li>Gemini 偏多模态长上下文；Claude 偏长文/代码/Artifacts；OpenAI 偏交互 UI/数据沙盒；DeepSeek/Qwen 偏中文推理与性价比</li><li>Code Interpreter 用真实 Python 算，不靠心算</li><li>Projects 固定项目知识，避免无限长对话的上下文腐败</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
-      <p class="explain-example-title">先看来源里的例子：PDF 本册实验/自测（来源）</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本册动手实验（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>本册的动手实验与课后自测题见原文。</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>按本册的顿悟→原理→实验→自测顺序阅读。</p><h3>输出</h3><p>参考答案见本页下方。</p></div>
+        <div class="explain-code"><span>输入</span><pre>任务：① 45 分钟讲座 MP4 转章节笔记；② 中文散文润色；③ 网页小工具变 React 原型。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>① 需要视频多模态和长窗口 → Gemini；② 需要细腻中文语感 → Claude；③ 需要画布实时渲染 React → Claude Artifacts 或 ChatGPT Canvas。</p><h3>输出</h3><p>来源参考答案：按任务能力边界分别路由，而不是所有任务都丢给同一个模型。</p></div>
       </div>
       <div class="explain-two">
-        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Code Interpreter</dt><dd>云端沙盒里执行真实代码</dd></div><div><dt>Artifacts/Canvas</dt><dd>实时渲染交互式内容</dd></div><div><dt>Projects</dt><dd>固定项目知识的长期空间</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>本册原文把这一课题拆成顿悟、原理、实验、自测四步；这里只做导读，不添加原文外的事实。</p><h3>结构长什么样</h3><pre class="explain-structure">顿悟 → 原理深讲 → 动手实验 → 课后自测 → 参考答案</pre></div>
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Code Interpreter</dt><dd>在隔离容器里运行真实代码的沙盒。</dd></div><div><dt>Artifacts/Canvas</dt><dd>实时渲染并交互预览生成内容的画布。</dd></div><div><dt>Projects</dt><dd>固定项目知识、跨对话共享的长期空间。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源指出：模型在预训练语料、后训练对齐和多模态融合上各有偏科；用错模型会把简单任务做贵做慢。</p><h3>结构长什么样</h3><pre class="explain-structure">任务类型 → 选择模型家族 → 选择工作台（沙盒/画布/项目）→ API 统一调用</pre></div>
       </div>
-      <p class="explain-check">本册自测题中，你能先用自己的话解释哪一条原理？</p>
+      <p class="explain-check">为什么上传 CSV 让模型算统计量，比让它“心算”更可靠？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
@@ -68,8 +68,8 @@
     <div class="reading-grid">
       <div><h3>逐点读懂</h3><ol class="reading-points"><li>不同模型在长视频、长文风、代码画布上各有偏科</li><li>CSV 精确计算来自后台代码沙盒</li><li>Projects 用固定知识区替代无限长对话</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>先读本册的顿悟时刻与原理，再做动手实验，最后用课后自测题检查；答案在页面下方。</p>
-        <h3>例子在哪</h3><p>本册的动手实验与自测题都在原文里；参考答案见本页下方。</p>
+        <h3>怎么对应本关练习</h3><p>先用 30 秒看懂抓四层结构，再读本册的‘顿悟时刻/原理/动手实验’，最后做课后自测；答案在下方。</p>
+        <h3>例子在哪</h3><p>本册的动手实验与课后自测都在原文；参考答案见本页下方。</p>
       </div>
     </div>
     <p class="reading-takeaway">四大云端模型的能力边界与内置工作台</p>

@@ -45,21 +45,21 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">本册讲 n8n 的事件驱动触发器、JSON 数组流与跨软件编排，以及与 Dify 的分工。</p>
-      <ul class="explain-bullets"><li>n8n 是主动监听外部事件的自动化中枢</li><li>Webhook/Cron 是两类触发器</li><li>节点默认逐 item 执行，汇总要显式 Aggregate</li></ul>
+      <p class="explain-summary">这一册只解决一件事：n8n 用事件触发器主动监听外部世界，用 JSON Items 数组自动逐条处理数据。</p>
+      <ul class="explain-bullets"><li>触发器：Cron 定时、Webhook 外部事件、IMAP 邮件等</li><li>节点默认对数组里的每个 Item 各执行一次，不写 for 循环</li><li>通知前要 Aggregate 合并，否则会连响 N 次</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
-      <p class="explain-example-title">先看来源里的例子：PDF 本册实验/自测（来源）</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本册核心例子（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>本册的动手实验与课后自测题见原文。</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>按本册的顿悟→原理→实验→自测顺序阅读。</p><h3>输出</h3><p>参考答案见本页下方。</p></div>
+        <div class="explain-code"><span>输入</span><pre>RSS 抓取 20 篇文章，后面只连一个 AI 总结节点，没有写循环。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>n8n 在节点间流动的是 JSON 对象数组；大多数动作节点默认 Run Once for Each Item，所以自动总结了 20 次。</p><h3>输出</h3><p>来源提醒：如果直接连通知节点会发 20 条；要汇总成 1 条日报，必须在中间加 Aggregate。</p></div>
       </div>
       <div class="explain-two">
-        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Webhook</dt><dd>外部系统推送事件的 HTTP 回调</dd></div><div><dt>Cron</dt><dd>定时触发器</dd></div><div><dt>Item</dt><dd>n8n 数组流中的单条数据</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>本册原文把这一课题拆成顿悟、原理、实验、自测四步；这里只做导读，不添加原文外的事实。</p><h3>结构长什么样</h3><pre class="explain-structure">顿悟 → 原理深讲 → 动手实验 → 课后自测 → 参考答案</pre></div>
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Webhook</dt><dd>外部系统主动推送事件的 HTTP 回调。</dd></div><div><dt>Cron</dt><dd>定时触发器。</dd></div><div><dt>Item</dt><dd>n8n 数组流里的单条数据。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源对比 Dify：Dify 是被动响应的 AI 智囊，n8n 是主动监听外部事件、连接 400+ 软件的神经中枢。</p><h3>结构长什么样</h3><pre class="explain-structure">Trigger → 抓取/读取 → N 个 Item 自动逐条处理 → Aggregate → 通知/写入</pre></div>
       </div>
-      <p class="explain-check">本册自测题中，你能先用自己的话解释哪一条原理？</p>
+      <p class="explain-check">为什么 n8n 里不写 for 循环，20 篇文章也会被处理 20 次？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
@@ -68,8 +68,8 @@
     <div class="reading-grid">
       <div><h3>逐点读懂</h3><ol class="reading-points"><li>n8n 是主动监听外部事件的自动化中枢</li><li>Webhook/Cron 是两类触发器</li><li>节点默认逐 item 执行，汇总要显式 Aggregate</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>先读本册的顿悟时刻与原理，再做动手实验，最后用课后自测题检查；答案在页面下方。</p>
-        <h3>例子在哪</h3><p>本册的动手实验与自测题都在原文里；参考答案见本页下方。</p>
+        <h3>怎么对应本关练习</h3><p>先用 30 秒看懂抓四层结构，再读本册的‘顿悟时刻/原理/动手实验’，最后做课后自测；答案在下方。</p>
+        <h3>例子在哪</h3><p>本册的动手实验与课后自测都在原文；参考答案见本页下方。</p>
       </div>
     </div>
     <p class="reading-takeaway">n8n 的事件驱动与数组流</p>

@@ -45,21 +45,21 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">本册讲 Dify 的 DAG 工作流、节点分治、变量池与父子分段检索，以及 Workflow/Agent 的工程边界。</p>
-      <ul class="explain-bullets"><li>固定流程用 DAG，避免自主路由跑偏</li><li>节点分治与变量池让流程可观测</li><li>Workflow 与 Agent 是两种不同工程范式</li></ul>
+      <p class="explain-summary">这一册只解决一件事：能用确定性 DAG 工作流解决的任务，不要交给自由 Agent 随机决策。</p>
+      <ul class="explain-bullets"><li>Workflow 控制权在人，Agent 控制权在模型</li><li>DAG 把任务拆成节点，连线决定顺序，变量池传递数据</li><li>节点分治让每一步只做一件窄而确定的事</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
-      <p class="explain-example-title">先看来源里的例子：PDF 本册实验/自测（来源）</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本册核心例子（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>本册的动手实验与课后自测题见原文。</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>按本册的顿悟→原理→实验→自测顺序阅读。</p><h3>输出</h3><p>参考答案见本页下方。</p></div>
+        <div class="explain-code"><span>输入</span><pre>多语种论文精读：识别语言→提取公式/表格→检索背景→翻译→术语检查→排版。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>把六步塞进一个大 Prompt，注意力被分散，第 2 步偏了后面全错；拆成 DAG 六个节点，每步用最合适的模型或代码。</p><h3>输出</h3><p>来源结论：DAG 工作流把稳定性从约 60% 拉到 99%，且延迟、Token 成本可预测。</p></div>
       </div>
       <div class="explain-two">
-        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Dify</dt><dd>开源 LLM 应用编排平台</dd></div><div><dt>DAG</dt><dd>有向无环图工作流</dd></div><div><dt>Variable Pool</dt><dd>节点间传递变量的池</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>本册原文把这一课题拆成顿悟、原理、实验、自测四步；这里只做导读，不添加原文外的事实。</p><h3>结构长什么样</h3><pre class="explain-structure">顿悟 → 原理深讲 → 动手实验 → 课后自测 → 参考答案</pre></div>
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>DAG</dt><dd>有向无环图，节点按依赖顺序执行。</dd></div><div><dt>Variable Pool</dt><dd>节点间传递输出变量的全局池。</dd></div><div><dt>Workflow vs Agent</dt><dd>人定流程 vs 模型自主决策。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源引用 Anthropic《Building Effective Agents》：固定流程用工作流，开放目标才用 Agent；混用会让成本和稳定性失控。</p><h3>结构长什么样</h3><pre class="explain-structure">Start → 分类/分支 → 检索/翻译/校验节点 → 变量池 → 输出</pre></div>
       </div>
-      <p class="explain-check">本册自测题中，你能先用自己的话解释哪一条原理？</p>
+      <p class="explain-check">为什么“6 步全塞进一个大 Prompt”比 DAG 更容易出错？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
@@ -68,8 +68,8 @@
     <div class="reading-grid">
       <div><h3>逐点读懂</h3><ol class="reading-points"><li>固定流程用 DAG，避免自主路由跑偏</li><li>节点分治与变量池让流程可观测</li><li>Workflow 与 Agent 是两种不同工程范式</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>先读本册的顿悟时刻与原理，再做动手实验，最后用课后自测题检查；答案在页面下方。</p>
-        <h3>例子在哪</h3><p>本册的动手实验与自测题都在原文里；参考答案见本页下方。</p>
+        <h3>怎么对应本关练习</h3><p>先用 30 秒看懂抓四层结构，再读本册的‘顿悟时刻/原理/动手实验’，最后做课后自测；答案在下方。</p>
+        <h3>例子在哪</h3><p>本册的动手实验与课后自测都在原文；参考答案见本页下方。</p>
       </div>
     </div>
     <p class="reading-takeaway">DAG 工作流与 Agent 的边界</p>

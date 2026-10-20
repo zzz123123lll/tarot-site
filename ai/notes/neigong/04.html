@@ -45,21 +45,21 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">本册把 Prompt Engineering 升级为 Context Engineering：如何管理窗口、记忆、KV Cache，并控制幻觉。</p>
-      <ul class="explain-bullets"><li>窗口不是越大越好，中间信息会丢</li><li>KV Cache 是推理成本的重要部分</li><li>幻觉要用证据与拒答边界控制</li></ul>
+      <p class="explain-summary">这一册只解决一件事：从“写好一句话”升级为“管理整个信息场”，包括窗口、缓存、记忆与幻觉。</p>
+      <ul class="explain-bullets"><li>长上下文有 Lost in the Middle：中间信息注意力被稀释</li><li>KV Cache/Prefix Caching 决定延迟和成本；静态内容前置、动态内容后置</li><li>幻觉来自全知答题惯性和迎合偏见，要用证据、引用、拒答控制</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
-      <p class="explain-example-title">先看来源里的例子：PDF 本册实验/自测（来源）</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本册核心例子（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>本册的动手实验与课后自测题见原文。</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>按本册的顿悟→原理→实验→自测顺序阅读。</p><h3>输出</h3><p>参考答案见本页下方。</p></div>
+        <div class="explain-code"><span>输入</span><pre>把 4 万字资料和一条“第一行必须输出 JSON”的格式指令放在同一个长上下文里。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>长文隔开了开头格式指令和最终生成位置，近因效应使格式约束的注意力权重衰减，模型可能忘记第一行格式。</p><h3>输出</h3><p>来源修复：三明治首尾呼应——开头放规则，中间放资料，结尾紧挨输出指令再重申约束。</p></div>
       </div>
       <div class="explain-two">
-        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Lost in the Middle</dt><dd>长上下文中部信息被忽略</dd></div><div><dt>KV Cache</dt><dd>缓存历史 Key/Value 降低重复计算</dd></div><div><dt>Context Engineering</dt><dd>选择、组织、压缩上下文</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>本册原文把这一课题拆成顿悟、原理、实验、自测四步；这里只做导读，不添加原文外的事实。</p><h3>结构长什么样</h3><pre class="explain-structure">顿悟 → 原理深讲 → 动手实验 → 课后自测 → 参考答案</pre></div>
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Lost in the Middle</dt><dd>长上下文中部信息容易被忽略。</dd></div><div><dt>KV Cache</dt><dd>缓存历史 Key/Value，避免重复计算。</dd></div><div><dt>Context Rot</dt><dd>上下文被冗余信息污染、信噪比下降。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源把上下文当内存管理：窗口越大不等于越聪明；要排布、压缩、缓存，并给模型证据退路。</p><h3>结构长什么样</h3><pre class="explain-structure">静态规则置顶 → 长资料 → 动态问题置底 → 关键约束首尾呼应 → 证据/拒答</pre></div>
       </div>
-      <p class="explain-check">本册自测题中，你能先用自己的话解释哪一条原理？</p>
+      <p class="explain-check">为什么把动态时间戳放在提示词第一行会显著增加成本？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
@@ -68,8 +68,8 @@
     <div class="reading-grid">
       <div><h3>逐点读懂</h3><ol class="reading-points"><li>窗口不是越大越好，中间信息会丢</li><li>KV Cache 是推理成本的重要部分</li><li>幻觉要用证据与拒答边界控制</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>先读本册的顿悟时刻与原理，再做动手实验，最后用课后自测题检查；答案在页面下方。</p>
-        <h3>例子在哪</h3><p>本册的动手实验与自测题都在原文里；参考答案见本页下方。</p>
+        <h3>怎么对应本关练习</h3><p>先用 30 秒看懂抓四层结构，再读本册的‘顿悟时刻/原理/动手实验’，最后做课后自测；答案在下方。</p>
+        <h3>例子在哪</h3><p>本册的动手实验与课后自测都在原文；参考答案见本页下方。</p>
       </div>
     </div>
     <p class="reading-takeaway">上下文工程是信息场管理</p>

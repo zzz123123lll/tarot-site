@@ -45,21 +45,21 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">本册讲 MCP 的 Host-Client-Server 架构、stdio 与 Streamable HTTP 传输，以及 FastMCP 开发。</p>
-      <ul class="explain-bullets"><li>Host 管连接，Server 暴露工具/资源</li><li>本地 stdio，远程 Streamable HTTP</li><li>MCP 解决插件格式碎片化</li></ul>
+      <p class="explain-summary">这一册只解决一件事：MCP 用统一协议把 AI 和外部工具连接起来，本地走 stdio，远程走 Streamable HTTP。</p>
+      <ul class="explain-bullets"><li>MCP 有 Host、Client、Server 三层，Server 暴露 Resources/Tools/Prompts</li><li>stdio 用标准输入输出传 JSON-RPC；远程用 Streamable HTTP 单端点</li><li>stdio Server 里 print 调试会污染协议通道，日志必须写 stderr</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
-      <p class="explain-example-title">先看来源里的例子：PDF 本册实验/自测（来源）</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本册核心例子（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>本册的动手实验与课后自测题见原文。</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>按本册的顿悟→原理→实验→自测顺序阅读。</p><h3>输出</h3><p>参考答案见本页下方。</p></div>
+        <div class="explain-code"><span>输入</span><pre>写 MCP Server 时在工具函数里加了一句 print(&quot;正在查询数据...&quot;)。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>stdio 模式下 stdout 是 JSON-RPC 专用通道；普通 print 把中文写进 stdout，客户端 JSON 解析器收到非 JSON 字符，报错并断开。</p><h3>输出</h3><p>来源修复：调试日志一律写入 sys.stderr，保持 stdout 只输出 JSON-RPC 报文。</p></div>
       </div>
       <div class="explain-two">
-        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>MCP</dt><dd>Model Context Protocol</dd></div><div><dt>stdio</dt><dd>标准输入输出本地传输</dd></div><div><dt>Streamable HTTP</dt><dd>远程单端点流式传输</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>本册原文把这一课题拆成顿悟、原理、实验、自测四步；这里只做导读，不添加原文外的事实。</p><h3>结构长什么样</h3><pre class="explain-structure">顿悟 → 原理深讲 → 动手实验 → 课后自测 → 参考答案</pre></div>
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>MCP</dt><dd>Model Context Protocol，AI 工具插件标准。</dd></div><div><dt>stdio</dt><dd>本地进程通过标准输入输出通信。</dd></div><div><dt>Streamable HTTP</dt><dd>远程 MCP 的单端点流式 HTTP 传输。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源指出：过去每个工具各写一套插件格式；MCP 统一 Host-Client-Server 和传输层，成为 AI 界的 USB-C。</p><h3>结构长什么样</h3><pre class="explain-structure">Host → Client → Server（Resources/Tools/Prompts）\n本地 stdio / 远程 Streamable HTTP</pre></div>
       </div>
-      <p class="explain-check">本册自测题中，你能先用自己的话解释哪一条原理？</p>
+      <p class="explain-check">为什么 MCP stdio Server 里不能随便 print 调试信息？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
@@ -68,8 +68,8 @@
     <div class="reading-grid">
       <div><h3>逐点读懂</h3><ol class="reading-points"><li>Host 管连接，Server 暴露工具/资源</li><li>本地 stdio，远程 Streamable HTTP</li><li>MCP 解决插件格式碎片化</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>先读本册的顿悟时刻与原理，再做动手实验，最后用课后自测题检查；答案在页面下方。</p>
-        <h3>例子在哪</h3><p>本册的动手实验与自测题都在原文里；参考答案见本页下方。</p>
+        <h3>怎么对应本关练习</h3><p>先用 30 秒看懂抓四层结构，再读本册的‘顿悟时刻/原理/动手实验’，最后做课后自测；答案在下方。</p>
+        <h3>例子在哪</h3><p>本册的动手实验与课后自测都在原文；参考答案见本页下方。</p>
       </div>
     </div>
     <p class="reading-takeaway">MCP 统一插件协议</p>

@@ -45,21 +45,21 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">本册从 Tokenizer、Embedding、Self-Attention 与三阶段训练讲清 LLM 的黑盒；来源强调看懂这些机制后，许多 AI 现象都能解释。</p>
-      <ul class="explain-bullets"><li>Token 不是字；Embedding 把语义放进高维空间</li><li>Self-Attention 用 Query-Key 权重建立上下文关联</li><li>Temperature/Top-p 决定从概率榜单里怎么选词</li></ul>
+      <p class="explain-summary">这一册只解决一件事：把大模型的黑盒拆成四层——分词、向量、注意力、采样。看懂后，计数、幻觉、随机性都能解释。</p>
+      <ul class="explain-bullets"><li>Tokenizer 把文字切成 Token ID，模型不直接看汉字/字母</li><li>Embedding 把 Token 放进高维语义空间，Self-Attention 再按上下文聚合</li><li>Temperature/Top-p 决定从概率榜单里怎么选下一个词</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
-      <p class="explain-example-title">先看来源里的例子：PDF 本册实验/自测（来源）</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本册动手实验（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>本册的动手实验与课后自测题见原文。</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>按本册的顿悟→原理→实验→自测顺序阅读。</p><h3>输出</h3><p>参考答案见本页下方。</p></div>
+        <div class="explain-code"><span>输入</span><pre>实验 1：直接问模型“immunoelectrophoresis 里有几个字母 o，分别在第几位？”；实验 2：让模型先把每个字母编号，再统计 o。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>直接问时，模型看到的是 Token 而不是单字母，容易数错；强制逐字母编号后，每个字母成为可见 Token，注意力能精确对齐位置。</p><h3>输出</h3><p>来源实验结论：强制把字符拆成带序号的 Token 后，计数准确率可到 100%。</p></div>
       </div>
       <div class="explain-two">
-        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Token</dt><dd>文本被分词器切成的单位</dd></div><div><dt>Embedding</dt><dd>把 token 映射成向量</dd></div><div><dt>Self-Attention</dt><dd>让 token 互相计算注意力权重</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>本册原文把这一课题拆成顿悟、原理、实验、自测四步；这里只做导读，不添加原文外的事实。</p><h3>结构长什么样</h3><pre class="explain-structure">顿悟 → 原理深讲 → 动手实验 → 课后自测 → 参考答案</pre></div>
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Tokenizer</dt><dd>把文本切成 Token 并映射为编号的分词器。</dd></div><div><dt>Embedding</dt><dd>把 Token 映射成高维向量的语义坐标。</dd></div><div><dt>Self-Attention</dt><dd>让每个 Token 根据上下文计算注意力权重。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源指出：模型只做“下一个 Token 的概率接龙”；不理解 Token 颗粒度，就会误判模型的计数、拼写和幻觉能力。</p><h3>结构长什么样</h3><pre class="explain-structure">文字 → Tokenizer → Token ID → Embedding → Self-Attention → 概率分布 → Sampler → 下一个 Token</pre></div>
       </div>
-      <p class="explain-check">本册自测题中，你能先用自己的话解释哪一条原理？</p>
+      <p class="explain-check">为什么模型能翻译长文，却可能数错一个单词里有几个字母 o？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
@@ -68,8 +68,8 @@
     <div class="reading-grid">
       <div><h3>逐点读懂</h3><ol class="reading-points"><li>Token 不是字；Embedding 把语义放进高维空间</li><li>Self-Attention 用 Query-Key 权重建立上下文关联</li><li>Temperature/Top-p 决定从概率榜单里怎么选词</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>先读本册的顿悟时刻与原理，再做动手实验，最后用课后自测题检查；答案在页面下方。</p>
-        <h3>例子在哪</h3><p>本册的动手实验与自测题都在原文里；参考答案见本页下方。</p>
+        <h3>怎么对应本关练习</h3><p>先用 30 秒看懂抓四层结构，再读本册的‘顿悟时刻/原理/动手实验’，最后做课后自测；答案在下方。</p>
+        <h3>例子在哪</h3><p>本册的动手实验与课后自测都在原文；参考答案见本页下方。</p>
       </div>
     </div>
     <p class="reading-takeaway">大语言模型底层运作原理</p>

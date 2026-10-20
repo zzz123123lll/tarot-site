@@ -45,21 +45,21 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">本册用条件概率与概率空间视角解释提示词：角色、XML 边界、少样本和结构化控制，不是玄学咒语。</p>
-      <ul class="explain-bullets"><li>模糊提问会落回最大似然均值</li><li>角色与 XML 是上下文条件</li><li>少样本用示例对齐格式和边界</li></ul>
+      <p class="explain-summary">这一册只解决一件事：提示词不是咒语，而是用条件把模型散漫的概率分布收窄到专业子空间。</p>
+      <ul class="explain-bullets"><li>模糊提问会落回语料的“最大公约数”，输出正确的废话</li><li>角色、受众、评价标准、禁用边界是四把概率手术刀</li><li>XML 标签隔离指令与数据；少样本用示例对齐格式</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
-      <p class="explain-example-title">先看来源里的例子：PDF 本册实验/自测（来源）</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本册正反例（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>本册的动手实验与课后自测题见原文。</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>按本册的顿悟→原理→实验→自测顺序阅读。</p><h3>输出</h3><p>参考答案见本页下方。</p></div>
+        <div class="explain-code"><span>输入</span><pre>低效写法：“你是一位资深计算机专家，请帮我看看这段代码有什么问题。”</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>“有什么问题”过于宽泛，模型不知道查语法、性能还是安全；科学写法补上身份、三个安全维度、受众和输出格式。</p><h3>输出</h3><p>来源科学写法：白帽安全审计员，按 SQL 注入/越权/硬编码三维度，面向初级开发者，用“行号+原理+修复代码”三段式输出。</p></div>
       </div>
       <div class="explain-two">
-        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>条件概率</dt><dd>给定上下文后下一个 token 的概率</dd></div><div><dt>XML 边界</dt><dd>用标签区分数据与指令</dd></div><div><dt>少样本</dt><dd>用几个示例教模型期望输出</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>本册原文把这一课题拆成顿悟、原理、实验、自测四步；这里只做导读，不添加原文外的事实。</p><h3>结构长什么样</h3><pre class="explain-structure">顿悟 → 原理深讲 → 动手实验 → 课后自测 → 参考答案</pre></div>
+        <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>条件概率</dt><dd>给定上下文后下一个 Token 的概率。</dd></div><div><dt>XML 边界</dt><dd>用标签把指令和数据物理隔开。</dd></div><div><dt>Few-Shot</dt><dd>用少量输入输出示例对齐格式和语气。</dd></div></dl></div>
+        <div><h3>为什么有效</h3><p>来源把提示词看作条件约束：条件越具体，低质量分支被剪掉越多，模型越容易进入专业表达区域。</p><h3>结构长什么样</h3><pre class="explain-structure">模糊问题 → 平均语料\n角色 + 受众 + 标准 + 边界 → 专业子空间\nXML 分隔指令/数据 → 防串扰</pre></div>
       </div>
-      <p class="explain-check">本册自测题中，你能先用自己的话解释哪一条原理？</p>
+      <p class="explain-check">为什么“请帮我看看代码有什么问题”容易得到泛泛而谈的回答？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
@@ -68,8 +68,8 @@
     <div class="reading-grid">
       <div><h3>逐点读懂</h3><ol class="reading-points"><li>模糊提问会落回最大似然均值</li><li>角色与 XML 是上下文条件</li><li>少样本用示例对齐格式和边界</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>先读本册的顿悟时刻与原理，再做动手实验，最后用课后自测题检查；答案在页面下方。</p>
-        <h3>例子在哪</h3><p>本册的动手实验与自测题都在原文里；参考答案见本页下方。</p>
+        <h3>怎么对应本关练习</h3><p>先用 30 秒看懂抓四层结构，再读本册的‘顿悟时刻/原理/动手实验’，最后做课后自测；答案在下方。</p>
+        <h3>例子在哪</h3><p>本册的动手实验与课后自测都在原文；参考答案见本页下方。</p>
       </div>
     </div>
     <p class="reading-takeaway">提示词不是玄学，而是概率空间的窄化漏斗</p>
