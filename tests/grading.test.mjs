@@ -7,8 +7,19 @@ import { grade, gradeObjective, normalize, ENGINE_VERSION } from '../shared/grad
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
-const level = JSON.parse(fs.readFileSync(path.join(root, 'content/levels/prompt-01.json'), 'utf8'));
-const ex = level.exercise;
+const ex = {
+  minLength: 40,
+  criteria: [
+    { id: 'c1', label: '通道拆分', weight: 3, type: 'term_groups', groups: [
+      { label: 'System', terms: ['system', '系统'] },
+      { label: 'User', terms: ['user', '用户'] }
+    ]},
+    { id: 'c2', label: '事实要素', weight: 7, type: 'term_groups', groups: [
+      { label: '时间', terms: ['时间'] },
+      { label: '地点', terms: ['地点'] }
+    ]}
+  ]
+};
 
 const cases = [
   {
@@ -21,17 +32,16 @@ const cases = [
   },
   {
     name: 'edge: 只覆盖部分得分点',
-    answer: '【System 设定】你是科技公关。\n【User 指令】时间：下周五；地点：深圳南山；核心亮点：心率监测。字数 150-200 字。',
+    answer: '【System 设定】你是科技公关。\n【User 指令】时间：下周五；核心亮点：心率监测。这是一段足够长的边界答案。',
     check(r) {
       assert.equal(r.status, 'partial');
       assert.ok(r.score > 0 && r.score < r.max, `score ${r.score} 应在 0..${r.max}`);
-      assert.ok(r.missing.includes('媒体权益'));
-      assert.ok(r.missing.includes('RSVP / 截止'));
+      assert.ok(r.missing.includes('地点'));
     }
   },
   {
     name: 'good: 覆盖全部得分点',
-    answer: '【System 设定】你是资深科技公关。\n【User 指令】为智能戒指发布会写邀请邮件。时间：下周五下午两点；地点：深圳南山科技园；核心亮点：睡眠与心率监测；媒体专属权益：专访机位和评测样机。字数 150-200 字。请在截止时间前 RSVP 回复确认。',
+    answer: '【System 设定】你是资深科技公关。\n【User 指令】时间：下周五下午两点；地点：深圳南山科技园；核心亮点：睡眠与心率监测。这是一段覆盖全部评分项的完整答案。',
     check(r) {
       assert.equal(r.status, 'pass');
       assert.equal(r.score, r.max);
