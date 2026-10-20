@@ -11,9 +11,9 @@
 <meta property="og:description" content="本关练习：设计“企业新客户背景尽调 Agent”的分步规划器。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=10">
-<script src="/ai/notes/notes.js?v=6" defer></script>
-<script type="module" src="/ai/notes/practice.mjs?v=4"></script>
+<link rel="stylesheet" href="/ai/notes/notes.css?v=11">
+<script src="/ai/notes/notes.js?v=7" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=5"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>
@@ -45,35 +45,37 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">这一关只解决一件事：把大目标拆成带依赖关系的子任务，并允许重规划。</p>
-      <ul class="explain-bullets"><li>每个子任务有 step_id/tool_name/expected_output</li><li>depends_on 决定串行/并行</li><li>异常时终止或重规划</li></ul>
+      <p class="explain-summary">这一关只解决一件事：面对复杂目标(如“分析竞品最近三个月的定价变动并生成应对促销方案”),单步工具调用无法完 成。Microsoft AI Agents for Beginners 第 7 课(Planning Design) 指出,高阶智能体必须具备“先规划后 执行(Plan-and-Solve)”能力:先将宏大目标拆解为包含明确输入输出依赖关系的子任务列表(Sub-task DAG),标记哪些子任务可以并行执行(Parallel)、哪些必须串行等待(Sequential);且每完成一步后根据 实际返回结果动态修正后续计划(Re-planning)。</p>
+      <ul class="explain-bullets"><li>设计 Planner 输出的结构化 JSON 计划表格式,每个子任务需包含 step_id、tool_name、depends_on (前置依赖数组)与 expected_output;</li><li>准确区分并行阶段(工商信息查询、新闻检索、官网产品抓取互不依赖,可并发执行)与串行汇总阶 段(</li><li>5 分);</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
       <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>来源任务：B2B 销售团队输入一个潜在客户公司名称，希望 Agent 自动完成工商风险核查、近期高管新闻动态检索、主营产品匹配度评估，并输出一份拜访简报。</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求工商核查后新闻/官网可并行，汇总依赖前两步；若发现注销/失信立即终止。</p><h3>输出</h3><p>参考答案是结构化计划表和重规划分支（见本关原文）。</p></div>
+        <div class="explain-code"><span>输入</span><pre>B2B 销售团队输入一个潜在客戶公司名称,希望 Agent 自动完成工商⻛险核查、近期高管新闻 动态检索、主营产品匹配度评估,并输出一份拜访简报。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：设计 Planner 输出的结构化 JSON 计划表格式,每个子任务需包含 step_id、tool_name、depends_on (前置依赖数组)与 expected_output; / 准确区分并行阶段(工商信息查询、新闻检索、官网产品抓取互不依赖,可并发执行)与串行汇总阶 段( / 5 分);</p><h3>输出</h3><p>参考答案：参考答案:企业尽调 Agent 的 DAG 任务规划与短路拦截器 { &quot;goal&quot;: &quot;对目标企业【星云智造科技有限公司】进行销售前背景尽调并生成拜访简报&quot;, &quot;execution_plan&quot;: [ { &quot;step_id&quot;: &quot;step_1&quot;, &quot;task&quot;: &quot;核查工商注册状态、行政处罚与失信被执行人记录&quot;, &quot;tool_name&quot;: &quot;verify_business_registration&quot;, &quot;depends_on&quot;: [], </p></div>
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>DAG</dt><dd>有向无环图，用来表达任务依赖。</dd></div><div><dt>重规划</dt><dd>前置结果异常时改变后续计划。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源 Microsoft 第 7 课 Planning 讲任务拆解与依赖；复杂任务不能一步硬做。</p><h3>结构长什么样</h3><pre class="explain-structure">step1 → parallel(step2,step3) → step4
-异常 → 终止/重规划</pre></div>
+        <div><h3>为什么有效</h3><p>来源核心原理：面对复杂目标(如“分析竞品最近三个月的定价变动并生成应对促销方案”),单步工具调用无法完 成。Microsoft AI Agents for Beginners 第 7 课(Planning Design) 指出,高阶智能体必须具备“先规划后 执行(Plan-and-Solve)”能力:先将宏大目标拆解为包含明确输入输出依赖关系的子任务列表(Sub-task DAG),标记哪些子任务可以并行执行(Parallel)、哪些必须串行等待(Sequential);且每完成一步后根据 实际返回结果动态修正后续计划(Re-planning)。</p><h3>结构长什么样</h3><pre class="explain-structure">设计 Planner 输出的结构化 JSON 计划表格式,每个子任务需包含 step_id、tool_name、depends_on (前置依赖数组)与 expected_output;
+准确区分并行阶段(工商信息查询、新闻检索、官网产品抓取互不依赖,可并发执行)与串行汇总阶 段(
+5 分);
+设计动态重规划分支:若第一步工商核查发现该公司“已注销或被列为失信被执行人”,立即终止后续 新闻检索并直接输出⻛险拦截报告。</pre></div>
       </div>
       <p class="explain-check">depends_on 为空和不为空分别意味着什么？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
-    <p class="reading-quote">本关 PDF 要求 Planner 输出结构化计划表：每个子任务包含 step_id、tool_name、depends_on、expected_output；依赖决定串行，互不依赖才能并行，并设计动态重规划分支。</p>
+    <p class="reading-quote">面对复杂目标(如“分析竞品最近三个月的定价变动并生成应对促销方案”),单步工具调用无法完 成。Microsoft AI Agents for Beginners 第 7 课(Planning Design) 指出,高阶智能体必须具备“先规划后 执行(Plan-and-Solve)”能力:先将宏大目标拆解为包含明确输入输出依赖关系的子任务列表(Sub-task DAG),标记哪些子任务可以并行执行(Parallel)、哪些必须串行等待(Sequential);且每完成一步后根据 实际返回结果动态修正后续计划(Re-planning)。</p>
     <div class="reading-grid">
-      <div><h3>逐点读懂</h3><ol class="reading-points"><li>复杂目标需要先拆子任务，再决定执行顺序。</li><li>depends_on 表达前置依赖；为空表示可以先执行。</li><li>互不依赖的步骤可以并行，有依赖的必须串行。</li><li>前置结果异常时要能终止或重规划，而不是继续原计划。</li></ol></div>
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>设计 Planner 输出的结构化 JSON 计划表格式,每个子任务需包含 step_id、tool_name、depends_on (前置依赖数组)与 expected_output;</li><li>准确区分并行阶段(工商信息查询、新闻检索、官网产品抓取互不依赖,可并发执行)与串行汇总阶 段(</li><li>5 分);</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>读 PDF 时把“计划表”和“执行图”分开：计划表是数据，执行图由依赖关系决定。</p>
-        <h3>例子在哪</h3><p>PDF 第 3 关的工商核查→新闻/官网并行→汇总简报示例就是本关的来源例子。</p>
+        <h3>怎么对应本关练习</h3><p>先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。</p>
+        <h3>例子在哪</h3><p>本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。</p>
       </div>
     </div>
-    <p class="reading-takeaway">Planner 的核心是依赖关系和可重规划。</p>
+    <p class="reading-takeaway">本关先记住：设计 Planner 输出的结构化 JSON 计划表格式,每个子任务需包含 step_id、tool_name、depends_on (前置依赖数组)与 expected_output;</p>
     <div class="reading-refs"><span class="label">SOURCES</span><span>PDF 第 3 关（用户提供）</span><a href="https://github.com/microsoft/ai-agents-for-beginners/blob/main/07-planning-design/README.md" target="_blank" rel="noopener">Microsoft · Lesson 7 Planning ↗</a></div>
   </section>
     <section class="lesson"><h3>核心原理</h3><p>面对复杂目标(如“分析竞品最近三个月的定价变动并生成应对促销方案”),单步工具调用无法完 成。Microsoft AI Agents for Beginners 第 7 课(Planning Design) 指出,高阶智能体必须具备“先规划后 执行(Plan-and-Solve)”能力:先将宏大目标拆解为包含明确输入输出依赖关系的子任务列表(Sub-task DAG),标记哪些子任务可以并行执行(Parallel)、哪些必须串行等待(Sequential);且每完成一步后根据 实际返回结果动态修正后续计划(Re-planning)。</p><h2>第 3 关实操练习题：设计“企业新客戶背景尽调 Agent”的分步规划器</h2><h3>任务背景</h3><p>B2B 销售团队输入一个潜在客戶公司名称,希望 Agent 自动完成工商⻛险核查、近期高管新闻 动态检索、主营产品匹配度评估,并输出一份拜访简报。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设计 Planner 输出的结构化 JSON 计划表格式,每个子任务需包含 step_id、tool_name、depends_on (前置依赖数组)与 expected_output(5 分);</p><p>2. 准确区分并行阶段(工商信息查询、新闻检索、官网产品抓取互不依赖,可并发执行)与串行汇总阶 段(</p><p>4.5 分);</p><p>3. 设计动态重规划分支:若第一步工商核查发现该公司“已注销或被列为失信被执行人”,立即终止后续 新闻检索并直接输出⻛险拦截报告(3 分)。</p></section>

@@ -422,3 +422,27 @@ footer a:hover{color:var(--seal)}
 .breadcrumb .sep{color:var(--line-strong)}
 .article p a,.lesson a{color:var(--seal)}
 @media(max-width:900px){.hero::after{display:none}}
+
+.validator-hint{display:block;font-family:var(--mono);font-size:9px;line-height:1.5;color:var(--muted);margin-top:3px;letter-spacing:.02em}
+
+/* 搜索与继续阅读 */
+.resume{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px;font-size:12px;color:var(--muted)}
+.resume span{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--seal)}
+.resume a{color:var(--ink);border-bottom:1px solid var(--line-strong);padding-bottom:2px}
+.resume a:hover{color:var(--seal);border-color:var(--seal)}
+.resume[hidden]{display:none}
+.search-panel{border:1px solid var(--line-strong);background:rgba(251,246,234,.78);padding:24px}
+.search-label{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--seal);margin-bottom:8px}
+.search-input{width:100%;border:0;border-bottom:1px solid var(--line-strong);background:transparent;color:var(--ink);font-family:var(--serif);font-size:clamp(22px,3vw,34px);padding:8px 0 12px;outline:none}
+.search-input:focus{border-bottom-color:var(--seal)}
+.search-meta{font-family:var(--mono);font-size:10px;color:var(--muted);margin:12px 0 0;letter-spacing:.03em}
+.search-results{display:grid;border-top:1px solid var(--line);margin-top:18px}
+.search-hit{display:grid;grid-template-columns:52px minmax(0,1fr) 20px;gap:14px;align-items:start;padding:18px 0;border-bottom:1px solid var(--line);color:var(--ink)}
+.search-hit:hover h2{color:var(--seal)}
+.search-type{font-family:var(--mono);font-size:9px;color:var(--seal);border:1px solid var(--line-strong);padding:3px 5px;text-align:center;margin-top:4px}
+.search-hit h2{font-family:var(--serif);font-size:20px;line-height:1.35;letter-spacing:-.02em;margin:0 0 5px;font-weight:600;transition:color .15s}
+.search-hit p{font-size:13px;line-height:1.7;color:var(--muted);margin:0 0 5px}
+.search-hit small{font-family:var(--mono);font-size:9px;color:var(--muted)}
+.search-arrow{color:var(--seal);font-size:15px;padding-top:4px}
+.search-empty{border-bottom:1px solid var(--line);padding:26px 0;color:var(--muted);font-size:14px}
+@media(max-width:700px){.search-panel{padding:16px}.search-hit{grid-template-columns:42px minmax(0,1fr);gap:10px}.search-arrow{display:none}}

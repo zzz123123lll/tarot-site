@@ -11,9 +11,9 @@
 <meta property="og:description" content="本关练习：构建带元数据预过滤的本地 Chroma/Qdrant 语义检索管道。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=10">
-<script src="/ai/notes/notes.js?v=6" defer></script>
-<script type="module" src="/ai/notes/practice.mjs?v=4"></script>
+<link rel="stylesheet" href="/ai/notes/notes.css?v=11">
+<script src="/ai/notes/notes.js?v=7" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=5"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>
@@ -45,35 +45,37 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">这一关只解决一件事：检索前先用元数据过滤，再做向量相似度。</p>
-      <ul class="explain-bullets"><li>入库保存文本、embedding 和元数据</li><li>查询先按 is_active/版本/部门过滤</li><li>再做向量相似度取 Top-K</li></ul>
+      <p class="explain-summary">这一关只解决一件事：在 StepByStep-RAG 的第二模块 SemanticSeek 与 AI Infra Engineer Learning (Mod 110) 中,传 统的 Ctrl+F 或关键词搜索在面对“用戶问:电脑连不上公司内网怎么办”而知识库原文写的是“企业 VPN 客 戶端认证失败排查指南”时,会因为字面词汇零重合而完全搜不到结果。语义检索(Semantic Search)通过 将文本块编码为稠密向量并存入向量数据库(如 Chroma、Qdrant、Weaviate),同时绑定结构化元数据过滤 条件(Metadata Filtering,如 department == &quot;IT&quot; 且 year &gt;= 2025),实现“既懂弦外之音、又守精确边界” 的高效检索。</p>
+      <ul class="explain-bullets"><li>设计文档入库(Upsert)时的三维结构:id、document_text、embedding 与 metadata(含版本号、生效 状态 is_active、适用部门)(</li><li>5 分);</li><li>编写检索查询逻辑,在计算向量相似度前先通过 where={&quot;is_active&quot;: True} 过滤掉历史废止文档;</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
       <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>来源任务：知识库里同时存有 2023 年（已废止）和 2026 年（现行有效）的差旅报销标准，单纯靠向量相似度检索经常把 2023 年的旧住宿标准排在第一名。</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求 upsert 保存版本和 is_active，查询时先 where 过滤再算相似度，并说明查询与文档必须用同一 Embedding 模型。</p><h3>输出</h3><p>参考答案是入库+过滤检索流程（见本关原文）。</p></div>
+        <div class="explain-code"><span>输入</span><pre>知识库里同时存有 2023 年(已废止)和 2026 年(现行有效)的差旅报销标准,单纯靠向量相 似度检索经常把 2023 年的旧住宿标准排在第一名。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：设计文档入库(Upsert)时的三维结构:id、document_text、embedding 与 metadata(含版本号、生效 状态 is_active、适用部门)( / 5 分); / 编写检索查询逻辑,在计算向量相似度前先通过 where={&quot;is_active&quot;: True} 过滤掉历史废止文档;</p><h3>输出</h3><p>参考答案：参考答案:带元数据过滤的 Chroma/Qdrant 向量入库与检索 # 1. 结构化入库结构(绑定版本与生效状态元数据) collection.upsert( ids=[&quot;policy_2026_chunk_01&quot;, &quot;policy_2023_chunk_01&quot;], embeddings=[embed_model.encode(text_2026), embed_model.encode(text_2023)], documents=</p></div>
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>元数据</dt><dd>描述文档版本、部门、状态等信息。</dd></div><div><dt>Upsert</dt><dd>插入或更新文档记录。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源 SemanticSeek 用 embedding + 余弦相似度做语义检索；加入元数据可先排除不适用的文档。</p><h3>结构长什么样</h3><pre class="explain-structure">入库：id/text/embedding/metadata
-查询：where 过滤 → 余弦 → Top-K</pre></div>
+        <div><h3>为什么有效</h3><p>来源核心原理：在 StepByStep-RAG 的第二模块 SemanticSeek 与 AI Infra Engineer Learning (Mod 110) 中,传 统的 Ctrl+F 或关键词搜索在面对“用戶问:电脑连不上公司内网怎么办”而知识库原文写的是“企业 VPN 客 戶端认证失败排查指南”时,会因为字面词汇零重合而完全搜不到结果。语义检索(Semantic Search)通过 将文本块编码为稠密向量并存入向量数据库(如 Chroma、Qdrant、Weaviate),同时绑定结构化元数据过滤 条件(Metadata Filtering,如 department == &quot;IT&quot; 且 year &gt;= 2025),实现“既懂弦外之音、又守精确边界” 的高效检索。</p><h3>结构长什么样</h3><pre class="explain-structure">设计文档入库(Upsert)时的三维结构:id、document_text、embedding 与 metadata(含版本号、生效 状态 is_active、适用部门)(
+5 分);
+编写检索查询逻辑,在计算向量相似度前先通过 where={&quot;is_active&quot;: True} 过滤掉历史废止文档;
+说明为什么查询向量(Query Embedding)与文档入库向量必须使用完全相同的 Embedding 模型与 归一化方式。</pre></div>
       </div>
       <p class="explain-check">为什么过滤要发生在相似度计算之前？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
-    <p class="reading-quote">SemanticSeek 用 Embedding 把查询和文档转成向量，再用余弦相似度计算相关性，并按 Top-K 返回最相关文档。</p>
+    <p class="reading-quote">在 StepByStep-RAG 的第二模块 SemanticSeek 与 AI Infra Engineer Learning (Mod 110) 中,传 统的 Ctrl+F 或关键词搜索在面对“用戶问:电脑连不上公司内网怎么办”而知识库原文写的是“企业 VPN 客 戶端认证失败排查指南”时,会因为字面词汇零重合而完全搜不到结果。语义检索(Semantic Search)通过 将文本块编码为稠密向量并存入向量数据库(如 Chroma、Qdrant、Weaviate),同时绑定结构化元数据过滤 条件(Metadata Filtering,如 department == &quot;IT&quot; 且 year &gt;= 2025),实现“既懂弦外之音、又守精确边界” 的高效检索。</p>
     <div class="reading-grid">
-      <div><h3>逐点读懂</h3><ol class="reading-points"><li>语义检索不是关键词匹配，而是比较查询与文档的向量表示。</li><li>来源使用 Ollama 的 nomic-embed-text 模型生成 embedding。</li><li>检索结果按相似度排序，返回 Top-K 文档。</li><li>语义检索适合自然语言问法，但仍需要文档侧的准备和索引。</li></ol></div>
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>设计文档入库(Upsert)时的三维结构:id、document_text、embedding 与 metadata(含版本号、生效 状态 is_active、适用部门)(</li><li>5 分);</li><li>编写检索查询逻辑,在计算向量相似度前先通过 where={&quot;is_active&quot;: True} 过滤掉历史废止文档;</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>本关的入库结构、元数据过滤和查询逻辑，是在来源的语义检索链路上增加工程约束。</p>
-        <h3>例子在哪</h3><p>来源 README 用酒店洗衣服务的自然语言查询展示 Top-K 结果和相似度分数。</p>
+        <h3>怎么对应本关练习</h3><p>先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。</p>
+        <h3>例子在哪</h3><p>本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。</p>
       </div>
     </div>
-    <p class="reading-takeaway">语义检索的核心是 embedding + 相似度 + Top-K。</p>
+    <p class="reading-takeaway">本关先记住：设计文档入库(Upsert)时的三维结构:id、document_text、embedding 与 metadata(含版本号、生效 状态 is_active、适用部门)(</p>
     <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/gurucharanmk/StepByStep-RAG/blob/main/SemanticSeek/README.md" target="_blank" rel="noopener">StepByStep-RAG · SemanticSeek ↗</a><span>PDF 第 3 关</span></div>
   </section>
     <section class="lesson"><h3>核心原理</h3><p>在 StepByStep-RAG 的第二模块 SemanticSeek 与 AI Infra Engineer Learning (Mod 110) 中,传 统的 Ctrl+F 或关键词搜索在面对“用戶问:电脑连不上公司内网怎么办”而知识库原文写的是“企业 VPN 客 戶端认证失败排查指南”时,会因为字面词汇零重合而完全搜不到结果。语义检索(Semantic Search)通过 将文本块编码为稠密向量并存入向量数据库(如 Chroma、Qdrant、Weaviate),同时绑定结构化元数据过滤 条件(Metadata Filtering,如 department == "IT" 且 year &gt;= 2025),实现“既懂弦外之音、又守精确边界” 的高效检索。</p><h2>第 3 关实操练习题：构建带元数据预过滤的本地 Chroma/Qdrant 语义检索管道</h2><h3>任务背景</h3><p>知识库里同时存有 2023 年(已废止)和 2026 年(现行有效)的差旅报销标准,单纯靠向量相 似度检索经常把 2023 年的旧住宿标准排在第一名。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设计文档入库(Upsert)时的三维结构:id、document_text、embedding 与 metadata(含版本号、生效 状态 is_active、适用部门)(</p><p>4.5 分);</p><p>2. 编写检索查询逻辑,在计算向量相似度前先通过 where={"is_active": True} 过滤掉历史废止文档(5 分);</p><p>3. 说明为什么查询向量(Query Embedding)与文档入库向量必须使用完全相同的 Embedding 模型与 归一化方式(3 分)。</p></section>

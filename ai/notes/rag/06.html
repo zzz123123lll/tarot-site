@@ -11,9 +11,9 @@
 <meta property="og:description" content="本关练习：编写多轮对话指代消解与复杂对比问题拆解器。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=10">
-<script src="/ai/notes/notes.js?v=6" defer></script>
-<script type="module" src="/ai/notes/practice.mjs?v=4"></script>
+<link rel="stylesheet" href="/ai/notes/notes.css?v=11">
+<script src="/ai/notes/notes.js?v=7" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=5"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>
@@ -45,35 +45,37 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">这一关只解决一件事：把多轮追问改写成可独立检索的问题，并拆开对比题。</p>
-      <ul class="explain-bullets"><li>结合历史补全代词</li><li>对比题拆成两个子查询</li><li>闲聊/致谢可跳过检索</li></ul>
+      <p class="explain-summary">这一关只解决一件事：StepByStep-RAG 的第四模块 ConvoRAG 解决了单轮 RAG 走向真实聊天应用的最大拦路虎——多 轮对话中的指代消解(Coreference Resolution)。例如:第 1 轮用戶问“Grand Palace 酒店的豪华海景房 多少钱一晚?</p>
+      <ul class="explain-bullets"><li>设计前置 Query Rewriter 提示词:结合历史对话 &lt;chat_history&gt; 与当前追问 &lt;latest_question&gt;,将含 代词“它”的句子改写为主语完整、可独立检索的句子(</li><li>5 分);</li><li>针对“A 与 B 有什么区别”这类对比型问题,设计拆解为两条独立检索子查询(Sub-queries)的 JSON 输出格式,避免单次检索只召回 A 而漏掉 B;</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
       <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>来源任务：用户在第 1 轮问了“Pro 版会员的年费是多少？”,第 2 轮追问：“那它跟企业旗舰版在 API 每分钟调用限额上有什么区别？”</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求 Query Rewriter 读取 chat_history 和 latest_question；对比题输出两个独立子查询；纯致谢跳过向量库。</p><h3>输出</h3><p>参考答案是改写器和子查询 JSON（见本关原文）。</p></div>
+        <div class="explain-code"><span>输入</span><pre>用戶在第 1 轮问了“Pro 版会员的年费是多少?”,第 2 轮追问:“那它跟企业旗舰版在 API 每 分钟调用限额上有什么区别?”</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：设计前置 Query Rewriter 提示词:结合历史对话 &lt;chat_history&gt; 与当前追问 &lt;latest_question&gt;,将含 代词“它”的句子改写为主语完整、可独立检索的句子( / 5 分); / 针对“A 与 B 有什么区别”这类对比型问题,设计拆解为两条独立检索子查询(Sub-queries)的 JSON 输出格式,避免单次检索只召回 A 而漏掉 B;</p><h3>输出</h3><p>参考答案：参考答案:ConvoRAG 多轮指代消解与对比子查询拆解器 【前置查询改写与拆解器 Prompt(Query Rewriter &amp; Decomposer)】 请结合 &lt;chat_history&gt; 将用戶的 &lt;latest_question&gt; 转化为面向向量检索引擎的优化查询 JSON。 规则说明: 1. 闲聊豁免:若用戶最新输入仅为感谢、寒暄或确认(如“谢谢”、“明白了”),将 need_retrieval 设为 false,无需检索知</p></div>
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Query Rewriting</dt><dd>把口语追问改写成可检索的完整问题。</dd></div><div><dt>子查询</dt><dd>从复杂问题拆出的独立检索问题。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源 ConvoRAG 用对话历史、查询分类和查询上下文化来提升多轮回答相关性。</p><h3>结构长什么样</h3><pre class="explain-structure">history + latest → rewritten query
-对比题 → sub_query_A / sub_query_B</pre></div>
+        <div><h3>为什么有效</h3><p>来源核心原理：StepByStep-RAG 的第四模块 ConvoRAG 解决了单轮 RAG 走向真实聊天应用的最大拦路虎——多 轮对话中的指代消解(Coreference Resolution)。例如:第 1 轮用戶问“Grand Palace 酒店的豪华海景房 多少钱一晚?”,第 2 轮用戶紧接着问“那它包含免费双人早餐和机场接送吗?”。如果直接拿第 2 轮原话“那 它包含免费双人早餐和机场接送吗?”去向量库检索,由于丢失了主语“Grand Palace 酒店豪华海景房”,检 索 器 会 把 全 库 所 有 提 到 早 餐 的 无 关文 档 搜 出 来 ! 因 此 , 在 检索 之 前 必 须 增 加 一 步 独 立 查 询 改 写 器 (Contextual Query Rewriter),并可结合 RAG Zero to Hero Guide 中的 HyDE(假设性文档嵌入) 或 Sub-Query Decomposition(多子问题拆解)。</p><h3>结构长什么样</h3><pre class="explain-structure">设计前置 Query Rewriter 提示词:结合历史对话 &lt;chat_history&gt; 与当前追问 &lt;latest_question&gt;,将含 代词“它”的句子改写为主语完整、可独立检索的句子(
+5 分);
+针对“A 与 B 有什么区别”这类对比型问题,设计拆解为两条独立检索子查询(Sub-queries)的 JSON 输出格式,避免单次检索只召回 A 而漏掉 B;
+说明若用戶第 2 轮只是说“谢谢,讲得很清楚”,系统应如何跳过向量库检索以节省延迟。 第四阶段:高阶生产篇(第 7‒8 关)——知识图谱 GraphRAG、流式应用与评估 体系</pre></div>
       </div>
       <p class="explain-check">用户只说“它”时，为什么不能直接拿原话检索？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
-    <p class="reading-quote">ConvoRAG 在传统 RAG 上增加对话历史、查询分类和查询上下文化，使回答能考虑正在进行中的对话。</p>
+    <p class="reading-quote">StepByStep-RAG 的第四模块 ConvoRAG 解决了单轮 RAG 走向真实聊天应用的最大拦路虎——多 轮对话中的指代消解(Coreference Resolution)。例如:第 1 轮用戶问“Grand Palace 酒店的豪华海景房 多少钱一晚?</p>
     <div class="reading-grid">
-      <div><h3>逐点读懂</h3><ol class="reading-points"><li>多轮 RAG 不能只拿当前一句话检索，需要历史上下文。</li><li>查询分类可以优化检索路径。</li><li>查询上下文化会把简短追问补成可检索的问题。</li><li>这些能力对应练习中的 Query Rewriter 和对比型问题拆解。</li></ol></div>
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>设计前置 Query Rewriter 提示词:结合历史对话 &lt;chat_history&gt; 与当前追问 &lt;latest_question&gt;,将含 代词“它”的句子改写为主语完整、可独立检索的句子(</li><li>5 分);</li><li>针对“A 与 B 有什么区别”这类对比型问题,设计拆解为两条独立检索子查询(Sub-queries)的 JSON 输出格式,避免单次检索只召回 A 而漏掉 B;</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>读本关时把“用户原话”与“改写后的检索问题”分开；练习要求先补全代词、再拆子查询。</p>
-        <h3>例子在哪</h3><p>来源 ConvoRAG README 的对话历史、查询分类、上下文化三项功能，就是本关的来源例子。</p>
+        <h3>怎么对应本关练习</h3><p>先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。</p>
+        <h3>例子在哪</h3><p>本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。</p>
       </div>
     </div>
-    <p class="reading-takeaway">多轮 RAG 的第一步是把追问变成完整问题。</p>
+    <p class="reading-takeaway">本关先记住：设计前置 Query Rewriter 提示词:结合历史对话 &lt;chat_history&gt; 与当前追问 &lt;latest_question&gt;,将含 代词“它”的句子改写为主语完整、可独立检索的句子(</p>
     <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/gurucharanmk/StepByStep-RAG/blob/main/ConvoRAG/README.md" target="_blank" rel="noopener">StepByStep-RAG · ConvoRAG ↗</a><span>PDF 第 6 关</span></div>
   </section>
     <section class="lesson"><h3>核心原理</h3><p>StepByStep-RAG 的第四模块 ConvoRAG 解决了单轮 RAG 走向真实聊天应用的最大拦路虎——多 轮对话中的指代消解(Coreference Resolution)。例如:第 1 轮用戶问“Grand Palace 酒店的豪华海景房 多少钱一晚?”,第 2 轮用戶紧接着问“那它包含免费双人早餐和机场接送吗?”。如果直接拿第 2 轮原话“那 它包含免费双人早餐和机场接送吗?”去向量库检索,由于丢失了主语“Grand Palace 酒店豪华海景房”,检 索 器 会 把 全 库 所 有 提 到 早 餐 的 无 关文 档 搜 出 来 ! 因 此 , 在 检索 之 前 必 须 增 加 一 步 独 立 查 询 改 写 器 (Contextual Query Rewriter),并可结合 RAG Zero to Hero Guide 中的 HyDE(假设性文档嵌入) 或 Sub-Query Decomposition(多子问题拆解)。</p><h2>第 6 关实操练习题：编写多轮对话指代消解与复杂对比问题拆解器</h2><h3>任务背景</h3><p>用戶在第 1 轮问了“Pro 版会员的年费是多少?”,第 2 轮追问:“那它跟企业旗舰版在 API 每 分钟调用限额上有什么区别?”</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设计前置 Query Rewriter 提示词:结合历史对话 &lt;chat_history&gt; 与当前追问 &lt;latest_question&gt;,将含 代词“它”的句子改写为主语完整、可独立检索的句子(</p><p>4.5 分);</p><p>2. 针对“A 与 B 有什么区别”这类对比型问题,设计拆解为两条独立检索子查询(Sub-queries)的 JSON 输出格式,避免单次检索只召回 A 而漏掉 B(5 分);</p><p>3. 说明若用戶第 2 轮只是说“谢谢,讲得很清楚”,系统应如何跳过向量库检索以节省延迟(3 分)。 第四阶段:高阶生产篇(第 7‒8 关)——知识图谱 GraphRAG、流式应用与评估 体系</p></section>

@@ -11,9 +11,9 @@
 <meta property="og:description" content="先手算余弦相似度，再补上阈值、空结果和结构化返回。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=10">
-<script src="/ai/notes/notes.js?v=6" defer></script>
-<script type="module" src="/ai/notes/practice.mjs?v=4"></script>
+<link rel="stylesheet" href="/ai/notes/notes.css?v=11">
+<script src="/ai/notes/notes.js?v=7" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=5"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>
@@ -45,36 +45,38 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">这一关只解决一件事：把“语义接近”变成可计算的余弦相似度，并处理阈值和空结果。</p>
-      <ul class="explain-bullets"><li>向量先算 L2 模长并归一化</li><li>相似度为点积除以模长乘积</li><li>低分过滤，空结果返回空列表</li></ul>
+      <p class="explain-summary">这一关只解决一件事：在 StepByStep-RAG 的第一模块 CosineExplorer 中,作者指出理解 RAG 的起点是搞懂计算机如何 衡量两段文字“意思相近”。通过嵌入模型(Embedding Model),每段文本被映射为高维空间中的数值向量 A 与 B。</p>
+      <ul class="explain-bullets"><li>正确写出包含 L2 范数(模长)归一化的余弦相似度计算公式并防范除零异常(</li><li>5 分);</li><li>加入最低相似度阈值过滤(min_score =</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
-      <p class="explain-example-title">先看来源里的例子：PDF 本关实操题</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>来源劣质示例：def search(q, docs)：return sorted(docs, key=lambda d: sum(q*d))[:3]（缺陷：仅算点积未做模长归一化，长文档或数值偏大的向量会霸榜，且无最低相关度阈值过滤。）</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求公式含 L2 范数、防除零、min_score=0.75 过滤，并按相似度降序返回 doc_id/score/text。</p><h3>输出</h3><p>参考答案是完整的余弦检索函数（见本关原文）。</p></div>
+        <div class="explain-code"><span>输入</span><pre>参照 CosineExplorer.py 的教学精神,在不依赖重型黑盒框架的前提下,用基础 Python / NumPy 编写一个计算用戶问题向量与知识库候选文档向量矩阵余弦相似度、并返回大于阈值(threshold &gt;= 0.75)的前 K 个文档索引与得分的核心函数。 待改造劣质代码:def search(q, docs): return sorted(docs, key=lambda d: sum(q*d))[:3](缺陷:仅算 点积未做模长归一化,长文档或数值偏大的向量会霸榜,且无最低相关度阈值过滤。)</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：正确写出包含 L2 范数(模长)归一化的余弦相似度计算公式并防范除零异常( / 5 分); / 加入最低相似度阈值过滤(min_score =</p><h3>输出</h3><p>参考答案：参考答案与代码解析(Answer Key) 以下提供全套 8 关的 Python 核心实现代码、算法公式与工业级配置模板,助你快速落地本地知识库项目。 第 1 关参考答案:零框架依赖的 NumPy 余弦相似度检索引擎实现 import numpy as np from typing import List, Dict, Any def cosine_similarity_search( query_vec: np.ndarray, do</p></div>
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Embedding</dt><dd>把文本映射成数值向量。</dd></div><div><dt>L2 范数</dt><dd>向量的长度，用于归一化。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源 CosineExplorer 用二维向量演示：余弦值从 -1 到 1，衡量方向相似，不看向量长度。</p><h3>结构长什么样</h3><pre class="explain-structure">score = dot(q,d) / (||q||·||d||)
-if score &lt; min_score: 丢弃
-按 score 降序取 top_k</pre></div>
+        <div><h3>为什么有效</h3><p>来源核心原理：在 StepByStep-RAG 的第一模块 CosineExplorer 中,作者指出理解 RAG 的起点是搞懂计算机如何 衡量两段文字“意思相近”。通过嵌入模型(Embedding Model),每段文本被映射为高维空间中的数值向量 A 与 B。衡量它们语义接近程度的核心指标是余弦相似度(Cosine Similarity):即两个向量夹角的余弦值 (点积除以各自模长的乘积),取值范围为 [-1, 1]。夹角越接近 0 度,余弦值越接近 1,代表语义高度重合;与 向量绝对长度(文章字数多少)无关,只看方向是否一致。</p><h3>结构长什么样</h3><pre class="explain-structure">正确写出包含 L2 范数(模长)归一化的余弦相似度计算公式并防范除零异常(
+5 分);
+加入最低相似度阈值过滤(min_score =
+75),当所有候选文档得分均低于阈值时返回空列表而非强 行凑够 Top-K;
+按相似度从高到低排序并返回包含 {&quot;doc_id&quot;, &quot;score&quot;, &quot;text&quot;} 的结构化列表。</pre></div>
       </div>
       <p class="explain-check">余弦相似度为什么与向量长度无关？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
-    <p class="reading-quote">CosineExplorer 用二维向量演示余弦相似度：相似度 = (A·B)/(|A|·|B|)，取值从 -1（完全相反）到 1（完全相同）；它衡量方向相似，不看向量长度。</p>
+    <p class="reading-quote">在 StepByStep-RAG 的第一模块 CosineExplorer 中,作者指出理解 RAG 的起点是搞懂计算机如何 衡量两段文字“意思相近”。通过嵌入模型(Embedding Model),每段文本被映射为高维空间中的数值向量 A 与 B。</p>
     <div class="reading-grid">
-      <div><h3>逐点读懂</h3><ol class="reading-points"><li>每个文本先被 Embedding 模型映射为向量，再用余弦相似度比较语义接近程度。</li><li>分子是点积，分母是两个向量模长的乘积。</li><li>二维向量可视化是为了先理解概念，再扩展到高维文本向量。</li><li>余弦值越接近 1，方向越接近；向量长度不影响方向相似性。</li></ol></div>
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>正确写出包含 L2 范数(模长)归一化的余弦相似度计算公式并防范除零异常(</li><li>5 分);</li><li>加入最低相似度阈值过滤(min_score =</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>本关要求手写 L2 归一化、防除零、阈值过滤、排序返回；对应来源公式和 CosineExplorer 的教学顺序。</p>
-        <h3>例子在哪</h3><p>来源 README 用二维坐标 (2,3) 与 (4,6) 得到 1.00 的示例，可作为手算对照。</p>
+        <h3>怎么对应本关练习</h3><p>先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。</p>
+        <h3>例子在哪</h3><p>本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。</p>
       </div>
     </div>
-    <p class="reading-takeaway">先理解方向相似，再实现工程细节。</p>
+    <p class="reading-takeaway">本关先记住：正确写出包含 L2 范数(模长)归一化的余弦相似度计算公式并防范除零异常(</p>
     <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/gurucharanmk/StepByStep-RAG/blob/main/CosineExplorer/README.md" target="_blank" rel="noopener">StepByStep-RAG · CosineExplorer ↗</a><span>PDF 第 1 关</span></div>
   </section>
     <section class="lesson"><h3>核心原理</h3><p>在 StepByStep-RAG 的第一模块 CosineExplorer 中,作者指出理解 RAG 的起点是搞懂计算机如何 衡量两段文字“意思相近”。通过嵌入模型(Embedding Model),每段文本被映射为高维空间中的数值向量 A 与 B。衡量它们语义接近程度的核心指标是余弦相似度(Cosine Similarity):即两个向量夹角的余弦值 (点积除以各自模长的乘积),取值范围为 [-1, 1]。夹角越接近 0 度,余弦值越接近 1,代表语义高度重合;与 向量绝对长度(文章字数多少)无关,只看方向是否一致。</p><h2>第 1 关实操练习题：编写零第三方框架依赖的余弦相似度检索函数</h2><h3>任务背景</h3><p>参照 CosineExplorer.py 的教学精神,在不依赖重型黑盒框架的前提下,用基础 Python / NumPy 编写一个计算用戶问题向量与知识库候选文档向量矩阵余弦相似度、并返回大于阈值(threshold &gt;= 0.75)的前 K 个文档索引与得分的核心函数。 待改造劣质代码:def search(q, docs): return sorted(docs, key=lambda d: sum(q*d))[:3](缺陷:仅算 点积未做模长归一化,长文档或数值偏大的向量会霸榜,且无最低相关度阈值过滤。)</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 正确写出包含 L2 范数(模长)归一化的余弦相似度计算公式并防范除零异常(</p><p>4.5 分);</p><p>2. 加入最低相似度阈值过滤(min_score =</p><p>0.75),当所有候选文档得分均低于阈值时返回空列表而非强 行凑够 Top-K(5 分);</p><p>3. 按相似度从高到低排序并返回包含 {"doc_id", "score", "text"} 的结构化列表(3 分)。</p></section>

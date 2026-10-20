@@ -47,8 +47,8 @@ function head(title, description, canonical) {
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=10">
-<script src="/ai/notes/notes.js?v=6" defer></script>
+<link rel="stylesheet" href="/ai/notes/notes.css?v=11">
+<script src="/ai/notes/notes.js?v=7" defer></script>
 </head>`;
 }
 function shellHeader() {
@@ -58,6 +58,7 @@ function shellHeader() {
   <a class="brand" href="/">${BRAND} <small>KNOWLEDGE BASE</small></a>
   <nav class="nav" aria-label="主导航">
     <a href="/ai/notes/">全部课程</a>
+    <a class="hide-s" href="/ai/notes/search/">搜索</a>
     <a class="hide-s" href="/#guide">学习路线</a>
     <a class="hide-s" href="/ai/notes/review/">错题本</a>
     <a class="hide-s" href="/#practice">怎么练</a>
@@ -86,11 +87,11 @@ ${shellHeader()}
 <section class="wrap section">
   <div class="section-head"><div><p class="label">THE SERIES / 两大系列</p><h2>先内功，后利器。</h2></div><a href="/">回到总目录 →</a></div>
   <div class="series-grid">
-    <a class="series-card" href="/ai/notes/neigong/" data-series="neigong" data-total="28">
+    <a class="series-card" href="/ai/notes/neigong/" data-series="neigong" data-prefixes="/ai/notes/neigong/,/ai/notes/rag/,/ai/notes/agents/,/ai/notes/llm/" data-total="28">
       <span class="num">01 / 内功心法</span>
       <h3>内功心法</h3>
       <p>7 册：LLM 底层、提示词、深度推理、上下文工程、RAG、Agent、模型定制。共 28 讲。</p>
-      <span class="meta-line"><span>7 册 · 28 关</span><span>先读原理</span><span>展开 ↗</span></span>
+      <span class="meta-line"><span>7 册 · 28 关</span><span data-series-progress>0 / 28 完成</span><span>展开 ↗</span></span>
     </a>
     <a class="series-card" href="/ai/notes/tools/" data-series="tools" data-total="8">
       <span class="num">02 / 神兵利器</span>
@@ -123,11 +124,11 @@ ${footer()}
 }
 
 function renderNeigong() {
-  const cards = NEIGONG_BOOKS.map((b) => `<a class="series-card" href="${esc(b.href)}">
+  const cards = NEIGONG_BOOKS.map((b) => `<a class="series-card" href="${esc(b.href)}" data-book-prefix="${esc(b.href)}" data-book-total="${b.count}">
   <span class="num">内功${b.id}</span>
   <h3>${esc(b.title)}</h3>
   <p>${esc(b.desc)}</p>
-  <span class="meta-line"><span>${b.count === 1 ? '单册 · 1 讲' : b.count + ' 关'}</span><span>开始阅读 ↗</span></span>
+  <span class="meta-line"><span>${b.count === 1 ? '单册 · 1 讲' : b.count + ' 关'}</span><span data-book-progress>0 / ${b.count} 完成</span><span>开始阅读 ↗</span></span>
 </a>`).join('');
   const page = `${head('内功心法 — AI神功', '内功心法 7 册：LLM 底层、提示词、深度推理、上下文工程、RAG、Agent、模型定制。', 'https://gongjuhe.top/ai/notes/neigong/')}
 <body>
@@ -139,6 +140,7 @@ ${shellHeader()}
   <p class="lead">先修底层原理，再进入 RAG、Agent 与模型定制。7 册不是 7 个孤立的课，而是一条从“看懂模型”到“改造模型”的线。</p>
   <p class="source">课程来源：AI 现代必修课 · 内功心法篇（7 册）</p>
   <div class="track-progress" data-track="neigong" data-total="28"><span data-track-count>0 / 28 完成</span><span class="bar"><i></i></span></div>
+  <div class="resume" data-resume hidden></div>
 </section>
 <section class="wrap section">
   <div class="section-head"><div><p class="label">BOOKS / 七册</p><h2>按顺序读，或先挑你需要的那一册。</h2></div><a href="/#guide">完整学习路线 →</a></div>
@@ -194,6 +196,62 @@ ${footer()}
   return out;
 }
 
+
+function renderSearch() {
+  const page = `${head('搜索 — AI神功', '搜索 AI神功 的 15 册、36 关课程；按标题、摘要和来源精读关键词查找。', 'https://gongjuhe.top/ai/notes/search/')}
+<body>
+${shellHeader()}
+<main id="main">
+<section class="wrap track-head">
+  <p class="label">SEARCH / 藏经阁</p>
+  <h1>搜索课程</h1>
+  <p class="lead">输入关键词，搜 15 册 / 36 关的标题、摘要与来源精读。</p>
+</section>
+<section class="wrap section">
+  <div class="search-panel">
+    <label class="search-label" for="search-input">SEARCH</label>
+    <input id="search-input" class="search-input" type="search" placeholder="例如：余弦相似度 / DPO / MCP / 量化" autocomplete="off" autofocus>
+    <p class="search-meta" data-search-meta>输入关键词开始搜索。</p>
+    <div class="search-results" data-search-results></div>
+  </div>
+</section>
+</main>
+${footer()}
+<script type="module" src="/ai/notes/search.mjs?v=1"></script>
+</body>
+</html>
+`;
+  const out = path.join(ROOT, 'ai/notes/search/index.html');
+  fs.mkdirSync(path.dirname(out), { recursive: true });
+  fs.writeFileSync(out, page, 'utf8');
+  return out;
+}
+
+function renderSearchIndex() {
+  const entries = [];
+  const strip = (s) => String(s || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  for (const id of ALL_TRACKS) {
+    const t = readTrack(id);
+    entries.push({
+      type: 'book', title: t.title, track: id, href: '/ai/notes/' + id + '/',
+      summary: t.subtitle || '', text: strip(t.subtitle || '')
+    });
+    for (const l of t.levels) {
+      const level = JSON.parse(fs.readFileSync(path.join(ROOT, 'content/levels', l.id + '.json'), 'utf8'));
+      const explain = level.explain || {};
+      const reading = level.reading || {};
+      entries.push({
+        type: 'lesson', title: level.title, track: id, trackTitle: t.title, href: l.href,
+        summary: level.summary || '',
+        text: [level.summary, explain.summary, explain.why, reading.quote, (reading.points || []).join(' ')].filter(Boolean).join(' ')
+      });
+    }
+  }
+  const out = path.join(ROOT, 'ai/notes/search-index.json');
+  fs.writeFileSync(out, JSON.stringify(entries), 'utf8');
+  return out;
+}
+
 function renderReview() {
   const page = `${head('错题本 — AI神功', '本机保存的客观题错题，答对后自动移除。', 'https://gongjuhe.top/ai/notes/review/')}
 <body>
@@ -211,7 +269,7 @@ ${shellHeader()}
 </section>
 </main>
 ${footer()}
-<script src="/ai/notes/notes.js?v=6" defer></script>
+<script src="/ai/notes/notes.js?v=7" defer></script>
 <script type="module" src="/ai/notes/review.mjs?v=1"></script>
 </body>
 </html>
@@ -223,7 +281,7 @@ ${footer()}
 }
 
 export function renderCatalog() {
-  const pages = [renderIndex(), renderNeigong()];
+  const pages = [renderIndex(), renderNeigong(), renderSearch(), renderSearchIndex()];
   for (const id of ['rag', 'agents', 'llm', 'tools']) pages.push(renderTrack(readTrack(id)));
   pages.push(renderReview());
   return pages;

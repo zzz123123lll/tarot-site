@@ -11,9 +11,9 @@
 <meta property="og:description" content="本关练习：将原始业务问答修正为标准 ShareGPT/ChatML 微调样本。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=10">
-<script src="/ai/notes/notes.js?v=6" defer></script>
-<script type="module" src="/ai/notes/practice.mjs?v=4"></script>
+<link rel="stylesheet" href="/ai/notes/notes.css?v=11">
+<script src="/ai/notes/notes.js?v=7" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=5"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>
@@ -45,35 +45,39 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">这一关只解决一件事：把业务问答变成带角色、模板和结束符的标准训练样本。</p>
-      <ul class="explain-bullets"><li>三角色 JSON：system/user/assistant</li><li>展开为 ChatML 时必须带 im_start/im_end</li><li>只对 assistant 计算 loss</li></ul>
+      <p class="explain-summary">这一关只解决一件事：正如 mlabonne/llm-course 第 3‒4 章 所言:“在微调中,数据质量永远比堆砌超参数重要十倍 (Always prioritize data quality over parameter optimization)。”新手做微调最常踩的两个致命大坑: 对话模板(Chat Template)错配与结束符(EOS Token)丢失:基座模型与指令模型遵循严格的特殊控 制符格式(如 ChatML 的 &lt;|im_start|&gt;user...&lt;|im_end|&gt; 或 Llama 3 的 &lt;|start_header_id|&gt;... &lt;|eot_id|&gt;)。</p>
+      <ul class="explain-bullets"><li>将该样本重构为包含 system、user、assistant 三角色的 ShareGPT/OpenAI 标准 JSON 数组格式(</li><li>5 分);</li><li>写出映射为 ChatML 模板后的完整纯文本字符串(必须显式包含 &lt;|im_start|&gt; 与 &lt;|im_end|&gt; 特殊标记) (</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
       <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>来源任务：你想把中医问诊记录转化为微调数据集,参照 LLM Fine-Tuning Hands-on Lab 的数据准备规 范进行格式化与去重清洗。 待改造劣质样本:&quot;问:最近总是失眠多梦、手脚心发热怎么办?答:这属于典型的阴虚火旺证,建议滋阴降 火。&quot;(直接按纯文本塞入训练器,无角色边界、无系统提示、无结束符。)</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：system/user/assistant 三角色 JSON / ChatML 模板与结束符 / SFT 前数据清洗三项</p><h3>输出</h3><p>按这些通关要求组织答案；参考答案见本页下方。</p></div>
+        <div class="explain-code"><span>输入</span><pre>你想把中医问诊记录转化为微调数据集,参照 LLM Fine-Tuning Hands-on Lab 的数据准备规 范进行格式化与去重清洗。 待改造劣质样本:&quot;问:最近总是失眠多梦、手脚心发热怎么办?答:这属于典型的阴虚火旺证,建议滋阴降 火。&quot;(直接按纯文本塞入训练器,无角色边界、无系统提示、无结束符。)</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：将该样本重构为包含 system、user、assistant 三角色的 ShareGPT/OpenAI 标准 JSON 数组格式( / 5 分); / 写出映射为 ChatML 模板后的完整纯文本字符串(必须显式包含 &lt;|im_start|&gt; 与 &lt;|im_end|&gt; 特殊标记) (</p><h3>输出</h3><p>参考答案：参考答案:ShareGPT/ChatML 标准微调格式转换与清洗清单 // 1. 标准 ShareGPT / OpenAI Messages JSON 格式 { &quot;messages&quot;: [ {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;你是一位严谨的中医辅助问诊助手,请根据患者描述的症状进行辨证分析 并给出调理建议。&quot;}, {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;最近总是失眠多梦、手脚心发热,舌红少苔,</p></div>
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>ChatML</dt><dd>用特殊控制符标记对话角色的模板格式。</dd></div><div><dt>EOS</dt><dd>结束符；缺失会让模型不知道何时停止。</dd></div><div><dt>Completion-only Loss</dt><dd>只对 assistant 回复计算损失。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源强调数据质量优先，模板错配和 EOS 丢失是微调最常见的大坑。</p><h3>结构长什么样</h3><pre class="explain-structure">messages: system→user→assistant
-ChatML: &lt;|im_start|&gt;role ... &lt;|im_end|&gt;</pre></div>
+        <div><h3>为什么有效</h3><p>来源核心原理：正如 mlabonne/llm-course 第 3‒4 章 所言:“在微调中,数据质量永远比堆砌超参数重要十倍 (Always prioritize data quality over parameter optimization)。”新手做微调最常踩的两个致命大坑: 对话模板(Chat Template)错配与结束符(EOS Token)丢失:基座模型与指令模型遵循严格的特殊控 制符格式(如 ChatML 的 &lt;|im_start|&gt;user...&lt;|im_end|&gt; 或 Llama 3 的 &lt;|start_header_id|&gt;... &lt;|eot_id|&gt;)。如果在拼接训练样本时漏掉了助手回答末尾的 eos_token,微调后的模型在推理时永远不知 道何时停下来,会一直自言自语直到填满最大长度! 未只对 Assistant 回复计算 Loss(Completion-only Loss Masking):如果把用戶提问(Instruction) 也算进交叉熵损失,模型会浪费算力去背诵用戶的问题,甚至学会模仿用戶的语气反问用戶。</p><h3>结构长什么样</h3><pre class="explain-structure">将该样本重构为包含 system、user、assistant 三角色的 ShareGPT/OpenAI 标准 JSON 数组格式(
+5 分);
+写出映射为 ChatML 模板后的完整纯文本字符串(必须显式包含 &lt;|im_start|&gt; 与 &lt;|im_end|&gt; 特殊标记) (
+5 分);
+列出将数据集送入 SFTTrainer 前必做的 3 项数据清洗检查(如近重复去重 MinHash、长度截断检查、 低质回复过滤)(
+5 分)。 第二阶段:微调核心篇(第 3‒4 关)——LoRA/QLoRA 高效微调与训练曲线排障</pre></div>
       </div>
       <p class="explain-check">如果漏掉 assistant 末尾的 EOS，推理时会发生什么？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
-    <p class="reading-quote">来源引用：在微调中，数据质量永远比堆砌超参数重要十倍；新手最常踩的两个坑是对话模板错配和 EOS 结束符丢失。</p>
+    <p class="reading-quote">正如 mlabonne/llm-course 第 3‒4 章 所言:“在微调中,数据质量永远比堆砌超参数重要十倍 (Always prioritize data quality over parameter optimization)。”新手做微调最常踩的两个致命大坑: 对话模板(Chat Template)错配与结束符(EOS Token)丢失:基座模型与指令模型遵循严格的特殊控 制符格式(如 ChatML 的 &lt;|im_start|&gt;user...&lt;|im_end|&gt; 或 Llama 3 的 &lt;|start_header_id|&gt;... &lt;|eot_id|&gt;)。</p>
     <div class="reading-grid">
-      <div><h3>逐点读懂</h3><ol class="reading-points"><li>基座/指令模型遵循严格特殊控制符格式，如 ChatML 与 Llama 3。</li><li>漏掉 assistant 末尾 eos_token，模型推理时不知道何时停止。</li><li>未只对 Assistant 回复计算 Loss 会让模型浪费算力背诵 User 问题。</li><li>标准做法：三角色 JSON、ChatML 展开、Completion-only Loss Masking。</li></ol></div>
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>将该样本重构为包含 system、user、assistant 三角色的 ShareGPT/OpenAI 标准 JSON 数组格式(</li><li>5 分);</li><li>写出映射为 ChatML 模板后的完整纯文本字符串(必须显式包含 &lt;|im_start|&gt; 与 &lt;|im_end|&gt; 特殊标记) (</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>读本关时先检查数据格式，再看训练参数；格式错，参数再对也没用。</p>
-        <h3>例子在哪</h3><p>来源任务是把中医问诊纯文本改成 ShareGPT/ChatML 样本；参考答案给出完整 JSON 与 ChatML 文本。</p>
+        <h3>怎么对应本关练习</h3><p>先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。</p>
+        <h3>例子在哪</h3><p>本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。</p>
       </div>
     </div>
-    <p class="reading-takeaway">微调前先保证模板、EOS 和 loss mask 正确。</p>
+    <p class="reading-takeaway">本关先记住：将该样本重构为包含 system、user、assistant 三角色的 ShareGPT/OpenAI 标准 JSON 数组格式(</p>
     <div class="reading-refs"><span class="label">SOURCES</span><span>PDF 第 2 关（用户提供）</span><a href="https://github.com/mlabonne/llm-course" target="_blank" rel="noopener">mlabonne/llm-course ↗</a></div>
   </section>
     <section class="lesson"><h3>核心原理</h3><p>正如 mlabonne/llm-course 第 3‒4 章 所言:“在微调中,数据质量永远比堆砌超参数重要十倍 (Always prioritize data quality over parameter optimization)。”新手做微调最常踩的两个致命大坑: 对话模板(Chat Template)错配与结束符(EOS Token)丢失:基座模型与指令模型遵循严格的特殊控 制符格式(如 ChatML 的 &lt;|im_start|&gt;user...&lt;|im_end|&gt; 或 Llama 3 的 &lt;|start_header_id|&gt;... &lt;|eot_id|&gt;)。如果在拼接训练样本时漏掉了助手回答末尾的 eos_token,微调后的模型在推理时永远不知 道何时停下来,会一直自言自语直到填满最大长度! 未只对 Assistant 回复计算 Loss(Completion-only Loss Masking):如果把用戶提问(Instruction) 也算进交叉熵损失,模型会浪费算力去背诵用戶的问题,甚至学会模仿用戶的语气反问用戶。</p><h2>第 2 关实操练习题：将原始业务问答修正为标准 ShareGPT/ChatML 微调样本</h2><h3>任务背景</h3><p>你想把中医问诊记录转化为微调数据集,参照 LLM Fine-Tuning Hands-on Lab 的数据准备规 范进行格式化与去重清洗。 待改造劣质样本:"问:最近总是失眠多梦、手脚心发热怎么办?答:这属于典型的阴虚火旺证,建议滋阴降 火。"(直接按纯文本塞入训练器,无角色边界、无系统提示、无结束符。)</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 将该样本重构为包含 system、user、assistant 三角色的 ShareGPT/OpenAI 标准 JSON 数组格式(</p><p>4.5 分);</p><p>2. 写出映射为 ChatML 模板后的完整纯文本字符串(必须显式包含 &lt;|im_start|&gt; 与 &lt;|im_end|&gt; 特殊标记) (</p><p>4.5 分);</p><p>3. 列出将数据集送入 SFTTrainer 前必做的 3 项数据清洗检查(如近重复去重 MinHash、长度截断检查、 低质回复过滤)(</p><p>3.5 分)。 第二阶段:微调核心篇(第 3‒4 关)——LoRA/QLoRA 高效微调与训练曲线排障</p></section>

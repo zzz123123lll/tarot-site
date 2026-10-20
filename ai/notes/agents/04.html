@@ -11,9 +11,9 @@
 <meta property="og:description" content="本关练习：设计私人理财顾问 Agent 的记忆读写与主动检索策略。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=10">
-<script src="/ai/notes/notes.js?v=6" defer></script>
-<script type="module" src="/ai/notes/practice.mjs?v=4"></script>
+<link rel="stylesheet" href="/ai/notes/notes.css?v=11">
+<script src="/ai/notes/notes.js?v=7" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=5"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>
@@ -45,34 +45,37 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">这一关只解决一件事：区分长期记忆和短期记忆，并让 Agent 自检何时二次检索。</p>
-      <ul class="explain-bullets"><li>长期存偏好/风险等级，短期存本轮对话</li><li>首次检索缺关键字段时二次检索</li><li>对话结束后判断是否写回记忆</li></ul>
+      <p class="explain-summary">这一关只解决一件事：传统 RAG 只是机械地把用戶原话拿去搜一次向量库,而 Microsoft AI Agents for Beginners 第 5 课 (Agentic RAG)与第 13 课(Managing Agentic Memory) 强调了两大升级: Agentic RAG(主动式检索):智能体会自己评估检索回来的文档够不够用——如果第一次搜到的资料相关 性低,Agent 会自主改写查询词(Query Rewrite)、拆解多跳子问题或切换数据源重新检索,直到收集⻬ 证据再作答。三层记忆架构(Memory Hierarchy):将记忆划分为 短期工作记忆(Working Memory / 当前会话上下 文)、情景记忆(Episodic Memory / 历史历史交互摘要) 与 长期语义记忆(Semantic Memory / 用戶 偏好、固定资产配置等结构化键值库)。</p>
+      <ul class="explain-bullets"><li>设计检索分流逻辑:从【长期用戶画像记忆库】读取用戶的历史⻛险等级与持仓偏好,同时通过【主 动文档检索工具】查询今日新基金招募说明书(</li><li>5 分);</li><li>设计 Agentic RAG 自检判定规则:若首次检索仅拿到基金名称而缺少“最大回撤、久期、信用评级分 布”关键字段,自动生成二次精准检索词;</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
       <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>来源任务：用户对理财 Agent 说：“按我上个月告诉你的风险承受等级，帮我看看今天刚发布的这只新债券基金适不适合买？”</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求读长期画像 + 查今日招募说明书；缺最大回撤/久期/信用评级时二次检索；结束后写回新信息。</p><h3>输出</h3><p>参考答案是记忆读写和检索分流流程（见本关原文）。</p></div>
+        <div class="explain-code"><span>输入</span><pre>用戶对理财 Agent 说:“按我上个月告诉你的⻛险承受等级,帮我看看今天刚发布的这只新债 券基金适不适合买?”</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：设计检索分流逻辑:从【长期用戶画像记忆库】读取用戶的历史⻛险等级与持仓偏好,同时通过【主 动文档检索工具】查询今日新基金招募说明书( / 5 分); / 设计 Agentic RAG 自检判定规则:若首次检索仅拿到基金名称而缺少“最大回撤、久期、信用评级分 布”关键字段,自动生成二次精准检索词;</p><h3>输出</h3><p>参考答案：参考答案:理财顾问 Agent 的三层记忆与主动检索工作流 【Step 1: 跨源并行感知】 - 读取长期语义记忆(Semantic Memory):调用 get_user_profile(user_id) 获取 {&quot;risk_tolerance&quot;: &quot;R2_稳 健型&quot;, &quot;max_drawdown_limit&quot;: &quot;3.5%&quot;, &quot;investment_horizon&quot;: &quot;6-12个月&quot;}。 - 初次文档检索:调用 search_f</p></div>
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Agentic RAG</dt><dd>Agent 自己判断何时检索、检索什么。</dd></div><div><dt>Memory Write-back</dt><dd>对话结束后把重要信息写回长期记忆。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源 Microsoft 第 5/13 课讲 Agentic RAG 与短期/长期记忆。</p><h3>结构长什么样</h3><pre class="explain-structure">长期画像 + 本轮对话 → 检索 → 自检 → 二次检索 → 写回</pre></div>
+        <div><h3>为什么有效</h3><p>来源核心原理：传统 RAG 只是机械地把用戶原话拿去搜一次向量库,而 Microsoft AI Agents for Beginners 第 5 课 (Agentic RAG)与第 13 课(Managing Agentic Memory) 强调了两大升级: Agentic RAG(主动式检索):智能体会自己评估检索回来的文档够不够用——如果第一次搜到的资料相关 性低,Agent 会自主改写查询词(Query Rewrite)、拆解多跳子问题或切换数据源重新检索,直到收集⻬ 证据再作答。 三层记忆架构(Memory Hierarchy):将记忆划分为 短期工作记忆(Working Memory / 当前会话上下 文)、情景记忆(Episodic Memory / 历史历史交互摘要) 与 长期语义记忆(Semantic Memory / 用戶 偏好、固定资产配置等结构化键值库)。</p><h3>结构长什么样</h3><pre class="explain-structure">设计检索分流逻辑:从【长期用戶画像记忆库】读取用戶的历史⻛险等级与持仓偏好,同时通过【主 动文档检索工具】查询今日新基金招募说明书(
+5 分);
+设计 Agentic RAG 自检判定规则:若首次检索仅拿到基金名称而缺少“最大回撤、久期、信用评级分 布”关键字段,自动生成二次精准检索词;
+设计对话结束后的记忆更新机制(Memory Write-back):判断本次对话中哪些新信息值得写入长期记 忆,哪些仅保留在短期会话中。 第三阶段:进阶编排篇(第 5‒6 关)——元认知自我反思与多智能体协同</pre></div>
       </div>
       <p class="explain-check">什么信息该进长期记忆，什么只留本轮？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
-    <p class="reading-quote">Microsoft 第 5 课 Agentic RAG 与第 13 课 Agentic Memory：Agent 需要短期会话记忆、长期用户记忆，并能在需要时自主检索和改写查询。</p>
+    <p class="reading-quote">传统 RAG 只是机械地把用戶原话拿去搜一次向量库,而 Microsoft AI Agents for Beginners 第 5 课 (Agentic RAG)与第 13 课(Managing Agentic Memory) 强调了两大升级: Agentic RAG(主动式检索):智能体会自己评估检索回来的文档够不够用——如果第一次搜到的资料相关 性低,Agent 会自主改写查询词(Query Rewrite)、拆解多跳子问题或切换数据源重新检索,直到收集⻬ 证据再作答。三层记忆架构(Memory Hierarchy):将记忆划分为 短期工作记忆(Working Memory / 当前会话上下 文)、情景记忆(Episodic Memory / 历史历史交互摘要) 与 长期语义记忆(Semantic Memory / 用戶 偏好、固定资产配置等结构化键值库)。</p>
     <div class="reading-grid">
-      <div><h3>逐点读懂</h3><ol class="reading-points"><li>短期记忆保存当前对话，长期记忆保存跨会话的偏好和状态。</li><li>Agentic RAG 会判断何时检索、检索什么，而不是每次机械检索。</li><li>首次检索缺少关键字段时，应改写查询再检索。</li><li>对话结束后，应判断哪些新信息值得写回长期记忆。</li></ol></div>
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>设计检索分流逻辑:从【长期用戶画像记忆库】读取用戶的历史⻛险等级与持仓偏好,同时通过【主 动文档检索工具】查询今日新基金招募说明书(</li><li>5 分);</li><li>设计 Agentic RAG 自检判定规则:若首次检索仅拿到基金名称而缺少“最大回撤、久期、信用评级分 布”关键字段,自动生成二次精准检索词;</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>读两课后，把练习里的“用户画像记忆、主动文档检索、二次检索、记忆写回”分别对应到短期/长期记忆和 Agentic RAG。</p>
-        <h3>例子在哪</h3><p>来源课程中的旅行 Agent 记忆与 Agentic RAG 示例对应本关的理财顾问场景；不要另造例子。</p>
+        <h3>怎么对应本关练习</h3><p>先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。</p>
+        <h3>例子在哪</h3><p>本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。</p>
       </div>
     </div>
-    <p class="reading-takeaway">记忆的关键是分层和写回策略，不是存得越多越好。</p>
+    <p class="reading-takeaway">本关先记住：设计检索分流逻辑:从【长期用戶画像记忆库】读取用戶的历史⻛险等级与持仓偏好,同时通过【主 动文档检索工具】查询今日新基金招募说明书(</p>
     <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/microsoft/ai-agents-for-beginners/blob/main/05-agentic-rag/README.md" target="_blank" rel="noopener">Microsoft · Lesson 5 Agentic RAG ↗</a><a href="https://github.com/microsoft/ai-agents-for-beginners/blob/main/13-agent-memory/README.md" target="_blank" rel="noopener">Microsoft · Lesson 13 Agentic Memory ↗</a><span>PDF 第 4 关</span></div>
   </section>
     <section class="lesson"><h3>核心原理</h3><p>传统 RAG 只是机械地把用戶原话拿去搜一次向量库,而 Microsoft AI Agents for Beginners 第 5 课 (Agentic RAG)与第 13 课(Managing Agentic Memory) 强调了两大升级: Agentic RAG(主动式检索):智能体会自己评估检索回来的文档够不够用——如果第一次搜到的资料相关 性低,Agent 会自主改写查询词(Query Rewrite)、拆解多跳子问题或切换数据源重新检索,直到收集⻬ 证据再作答。 三层记忆架构(Memory Hierarchy):将记忆划分为 短期工作记忆(Working Memory / 当前会话上下 文)、情景记忆(Episodic Memory / 历史历史交互摘要) 与 长期语义记忆(Semantic Memory / 用戶 偏好、固定资产配置等结构化键值库)。</p><h2>第 4 关实操练习题：设计私人理财顾问 Agent 的记忆读写与主动检索策略</h2><h3>任务背景</h3><p>用戶对理财 Agent 说:“按我上个月告诉你的⻛险承受等级,帮我看看今天刚发布的这只新债 券基金适不适合买?”</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设计检索分流逻辑:从【长期用戶画像记忆库】读取用戶的历史⻛险等级与持仓偏好,同时通过【主 动文档检索工具】查询今日新基金招募说明书(</p><p>4.5 分);</p><p>2. 设计 Agentic RAG 自检判定规则:若首次检索仅拿到基金名称而缺少“最大回撤、久期、信用评级分 布”关键字段,自动生成二次精准检索词(5 分);</p><p>3. 设计对话结束后的记忆更新机制(Memory Write-back):判断本次对话中哪些新信息值得写入长期记 忆,哪些仅保留在短期会话中(3 分)。 第三阶段:进阶编排篇(第 5‒6 关)——元认知自我反思与多智能体协同</p></section>

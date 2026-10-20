@@ -34,6 +34,22 @@
     catch (e) { return false; }
   }
 
+
+  function countDone(prefixes) {
+    var n = 0;
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (!k || k.indexOf(PREFIX) !== 0) continue;
+        var hit = prefixes.some(function (p) { return k.indexOf(PREFIX + p) === 0; });
+        if (!hit) continue;
+        var v = JSON.parse(localStorage.getItem(k) || '{}');
+        if (v && v.done) n++;
+      }
+    } catch (e) {}
+    return n;
+  }
+
   /* ---------- copy code ---------- */
   document.querySelectorAll('.code-block .copy-btn').forEach(function (btn) {
     btn.addEventListener('click', function () {
@@ -92,6 +108,21 @@
         doneCount++;
       }
     });
+    var bookCards = document.querySelectorAll('[data-book-prefix]');
+    var bookDone = 0;
+    var bookTotal = 0;
+    bookCards.forEach(function (card) {
+      var total = Number(card.dataset.bookTotal) || 0;
+      var n = countDone([card.dataset.bookPrefix]);
+      var p = card.querySelector('[data-book-progress]');
+      if (p) p.textContent = n + ' / ' + total + ' 完成';
+      bookDone += n;
+      bookTotal += total;
+    });
+    if (bookCards.length) {
+      doneCount = bookDone;
+      rows = { length: bookTotal };
+    }
     var tc = track.querySelector('[data-track-count]');
     if (tc) tc.textContent = doneCount + ' / ' + rows.length + ' 完成';
     var tb = track.querySelector('.bar i');
@@ -104,16 +135,10 @@
     var allDone = 0;
     var allTotal = 0;
     cards.forEach(function (card) {
-      var prefix = PREFIX + '/ai/notes/' + card.dataset.series + '/';
-      var n = 0;
-      try {
-        for (var i = 0; i < localStorage.length; i++) {
-          var k = localStorage.key(i);
-          if (!k || k.indexOf(prefix) !== 0) continue;
-          var v = JSON.parse(localStorage.getItem(k) || '{}');
-          if (v && v.done) n++;
-        }
-      } catch (e) {}
+      var prefixes = card.dataset.prefixes
+        ? card.dataset.prefixes.split(',').map(function (x) { return x.trim(); }).filter(Boolean)
+        : ['/ai/notes/' + card.dataset.series + '/'];
+      var n = countDone(prefixes);
       allDone += n;
       allTotal += Number(card.dataset.total) || 0;
       var p = card.querySelector('[data-series-progress]');
@@ -122,6 +147,32 @@
     var overall = document.querySelector('[data-overall]');
     if (overall) overall.textContent = allDone + ' / ' + allTotal + ' 关完成';
   }
+
+  /* ---------- resume last read ---------- */
+  var pathname = location.pathname.replace(/\.html$/, '');
+  var lessonMatch = pathname.match(/^\/ai\/notes\/(neigong|rag|agents|llm|tools)\/\d+$/);
+  if (lessonMatch) {
+    var h1 = document.querySelector('h1');
+    try {
+      localStorage.setItem('gjh-last-read', JSON.stringify({
+        href: pathname,
+        title: h1 ? h1.textContent.trim() : pathname,
+        track: lessonMatch[1],
+        at: Date.now()
+      }));
+    } catch (e) {}
+  }
+  var resume = document.querySelector('[data-resume]');
+  if (resume) {
+    try {
+      var last = JSON.parse(localStorage.getItem('gjh-last-read') || 'null');
+      if (last && last.href && last.title) {
+        resume.hidden = false;
+        resume.innerHTML = '<span>继续上次</span><a href="' + last.href + '">' + last.title + ' →</a>';
+      }
+    } catch (e) {}
+  }
+
   // 知识库外壳的离线缓存（旧站 SW 已被替换）
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(function () {});

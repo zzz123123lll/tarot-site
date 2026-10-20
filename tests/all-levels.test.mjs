@@ -5,6 +5,32 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { grade, gradeObjective } from '../shared/grading-engine.mjs';
 
+
+function goodAnswerFor(level) {
+  const parts = [];
+  for (const c of level.exercise.criteria) {
+    for (const g of c.groups) parts.push(g.terms[0]);
+    const v = c.validator || {};
+    if (v.type === 'json') {
+      const obj = {};
+      for (const path of v.required || []) {
+        let cur = obj;
+        const bits = path.split('.');
+        for (const b of bits.slice(0, -1)) cur = cur[b] = cur[b] || {};
+        cur[bits[bits.length - 1]] = 'ok';
+      }
+      parts.push(JSON.stringify(obj));
+    } else if (v.type === 'numeric') {
+      parts.push(String(v.expected));
+    } else if (v.type === 'code_static') {
+      parts.push(...(v.required || []));
+    } else if (v.type === 'regex') {
+      parts.push('<context></context> [1]');
+    }
+  }
+  return parts.join('；') + '。这是一段刻意写长的完整答案，用于通过最低长度检查，并覆盖所有评分项。';
+}
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const tracksDir = path.join(ROOT, 'content/tracks');
@@ -47,9 +73,7 @@ for (const tf of trackFiles) {
     const total = level.exercise.criteria.reduce((sum, c) => sum + Number(c.weight), 0);
     assert(Math.abs(total - expected) < 0.01, level.id + ' weight ' + total);
 
-    const good = level.exercise.criteria
-      .flatMap((c) => c.groups.map((g) => g.terms[0]))
-      .join('；') + '。这是一段刻意写长的完整答案，用于通过最低长度检查，并覆盖所有评分项。';
+    const good = goodAnswerFor(level);
     const goodResult = grade(level.exercise, good);
     assert.equal(goodResult.status, 'pass', level.id + ' good status=' + goodResult.status);
     assert.equal(goodResult.score, goodResult.max, level.id + ' good score');
@@ -85,7 +109,7 @@ for (const tf of trackFiles) {
 const catalog = fs.readFileSync(path.join(ROOT, 'ai/notes/index.html'), 'utf8');
 assert.equal((catalog.match(/data-series="/g) || []).length, 2, 'index series cards');
 assert(catalog.includes('data-overall'), 'index overall progress');
-assert(catalog.includes('notes.js?v=6'), 'index script version');
+assert(catalog.includes('notes.js?v=7'), 'index script version');
 for (const tf of trackFiles) {
   const track = JSON.parse(fs.readFileSync(path.join(tracksDir, tf), 'utf8'));
   const trackPage = fs.readFileSync(path.join(ROOT, 'ai/notes', track.id, 'index.html'), 'utf8');
@@ -99,6 +123,10 @@ for (const tf of trackFiles) {
 }
 const guide = fs.readFileSync(path.join(ROOT, 'ai/notes/guide/index.html'), 'utf8');
 assert(guide.includes('AI 现代必修课'), 'guide page');
+const searchPage = fs.readFileSync(path.join(ROOT, 'ai/notes/search/index.html'), 'utf8');
+assert(searchPage.includes('data-search-results'), 'search page');
+const searchIndex = JSON.parse(fs.readFileSync(path.join(ROOT, 'ai/notes/search-index.json'), 'utf8'));
+assert(searchIndex.length >= 36, 'search index entries');
 const review = fs.readFileSync(path.join(ROOT, 'ai/notes/review/index.html'), 'utf8');
 assert(review.includes('data-mistakes'), 'review mistakes container');
 assert(review.includes('review.mjs'), 'review module');

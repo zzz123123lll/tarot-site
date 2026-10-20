@@ -11,9 +11,9 @@
 <meta property="og:description" content="本关练习：为售后退款智能体编写严谨的 Tool JSON Schema。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=10">
-<script src="/ai/notes/notes.js?v=6" defer></script>
-<script type="module" src="/ai/notes/practice.mjs?v=4"></script>
+<link rel="stylesheet" href="/ai/notes/notes.css?v=11">
+<script src="/ai/notes/notes.js?v=7" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=5"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>
@@ -45,34 +45,37 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">这一关只解决一件事：把工具参数写成可验证的 schema，并让校验失败可追问。</p>
-      <ul class="explain-bullets"><li>工具名 + description 写调用前提</li><li>参数类型、required、枚举</li><li>失败返回结构化错误</li></ul>
+      <p class="explain-summary">这一关只解决一件事：根据 Microsoft AI Agents for Beginners 第 4 课 与 LLM Engineering 工具调用实验,大模型本身并 不 会 直 接 运 行 代 码 或 查数 据 库 , 而 是 根 据 你 提 供 的 工 具 函 数 签 名 与 文 档 字 符 串 ( Docstring / JSON Schema),输出结构化的函数名与 JSON 参数,由宿主程序执行后再将结果返回给模型。工具调用成败的 80% 取决于函数描述是否清晰说明了“何时该调、何时不该调”以及参数枚举/格式约束。</p>
+      <ul class="explain-bullets"><li>编写完整的 OpenAI/Pydantic 兼容 JSON Schema,包含工具名、详细调用前提说明(description) 与 required 必填字段列表(</li><li>5 分);</li><li>为 order_id、refund_amount_cny(设定单笔上限说明)、reason_category(设定枚举值 enum)三个参数 提供精确类型与业务约束;</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
-      <p class="explain-example-title">先看来源里的例子：PDF 本关实操题</p>
+      <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>来源劣质示例：{&quot;name&quot;: &quot;refund&quot;, &quot;description&quot;: &quot;给客户退款&quot;, &quot;parameters&quot;: {&quot;id&quot;: &quot;string&quot;,  &quot;money&quot;: &quot;number&quot;}}</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求 order_id、refund_amount_cny、reason_category 均有类型/约束，并设计校验失败的错误格式。</p><h3>输出</h3><p>参考答案是完整工具 schema（见本关原文）。</p></div>
+        <div class="explain-code"><span>输入</span><pre>你要为客服 Agent 配备一个“查询订单物流与发起部分退款”的工具声明,防止模型在未核实 物流状态前乱调退款接口。 待改造劣质定义:{&quot;name&quot;: &quot;refund&quot;, &quot;description&quot;: &quot;给客戶退款&quot;, &quot;parameters&quot;: {&quot;id&quot;: &quot;string&quot;, &quot;money&quot;: &quot;number&quot;}}</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：编写完整的 OpenAI/Pydantic 兼容 JSON Schema,包含工具名、详细调用前提说明(description) 与 required 必填字段列表( / 5 分); / 为 order_id、refund_amount_cny(设定单笔上限说明)、reason_category(设定枚举值 enum)三个参数 提供精确类型与业务约束;</p><h3>输出</h3><p>参考答案：参考答案:售后部分退款工具的强类型 JSON Schema 定义 { &quot;name&quot;: &quot;initiate_partial_refund&quot;, &quot;description&quot;: &quot;向买家发起订单部分退款。调用前提:必须先调用 get_logistics_status 确认包裹已签收 或存在核实的物流异常,严禁在未查询订单状态前直接调用本工具。单笔自动退款上限为 200 元人⺠币。&quot;, &quot;parameters&quot;: { &quot;type&quot;: &quot;objec</p></div>
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>JSON Schema</dt><dd>描述工具参数结构和约束的格式。</dd></div><div><dt>required</dt><dd>调用时必须提供的参数。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源 Microsoft 第 4 课 Tool Use 强调工具定义与参数处理是 Agent 可靠性的基础。</p><h3>结构长什么样</h3><pre class="explain-structure">{ name, description, parameters{ type, properties, required } }</pre></div>
+        <div><h3>为什么有效</h3><p>来源核心原理：根据 Microsoft AI Agents for Beginners 第 4 课 与 LLM Engineering 工具调用实验,大模型本身并 不 会 直 接 运 行 代 码 或 查数 据 库 , 而 是 根 据 你 提 供 的 工 具 函 数 签 名 与 文 档 字 符 串 ( Docstring / JSON Schema),输出结构化的函数名与 JSON 参数,由宿主程序执行后再将结果返回给模型。工具调用成败的 80% 取决于函数描述是否清晰说明了“何时该调、何时不该调”以及参数枚举/格式约束。 踩坑 Schema vs. 高手 Schema 对比: 新手踩坑写法:定义一个函数 def query_db(sql: str),描述仅写“查询数据库”。结果模型自己瞎猜表名 和字段名,拼出错误的 SQL 甚至引发删表⻛险。 高手强类型工具定义:将模糊的通用查询拆解为语义明确的业务原子工具(如 get_order_status_by_id(order_id: str)),并在参数描述中注明正则格式(如“必须是以 ORD- 开头的 12 位订单号”)及错误返回值格式。</p><h3>结构长什么样</h3><pre class="explain-structure">编写完整的 OpenAI/Pydantic 兼容 JSON Schema,包含工具名、详细调用前提说明(description) 与 required 必填字段列表(
+5 分);
+为 order_id、refund_amount_cny(设定单笔上限说明)、reason_category(设定枚举值 enum)三个参数 提供精确类型与业务约束;
+设计当参数校验失败时返回给 Agent 的结构化错误提示格式,引导 Agent 向用戶追问缺失信息而非盲 目报错。 第二阶段:核心能力篇(第 3‒4 关)——目标规划拆解与智能体记忆系统</pre></div>
       </div>
       <p class="explain-check">为什么 description 和 required 会直接影响工具调用？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
-    <p class="reading-quote">本关 PDF 要求编写完整的 OpenAI/Pydantic 兼容 JSON Schema：工具名、调用前提说明（description）与 required 必填字段；参数校验失败要返回结构化错误，引导 Agent 追问。</p>
+    <p class="reading-quote">根据 Microsoft AI Agents for Beginners 第 4 课 与 LLM Engineering 工具调用实验,大模型本身并 不 会 直 接 运 行 代 码 或 查数 据 库 , 而 是 根 据 你 提 供 的 工 具 函 数 签 名 与 文 档 字 符 串 ( Docstring / JSON Schema),输出结构化的函数名与 JSON 参数,由宿主程序执行后再将结果返回给模型。工具调用成败的 80% 取决于函数描述是否清晰说明了“何时该调、何时不该调”以及参数枚举/格式约束。</p>
     <div class="reading-grid">
-      <div><h3>逐点读懂</h3><ol class="reading-points"><li>工具 schema 是 Agent 调用外部函数的结构化合同。</li><li>description 要说明何时调用、调用前提和限制。</li><li>required 明确必填参数，类型/枚举限制取值范围。</li><li>校验失败应返回结构化错误，而不是让 Agent 盲目重试或编造参数。</li></ol></div>
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>编写完整的 OpenAI/Pydantic 兼容 JSON Schema,包含工具名、详细调用前提说明(description) 与 required 必填字段列表(</li><li>5 分);</li><li>为 order_id、refund_amount_cny(设定单笔上限说明)、reason_category(设定枚举值 enum)三个参数 提供精确类型与业务约束;</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>读 PDF 时把工具 schema 拆成 name、description、parameters、required 四部分；练习要求逐项都有对应。</p>
-        <h3>例子在哪</h3><p>PDF 第 2 关的工具定义和“结构化错误返回”示例就是本关来源例子。</p>
+        <h3>怎么对应本关练习</h3><p>先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。</p>
+        <h3>例子在哪</h3><p>本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。</p>
       </div>
     </div>
-    <p class="reading-takeaway">工具调用的可靠性来自 schema 和信息完整的错误返回。</p>
+    <p class="reading-takeaway">本关先记住：编写完整的 OpenAI/Pydantic 兼容 JSON Schema,包含工具名、详细调用前提说明(description) 与 required 必填字段列表(</p>
     <div class="reading-refs"><span class="label">SOURCES</span><span>PDF 第 2 关（用户提供）</span><a href="https://github.com/microsoft/ai-agents-for-beginners/blob/main/04-tool-use/README.md" target="_blank" rel="noopener">Microsoft · Lesson 4 Tool Use ↗</a></div>
   </section>
     <section class="lesson"><h3>核心原理</h3><p>根据 Microsoft AI Agents for Beginners 第 4 课 与 LLM Engineering 工具调用实验,大模型本身并 不 会 直 接 运 行 代 码 或 查数 据 库 , 而 是 根 据 你 提 供 的 工 具 函 数 签 名 与 文 档 字 符 串 ( Docstring / JSON Schema),输出结构化的函数名与 JSON 参数,由宿主程序执行后再将结果返回给模型。工具调用成败的 80% 取决于函数描述是否清晰说明了“何时该调、何时不该调”以及参数枚举/格式约束。 踩坑 Schema vs. 高手 Schema 对比: 新手踩坑写法:定义一个函数 def query_db(sql: str),描述仅写“查询数据库”。结果模型自己瞎猜表名 和字段名,拼出错误的 SQL 甚至引发删表⻛险。 高手强类型工具定义:将模糊的通用查询拆解为语义明确的业务原子工具(如 get_order_status_by_id(order_id: str)),并在参数描述中注明正则格式(如“必须是以 ORD- 开头的 12 位订单号”)及错误返回值格式。</p><h2>第 2 关实操练习题：为售后退款智能体编写严谨的 Tool JSON Schema</h2><h3>任务背景</h3><p>你要为客服 Agent 配备一个“查询订单物流与发起部分退款”的工具声明,防止模型在未核实 物流状态前乱调退款接口。 待改造劣质定义:{"name": "refund", "description": "给客戶退款", "parameters": {"id": "string", "money": "number"}}</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 编写完整的 OpenAI/Pydantic 兼容 JSON Schema,包含工具名、详细调用前提说明(description) 与 required 必填字段列表(</p><p>4.5 分);</p><p>2. 为 order_id、refund_amount_cny(设定单笔上限说明)、reason_category(设定枚举值 enum)三个参数 提供精确类型与业务约束(5 分);</p><p>3. 设计当参数校验失败时返回给 Agent 的结构化错误提示格式,引导 Agent 向用戶追问缺失信息而非盲 目报错(3 分)。 第二阶段:核心能力篇(第 3‒4 关)——目标规划拆解与智能体记忆系统</p></section>

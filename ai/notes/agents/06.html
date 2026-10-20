@@ -11,9 +11,9 @@
 <meta property="og:description" content="本关练习：设计“跨境电商全自动选品与上架团队”多智能体架构。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=10">
-<script src="/ai/notes/notes.js?v=6" defer></script>
-<script type="module" src="/ai/notes/practice.mjs?v=4"></script>
+<link rel="stylesheet" href="/ai/notes/notes.css?v=11">
+<script src="/ai/notes/notes.js?v=7" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=5"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>
@@ -45,35 +45,37 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">这一关只解决一件事：把大任务拆成职责和工具都独立的多个 Agent。</p>
-      <ul class="explain-bullets"><li>每个 Agent 有唯一职责和独立工具集</li><li>交接用结构化 Handoff Schema</li><li>高风险可一票否决回退</li></ul>
+      <p class="explain-summary">这一关只解决一件事：当一个智能体挂载超过 15 个工具、系统提示词超过数千字时,它的工具选错率和指令遗忘率会急 剧上升。Microsoft AI Agents for Beginners 第 8 课(Multi-Agent) 与 Complete Agentic AI Engineering Course 给出的解法是“职责单一化与多智能体分治”。</p>
+      <ul class="explain-bullets"><li>明确定义 4 个子智能体的专属名称、唯一职责边界与各自挂载的独立工具集(严禁工具跨角色混用) ;</li><li>设计各 Agent 之间传递的结构化交接数据包(State Payload / Handoff Schema),避免把冗长的无关 思考过程传给下游(</li><li>5 分);</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
       <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>来源任务：你想用 4 个各司其职的专职 Agent 组成虚拟团队，自动完成“市场趋势挖掘 → 供应商 1688 比价利润核算 → 侵权与违禁词合规风控 → 多语种详情页生成”。</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求 4 个子智能体、独立工具集、交接数据包，以及专利风险时直接打回选品。</p><h3>输出</h3><p>参考答案是多智能体分工和回退机制（见本关原文）。</p></div>
+        <div class="explain-code"><span>输入</span><pre>你想用 4 个各司其职的专职 Agent 组成虚拟团队,自动完成“市场趋势挖掘 → 供应商 1688 比 价利润核算 → 侵权与违禁词合规⻛控 → 多语种详情页生成”。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：明确定义 4 个子智能体的专属名称、唯一职责边界与各自挂载的独立工具集(严禁工具跨角色混用) ; / 设计各 Agent 之间传递的结构化交接数据包(State Payload / Handoff Schema),避免把冗长的无关 思考过程传给下游( / 5 分);</p><h3>输出</h3><p>参考答案：参考答案:跨境电商四智能体协作架构与交接协议 【1. 四大专职 Agent 角色与独立工具集】 - Agent A(趋势侦察兵 TrendScout):仅挂载 [search_tiktok_trends, get_amazon_movers];职责:输出候选 品类词。 - Agent B(供应链精算师 MarginCalculator):仅挂载 [search_1688_suppliers, calc_fba_shipping_fee]</p></div>
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Handoff</dt><dd>智能体之间传递任务和状态的机制。</dd></div><div><dt>Multi-Agent</dt><dd>多个智能体按角色分工协作。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源 Microsoft 第 8 课 Multi-Agent 讲角色分工、协作与交接。</p><h3>结构长什么样</h3><pre class="explain-structure">选品 → 合规 → 内容 → 运营
-合规一票否决 → 回退选品</pre></div>
+        <div><h3>为什么有效</h3><p>来源核心原理：当一个智能体挂载超过 15 个工具、系统提示词超过数千字时,它的工具选错率和指令遗忘率会急 剧上升。Microsoft AI Agents for Beginners 第 8 课(Multi-Agent) 与 Complete Agentic AI Engineering Course 给出的解法是“职责单一化与多智能体分治”。主流编排架构有三种: 主管路由模式(Supervisor / Orchestrator-Workers):由一个中央主管 Agent 接收任务、拆解分发给专 门的“代码专家 Agent”、“数据分析 Agent”、“合规审查 Agent”,最后由主管汇总结果。 交接接力模式(Handoffs / Swarm):前台分诊 Agent 识别出具体诉求后,将对话控制权与精简上下文直 接移交(Handoff)给对应的垂直专科 Agent。 并发聚合模式(Concurrent Aggregation):多个不同视角的专家 Agent 同时独立评估同一份方案(如乐 观派、悲观⻛控派、法务派),最后由聚合器合并各方意见。</p><h3>结构长什么样</h3><pre class="explain-structure">明确定义 4 个子智能体的专属名称、唯一职责边界与各自挂载的独立工具集(严禁工具跨角色混用) ;
+设计各 Agent 之间传递的结构化交接数据包(State Payload / Handoff Schema),避免把冗长的无关 思考过程传给下游(
+5 分);
+设计“一票否决回退机制”:若合规⻛控 Agent 发现外观专利侵权⻛险,如何直接打回选品阶段而非继 续生成详情页。 第四阶段:生产落地篇(第 7‒8 关)——标准化协议、上下文工程与安全护栏</pre></div>
       </div>
       <p class="explain-check">为什么不把工具都挂在一个 Agent 上？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
-    <p class="reading-quote">Microsoft 第 8 课 Multi-Agent Design Pattern：多智能体通过角色分工、协作与交接完成单个 Agent 难以完成的任务。</p>
+    <p class="reading-quote">当一个智能体挂载超过 15 个工具、系统提示词超过数千字时,它的工具选错率和指令遗忘率会急 剧上升。Microsoft AI Agents for Beginners 第 8 课(Multi-Agent) 与 Complete Agentic AI Engineering Course 给出的解法是“职责单一化与多智能体分治”。</p>
     <div class="reading-grid">
-      <div><h3>逐点读懂</h3><ol class="reading-points"><li>多智能体不是简单复制模型，而是把职责和工具切开。</li><li>智能体之间需要明确协作和交接方式。</li><li>每个角色应有独立职责边界，避免工具和权限混乱。</li><li>高风险场景需要回退/否决机制，而不是继续流水线。</li></ol></div>
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>明确定义 4 个子智能体的专属名称、唯一职责边界与各自挂载的独立工具集(严禁工具跨角色混用) ;</li><li>设计各 Agent 之间传递的结构化交接数据包(State Payload / Handoff Schema),避免把冗长的无关 思考过程传给下游(</li><li>5 分);</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>读第 8 课后，把练习里的 4 个子智能体、独立工具集、Handoff Schema 和一票否决分别对应到角色分工、交接和治理。</p>
-        <h3>例子在哪</h3><p>来源课程的多智能体示例对应本关的选品/合规/内容分工；不要另造例子。</p>
+        <h3>怎么对应本关练习</h3><p>先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。</p>
+        <h3>例子在哪</h3><p>本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。</p>
       </div>
     </div>
-    <p class="reading-takeaway">多智能体的核心是边界、交接和治理。</p>
+    <p class="reading-takeaway">本关先记住：明确定义 4 个子智能体的专属名称、唯一职责边界与各自挂载的独立工具集(严禁工具跨角色混用) ;</p>
     <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/microsoft/ai-agents-for-beginners/blob/main/08-multi-agent/README.md" target="_blank" rel="noopener">Microsoft · Lesson 8 Multi-Agent ↗</a><span>PDF 第 6 关</span></div>
   </section>
     <section class="lesson"><h3>核心原理</h3><p>当一个智能体挂载超过 15 个工具、系统提示词超过数千字时,它的工具选错率和指令遗忘率会急 剧上升。Microsoft AI Agents for Beginners 第 8 课(Multi-Agent) 与 Complete Agentic AI Engineering Course 给出的解法是“职责单一化与多智能体分治”。主流编排架构有三种: 主管路由模式(Supervisor / Orchestrator-Workers):由一个中央主管 Agent 接收任务、拆解分发给专 门的“代码专家 Agent”、“数据分析 Agent”、“合规审查 Agent”,最后由主管汇总结果。 交接接力模式(Handoffs / Swarm):前台分诊 Agent 识别出具体诉求后,将对话控制权与精简上下文直 接移交(Handoff)给对应的垂直专科 Agent。 并发聚合模式(Concurrent Aggregation):多个不同视角的专家 Agent 同时独立评估同一份方案(如乐 观派、悲观⻛控派、法务派),最后由聚合器合并各方意见。</p><h2>第 6 关实操练习题：设计“跨境电商全自动选品与上架团队”多智能体架构</h2><h3>任务背景</h3><p>你想用 4 个各司其职的专职 Agent 组成虚拟团队,自动完成“市场趋势挖掘 → 供应商 1688 比 价利润核算 → 侵权与违禁词合规⻛控 → 多语种详情页生成”。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 明确定义 4 个子智能体的专属名称、唯一职责边界与各自挂载的独立工具集(严禁工具跨角色混用) (5 分);</p><p>2. 设计各 Agent 之间传递的结构化交接数据包(State Payload / Handoff Schema),避免把冗长的无关 思考过程传给下游(</p><p>4.5 分);</p><p>3. 设计“一票否决回退机制”:若合规⻛控 Agent 发现外观专利侵权⻛险,如何直接打回选品阶段而非继 续生成详情页(3 分)。 第四阶段:生产落地篇(第 7‒8 关)——标准化协议、上下文工程与安全护栏</p></section>

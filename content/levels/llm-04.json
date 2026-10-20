@@ -15,7 +15,7 @@
     "criteria": [
       {
         "id": "c1",
-        "label": "过拟合的三项措施",
+        "label": "针对实验1(过拟合),给出至少 3 项具体的参数调整或数据改进措施(",
         "weight": 4.5,
         "type": "term_groups",
         "groups": [
@@ -44,7 +44,7 @@
       },
       {
         "id": "c2",
-        "label": "NaN/梯度爆炸修复",
+        "label": "5 分);",
         "weight": 4.5,
         "type": "term_groups",
         "groups": [
@@ -73,7 +73,7 @@
       },
       {
         "id": "c3",
-        "label": "SFT 与 RAG 的边界",
+        "label": "针对实验2(开局梯度爆炸 NaN),从学习率调度(Warmup)、梯度裁剪(max_grad_norm)与脏数据 排查三个角度给出修复方案(",
         "weight": 3.5,
         "type": "term_groups",
         "groups": [
@@ -142,16 +142,15 @@
     }
   ],
   "reading": {
-    "quote": "启动微调只是开始；读懂 Train Loss、Eval Loss 与 Gradient Norm 曲线，才能区分过拟合、梯度爆炸和 SFT 能力边界。",
+    "quote": "在 LLM Fine-Tuning Hands-on Lab 与 mlabonne/llm-course 中,启动微调脚本只是开始,能否 读懂 Weights & Biases (WandB) 或 TensorBoard 上的 Train Loss(训练损失)、Eval Loss(验证损失)与 Gradient Norm(梯度范数) 曲线,才是区分新手与老手的分水岭: 典型过拟合(Overfitting):Train Loss 一路陡降趋近于 0.1,但 Eval Loss 在第 1 个 Epoch 后开始掉头向 上反弹!此时模型已经沦为“死记硬背训练集的复读机”,丧失了通用推理能力。",
     "points": [
-      "Train Loss 下降而 Eval Loss 反弹，是典型过拟合。",
-      "Loss 突变 NaN 常与学习率过大、缺少 Warmup、脏数据有关。",
-      "SFT 教格式与风格，不能强行灌输实时新事实。",
-      "新事实应走 RAG；强行 SFT 会加剧幻觉。"
+      "针对实验1(过拟合),给出至少 3 项具体的参数调整或数据改进措施(",
+      "5 分);",
+      "针对实验2(开局梯度爆炸 NaN),从学习率调度(Warmup)、梯度裁剪(max_grad_norm)与脏数据 排查三个角度给出修复方案("
     ],
-    "guide": "读本关时把三种异常分开：过拟合看 Eval Loss，NaN 看梯度/学习率，记不住新事实看 SFT 与 RAG 边界。",
-    "example": "来源实操题给出三组异常日志；参考答案分别给出过拟合、NaN、价格表记不住的处方。",
-    "takeaway": "训练诊断要按曲线和异常类型分别处理。",
+    "guide": "先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。",
+    "example": "本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。",
+    "takeaway": "本关先记住：针对实验1(过拟合),给出至少 3 项具体的参数调整或数据改进措施(",
     "refs": [
       [
         "PDF 第 4 关（用户提供）",
@@ -164,12 +163,18 @@
     ]
   },
   "explain": {
-    "summary": "这一关只解决一件事：看 Train/Eval Loss 和梯度曲线，判断过拟合、梯度爆炸还是 SFT 能力边界。",
+    "summary": "这一关只解决一件事：在 LLM Fine-Tuning Hands-on Lab 与 mlabonne/llm-course 中,启动微调脚本只是开始,能否 读懂 Weights & Biases (WandB) 或 TensorBoard 上的 Train Loss(训练损失)、Eval Loss(验证损失)与 Gradient Norm(梯度范数) 曲线,才是区分新手与老手的分水岭: 典型过拟合(Overfitting):Train Loss 一路陡降趋近于 0.1,但 Eval Loss 在第 1 个 Epoch 后开始掉头向 上反弹!此时模型已经沦为“死记硬背训练集的复读机”,丧失了通用推理能力。",
     "bullets": [
-      "Eval Loss 反弹=过拟合",
-      "NaN 看 warmup/梯度裁剪/脏数据",
-      "新事实记不住不是 SFT 的强项"
+      "针对实验1(过拟合),给出至少 3 项具体的参数调整或数据改进措施(",
+      "5 分);",
+      "针对实验2(开局梯度爆炸 NaN),从学习率调度(Warmup)、梯度裁剪(max_grad_norm)与脏数据 排查三个角度给出修复方案("
     ],
+    "example": {
+      "label": "PDF 本关任务（来源）",
+      "input": "团队实习生跑了三次微调实验,分别出现了:1 第 2 轮起验证集 Loss 持续上升且模型回答变 成机械背诵;2 开局第 15 步 Loss 突变为 NaN 崩溃;3 微调了 500 条公司今年最新产品价格表后,模型 依然经常报价错误。",
+      "walkthrough": "来源要求：针对实验1(过拟合),给出至少 3 项具体的参数调整或数据改进措施( / 5 分); / 针对实验2(开局梯度爆炸 NaN),从学习率调度(Warmup)、梯度裁剪(max_grad_norm)与脏数据 排查三个角度给出修复方案(",
+      "output": "参考答案：参考答案:三大微调异常故障诊断与处方 故障1(第 2 轮起验证 Loss 反弹过拟合)处方:将训练轮数 num_train_epochs 从多轮缩减至 1‒2 轮;调 大 weight_decay = 0.05 或设置 lora_dropout = 0.05;降低 LoRA 秩 r(如从 64 降至 16),并在训练集中 混入 10%‒15% 的通用高质量指令样本防止灾难性遗忘。 故障2(开局第 15 步梯度爆炸 NaN)处方:将 wa"
+    },
     "terms": [
       {
         "term": "Overfitting",
@@ -184,15 +189,9 @@
         "plain": "SFT 主要教格式和风格，不擅长灌输实时新事实。"
       }
     ],
-    "why": "来源把三种异常分开：过拟合看 Eval Loss，NaN 看梯度/学习率，记不住价格表看 SFT 与 RAG 边界。",
-    "structure": "Train ↓ + Eval ↑ → 过拟合\nLoss=NaN → warmup/裁剪/脏数据\n新事实 → RAG",
-    "check": "验证集 Loss 反弹通常说明什么？",
-    "example": {
-      "label": "PDF 本关任务（来源）",
-      "input": "来源任务：团队实习生跑了三次微调实验,分别出现了:1 第 2 轮起验证集 Loss 持续上升且模型回答变 成机械背诵;2 开局第 15 步 Loss 突变为 NaN 崩溃;3 微调了 500 条公司今年最新产品价格表后,模型 依然经常报价错误。",
-      "walkthrough": "来源要求：过拟合的三项措施 / NaN/梯度爆炸修复 / SFT 与 RAG 的边界",
-      "output": "按这些通关要求组织答案；参考答案见本页下方。"
-    }
+    "why": "来源核心原理：在 LLM Fine-Tuning Hands-on Lab 与 mlabonne/llm-course 中,启动微调脚本只是开始,能否 读懂 Weights & Biases (WandB) 或 TensorBoard 上的 Train Loss(训练损失)、Eval Loss(验证损失)与 Gradient Norm(梯度范数) 曲线,才是区分新手与老手的分水岭: 典型过拟合(Overfitting):Train Loss 一路陡降趋近于 0.1,但 Eval Loss 在第 1 个 Epoch 后开始掉头向 上反弹!此时模型已经沦为“死记硬背训练集的复读机”,丧失了通用推理能力。 Loss 尖峰与梯度爆炸(Loss Spikes & Gradient Explosion):训练中途梯度范数突然飙升、Loss 变成 NaN,通常是因为学习率过大、缺少 Warmup 预热步数,或混入了极长/格式损坏的脏数据样本。 注意 SFT 的能力边界:SFT 的本质是“教模型学会回答的格式与说话⻛格,激活预训练已有知识”,绝不 能靠少量 SFT 样本去强行灌输海量全新的实时事实(新事实应走 RAG,强行 SFT 只会加剧幻觉)。",
+    "structure": "针对实验1(过拟合),给出至少 3 项具体的参数调整或数据改进措施(\n5 分);\n针对实验2(开局梯度爆炸 NaN),从学习率调度(Warmup)、梯度裁剪(max_grad_norm)与脏数据 排查三个角度给出修复方案(\n5 分);\n针对实验3,从“SFT 与 RAG 的职责边界”角度解释为什么用 500 条问答微调记不住精确价格表,并 给出正确架构建议(\n5 分)。 第三阶段:对⻬与融合篇(第 5‒6 关)——偏好对⻬(DPO/GRPO)、模型融合 与科学评测",
+    "check": "验证集 Loss 反弹通常说明什么？"
   },
   "next": "llm-05"
 }

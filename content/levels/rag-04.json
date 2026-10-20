@@ -128,16 +128,15 @@
     }
   ],
   "reading": {
-    "quote": "本关来源（PDF 第 4 关）把混合检索拆成：向量召回 Top-20、BM25 召回 Top-20、RRF 按排名融合、再用 Cross-Encoder 精排 Top-4。",
+    "quote": "纯向量语义检索有一个致命短板:对精确专有名词、产品型号代码(如“错误码 ERR-4092-B”)、 人名与法规条文编号非常不敏感!根据 RAG Zero to Hero Guide 与 RAG All-in-One 的进阶架构,工业级知识 库普遍采用“两阶段漏斗架构”: 第一阶段(粗排召回:BM25 关键词检索 + 向量稠密检索):两路并行各取 Top-20,通过 RRF (Reciprocal Rank Fusion,倒数排名融合算法) 合并去重,兼顾精确型号匹配与语义泛化理解。",
     "points": [
-      "向量检索擅长语义相近，BM25 擅长字面精确匹配。",
-      "RRF 使用排名而不是原始分数，避免不同检索器分数量纲不可比。",
-      "Cross-Encoder 需要把查询与文档拼接后过完整 Transformer，计算重，只适合对少量候选精排。",
-      "因此顺序是：先粗排召回，再 RRF 融合，再 Reranker 精排。"
+      "写出标准 RRF(Reciprocal Rank Fusion)打分公式(含平滑常数 k = 60)及 Python 融合排序实现 (",
+      "5 分);",
+      "设计粗排(Recall Top-20)→ Reranker 精排(Select Top-4)的两阶段调用流程;"
     ],
-    "guide": "读 PDF 原文时抓住“两阶段”：第一阶段扩大召回，第二阶段提高排序精度。练习中的 RRF 公式和 top-4 都对应这个流程。",
-    "example": "PDF 第 4 关给出的 RRF 公式、Python 融合排序和 Cross-Encoder 说明就是本关来源例子。",
-    "takeaway": "混合检索解决召回，Reranker 解决排序精度。",
+    "guide": "先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。",
+    "example": "本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。",
+    "takeaway": "本关先记住：写出标准 RRF(Reciprocal Rank Fusion)打分公式(含平滑常数 k = 60)及 Python 融合排序实现 (",
     "refs": [
       [
         "PDF 第 4 关（用户提供）",
@@ -146,17 +145,17 @@
     ]
   },
   "explain": {
-    "summary": "这一关只解决一件事：两阶段检索——先扩大召回，再融合和精排。",
+    "summary": "这一关只解决一件事：纯向量语义检索有一个致命短板:对精确专有名词、产品型号代码(如“错误码 ERR-4092-B”)、 人名与法规条文编号非常不敏感!根据 RAG Zero to Hero Guide 与 RAG All-in-One 的进阶架构,工业级知识 库普遍采用“两阶段漏斗架构”: 第一阶段(粗排召回:BM25 关键词检索 + 向量稠密检索):两路并行各取 Top-20,通过 RRF (Reciprocal Rank Fusion,倒数排名融合算法) 合并去重,兼顾精确型号匹配与语义泛化理解。",
     "bullets": [
-      "向量和 BM25 各召回 Top-20",
-      "RRF 用排名融合",
-      "Cross-Encoder 只对少量候选精排"
+      "写出标准 RRF(Reciprocal Rank Fusion)打分公式(含平滑常数 k = 60)及 Python 融合排序实现 (",
+      "5 分);",
+      "设计粗排(Recall Top-20)→ Reranker 精排(Select Top-4)的两阶段调用流程;"
     ],
     "example": {
       "label": "PDF 本关任务（来源）",
-      "input": "来源任务：售后工程师搜索“变频器报 E-017 故障怎么复位”,向量检索召回了第 [D3, D1, D8] 号文档，BM25 关键词检索召回了第 [D1, D5, D3] 号文档。",
-      "walkthrough": "来源要求写出含 k=60 的 RRF 公式，设计粗排 Top-20→精排 Top-4，并解释不能对全库跑 Cross-Encoder。",
-      "output": "参考答案是 RRF 融合和两阶段精排流程（见本关原文）。"
+      "input": "售后工程师搜索“变频器报 E-017 故障怎么复位”,向量检索召回了第 [D3, D1, D8] 号文档, BM25 关键词检索召回了第 [D1, D5, D3] 号文档。",
+      "walkthrough": "来源要求：写出标准 RRF(Reciprocal Rank Fusion)打分公式(含平滑常数 k = 60)及 Python 融合排序实现 ( / 5 分); / 设计粗排(Recall Top-20)→ Reranker 精排(Select Top-4)的两阶段调用流程;",
+      "output": "参考答案：参考答案:RRF 倒数排名融合算法与两阶段重排序流水线 from collections import defaultdict from typing import List def reciprocal_rank_fusion( dense_results: List[str], sparse_bm25_results: List[str], k: int = 60, top_n: int = 20 ) -> List[str]: \""
     },
     "terms": [
       {
@@ -168,8 +167,8 @@
         "plain": "用排名而不是原始分数融合多路结果。"
       }
     ],
-    "why": "来源指出向量擅长语义、BM25 擅长字面；Cross-Encoder 计算重，只适合少量候选。",
-    "structure": "vector Top-20 + BM25 Top-20 → RRF → Cross-Encoder Top-4",
+    "why": "来源核心原理：纯向量语义检索有一个致命短板:对精确专有名词、产品型号代码(如“错误码 ERR-4092-B”)、 人名与法规条文编号非常不敏感!根据 RAG Zero to Hero Guide 与 RAG All-in-One 的进阶架构,工业级知识 库普遍采用“两阶段漏斗架构”: 第一阶段(粗排召回:BM25 关键词检索 + 向量稠密检索):两路并行各取 Top-20,通过 RRF (Reciprocal Rank Fusion,倒数排名融合算法) 合并去重,兼顾精确型号匹配与语义泛化理解。 第二阶段(精排重排序:Cross-Encoder Reranker):使用 BGE-Reranker 或 Cohere Rerank 等交叉编码 模型,对粗排召回的 20 个片段与用戶问题做深度交叉注意力打分,精选出真正最相关的 Top-3 喂给大模 型。",
+    "structure": "写出标准 RRF(Reciprocal Rank Fusion)打分公式(含平滑常数 k = 60)及 Python 融合排序实现 (\n5 分);\n设计粗排(Recall Top-20)→ Reranker 精排(Select Top-4)的两阶段调用流程;\n解释为什么不能直接用 Cross-Encoder Reranker 对全库 10 万篇文档做第一阶段暴力检索。 第三阶段:生成演进篇(第 5‒6 关)——溯源生成闭环与多轮对话记忆",
     "check": "为什么不能对 10 万篇文档全部跑 Cross-Encoder？"
   }
 }

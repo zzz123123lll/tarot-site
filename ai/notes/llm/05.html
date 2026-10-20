@@ -11,9 +11,9 @@
 <meta property="og:description" content="本关练习：构建去“AI 说教味”的 DPO 偏好数据集与训练配置。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=10">
-<script src="/ai/notes/notes.js?v=6" defer></script>
-<script type="module" src="/ai/notes/practice.mjs?v=4"></script>
+<link rel="stylesheet" href="/ai/notes/notes.css?v=11">
+<script src="/ai/notes/notes.js?v=7" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=5"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>
@@ -45,35 +45,38 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">这一关只解决一件事：用 DPO 偏好对去掉 AI 说教腔，并知道什么时候该用 GRPO。</p>
-      <ul class="explain-bullets"><li>DPO 数据是 prompt/chosen/rejected</li><li>学习率比 SFT 小一到两个数量级</li><li>GRPO 适合有可验证奖励的推理任务</li></ul>
+      <p class="explain-summary">这一关只解决一件事：经过 SFT 微调后的模型虽然学会了指令格式,但往往还存在“爹味说教、冗余罗嗦、容易被诱导输 出有害内容或推理不够严密”的问题。mlabonne/llm-course 第 5 章(Preference Alignment) 详解了三大 现代对⻬算法: DPO(Direct Preference Optimization,直接偏好优化):无需像传统 RLHF 那样训练独立的奖励模型 (Reward Model),直接传入三元组数据 (prompt, chosen_response, rejected_response),最大化优质回 答相对劣质回答的对数概率比,显存开销小且极其稳定,最适合打磨对话文⻛与去 AI 腔。</p>
+      <ul class="explain-bullets"><li>编写一条标准的 DPO 训练数据 JSON 样本,包含 prompt、chosen(干脆利落直奔主题的回答)与 rejected(充满 AI 套话与端水说教的回答);</li><li>说明为什么 DPO 的学习率(如 5e-6)必须比 SFT 阶段(2e-4)小一到两个数量级,并解释温度超参数 beta(通常取</li><li>1)的作用(</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
       <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>来源任务：你的客服微调模型每次回答前总喜欢写一大段“作为一个人工智能语言模型,我很理解您的心 情,让我为您从以下几个方面娓娓道来......”,你想用 DPO 彻底根除这种腔调。</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：DPO 偏好样本 / DPO 学习率与 beta / DPO 与 GRPO 选型</p><h3>输出</h3><p>按这些通关要求组织答案；参考答案见本页下方。</p></div>
+        <div class="explain-code"><span>输入</span><pre>你的客服微调模型每次回答前总喜欢写一大段“作为一个人工智能语言模型,我很理解您的心 情,让我为您从以下几个方面娓娓道来......”,你想用 DPO 彻底根除这种腔调。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：编写一条标准的 DPO 训练数据 JSON 样本,包含 prompt、chosen(干脆利落直奔主题的回答)与 rejected(充满 AI 套话与端水说教的回答); / 说明为什么 DPO 的学习率(如 5e-6)必须比 SFT 阶段(2e-4)小一到两个数量级,并解释温度超参数 beta(通常取 / 1)的作用(</p><h3>输出</h3><p>参考答案：参考答案:去“AI 说教腔”DPO 偏好样本与超参数规范 { &quot;prompt&quot;: &quot;请问把 Python 列表里的重复元素去掉,同时保持原来的先后顺序不变,怎么写最简洁?&quot;, &quot;chosen&quot;: &quot;直接使用 `dict.fromkeys()` 最简洁且保持原序(Python 3.7+ 字典默认保序): \n```python\nitems = [3, 1, 2, 1, 3, 4]\nunique_items = list(dict.fr</p></div>
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>DPO</dt><dd>直接用偏好对优化模型，不需要独立奖励模型。</dd></div><div><dt>beta</dt><dd>DPO 的温度参数，常取 0.1。</dd></div><div><dt>GRPO</dt><dd>用组内相对优势和规则奖励优化推理。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源：DPO 显存小、稳定，适合打磨文风；GRPO 用可验证奖励激发长思维链。</p><h3>结构长什么样</h3><pre class="explain-structure">DPO: prompt + chosen + rejected
-GRPO: 同一题采样一组 → 规则打分 → 组内相对优势</pre></div>
+        <div><h3>为什么有效</h3><p>来源核心原理：经过 SFT 微调后的模型虽然学会了指令格式,但往往还存在“爹味说教、冗余罗嗦、容易被诱导输 出有害内容或推理不够严密”的问题。mlabonne/llm-course 第 5 章(Preference Alignment) 详解了三大 现代对⻬算法: DPO(Direct Preference Optimization,直接偏好优化):无需像传统 RLHF 那样训练独立的奖励模型 (Reward Model),直接传入三元组数据 (prompt, chosen_response, rejected_response),最大化优质回 答相对劣质回答的对数概率比,显存开销小且极其稳定,最适合打磨对话文⻛与去 AI 腔。 ORPO(Odds Ratio Preference Optimization):将 SFT 监督微调与偏好对⻬合并为单阶段完成,无需 先做 SFT 再做 DPO,节省一半算力。 GRPO(Group Relative Policy Optimization):DeepSeek-R1 等推理模型的核心强化学习算法——针 对同一道数学或代码题采样生成一组(Group)回答,用确定性规则(如代码能否跑通测试、数学答案是 否正确)打分并计算组内相对优势,无需 Critic 价值网络即可激发出强大的长思维链自我反思能力。</p><h3>结构长什么样</h3><pre class="explain-structure">编写一条标准的 DPO 训练数据 JSON 样本,包含 prompt、chosen(干脆利落直奔主题的回答)与 rejected(充满 AI 套话与端水说教的回答);
+说明为什么 DPO 的学习率(如 5e-6)必须比 SFT 阶段(2e-4)小一到两个数量级,并解释温度超参数 beta(通常取
+1)的作用(
+5 分);
+对比说明什么场景该选 DPO、什么场景该选基于规则奖励的 GRPO。</pre></div>
       </div>
       <p class="explain-check">什么场景更适合 GRPO 而不是 DPO？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
-    <p class="reading-quote">SFT 后模型可能仍有说教、冗余和有害输出；DPO 用 prompt/chosen/rejected 三元组直接优化偏好，GRPO 用规则奖励和组内相对优势强化推理。</p>
+    <p class="reading-quote">经过 SFT 微调后的模型虽然学会了指令格式,但往往还存在“爹味说教、冗余罗嗦、容易被诱导输 出有害内容或推理不够严密”的问题。mlabonne/llm-course 第 5 章(Preference Alignment) 详解了三大 现代对⻬算法: DPO(Direct Preference Optimization,直接偏好优化):无需像传统 RLHF 那样训练独立的奖励模型 (Reward Model),直接传入三元组数据 (prompt, chosen_response, rejected_response),最大化优质回 答相对劣质回答的对数概率比,显存开销小且极其稳定,最适合打磨对话文⻛与去 AI 腔。</p>
     <div class="reading-grid">
-      <div><h3>逐点读懂</h3><ol class="reading-points"><li>DPO 不需要单独训练奖励模型，显存小且稳定。</li><li>DPO 学习率通常比 SFT 小一到两个数量级。</li><li>beta 通常取 0.1，控制偏好优化强度。</li><li>GRPO 用确定性规则打分，适合有可验证答案的推理任务。</li></ol></div>
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>编写一条标准的 DPO 训练数据 JSON 样本,包含 prompt、chosen(干脆利落直奔主题的回答)与 rejected(充满 AI 套话与端水说教的回答);</li><li>说明为什么 DPO 的学习率(如 5e-6)必须比 SFT 阶段(2e-4)小一到两个数量级,并解释温度超参数 beta(通常取</li><li>1)的作用(</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>读本关时把“数据形态”和“算法选择”分开：DPO 要偏好对，GRPO 要可验证奖励。</p>
-        <h3>例子在哪</h3><p>来源实操题是去掉客服 AI 说教腔；参考答案给出 DPO JSON 样本与超参数。</p>
+        <h3>怎么对应本关练习</h3><p>先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。</p>
+        <h3>例子在哪</h3><p>本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。</p>
       </div>
     </div>
-    <p class="reading-takeaway">DPO 打磨偏好，GRPO 强化可验证推理。</p>
+    <p class="reading-takeaway">本关先记住：编写一条标准的 DPO 训练数据 JSON 样本,包含 prompt、chosen(干脆利落直奔主题的回答)与 rejected(充满 AI 套话与端水说教的回答);</p>
     <div class="reading-refs"><span class="label">SOURCES</span><span>PDF 第 5 关（用户提供）</span><a href="https://github.com/mlabonne/llm-course" target="_blank" rel="noopener">mlabonne/llm-course ↗</a></div>
   </section>
     <section class="lesson"><h3>核心原理</h3><p>经过 SFT 微调后的模型虽然学会了指令格式,但往往还存在“爹味说教、冗余罗嗦、容易被诱导输 出有害内容或推理不够严密”的问题。mlabonne/llm-course 第 5 章(Preference Alignment) 详解了三大 现代对⻬算法: DPO(Direct Preference Optimization,直接偏好优化):无需像传统 RLHF 那样训练独立的奖励模型 (Reward Model),直接传入三元组数据 (prompt, chosen_response, rejected_response),最大化优质回 答相对劣质回答的对数概率比,显存开销小且极其稳定,最适合打磨对话文⻛与去 AI 腔。 ORPO(Odds Ratio Preference Optimization):将 SFT 监督微调与偏好对⻬合并为单阶段完成,无需 先做 SFT 再做 DPO,节省一半算力。 GRPO(Group Relative Policy Optimization):DeepSeek-R1 等推理模型的核心强化学习算法——针 对同一道数学或代码题采样生成一组(Group)回答,用确定性规则(如代码能否跑通测试、数学答案是 否正确)打分并计算组内相对优势,无需 Critic 价值网络即可激发出强大的长思维链自我反思能力。</p><h2>第 5 关实操练习题：构建去“AI 说教味”的 DPO 偏好数据集与训练配置</h2><h3>任务背景</h3><p>你的客服微调模型每次回答前总喜欢写一大段“作为一个人工智能语言模型,我很理解您的心 情,让我为您从以下几个方面娓娓道来......”,你想用 DPO 彻底根除这种腔调。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 编写一条标准的 DPO 训练数据 JSON 样本,包含 prompt、chosen(干脆利落直奔主题的回答)与 rejected(充满 AI 套话与端水说教的回答)(5 分);</p><p>2. 说明为什么 DPO 的学习率(如 5e-6)必须比 SFT 阶段(2e-4)小一到两个数量级,并解释温度超参数 beta(通常取</p><p>0.1)的作用(</p><p>4.5 分);</p><p>3. 对比说明什么场景该选 DPO、什么场景该选基于规则奖励的 GRPO(3 分)。</p></section>

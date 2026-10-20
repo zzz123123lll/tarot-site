@@ -151,16 +151,15 @@
     }
   ],
   "reading": {
-    "quote": "MergeKit 可以零 GPU 训练融合同源代码模型；评测要防 Goodhart 与数据污染，LLM-as-a-Judge 存在位置、长度、自我偏好偏见。",
+    "quote": "在 mlabonne/llm-course 第 6 章(Evaluation)与第 8 章(Model Merging) 中,有两个极具性 价比的进阶秘籍: 零 GPU 算力的模型融合(Model Merging with MergeKit):如果你手里有一个“擅长写代码的微调模型 A”和一个“擅长中文创意写作的微调模型 B”(两者同源,如均基于 Qwen3.5-9B 或 Qwen3.8-27B 微 调),无需重新训练,直接用 mergekit 工具通过 SLERP(球面线性插值)、TIES 或 DARE 算法将两者的权 重矩阵按比例融合,甚至用 FrankenMoE 拼装成混合专家模型,往往能凭空诞生出一个综合能力超越两者 的全能模型!科学评估与 Goodhart 定律避坑:“当一个评测指标变成刷榜目标时,它就不再是一个好指标。",
     "points": [
-      "SLERP/TIES/DARE 按比例融合同源模型权重。",
-      "公开基准可能被训练数据污染。",
-      "Judge 倾向第一个回答、长篇回答、自己的风格。",
-      "对策包括 AB 交换、字数归一化、私有黄金测试集。"
+      "编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模 型路径、density 与 weight 权重分配);",
+      "指出使用 GPT-6 Sol / Claude Opus",
+      "5 作为 LLM-as-a-Judge 评测两个模型胜率(Win Rate)时的三 大常见偏见(位置偏见、长度偏见、自我偏好偏见);"
     ],
-    "guide": "读本关时把“融合”和“评测”分开：融合改权重，评测防偏见和污染。",
-    "example": "来源实操题是融合金融分析版与 SQL 编程版；参考答案给出 MergeKit YAML 与无偏盲测设计。",
-    "takeaway": "融合能组合能力，评测必须防污染和偏见。",
+    "guide": "先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。",
+    "example": "本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。",
+    "takeaway": "本关先记住：编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模 型路径、density 与 weight 权重分配);",
     "refs": [
       [
         "PDF 第 6 关（用户提供）",
@@ -173,12 +172,18 @@
     ]
   },
   "explain": {
-    "summary": "这一关只解决一件事：用 MergeKit 融合同源模型，并用无偏评测验证效果。",
+    "summary": "这一关只解决一件事：在 mlabonne/llm-course 第 6 章(Evaluation)与第 8 章(Model Merging) 中,有两个极具性 价比的进阶秘籍: 零 GPU 算力的模型融合(Model Merging with MergeKit):如果你手里有一个“擅长写代码的微调模型 A”和一个“擅长中文创意写作的微调模型 B”(两者同源,如均基于 Qwen3.5-9B 或 Qwen3.8-27B 微 调),无需重新训练,直接用 mergekit 工具通过 SLERP(球面线性插值)、TIES 或 DARE 算法将两者的权 重矩阵按比例融合,甚至用 FrankenMoE 拼装成混合专家模型,往往能凭空诞生出一个综合能力超越两者 的全能模型!科学评估与 Goodhart 定律避坑:“当一个评测指标变成刷榜目标时,它就不再是一个好指标。",
     "bullets": [
-      "融合算法：SLERP/TIES/DARE",
-      "Judge 有位置、长度、自我偏好",
-      "用 AB 交换、字数归一、私有黄金集降偏"
+      "编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模 型路径、density 与 weight 权重分配);",
+      "指出使用 GPT-6 Sol / Claude Opus",
+      "5 作为 LLM-as-a-Judge 评测两个模型胜率(Win Rate)时的三 大常见偏见(位置偏见、长度偏见、自我偏好偏见);"
     ],
+    "example": {
+      "label": "PDF 本关任务（来源）",
+      "input": "你想把同属于 Qwen3.5-9B 架构的“金融分析微调版”与“SQL 编程微调版”融合为一个模 型,并客观评测融合前后的真实业务表现。",
+      "walkthrough": "来源要求：编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模 型路径、density 与 weight 权重分配); / 指出使用 GPT-6 Sol / Claude Opus / 5 作为 LLM-as-a-Judge 评测两个模型胜率(Win Rate)时的三 大常见偏见(位置偏见、长度偏见、自我偏好偏见);",
+      "output": "参考答案：参考答案:MergeKit DARE-TIES 权重融合配置与无偏评测设计 # merge_config.yaml ― 使用 DARE-TIES 融合金融微调版与 SQL 编程微调版 models: - model: ./models/Qwen3.5-9B-Finance-SFT parameters: density: 0.55 # 随机丢弃 45% 微小增量参数,消除冗余冲突 weight: 0.60 - model: ./mode"
+    },
     "terms": [
       {
         "term": "MergeKit",
@@ -193,15 +198,9 @@
         "plain": "评测数据混入训练数据，导致分数虚高。"
       }
     ],
-    "why": "来源指出公开基准易污染，Judge 有系统性偏见，需要盲测和私有测试集。",
-    "structure": "YAML: base + models + density/weight\n评测: AB 交换 + 字数归一 + 私有黄金集",
-    "check": "为什么只看公开榜单分数不足以判断模型好坏？",
-    "example": {
-      "label": "PDF 本关任务（来源）",
-      "input": "来源任务：你想把同属于 Llama-3.1-8B 架构的“金融分析微调版”与“SQL 编程微调版”融合为一个模 型,并客观评测融合前后的真实业务表现。",
-      "walkthrough": "来源要求：MergeKit 配置结构 / LLM-as-Judge 三大偏见 / 消除裁判偏见",
-      "output": "按这些通关要求组织答案；参考答案见本页下方。"
-    }
+    "why": "来源核心原理：在 mlabonne/llm-course 第 6 章(Evaluation)与第 8 章(Model Merging) 中,有两个极具性 价比的进阶秘籍: 零 GPU 算力的模型融合(Model Merging with MergeKit):如果你手里有一个“擅长写代码的微调模型 A”和一个“擅长中文创意写作的微调模型 B”(两者同源,如均基于 Qwen3.5-9B 或 Qwen3.8-27B 微 调),无需重新训练,直接用 mergekit 工具通过 SLERP(球面线性插值)、TIES 或 DARE 算法将两者的权 重矩阵按比例融合,甚至用 FrankenMoE 拼装成混合专家模型,往往能凭空诞生出一个综合能力超越两者 的全能模型! 科学评估与 Goodhart 定律避坑:“当一个评测指标变成刷榜目标时,它就不再是一个好指标。”公开基准 (如 MMLU、GSM8K)极易遭受训练数据污染(Data Contamination);使用大模型当裁判(LLM-as-a- Judge)时,又存在显著的位置偏见(倾向选第一个回答)与长度偏见(倾向选长篇大论)。",
+    "structure": "编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模 型路径、density 与 weight 权重分配);\n指出使用 GPT-6 Sol / Claude Opus\n5 作为 LLM-as-a-Judge 评测两个模型胜率(Win Rate)时的三 大常见偏见(位置偏见、长度偏见、自我偏好偏见);\n设计消除上述裁判偏见的实操对策(如正反交换 AB 顺序双次打分、字数归一化约束、构建业务私有黄 金测试集)(\n5 分)。 第四阶段:量化与部署篇(第 7‒8 关)——低比特量化压缩与 vLLM 高并发推理 服务",
+    "check": "为什么只看公开榜单分数不足以判断模型好坏？"
   },
   "next": "llm-07"
 }

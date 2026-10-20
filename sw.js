@@ -11,7 +11,7 @@
 //      断网时用户看到的是"工具打不开",而不是一个可用的降级页面;
 //   3) 工具页要能离线**处理文件**,除 HTML 与工具模块外还需要 /shared/encoders.js、
 //      encoder-worker.js、encoder-core.js 与 /vendor/encoders/* —— 这些在"第一次成功处理"时才进缓存。
-const CACHE = 'gongjuhe-v67';
+const CACHE = 'gongjuhe-v69';
 // 兜底说明页(断网打开一个确实没缓存过的地址时用,塔罗页也走这条路径)。
 // 注意必须写**最终地址** /offline:Cloudflare Pages 会把 /offline.html 用 308 跳到 /offline,
 // 而"带 redirect 标记的缓存响应"在导航时会被 Chromium 直接拒绝(ERR_FAILED)——
@@ -68,7 +68,7 @@ const VENDOR_SMALL = [
   '/vendor/fonts/GeistMono-sub.woff2', '/vendor/fonts/Geist-sub.woff2'
 ];
 const SHARED_FILES = ['/shared/toolkit.js', '/shared/encoders.js', '/shared/encoder-core.js', '/shared/encoder-worker.js'];
-const SHELL = ['/', OFFLINE_PAGE, OFFLINE_PAGE_ALT, '/ai/notes/', '/ai/notes/neigong/', '/ai/notes/rag/', '/ai/notes/agents/', '/ai/notes/tools/', '/ai/notes/guide/', '/ai/notes/llm/', '/ai/notes/notes.css', '/ai/notes/notes.js', '/ai/notes/review/', '/ai/notes/review.mjs', '/manifest.webmanifest', '/icons/icon-192.png'];
+const SHELL = ['/', OFFLINE_PAGE, OFFLINE_PAGE_ALT, '/ai/notes/', '/ai/notes/neigong/', '/ai/notes/rag/', '/ai/notes/agents/', '/ai/notes/tools/', '/ai/notes/guide/', '/ai/notes/search/', '/ai/notes/search-index.json', '/ai/notes/search.mjs', '/ai/notes/llm/', '/ai/notes/notes.css', '/ai/notes/notes.js', '/ai/notes/review/', '/ai/notes/review.mjs', '/manifest.webmanifest', '/icons/icon-192.png'];
 const CACHEABLE = ['/ai/notes/notes.css', '/ai/notes/notes.js', '/ai/notes/practice.mjs', '/ai/notes/review.mjs', '/shared/grading-engine.mjs', '/content/levels/', '/icons/', '/assets/'];
 const SHARED = [];
 

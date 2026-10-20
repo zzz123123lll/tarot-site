@@ -15,7 +15,7 @@
     "criteria": [
       {
         "id": "c1",
-        "label": "制定工具返回值的【入窗截断与摘要规则】（如超过 1,000 字符的原始日志先提取错误码与关键堆栈行，原始全量文件仅存本地路径引用）",
+        "label": "制定工具返回值的【入窗截断与摘要规则】(如超过 1,000 字符的原始日志先提取错误码与关键堆栈 行,原始全量文件仅存本地路径引用);",
         "weight": 5.0,
         "type": "term_groups",
         "groups": [
@@ -51,7 +51,7 @@
       },
       {
         "id": "c2",
-        "label": "设计历史轮次的【滑动窗口 + 里程碑状态压缩(State Compaction)】策略，保留已验证结论、丢弃冗余试错过程",
+        "label": "设计历史轮次的【滑动窗口 + 里程碑状态压缩(State Compaction)】策略,保留已验证结论、丢弃冗 余试错过程(",
         "weight": 4.5,
         "type": "term_groups",
         "groups": [
@@ -79,7 +79,7 @@
       },
       {
         "id": "c3",
-        "label": "说明如何利用子智能体上下文隔离(Sub-agent Context Isolation)让主控 Agent 只接收最终 200 字排查结论",
+        "label": "5 分);",
         "weight": 3.0,
         "type": "term_groups",
         "groups": [
@@ -141,16 +141,15 @@
     }
   ],
   "reading": {
-    "quote": "Microsoft 第 12 课 Context Engineering：Agent 的上下文窗口是有限预算，需要选择、压缩和组织进入窗口的信息。",
+    "quote": "在 Microsoft AI Agents for Beginners 第 11 课 ( Agentic Protocols ) 与 第 12 课 ( Context Engineering) 以及 12-Factor Agents 中,生产级智能体工程有两大前沿基石: 标准化协议(MCP / A2A / NLWeb):通过 Model Context Protocol (MCP) 统一大模型与外部数据源/工 具(GitHub、数据库、本地文件)的连接标准;通过 Agent-to-Agent (A2A) 协议实现跨框架智能体之间 的发现与协作。上下文工程(Context Engineering):模型的上下文窗口不是垃圾桶!",
     "points": [
-      "工具返回、历史对话和子任务过程都会占用上下文。",
-      "长日志需要截断和摘要，保留关键错误与结论。",
-      "历史可以用滑动窗口或状态压缩，保留里程碑而不是全部过程。",
-      "子 Agent 上下文隔离可以让主控只接收最终结论。"
+      "制定工具返回值的【入窗截断与摘要规则】(如超过 1,000 字符的原始日志先提取错误码与关键堆栈 行,原始全量文件仅存本地路径引用);",
+      "设计历史轮次的【滑动窗口 + 里程碑状态压缩(State Compaction)】策略,保留已验证结论、丢弃冗 余试错过程(",
+      "5 分);"
     ],
-    "guide": "读第 12 课后，把练习里的入窗截断、滑动窗口、状态压缩、子智能体隔离对应到“选择/压缩/组织”三种上下文工程手段。",
-    "example": "PDF 第 7 关的长日志摘要、200 字结论和原始文件路径引用就是本关来源例子。",
-    "takeaway": "上下文工程是预算管理，不是把所有东西都塞进去。",
+    "guide": "先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。",
+    "example": "本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。",
+    "takeaway": "本关先记住：制定工具返回值的【入窗截断与摘要规则】(如超过 1,000 字符的原始日志先提取错误码与关键堆栈 行,原始全量文件仅存本地路径引用);",
     "refs": [
       [
         "Microsoft · Lesson 12 Context Engineering",
@@ -163,17 +162,17 @@
     ]
   },
   "explain": {
-    "summary": "这一关只解决一件事：把上下文当预算，截断、压缩、隔离。",
+    "summary": "这一关只解决一件事：在 Microsoft AI Agents for Beginners 第 11 课 ( Agentic Protocols ) 与 第 12 课 ( Context Engineering) 以及 12-Factor Agents 中,生产级智能体工程有两大前沿基石: 标准化协议(MCP / A2A / NLWeb):通过 Model Context Protocol (MCP) 统一大模型与外部数据源/工 具(GitHub、数据库、本地文件)的连接标准;通过 Agent-to-Agent (A2A) 协议实现跨框架智能体之间 的发现与协作。上下文工程(Context Engineering):模型的上下文窗口不是垃圾桶!",
     "bullets": [
-      "工具结果先截断摘要",
-      "历史用滑动窗口/状态压缩",
-      "子 Agent 隔离，只回传结论"
+      "制定工具返回值的【入窗截断与摘要规则】(如超过 1,000 字符的原始日志先提取错误码与关键堆栈 行,原始全量文件仅存本地路径引用);",
+      "设计历史轮次的【滑动窗口 + 里程碑状态压缩(State Compaction)】策略,保留已验证结论、丢弃冗 余试错过程(",
+      "5 分);"
     ],
     "example": {
       "label": "PDF 本关任务（来源）",
-      "input": "来源任务：一个运维排障 Agent 在连续调用了 10 次服务器日志查询工具后，上下文累积了 8 万 Token 的原始报错日志，导致模型开始遗忘最初的用户指令且响应极其缓慢。",
-      "walkthrough": "来源要求超长日志先提取错误码/堆栈，历史保留里程碑，主控只接收 200 字结论。",
-      "output": "参考答案是上下文预算和隔离策略（见本关原文）。"
+      "input": "一个运维排障 Agent 在连续调用了 10 次服务器日志查询工具后,上下文累积了 8 万 Token 的 原始报错日志,导致模型开始遗忘最初的用戶指令且响应极其缓慢。",
+      "walkthrough": "来源要求：制定工具返回值的【入窗截断与摘要规则】(如超过 1,000 字符的原始日志先提取错误码与关键堆栈 行,原始全量文件仅存本地路径引用); / 设计历史轮次的【滑动窗口 + 里程碑状态压缩(State Compaction)】策略,保留已验证结论、丢弃冗 余试错过程( / 5 分);",
+      "output": "参考答案：参考答案:研发排障 Agent 的上下文工程与子智能体隔离方案 【1. 工具输出入窗过滤器(Tool Output Truncation & Summarization Hook)】 当 fetch_server_logs 工具返回原始文本 > 1,500 字符时: - 将完整原始日志保存至沙盒临时文件 /tmp/log_dump_01.txt; - 仅向主 Agent 上下文注入结构化摘要:{\"log_file_ref\": \"/tmp"
     },
     "terms": [
       {
@@ -185,8 +184,8 @@
         "plain": "把长过程压缩成关键结论和里程碑。"
       }
     ],
-    "why": "来源 Microsoft 第 12 课 Context Engineering 把上下文视为需要选择和组织的预算。",
-    "structure": "工具返回 → 截断/摘要\n历史 → 窗口/压缩\n子 Agent → 只回传结论",
+    "why": "来源核心原理：在 Microsoft AI Agents for Beginners 第 11 课 ( Agentic Protocols ) 与 第 12 课 ( Context Engineering) 以及 12-Factor Agents 中,生产级智能体工程有两大前沿基石: 标准化协议(MCP / A2A / NLWeb):通过 Model Context Protocol (MCP) 统一大模型与外部数据源/工 具(GitHub、数据库、本地文件)的连接标准;通过 Agent-to-Agent (A2A) 协议实现跨框架智能体之间 的发现与协作。 上下文工程(Context Engineering):模型的上下文窗口不是垃圾桶!如 12-Factor Agents(Own your context window) 所述,必须对传入模型的 Token 进行精细化筛选、修剪与隔离——当工具返回长达 5 万字的原始网页或日志时,先在沙盒中提取关键摘要再塞入主对话上下文,避免“大海捞针”导致注意力 稀释和高昂 Token 账单。",
+    "structure": "制定工具返回值的【入窗截断与摘要规则】(如超过 1,000 字符的原始日志先提取错误码与关键堆栈 行,原始全量文件仅存本地路径引用);\n设计历史轮次的【滑动窗口 + 里程碑状态压缩(State Compaction)】策略,保留已验证结论、丢弃冗 余试错过程(\n5 分);\n说明如何利用子智能体上下文隔离(Sub-agent Context Isolation)让主控 Agent 只接收最终 200 字 排查结论。",
     "check": "为什么不能把全部历史都塞进上下文？"
   }
 }

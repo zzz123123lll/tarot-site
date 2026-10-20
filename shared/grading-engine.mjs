@@ -7,7 +7,7 @@
  * - 每个评分项独立给分，支持 partial / needs_review。
  * - 返回 missing 列表，便于 UI 指出具体不足。
  */
-export const ENGINE_VERSION = '1.0.0';
+export const ENGINE_VERSION = '1.1.0';
 
 export function normalize(value) {
   return String(value == null ? '' : value)
@@ -18,6 +18,83 @@ export function normalize(value) {
 
 function roundScore(n) {
   return Math.round(n * 10) / 10;
+}
+
+
+function parseJsonAnswer(text) {
+  const raw = String(text == null ? '' : text).trim();
+  const candidates = [];
+  const fenced = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fenced) candidates.push(fenced[1].trim());
+  candidates.push(raw);
+  const firstBrace = raw.indexOf('{');
+  const lastBrace = raw.lastIndexOf('}');
+  if (firstBrace >= 0 && lastBrace > firstBrace) candidates.push(raw.slice(firstBrace, lastBrace + 1));
+  const firstBracket = raw.indexOf('[');
+  const lastBracket = raw.lastIndexOf(']');
+  if (firstBracket >= 0 && lastBracket > firstBracket) candidates.push(raw.slice(firstBracket, lastBracket + 1));
+  for (const c of candidates) {
+    try { return JSON.parse(c); } catch (e) {}
+  }
+  return undefined;
+}
+
+function getPath(obj, path) {
+  let cur = obj;
+  for (const part of String(path).split('.')) {
+    if (cur == null) return undefined;
+    if (Array.isArray(cur) && /^\d+$/.test(part)) cur = cur[Number(part)];
+    else cur = cur[part];
+  }
+  return cur;
+}
+
+function missingValue(v) {
+  return v === undefined || v === null || v === '' || (Array.isArray(v) && v.length === 0);
+}
+
+function runValidator(spec, answerText) {
+  if (!spec || !spec.type) return null;
+  const missing = [];
+  if (spec.type === 'json') {
+    const parsed = parseJsonAnswer(answerText);
+    if (parsed === undefined) return { type: 'json', pass: false, missing: ['答案中必须包含可解析的 JSON'] };
+    const required = Array.isArray(spec.required) ? spec.required : [];
+    for (const path of required) {
+      if (missingValue(getPath(parsed, path))) missing.push('JSON 缺少字段：' + path);
+    }
+    return { type: 'json', pass: missing.length === 0, missing };
+  }
+  if (spec.type === 'numeric') {
+    const expected = Number(spec.expected);
+    const tolerance = Number.isFinite(Number(spec.tolerance)) ? Math.abs(Number(spec.tolerance)) : 0;
+    const nums = (String(answerText).match(/-?\d+(?:\.\d+)?/g) || []).map(Number);
+    const found = nums.some((n) => Math.abs(n - expected) <= tolerance);
+    return {
+      type: 'numeric',
+      pass: found,
+      missing: found ? [] : ['数值需为 ' + expected + (tolerance ? ' ± ' + tolerance : '')],
+      expected,
+      tolerance
+    };
+  }
+  if (spec.type === 'regex') {
+    const patterns = Array.isArray(spec.patterns) ? spec.patterns : [];
+    for (const p of patterns) {
+      let re;
+      try { re = new RegExp(p.pattern, p.flags || ''); } catch (e) { missing.push('校验规则无效：' + (p.label || p.pattern)); continue; }
+      if (!re.test(String(answerText))) missing.push(p.label || ('缺少结构：' + p.pattern));
+    }
+    return { type: 'regex', pass: missing.length === 0, missing };
+  }
+  if (spec.type === 'code_static') {
+    const req = Array.isArray(spec.required) ? spec.required : [];
+    const forb = Array.isArray(spec.forbidden) ? spec.forbidden : [];
+    for (const x of req) if (!String(answerText).includes(x)) missing.push('代码缺少：' + x);
+    for (const x of forb) if (String(answerText).includes(x)) missing.push('代码不应包含：' + x);
+    return { type: 'code_static', pass: missing.length === 0, missing };
+  }
+  return { type: spec.type, pass: false, missing: ['未知结构校验类型：' + spec.type] };
 }
 
 function evaluateCriterion(criterion, answerText) {
@@ -48,10 +125,16 @@ function evaluateCriterion(criterion, answerText) {
     });
     const matched = groupResults.filter((g) => g.hit).length;
     const missing = groupResults.filter((g) => !g.hit).map((g) => g.label);
-    const score = weight * (matched / groups.length);
+    let score = weight * (matched / groups.length);
     let status = 'fail';
     if (matched === groups.length) status = 'pass';
     else if (matched > 0) status = 'partial';
+    const validation = runValidator(criterion.validator, answerText);
+    if (validation && !validation.pass) {
+      if (status === 'pass') status = 'partial';
+      score = roundScore(score * 0.5);
+      for (const m of validation.missing) if (!missing.includes(m)) missing.push(m);
+    }
     return {
       ...base,
       status,
@@ -60,6 +143,7 @@ function evaluateCriterion(criterion, answerText) {
       matched,
       total: groups.length,
       groups: groupResults,
+      validator: validation || undefined,
       missing
     };
   }

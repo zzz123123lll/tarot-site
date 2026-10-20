@@ -11,9 +11,9 @@
 <meta property="og:description" content="本关练习：为三大迥异业务场景配置精准解码采样参数并核算显存。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=10">
-<script src="/ai/notes/notes.js?v=6" defer></script>
-<script type="module" src="/ai/notes/practice.mjs?v=4"></script>
+<link rel="stylesheet" href="/ai/notes/notes.css?v=11">
+<script src="/ai/notes/notes.js?v=7" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=5"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>
@@ -45,36 +45,37 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">这一关只解决一件事：同一个模型在不同业务下，怎样用采样参数控制“确定”还是“发散”。</p>
-      <ul class="explain-bullets"><li>医疗 JSON 要确定性：temperature 低</li><li>小说续写要多样性：temperature 高、top_p 截断长尾</li><li>算法 Pass@5 要多次采样但保持语法正确</li></ul>
+      <p class="explain-summary">这一关只解决一件事：在 mlabonne/llm-course 的 The LLM Scientist 第 1 章 与 Modern LLM Notebook 中,现代主流 开源大模型(如 Qwen3.5-9B / Llama 4、Qwen3.8 / Qwen3.5、DeepSeek-V4.1)均采用 Decoder-only Transformer 架 构 , 并 引 入 三 大 关 键 升 级 : BPE 子 词 分 词 器 ( Byte-Pair Encoding )、 旋 转 位 置 编 码 ( RoPE ) 以 及 大 幅 降 低 长文 本 推 理 KV Cache 显 存 占 用 的 分 组 查 询 注 意 力 ( GQA, Grouped-Query Attention)。而在生成阶段,模型每一步输出的是词表上的概率分布(Logits),最终选出哪个词取决于解码 采样策略(Decoding Strategies):Temperature 控制概率分布平滑度(越低越确定,越高越发散),Top-p (Nucleus Sampling) 动态截取累积概率达到 p 的候选词集合。</p>
+      <ul class="explain-bullets"><li>分别为上述三个场景配置最优的 temperature、top_p、repetition_penalty 参数组合并说明理由;</li><li>解释为什么在医疗 JSON 提取场景中,通常建议“调低 temperature 或调小 top_p 二选一”,而不建议 同时将两者设得极度激进(</li><li>5 分);</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
       <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>来源任务：你的团队用同一个 8B 基础大模型同时支撑三个业务接口:1 医疗病历结构化 JSON 提取;2 小说创意续写与头脑⻛暴;3 Python 算法题多路采样自动编程(Pass@5 测试)。目前三个接口全用默认 参数 temperature=1.0, top_p=1.0,导致医疗提取经常出现 JSON 语法损坏。</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：三个业务场景的采样参数组合 / 同时压 temperature 与 top_p 的风险 / GQA 节省 KV Cache 的机制</p><h3>输出</h3><p>按这些通关要求组织答案；参考答案见本页下方。</p></div>
+        <div class="explain-code"><span>输入</span><pre>你的团队用同一个 8B 基础大模型同时支撑三个业务接口:1 医疗病历结构化 JSON 提取;2 小说创意续写与头脑⻛暴;3 Python 算法题多路采样自动编程(Pass@5 测试)。目前三个接口全用默认 参数 temperature=1.0, top_p=1.0,导致医疗提取经常出现 JSON 语法损坏。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：分别为上述三个场景配置最优的 temperature、top_p、repetition_penalty 参数组合并说明理由; / 解释为什么在医疗 JSON 提取场景中,通常建议“调低 temperature 或调小 top_p 二选一”,而不建议 同时将两者设得极度激进( / 5 分);</p><h3>输出</h3><p>参考答案：参考答案与工程配置解析(Answer Key) 以下提供全套 8 关的标准代码、训练配置 YAML 与显存核算公式,既是高薪 AI 工程师面试的高频必考题答 案,也是可直接用于项目交付的实战脚手架。 第 1 关参考答案:三大业务场景解码采样参数配置与 GQA 显存原理解析 业务场景名称 推荐采样参数组合 底层原理与配置依据 1 医疗病历 JSON 提取 temperature = 0.0 top_p = 1.0 repetition_p</p></div>
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Temperature</dt><dd>控制概率分布平滑度，越低越确定。</dd></div><div><dt>Top-p</dt><dd>动态截取累积概率达到 p 的候选词集合。</dd></div><div><dt>GQA</dt><dd>多个 Query 头共享一组 K/V 头，降低 KV Cache。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源指出 Temperature 与 Top-p 都作用于采样分布，同时极端收紧可能导致截断和逻辑问题。</p><h3>结构长什么样</h3><pre class="explain-structure">医疗：T=0.0 / top_p=1.0
-小说：T=0.85 / top_p=0.92
-算法：T=0.6 / n=5</pre></div>
+        <div><h3>为什么有效</h3><p>来源核心原理：在 mlabonne/llm-course 的 The LLM Scientist 第 1 章 与 Modern LLM Notebook 中,现代主流 开源大模型(如 Qwen3.5-9B / Llama 4、Qwen3.8 / Qwen3.5、DeepSeek-V4.1)均采用 Decoder-only Transformer 架 构 , 并 引 入 三 大 关 键 升 级 : BPE 子 词 分 词 器 ( Byte-Pair Encoding )、 旋 转 位 置 编 码 ( RoPE ) 以 及 大 幅 降 低 长文 本 推 理 KV Cache 显 存 占 用 的 分 组 查 询 注 意 力 ( GQA, Grouped-Query Attention)。而在生成阶段,模型每一步输出的是词表上的概率分布(Logits),最终选出哪个词取决于解码 采样策略(Decoding Strategies):Temperature 控制概率分布平滑度(越低越确定,越高越发散),Top-p (Nucleus Sampling) 动态截取累积概率达到 p 的候选词集合。</p><h3>结构长什么样</h3><pre class="explain-structure">分别为上述三个场景配置最优的 temperature、top_p、repetition_penalty 参数组合并说明理由;
+解释为什么在医疗 JSON 提取场景中,通常建议“调低 temperature 或调小 top_p 二选一”,而不建议 同时将两者设得极度激进(
+5 分);
+简述 GQA(Grouped-Query Attention)相比传统多头注意力(MHA)是如何节省推理阶段 KV Cache 显存的。</pre></div>
       </div>
       <p class="explain-check">为什么医疗提取不建议同时把 temperature 和 top_p 都压到极端？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
-    <p class="reading-quote">现代开源 LLM 普遍采用 Decoder-only Transformer，并引入 BPE、RoPE 与 GQA；生成阶段每步输出词表上的概率分布，由 Temperature 与 Top-p 等解码策略决定选词。</p>
+    <p class="reading-quote">在 mlabonne/llm-course 的 The LLM Scientist 第 1 章 与 Modern LLM Notebook 中,现代主流 开源大模型(如 Qwen3.5-9B / Llama 4、Qwen3.8 / Qwen3.5、DeepSeek-V4.1)均采用 Decoder-only Transformer 架 构 , 并 引 入 三 大 关 键 升 级 : BPE 子 词 分 词 器 ( Byte-Pair Encoding )、 旋 转 位 置 编 码 ( RoPE ) 以 及 大 幅 降 低 长文 本 推 理 KV Cache 显 存 占 用 的 分 组 查 询 注 意 力 ( GQA, Grouped-Query Attention)。而在生成阶段,模型每一步输出的是词表上的概率分布(Logits),最终选出哪个词取决于解码 采样策略(Decoding Strategies):Temperature 控制概率分布平滑度(越低越确定,越高越发散),Top-p (Nucleus Sampling) 动态截取累积概率达到 p 的候选词集合。</p>
     <div class="reading-grid">
-      <div><h3>逐点读懂</h3><ol class="reading-points"><li>BPE 负责子词分词，RoPE 提供旋转位置编码，GQA 通过共享 K/V 头降低长文本 KV Cache。</li><li>Temperature 控制分布平滑度：越低越确定，越高越发散。</li><li>Top-p 动态截取累积概率达到 p 的候选词集合。</li><li>医疗 JSON 提取需要确定性，参考答案使用 temperature=0.0。</li></ol></div>
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>分别为上述三个场景配置最优的 temperature、top_p、repetition_penalty 参数组合并说明理由;</li><li>解释为什么在医疗 JSON 提取场景中,通常建议“调低 temperature 或调小 top_p 二选一”,而不建议 同时将两者设得极度激进(</li><li>5 分);</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>读本关时把“模型结构”和“解码参数”分开：前者决定能算什么，后者决定每一步怎么选词。</p>
-        <h3>例子在哪</h3><p>来源下方的实操题给出医疗/小说/算法三个业务场景的默认参数问题；参考答案表格就是本关例子。</p>
+        <h3>怎么对应本关练习</h3><p>先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。</p>
+        <h3>例子在哪</h3><p>本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。</p>
       </div>
     </div>
-    <p class="reading-takeaway">结构化任务先收紧解码，创意任务再放开。</p>
+    <p class="reading-takeaway">本关先记住：分别为上述三个场景配置最优的 temperature、top_p、repetition_penalty 参数组合并说明理由;</p>
     <div class="reading-refs"><span class="label">SOURCES</span><span>PDF 第 1 关（用户提供）</span><a href="https://github.com/mlabonne/llm-course" target="_blank" rel="noopener">mlabonne/llm-course ↗</a></div>
   </section>
     <section class="lesson"><h3>核心原理</h3><p>在 mlabonne/llm-course 的 The LLM Scientist 第 1 章 与 Modern LLM Notebook 中,现代主流 开源大模型(如 Qwen3.5-9B / Llama 4、Qwen3.8 / Qwen3.5、DeepSeek-V4.1)均采用 Decoder-only Transformer 架 构 , 并 引 入 三 大 关 键 升 级 : BPE 子 词 分 词 器 ( Byte-Pair Encoding )、 旋 转 位 置 编 码 ( RoPE ) 以 及 大 幅 降 低 长文 本 推 理 KV Cache 显 存 占 用 的 分 组 查 询 注 意 力 ( GQA, Grouped-Query Attention)。而在生成阶段,模型每一步输出的是词表上的概率分布(Logits),最终选出哪个词取决于解码 采样策略(Decoding Strategies):Temperature 控制概率分布平滑度(越低越确定,越高越发散),Top-p (Nucleus Sampling) 动态截取累积概率达到 p 的候选词集合。</p><h2>第 1 关实操练习题：为三大迥异业务场景配置精准解码采样参数并核算显存</h2><h3>任务背景</h3><p>你的团队用同一个 8B 基础大模型同时支撑三个业务接口:1 医疗病历结构化 JSON 提取;2 小说创意续写与头脑⻛暴;3 Python 算法题多路采样自动编程(Pass@5 测试)。目前三个接口全用默认 参数 temperature=1.0, top_p=1.0,导致医疗提取经常出现 JSON 语法损坏。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 分别为上述三个场景配置最优的 temperature、top_p、repetition_penalty 参数组合并说明理由(6 分);</p><p>2. 解释为什么在医疗 JSON 提取场景中,通常建议“调低 temperature 或调小 top_p 二选一”,而不建议 同时将两者设得极度激进(</p><p>3.5 分);</p><p>3. 简述 GQA(Grouped-Query Attention)相比传统多头注意力(MHA)是如何节省推理阶段 KV Cache 显存的(3 分)。</p></section>

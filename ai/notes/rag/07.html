@@ -11,9 +11,9 @@
 <meta property="og:description" content="本关练习：设计行业研报知识库的实体关系抽取与 Local/Global 路由策略。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=10">
-<script src="/ai/notes/notes.js?v=6" defer></script>
-<script type="module" src="/ai/notes/practice.mjs?v=4"></script>
+<link rel="stylesheet" href="/ai/notes/notes.css?v=11">
+<script src="/ai/notes/notes.js?v=7" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=5"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>
@@ -45,35 +45,37 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">这一关只解决一件事：局部细节走向量，跨文档全局问题走 GraphRAG。</p>
-      <ul class="explain-bullets"><li>抽取实体/关系/三元组</li><li>区分 Local Search 与 Global Search</li><li>成本高，只对高价值文档建图</li></ul>
+      <p class="explain-summary">这一关只解决一件事：传统向量切片 RAG 擅长回答“局部细节查找题”,但在面对“跨全库全局归纳题”(例如:“综合这 500 份客戶投诉工单,今年最核心的三大系统性质量问题及其关联供应商分别是什么?”)时往往彻底失效, 因为 Top-5 局部片段根本无法代表全部 500 份文档的全貌!</p>
+      <ul class="explain-bullets"><li>定义面向产业链研报的实体类型(如公司、核心原材料、产能指标、技术路线)与关系三元组 (Head, Relation, Tail) 抽取 JSON 格式;</li><li>设计查询路由器(Query Router):准确判断哪些用戶提问应路由至标准向量/Local Search,哪些宏 观综述提问必须路由至 GraphRAG Global Search(</li><li>5 分);</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
       <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>来源任务：你正在为一家券商研究所搭建涵盖 200 份新能源产业链研报的 GraphRAG 知识库。</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求定义实体与关系三元组、设计 Query Router，并说明图谱索引成本高、只对核心文档启用。</p><h3>输出</h3><p>参考答案是实体关系 JSON 和路由规则（见本关原文）。</p></div>
+        <div class="explain-code"><span>输入</span><pre>你正在为一家券商研究所搭建涵盖 200 份新能源产业链研报的 GraphRAG 知识库。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：定义面向产业链研报的实体类型(如公司、核心原材料、产能指标、技术路线)与关系三元组 (Head, Relation, Tail) 抽取 JSON 格式; / 设计查询路由器(Query Router):准确判断哪些用戶提问应路由至标准向量/Local Search,哪些宏 观综述提问必须路由至 GraphRAG Global Search( / 5 分);</p><h3>输出</h3><p>参考答案：参考答案:GraphRAG 产业链知识图谱抽取与 Local/Global 双路路由 // 1. 产业链研报图谱抽取 Schema 示例 { &quot;entities&quot;: [ {&quot;name&quot;: &quot;宁德时代&quot;, &quot;type&quot;: &quot;COMPANY&quot;, &quot;summary&quot;: &quot;全球动力电池⻰头企业,主营磷酸铁锂与三元锂 电池&quot;}, {&quot;name&quot;: &quot;麒麟电池&quot;, &quot;type&quot;: &quot;PRODUCT_TECH&quot;, &quot;summary&quot;: &quot;第三代 CT</p></div>
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>GraphRAG</dt><dd>用实体关系图增强检索的方法。</dd></div><div><dt>社区摘要</dt><dd>把图谱中的相关实体聚成主题摘要。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源 PDF 指出向量擅长局部细节查找，GraphRAG 的 Global Search 适合跨文档宏观归纳。</p><h3>结构长什么样</h3><pre class="explain-structure">实体/关系 → 社区摘要 → Query Router
-局部→向量 / 全局→Global</pre></div>
+        <div><h3>为什么有效</h3><p>来源核心原理：传统向量切片 RAG 擅长回答“局部细节查找题”,但在面对“跨全库全局归纳题”(例如:“综合这 500 份客戶投诉工单,今年最核心的三大系统性质量问题及其关联供应商分别是什么?”)时往往彻底失效, 因为 Top-5 局部片段根本无法代表全部 500 份文档的全貌!微软开源的 Microsoft GraphRAG 提出了革命性解 法:在索引阶段利用大模型从文本中抽取实体(Entities)与关系(Relationships)构建知识图谱,通过 Leiden 社区发现算法对紧密关联的实体群落生成多层级的社区摘要(Community Summaries)。查询时: 局部细节问题走 Local Search(实体邻域遍历 + 原文块),宏观全局问题走 Global Search(Map-Reduce 汇总各社区摘要)。</p><h3>结构长什么样</h3><pre class="explain-structure">定义面向产业链研报的实体类型(如公司、核心原材料、产能指标、技术路线)与关系三元组 (Head, Relation, Tail) 抽取 JSON 格式;
+设计查询路由器(Query Router):准确判断哪些用戶提问应路由至标准向量/Local Search,哪些宏 观综述提问必须路由至 GraphRAG Global Search(
+5 分);
+简述 GraphRAG 索引构建成本高的原因及如何仅对高价值核心文档启用图谱抽取。</pre></div>
       </div>
       <p class="explain-check">什么类型的问题不适合只走向量检索？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
-    <p class="reading-quote">本关 PDF 说明 GraphRAG 用实体、关系和社区摘要做全局检索，适合跨文档的宏观归纳；图谱索引成本高，应只对高价值核心文档启用。</p>
+    <p class="reading-quote">传统向量切片 RAG 擅长回答“局部细节查找题”,但在面对“跨全库全局归纳题”(例如:“综合这 500 份客戶投诉工单,今年最核心的三大系统性质量问题及其关联供应商分别是什么?”)时往往彻底失效, 因为 Top-5 局部片段根本无法代表全部 500 份文档的全貌!</p>
     <div class="reading-grid">
-      <div><h3>逐点读懂</h3><ol class="reading-points"><li>向量检索擅长局部细节，GraphRAG 的 Global Search 擅长跨文档主题归纳。</li><li>图谱需要抽取实体与关系，并构建社区摘要。</li><li>索引成本高，不适合所有文档全量启用。</li><li>具体数值/局部问题仍可用向量或 Local Search。</li></ol></div>
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>定义面向产业链研报的实体类型(如公司、核心原材料、产能指标、技术路线)与关系三元组 (Head, Relation, Tail) 抽取 JSON 格式;</li><li>设计查询路由器(Query Router):准确判断哪些用戶提问应路由至标准向量/Local Search,哪些宏 观综述提问必须路由至 GraphRAG Global Search(</li><li>5 分);</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>读 PDF 时区分 Local Search 与 Global Search 的适用问题；练习中的实体/关系/三元组和成本优化都来自这段。</p>
-        <h3>例子在哪</h3><p>PDF 第 7 关的实体/关系抽取 JSON 和查询路由说明就是本关例子。</p>
+        <h3>怎么对应本关练习</h3><p>先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。</p>
+        <h3>例子在哪</h3><p>本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。</p>
       </div>
     </div>
-    <p class="reading-takeaway">GraphRAG 解决全局关系问题，不替代所有向量检索。</p>
+    <p class="reading-takeaway">本关先记住：定义面向产业链研报的实体类型(如公司、核心原材料、产能指标、技术路线)与关系三元组 (Head, Relation, Tail) 抽取 JSON 格式;</p>
     <div class="reading-refs"><span class="label">SOURCES</span><span>PDF 第 7 关（用户提供）</span><a href="https://microsoft.github.io/graphrag/" target="_blank" rel="noopener">Microsoft GraphRAG 文档 ↗</a></div>
   </section>
     <section class="lesson"><h3>核心原理</h3><p>传统向量切片 RAG 擅长回答“局部细节查找题”,但在面对“跨全库全局归纳题”(例如:“综合这 500 份客戶投诉工单,今年最核心的三大系统性质量问题及其关联供应商分别是什么?”)时往往彻底失效, 因为 Top-5 局部片段根本无法代表全部 500 份文档的全貌!微软开源的 Microsoft GraphRAG 提出了革命性解 法:在索引阶段利用大模型从文本中抽取实体(Entities)与关系(Relationships)构建知识图谱,通过 Leiden 社区发现算法对紧密关联的实体群落生成多层级的社区摘要(Community Summaries)。查询时: 局部细节问题走 Local Search(实体邻域遍历 + 原文块),宏观全局问题走 Global Search(Map-Reduce 汇总各社区摘要)。</p><h2>第 7 关实操练习题：设计行业研报知识库的实体关系抽取与 Local/Global 路由策略</h2><h3>任务背景</h3><p>你正在为一家券商研究所搭建涵盖 200 份新能源产业链研报的 GraphRAG 知识库。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 定义面向产业链研报的实体类型(如公司、核心原材料、产能指标、技术路线)与关系三元组 (Head, Relation, Tail) 抽取 JSON 格式(5 分);</p><p>2. 设计查询路由器(Query Router):准确判断哪些用戶提问应路由至标准向量/Local Search,哪些宏 观综述提问必须路由至 GraphRAG Global Search(</p><p>4.5 分);</p><p>3. 简述 GraphRAG 索引构建成本高的原因及如何仅对高价值核心文档启用图谱抽取(3 分)。</p></section>

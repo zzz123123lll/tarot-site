@@ -53,6 +53,14 @@ function init(root) {
     clearTimeout(saveTimer);
     saveTimer = setTimeout(save, 350);
   }
+  function validatorHint(v) {
+    if (!v) return '';
+    if (v.type === 'json') return '结构校验：可解析 JSON，且包含 ' + (v.required || []).join('、');
+    if (v.type === 'numeric') return '结构校验：答案需出现数值 ' + v.expected + (v.tolerance ? ' ± ' + v.tolerance : '');
+    if (v.type === 'regex') return '结构校验：' + (v.patterns || []).map((x) => x.label || x.pattern).join('、');
+    if (v.type === 'code_static') return '结构校验：代码需包含 ' + (v.required || []).join('、') + (v.forbidden && v.forbidden.length ? '，且不能含 ' + v.forbidden.join('、') : '');
+    return '结构校验：' + v.type;
+  }
   function esc(s) {
     return String(s == null ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -198,7 +206,8 @@ function init(root) {
 
   function renderCriteria() {
     criteriaBox.innerHTML = exercise.criteria.map((c) => (
-      `<div class="check-item" data-criterion="${esc(c.id)}"><span class="check-state" data-state>待检查</span><span>${esc(c.label)}</span>` +
+      `<div class="check-item" data-criterion="${esc(c.id)}"><span class="check-state" data-state>待检查</span>` +
+      `<span>${esc(c.label)}${c.validator ? '<small class="validator-hint">' + esc(validatorHint(c.validator)) + '</small>' : ''}</span>` +
       `<span class="criterion-weight">${Number(c.weight)} 分</span></div>`
     )).join('');
   }
@@ -227,7 +236,7 @@ function init(root) {
     } else if (result.status === 'needs_review') {
       feedback.textContent = '有评分项需要人工判断：' + (result.missing.join(' / ') || '未命名评分项');
     } else if (result.status === 'pass') {
-      feedback.textContent = '评分项已全部覆盖。规则引擎只检查结构与关键词，最后仍要对照参考答案检查语义。';
+      feedback.textContent = '评分项已全部覆盖（含结构/数值/JSON 校验）。规则引擎仍不判断语义，最后要对照参考答案读一遍。';
     } else {
       feedback.textContent = '还缺：' + (result.missing.join(' / ') || '部分评分项') + '。补齐后再检查。';
     }

@@ -15,7 +15,7 @@
     "criteria": [
       {
         "id": "c1",
-        "label": "设计 Planner 输出的结构化 JSON 计划表格式，每个子任务需包含 step_id、tool_name、depends_on（前置依赖数组）与 expected_output",
+        "label": "设计 Planner 输出的结构化 JSON 计划表格式,每个子任务需包含 step_id、tool_name、depends_on (前置依赖数组)与 expected_output;",
         "weight": 5.0,
         "type": "term_groups",
         "groups": [
@@ -53,7 +53,7 @@
       },
       {
         "id": "c2",
-        "label": "准确区分并行阶段（工商信息查询、新闻检索、官网产品抓取互不依赖，可并发执行）与串行汇总阶段",
+        "label": "准确区分并行阶段(工商信息查询、新闻检索、官网产品抓取互不依赖,可并发执行)与串行汇总阶 段(",
         "weight": 4.5,
         "type": "term_groups",
         "groups": [
@@ -73,7 +73,7 @@
       },
       {
         "id": "c3",
-        "label": "设计动态重规划分支：若第一步工商核查发现该公司“已注销或被列为失信被执行人”,立即终止后续新闻检索并直接输出风险拦截报告",
+        "label": "5 分);",
         "weight": 3.0,
         "type": "term_groups",
         "groups": [
@@ -142,16 +142,15 @@
     }
   ],
   "reading": {
-    "quote": "本关 PDF 要求 Planner 输出结构化计划表：每个子任务包含 step_id、tool_name、depends_on、expected_output；依赖决定串行，互不依赖才能并行，并设计动态重规划分支。",
+    "quote": "面对复杂目标(如“分析竞品最近三个月的定价变动并生成应对促销方案”),单步工具调用无法完 成。Microsoft AI Agents for Beginners 第 7 课(Planning Design) 指出,高阶智能体必须具备“先规划后 执行(Plan-and-Solve)”能力:先将宏大目标拆解为包含明确输入输出依赖关系的子任务列表(Sub-task DAG),标记哪些子任务可以并行执行(Parallel)、哪些必须串行等待(Sequential);且每完成一步后根据 实际返回结果动态修正后续计划(Re-planning)。",
     "points": [
-      "复杂目标需要先拆子任务，再决定执行顺序。",
-      "depends_on 表达前置依赖；为空表示可以先执行。",
-      "互不依赖的步骤可以并行，有依赖的必须串行。",
-      "前置结果异常时要能终止或重规划，而不是继续原计划。"
+      "设计 Planner 输出的结构化 JSON 计划表格式,每个子任务需包含 step_id、tool_name、depends_on (前置依赖数组)与 expected_output;",
+      "准确区分并行阶段(工商信息查询、新闻检索、官网产品抓取互不依赖,可并发执行)与串行汇总阶 段(",
+      "5 分);"
     ],
-    "guide": "读 PDF 时把“计划表”和“执行图”分开：计划表是数据，执行图由依赖关系决定。",
-    "example": "PDF 第 3 关的工商核查→新闻/官网并行→汇总简报示例就是本关的来源例子。",
-    "takeaway": "Planner 的核心是依赖关系和可重规划。",
+    "guide": "先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。",
+    "example": "本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。",
+    "takeaway": "本关先记住：设计 Planner 输出的结构化 JSON 计划表格式,每个子任务需包含 step_id、tool_name、depends_on (前置依赖数组)与 expected_output;",
     "refs": [
       [
         "PDF 第 3 关（用户提供）",
@@ -164,17 +163,17 @@
     ]
   },
   "explain": {
-    "summary": "这一关只解决一件事：把大目标拆成带依赖关系的子任务，并允许重规划。",
+    "summary": "这一关只解决一件事：面对复杂目标(如“分析竞品最近三个月的定价变动并生成应对促销方案”),单步工具调用无法完 成。Microsoft AI Agents for Beginners 第 7 课(Planning Design) 指出,高阶智能体必须具备“先规划后 执行(Plan-and-Solve)”能力:先将宏大目标拆解为包含明确输入输出依赖关系的子任务列表(Sub-task DAG),标记哪些子任务可以并行执行(Parallel)、哪些必须串行等待(Sequential);且每完成一步后根据 实际返回结果动态修正后续计划(Re-planning)。",
     "bullets": [
-      "每个子任务有 step_id/tool_name/expected_output",
-      "depends_on 决定串行/并行",
-      "异常时终止或重规划"
+      "设计 Planner 输出的结构化 JSON 计划表格式,每个子任务需包含 step_id、tool_name、depends_on (前置依赖数组)与 expected_output;",
+      "准确区分并行阶段(工商信息查询、新闻检索、官网产品抓取互不依赖,可并发执行)与串行汇总阶 段(",
+      "5 分);"
     ],
     "example": {
       "label": "PDF 本关任务（来源）",
-      "input": "来源任务：B2B 销售团队输入一个潜在客户公司名称，希望 Agent 自动完成工商风险核查、近期高管新闻动态检索、主营产品匹配度评估，并输出一份拜访简报。",
-      "walkthrough": "来源要求工商核查后新闻/官网可并行，汇总依赖前两步；若发现注销/失信立即终止。",
-      "output": "参考答案是结构化计划表和重规划分支（见本关原文）。"
+      "input": "B2B 销售团队输入一个潜在客戶公司名称,希望 Agent 自动完成工商⻛险核查、近期高管新闻 动态检索、主营产品匹配度评估,并输出一份拜访简报。",
+      "walkthrough": "来源要求：设计 Planner 输出的结构化 JSON 计划表格式,每个子任务需包含 step_id、tool_name、depends_on (前置依赖数组)与 expected_output; / 准确区分并行阶段(工商信息查询、新闻检索、官网产品抓取互不依赖,可并发执行)与串行汇总阶 段( / 5 分);",
+      "output": "参考答案：参考答案:企业尽调 Agent 的 DAG 任务规划与短路拦截器 { \"goal\": \"对目标企业【星云智造科技有限公司】进行销售前背景尽调并生成拜访简报\", \"execution_plan\": [ { \"step_id\": \"step_1\", \"task\": \"核查工商注册状态、行政处罚与失信被执行人记录\", \"tool_name\": \"verify_business_registration\", \"depends_on\": [], "
     },
     "terms": [
       {
@@ -186,8 +185,8 @@
         "plain": "前置结果异常时改变后续计划。"
       }
     ],
-    "why": "来源 Microsoft 第 7 课 Planning 讲任务拆解与依赖；复杂任务不能一步硬做。",
-    "structure": "step1 → parallel(step2,step3) → step4\n异常 → 终止/重规划",
+    "why": "来源核心原理：面对复杂目标(如“分析竞品最近三个月的定价变动并生成应对促销方案”),单步工具调用无法完 成。Microsoft AI Agents for Beginners 第 7 课(Planning Design) 指出,高阶智能体必须具备“先规划后 执行(Plan-and-Solve)”能力:先将宏大目标拆解为包含明确输入输出依赖关系的子任务列表(Sub-task DAG),标记哪些子任务可以并行执行(Parallel)、哪些必须串行等待(Sequential);且每完成一步后根据 实际返回结果动态修正后续计划(Re-planning)。",
+    "structure": "设计 Planner 输出的结构化 JSON 计划表格式,每个子任务需包含 step_id、tool_name、depends_on (前置依赖数组)与 expected_output;\n准确区分并行阶段(工商信息查询、新闻检索、官网产品抓取互不依赖,可并发执行)与串行汇总阶 段(\n5 分);\n设计动态重规划分支:若第一步工商核查发现该公司“已注销或被列为失信被执行人”,立即终止后续 新闻检索并直接输出⻛险拦截报告。",
     "check": "depends_on 为空和不为空分别意味着什么？"
   }
 }

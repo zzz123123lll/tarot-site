@@ -15,7 +15,7 @@
     "criteria": [
       {
         "id": "c1",
-        "label": "设计 Generator → Validator → Refiner 三步元认知工作流",
+        "label": "设计 Generator → Validator → Refiner 三步元认知工作流;",
         "weight": 4.0,
         "type": "term_groups",
         "groups": [
@@ -41,7 +41,7 @@
       },
       {
         "id": "c2",
-        "label": "在 Validator 阶段同时设置【确定性规则检查】（如拦截 DROP/DELETE/UPDATE、强制检查是否包含 LIMIT与分区日期过滤）与【语义对齐检查】（核对是否遗漏业务口径）",
+        "label": "在 Validator 阶段同时设置【确定性规则检查】(如拦截 DROP/DELETE/UPDATE、强制检查是否包含 LIMIT 与分区日期过滤)与【语义对⻬检查】(核对是否遗漏业务口径)(",
         "weight": 5.5,
         "type": "term_groups",
         "groups": [
@@ -77,7 +77,7 @@
       },
       {
         "id": "c3",
-        "label": "定义带着数据库报错堆栈(Error Traceback)回传给 Refiner 的结构化修复模板与最大重试上限",
+        "label": "5 分);",
         "weight": 3.0,
         "type": "term_groups",
         "groups": [
@@ -139,16 +139,15 @@
     }
   ],
   "reading": {
-    "quote": "Microsoft 第 9 课 Metacognition：让 Agent 观察、评估并修正自己的推理；本关 PDF 把它工程化为 Generator → Validator → Refiner 三步。",
+    "quote": "为什么顶级 Agent 写出的代码或报告极少出错?因为它们不会把第一次生成的结果直接丢给用戶!",
     "points": [
-      "生成之后需要校验，不能把第一次生成直接当作最终结果。",
-      "校验可以包含确定性规则和语义核对。",
-      "失败时把错误反馈给 Refiner 做定向修复。",
-      "重试要有上限，超过上限转人工处理。"
+      "设计 Generator → Validator → Refiner 三步元认知工作流;",
+      "在 Validator 阶段同时设置【确定性规则检查】(如拦截 DROP/DELETE/UPDATE、强制检查是否包含 LIMIT 与分区日期过滤)与【语义对⻬检查】(核对是否遗漏业务口径)(",
+      "5 分);"
     ],
-    "guide": "读第 9 课后，把练习里的 Validator 分成“硬规则”和“语义核对”两类，Refiner 只负责按反馈修复。",
-    "example": "PDF 第 5 关的 SQL 安全拦截、LIMIT/分区检查、报错回传和最大重试次数就是本关来源例子。",
-    "takeaway": "可靠 Agent 不是一次写对，而是有校验和返工。",
+    "guide": "先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。",
+    "example": "本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。",
+    "takeaway": "本关先记住：设计 Generator → Validator → Refiner 三步元认知工作流;",
     "refs": [
       [
         "Microsoft · Lesson 9 Metacognition",
@@ -161,17 +160,17 @@
     ]
   },
   "explain": {
-    "summary": "这一关只解决一件事：生成之后加 Validator 质检，再让 Refiner 按错误修复。",
+    "summary": "这一关只解决一件事：为什么顶级 Agent 写出的代码或报告极少出错?因为它们不会把第一次生成的结果直接丢给用戶!",
     "bullets": [
-      "Generator 产出草稿",
-      "Validator 做硬规则 + 语义检查",
-      "Refiner 按报错修复，重试有上限"
+      "设计 Generator → Validator → Refiner 三步元认知工作流;",
+      "在 Validator 阶段同时设置【确定性规则检查】(如拦截 DROP/DELETE/UPDATE、强制检查是否包含 LIMIT 与分区日期过滤)与【语义对⻬检查】(核对是否遗漏业务口径)(",
+      "5 分);"
     ],
     "example": {
       "label": "PDF 本关任务（来源）",
-      "input": "来源任务：业务人员用自然语言让 Agent 查询数据库生成月度销售报表，直接执行模型生成的 SQL 极易出现字段名拼写错误、漏加时间过滤条件或慢查询锁表。",
-      "walkthrough": "来源要求拦截 DROP/DELETE、检查 LIMIT 和分区日期、核对业务口径；报错回传 Refiner，最多重试。",
-      "output": "参考答案是三步自愈循环（见本关原文）。"
+      "input": "业务人员用自然语言让 Agent 查询数据库生成月度销售报表,直接执行模型生成的 SQL 极易出 现字段名拼写错误、漏加时间过滤条件或慢查询锁表。",
+      "walkthrough": "来源要求：设计 Generator → Validator → Refiner 三步元认知工作流; / 在 Validator 阶段同时设置【确定性规则检查】(如拦截 DROP/DELETE/UPDATE、强制检查是否包含 LIMIT 与分区日期过滤)与【语义对⻬检查】(核对是否遗漏业务口径)( / 5 分);",
+      "output": "参考答案：参考答案:Text-to-SQL 报表智能体的 Actor-Critic 自愈闭环 def run_self_healing_sql_agent(user_query: str, max_retries: int = 3): draft_sql = sql_generator_agent.run(user_query) for attempt in range(1, max_retries + 1): # 1. 确定性安全与性能护栏检查"
     },
     "terms": [
       {
@@ -183,8 +182,8 @@
         "plain": "根据错误反馈修复结果的组件。"
       }
     ],
-    "why": "来源 Microsoft 第 9 课讲元认知设计模式；本关把它工程化为三步。",
-    "structure": "Generator → Validator（规则+语义） → Refiner → 重试/转人工",
+    "why": "来源核心原理：为什么顶级 Agent 写出的代码或报告极少出错?因为它们不会把第一次生成的结果直接丢给用戶! 根据 Microsoft AI Agents for Beginners 第 9 课(Metacognition) 与 Agentic AI Masterclass 的 Execution Hooks 机制,元认知(Metacognition)是指让 Agent 具备“自我监控、自我评估与自我纠错”能力。核心实 现模式是构建 Actor-Critic(执行者-审查者)内部循环:当 Actor 生成初稿或 SQL/Python 代码后,先由验证 器(确定性单元测试 / 语法检查器 + Critic 审查提示词)按评分标准打分;只有全部指标达标才放行输出,否 则将具体报错信息喂回给 Actor 进行定向修复(上限 2‒3 轮)。",
+    "structure": "设计 Generator → Validator → Refiner 三步元认知工作流;\n在 Validator 阶段同时设置【确定性规则检查】(如拦截 DROP/DELETE/UPDATE、强制检查是否包含 LIMIT 与分区日期过滤)与【语义对⻬检查】(核对是否遗漏业务口径)(\n5 分);\n定义带着数据库报错堆栈(Error Traceback)回传给 Refiner 的结构化修复模板与最大重试上限。",
     "check": "为什么校验要同时包含硬规则和语义核对？"
   }
 }

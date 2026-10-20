@@ -11,9 +11,9 @@
 <meta property="og:description" content="本关练习：设计带强制角标溯源与防脑补护栏的 SimpleRAG 生成模板。">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=10">
-<script src="/ai/notes/notes.js?v=6" defer></script>
-<script type="module" src="/ai/notes/practice.mjs?v=4"></script>
+<link rel="stylesheet" href="/ai/notes/notes.css?v=11">
+<script src="/ai/notes/notes.js?v=7" defer></script>
+<script type="module" src="/ai/notes/practice.mjs?v=5"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要内容</a>
@@ -45,36 +45,40 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">这一关只解决一件事：让回答的每个事实都带来源角标；没有证据就拒答。</p>
-      <ul class="explain-bullets"><li>context 标签带 id 和 source</li><li>事实断言后加 [来源X]</li><li>无相关片段固定拒答</li></ul>
+      <p class="explain-summary">这一关只解决一件事：在 StepByStep-RAG 的第三模块 SimpleRAG 中,检索出 Top-K 文档块后,如何把它们与用戶问题 拼装成最终 Prompt 决定了生成的可靠性。许多初学者只是简单地把检索文本拼在问题前面,结果大模型把自 己的预训练幻觉和知识库事实混在一起输出,用戶根本分不清哪句话出自哪份文件。</p>
+      <ul class="explain-bullets"><li>用带 id 与 source 属性的 XML 标签(如 &lt;context id=&quot;1&quot; source=&quot;医保手册_p</li><li>pdf&quot;&gt;)结构化封装检 索片段(</li><li>5 分);</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
       <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>来源任务：你将检索到的 3 个带编号的知识库片段注入大模型，要求模型回答客户的医保报销比例问题，且每一句结论都必须标明具体出处编号。</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求每个事实断言末尾加 [来源X]；所有片段都不相关时输出固定拒答，不带虚假引用。</p><h3>输出</h3><p>参考答案是带来源角标的生成模板（见本关原文）。</p></div>
+        <div class="explain-code"><span>输入</span><pre>你将检索到的 3 个带编号的知识库片段注入大模型,要求模型回答客戶的医保报销比例问题, 且每一句结论都必须标明具体出处编号。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：用带 id 与 source 属性的 XML 标签(如 &lt;context id=&quot;1&quot; source=&quot;医保手册_p / pdf&quot;&gt;)结构化封装检 索片段( / 5 分);</p><h3>输出</h3><p>参考答案：参考答案:带角标溯源与证据冲突披露的 SimpleRAG 生成模板 请严格依据下方 &lt;retrieved_contexts&gt; 标签内提供的知识库片段回答用戶问题。 &lt;retrieved_contexts&gt; &lt;context id=&quot;1&quot; source=&quot;员工补充医疗手册_2026.pdf#第12页&quot;&gt; 门诊医疗费用报销:起付线为每年累计 500 元,超过起付线部分按 90% 比例报销,年度封顶 2 万元。 &lt;/context&gt; &lt;con</p></div>
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>引用溯源</dt><dd>把回答绑定到具体检索片段。</dd></div><div><dt>拒答</dt><dd>证据不足时明确说无法回答。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源 SimpleRAG 强调基于检索上下文回答；无法从上下文生成时给出回退路径。</p><h3>结构长什么样</h3><pre class="explain-structure">&lt;context id=&quot;1&quot; source=&quot;...&quot;&gt;片段&lt;/context&gt;
-断言 [来源1]
-无证据 → 固定拒答</pre></div>
+        <div><h3>为什么有效</h3><p>来源核心原理：在 StepByStep-RAG 的第三模块 SimpleRAG 中,检索出 Top-K 文档块后,如何把它们与用戶问题 拼装成最终 Prompt 决定了生成的可靠性。许多初学者只是简单地把检索文本拼在问题前面,结果大模型把自 己的预训练幻觉和知识库事实混在一起输出,用戶根本分不清哪句话出自哪份文件。高标准的 RAG 生成指令 必须强制执行“封闭域作答 + 句末角标溯源(如 `[来源1: 文件名#页码]`) + 证据冲突显式披露”。</p><h3>结构长什么样</h3><pre class="explain-structure">用带 id 与 source 属性的 XML 标签(如 &lt;context id=&quot;1&quot; source=&quot;医保手册_p
+pdf&quot;&gt;)结构化封装检 索片段(
+5 分);
+强制规定输出中的每一个事实断言末尾必须紧跟 [来源X] 角标引用(
+5 分);
+规定当所有检索片段与问题无关时,直接输出固定拒答话术且不附带虚假引用(
+5 分)。</pre></div>
       </div>
       <p class="explain-check">为什么没有证据时不能随便引用一个最像的片段？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
-    <p class="reading-quote">SimpleRAG 把语义检索与生成结合：先检索相关文档，再让模型基于检索到的上下文回答；如果上下文中没有答案，系统会引导用户联系 helpdesk。</p>
+    <p class="reading-quote">在 StepByStep-RAG 的第三模块 SimpleRAG 中,检索出 Top-K 文档块后,如何把它们与用戶问题 拼装成最终 Prompt 决定了生成的可靠性。许多初学者只是简单地把检索文本拼在问题前面,结果大模型把自 己的预训练幻觉和知识库事实混在一起输出,用戶根本分不清哪句话出自哪份文件。</p>
     <div class="reading-grid">
-      <div><h3>逐点读懂</h3><ol class="reading-points"><li>RAG 的回答应基于检索上下文，而不是只靠模型记忆。</li><li>来源明确区分“能从文档回答”和“文档中没有答案”的情况。</li><li>没有答案时不硬答，而是给出回退路径。</li><li>这为练习中的引用角标和固定拒答话术提供了来源依据。</li></ol></div>
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>用带 id 与 source 属性的 XML 标签(如 &lt;context id=&quot;1&quot; source=&quot;医保手册_p</li><li>pdf&quot;&gt;)结构化封装检 索片段(</li><li>5 分);</li></ol></div>
       <div>
-        <h3>怎么对应本关练习</h3><p>本关的 [来源X] 和拒答要求，对应 SimpleRAG 的“基于上下文回答 + 无答案回退”原则。</p>
-        <h3>例子在哪</h3><p>来源 README 描述 SimpleRAG 在无法从上下文生成答案时引导 helpdesk，这就是本关的回退例子。</p>
+        <h3>怎么对应本关练习</h3><p>先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。</p>
+        <h3>例子在哪</h3><p>本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。</p>
       </div>
     </div>
-    <p class="reading-takeaway">RAG 的价值在于有依据地回答，也在于有依据地拒答。</p>
+    <p class="reading-takeaway">本关先记住：用带 id 与 source 属性的 XML 标签(如 &lt;context id=&quot;1&quot; source=&quot;医保手册_p</p>
     <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/gurucharanmk/StepByStep-RAG/blob/main/SimpleRAG/README.md" target="_blank" rel="noopener">StepByStep-RAG · SimpleRAG ↗</a><span>PDF 第 5 关</span></div>
   </section>
     <section class="lesson"><h3>核心原理</h3><p>在 StepByStep-RAG 的第三模块 SimpleRAG 中,检索出 Top-K 文档块后,如何把它们与用戶问题 拼装成最终 Prompt 决定了生成的可靠性。许多初学者只是简单地把检索文本拼在问题前面,结果大模型把自 己的预训练幻觉和知识库事实混在一起输出,用戶根本分不清哪句话出自哪份文件。高标准的 RAG 生成指令 必须强制执行“封闭域作答 + 句末角标溯源(如 `[来源1: 文件名#页码]`) + 证据冲突显式披露”。</p><h2>第 5 关实操练习题：设计带强制角标溯源与防脑补护栏的 SimpleRAG 生成模板</h2><h3>任务背景</h3><p>你将检索到的 3 个带编号的知识库片段注入大模型,要求模型回答客戶的医保报销比例问题, 且每一句结论都必须标明具体出处编号。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 用带 id 与 source 属性的 XML 标签(如 &lt;context id="1" source="医保手册_p</p><p>2.pdf"&gt;)结构化封装检 索片段(</p><p>4.5 分);</p><p>2. 强制规定输出中的每一个事实断言末尾必须紧跟 [来源X] 角标引用(</p><p>4.5 分);</p><p>3. 规定当所有检索片段与问题无关时,直接输出固定拒答话术且不附带虚假引用(</p><p>3.5 分)。</p></section>

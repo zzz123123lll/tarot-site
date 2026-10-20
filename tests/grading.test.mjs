@@ -69,8 +69,62 @@ console.log('PASS needs_review/manual');
 
 // 归一化：大小写、空白不影响术语检查。
 assert.equal(normalize('  System   Prompt '), 'system prompt');
-assert.equal(ENGINE_VERSION, '1.0.0');
+assert.equal(ENGINE_VERSION, '1.1.0');
 console.log('PASS normalize/version');
+
+// 结构校验：JSON 字段、数值、正则和代码静态结构。
+const jsonExercise = {
+  minLength: 10,
+  criteria: [{
+    id: 'j1', label: 'JSON 结构', weight: 10, type: 'term_groups',
+    groups: [{ label: 'messages', terms: ['messages'] }],
+    validator: { type: 'json', required: ['messages', 'messages.0.role'] }
+  }]
+};
+const jsonPass = grade(jsonExercise, '{"messages":[{"role":"user","content":"hi"}]}');
+assert.equal(jsonPass.status, 'pass');
+assert.equal(jsonPass.score, 10);
+const jsonFail = grade(jsonExercise, 'hello there');
+assert.equal(jsonFail.status, 'fail');
+assert.ok(jsonFail.missing.some((m) => m.includes('JSON')));
+console.log('PASS json validator');
+
+const numExercise = {
+  minLength: 1,
+  criteria: [{
+    id: 'n1', label: '数值', weight: 10, type: 'term_groups',
+    groups: [{ label: '结果', terms: ['结果'] }],
+    validator: { type: 'numeric', expected: 4.9, tolerance: 0.1 }
+  }]
+};
+assert.equal(grade(numExercise, '结果约为 4.9GB').status, 'pass');
+assert.equal(grade(numExercise, '结果约为 16GB').status, 'partial');
+console.log('PASS numeric validator');
+
+const codeExercise = {
+  minLength: 1,
+  criteria: [{
+    id: 'c1', label: '代码结构', weight: 10, type: 'term_groups',
+    groups: [{ label: '函数', terms: ['def'] }],
+    validator: { type: 'code_static', required: ['def', 'return'], forbidden: ['import os'] }
+  }]
+};
+assert.equal(grade(codeExercise, 'def f():\n    return 0').status, 'pass');
+assert.equal(grade(codeExercise, 'def f():\n    import os\n    return 0').status, 'partial');
+console.log('PASS code_static validator');
+
+const regexExercise = {
+  minLength: 1,
+  criteria: [{
+    id: 'r1', label: '引用格式', weight: 10, type: 'term_groups',
+    groups: [{ label: '引用', terms: ['引用'] }],
+    validator: { type: 'regex', patterns: [{ label: '方括号引用', pattern: '\\[\\d+\\]' }] }
+  }]
+};
+assert.equal(grade(regexExercise, '这里引用 [1]').status, 'pass');
+assert.equal(grade(regexExercise, '这里引用资料').status, 'partial');
+console.log('PASS regex validator');
+
 console.log('ALL GRADING TESTS PASSED');
 
 const objective = { question: 'q', options: ['a', 'b', 'c', 'd'], answer: 2, explanation: 'c is right' };
