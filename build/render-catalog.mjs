@@ -94,7 +94,7 @@ ${shellHeader()}
 </section>
 <section class="wrap section">
   <div class="section-head"><div><p class="label">PDF / 完整版</p><h2>网页免费，PDF 留邮箱。</h2></div></div>
-  <div class="pdf-strip"><p>三套完整练习册 PDF，整理好后按顺序发。只用于个人学习，不转售。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">留邮箱获取 PDF ↗</a></div>
+  <div class="pdf-strip"><p>十五册完整 PDF，整理好后按顺序发。只用于个人学习，不转售。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%20%E5%AE%9E%E6%88%98%E9%80%9A%E5%85%B3%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">留邮箱获取 PDF ↗</a></div>
 </section>
 </main>
 ${footer()}

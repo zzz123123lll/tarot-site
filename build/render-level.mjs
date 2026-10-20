@@ -202,7 +202,7 @@ export function renderLevel(trackId, levelId) {
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
       <div class="answer-body">${level.referenceAnswerHtml}</div>
     </details>
-    <div class="pdf-box"><p>网页永久免费。三套完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="${pdf}">留邮箱，获取完整 PDF ↗</a></div>
+    <div class="pdf-box"><p>网页永久免费。完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="${pdf}">留邮箱，获取完整 PDF ↗</a></div>
     <div class="nextprev">${prevLink}${nextLink}</div>
   </article>
 </div>
