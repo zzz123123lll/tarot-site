@@ -47,7 +47,7 @@ function head(title, description, canonical) {
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:image" content="/og-knowledge.png">
 <link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/ai/notes/notes.css?v=9">
+<link rel="stylesheet" href="/ai/notes/notes.css?v=10">
 <script src="/ai/notes/notes.js?v=6" defer></script>
 </head>`;
 }

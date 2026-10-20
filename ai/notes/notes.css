@@ -261,3 +261,164 @@ footer a:hover{color:var(--ink)}
 .book-intro-body{padding:0 18px 18px;border-top:1px solid var(--line)}
 .book-intro-body h3{font-size:15px;margin:18px 0 8px;letter-spacing:-.02em}
 .book-intro-body p{font-size:13px;line-height:1.85;color:var(--ink-2);margin:0 0 10px}
+
+/* ===== 宣纸水墨主题（轻度武侠）：只换皮，不改结构 ===== */
+:root{
+  --bg:#F3EDE1;
+  --surface:#FBF6EA;
+  --card:#FBF6EA;
+  --ink:#211D16;
+  --ink-2:#3C352A;
+  --muted:#776B58;
+  --line:#D9CDB8;
+  --line-strong:#B9A88C;
+  --accent:#A33A2B;
+  --accent-ink:#FFF8EC;
+  --seal:#9C2E22;
+  --code:#211D18;
+  --radius:1px;
+  --serif:"Songti SC","STSong","Noto Serif SC","Source Han Serif SC","SimSun",serif;
+  --sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+}
+html{background:var(--bg)}
+body{
+  background:
+    radial-gradient(1100px 560px at 82% -12%, rgba(158,124,72,.13), transparent 62%),
+    radial-gradient(760px 420px at 0% 8%, rgba(163,58,43,.055), transparent 58%),
+    repeating-linear-gradient(0deg, rgba(74,54,30,.026) 0 1px, transparent 1px 5px),
+    var(--bg);
+  color:var(--ink);
+}
+::selection{background:var(--seal);color:#FFF8EC}
+a{text-underline-offset:3px}
+.skip{background:var(--surface);border-color:var(--line-strong)}
+.top{border-bottom:1px solid var(--line-strong);position:relative}
+.top::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:1px;background:var(--line);opacity:.75}
+.brand{
+  font-family:var(--serif);
+  font-weight:600;
+  letter-spacing:-.02em;
+  font-size:24px;
+}
+.brand small{letter-spacing:.2em;color:var(--muted)}
+.nav{color:var(--muted)}
+.nav a:hover{color:var(--seal)}
+.nav .cta{border-bottom-color:var(--seal);color:var(--ink)}
+.read-progress{background:var(--seal)}
+h1,h2,h3,.hero h1,.section-head h2,.track-head h1,.practice-head h2{
+  font-family:var(--serif);
+  font-weight:600;
+  letter-spacing:-.035em;
+}
+.hero h1{font-size:clamp(44px,6.6vw,84px);line-height:1.1;letter-spacing:-.035em}
+.hero .label,.label,.kicker,.meta,.hero-meta{letter-spacing:.13em}
+.hero{position:relative;border-bottom:1px solid var(--line-strong)}
+.hero::after{
+  content:"神功";
+  writing-mode:vertical-rl;
+  position:absolute;
+  right:7.5%;
+  top:58px;
+  padding:10px 6px;
+  border:2px solid var(--seal);
+  color:var(--seal);
+  font-family:var(--serif);
+  font-size:14px;
+  letter-spacing:.22em;
+  line-height:1;
+  opacity:.78;
+  transform:rotate(-4deg);
+  pointer-events:none;
+}
+.hero .lead,.track-head .lead,.lede{color:var(--muted)}
+.section{border-bottom:1px solid var(--line)}
+.section-head border-bottom:0;
+.section-head a{border-bottom-color:var(--line-strong)}
+.hero-actions .btn{
+  background:var(--ink);border-color:var(--ink);color:#FBF6EA;
+  padding:13px 20px;letter-spacing:.04em;
+}
+.hero-actions .btn:hover{background:var(--seal);border-color:var(--seal);color:#FFF8EC}
+.btn{background:var(--ink);border-color:var(--ink);color:#FBF6EA}
+.btn:hover{background:var(--seal);border-color:var(--seal);color:#FFF8EC}
+.btn--ghost{background:transparent;color:var(--ink);border-color:var(--line-strong)}
+.btn--ghost:hover{border-color:var(--seal);color:var(--seal)}
+.series-card{
+  background:linear-gradient(180deg,rgba(255,252,244,.86),rgba(246,238,223,.72));
+  border-color:var(--line);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.35);
+}
+.series-card:hover{border-color:var(--line-strong);transform:translateY(-2px)}
+.series-card .num{color:var(--seal);letter-spacing:.13em}
+.series-card h3{font-family:var(--serif);font-size:23px;font-weight:600;letter-spacing:-.02em}
+.series-card p{color:var(--muted)}
+.series-card .meta-line{color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+.level-list{border-top:1px solid var(--line-strong)}
+.level-row{border-bottom:1px solid var(--line)}
+.level-row:hover h3{color:var(--seal)}
+.level-row h3{font-family:var(--serif);font-weight:600;font-size:19px;letter-spacing:-.015em}
+.level-row .num{color:var(--seal)}
+.track-head{border-bottom:1px solid var(--line-strong)}
+.track-head .source{color:var(--muted)}
+.track-progress .bar{background:#E3D7C2}
+.track-progress .bar i{background:var(--seal)}
+.level-nav a.current,.level-nav a.current .num{color:var(--seal)}
+.side-cta{background:rgba(251,246,234,.7);border-color:var(--line)}
+.side-cta a{color:var(--seal);border-bottom-color:var(--seal)}
+.meta{border-top-color:var(--line-strong);border-bottom-color:var(--line)}
+.meta .meta-jump{color:var(--seal);border-bottom-color:var(--seal)}
+.lesson p,.answer-body p,.lesson li,.answer-body li{
+  font-family:var(--serif);color:var(--ink-2);font-size:16.5px;line-height:1.95;
+}
+.lesson h2,.lesson h3,.answer-body h2,.answer-body h3,.practice-head h2,.explain-walk p,.explain-two p,.reading-grid p,.reading-points li,.explain-bullets li,.explain-terms dd,.book-intro-body p{
+  font-family:var(--serif);
+}
+.lesson blockquote{border-left-color:var(--seal)}
+.lesson code,.answer-body code{font-family:var(--mono)}
+.code-block{background:var(--code);border-color:#3A3226}
+.code-block code{color:#E9DFCF}
+.copy-btn{background:#2B251C;border-color:#4A4031;color:#C9B99F}
+.copy-btn:hover{color:#FFF8EC;border-color:#8B6B45}
+.answer{background:var(--surface);border-color:var(--line-strong)}
+.answer summary .plus{color:var(--seal)}
+.pdf-box,.pdf-strip{background:rgba(251,246,234,.7);border-color:var(--line)}
+.pdf-box a,.pdf-strip a{color:var(--seal);border-bottom-color:var(--seal)}
+.source-reading{border-top:2px solid var(--ink);border-bottom-color:var(--line-strong)}
+.reading-quote{font-family:var(--serif);font-weight:600;letter-spacing:-.02em}
+.reading-grid{border-color:var(--line)}
+.reading-grid h3{color:var(--muted)}
+.reading-takeaway{color:var(--ink)!important;border-left-color:var(--seal)}
+.reading-refs a:hover{color:var(--seal);border-color:var(--seal)}
+.explain-fast{background:rgba(251,246,234,.8);border-color:var(--line-strong)}
+.explain-deep{background:#F7F0E2;border-color:var(--line)}
+.explain-summary{font-family:var(--serif);font-weight:600;letter-spacing:-.025em}
+.explain-code pre,.explain-structure{background:#F3EBDC;border-color:var(--line)}
+.explain-terms dt{color:var(--seal)}
+.explain-check{border-left-color:var(--seal)}
+.check-answer{background:var(--seal);border-color:var(--seal);color:#FFF8EC}
+.check-answer:hover{opacity:.9}
+.practice-write textarea{background:#FBF6EA;border-color:var(--line);color:var(--ink)}
+.practice-write textarea:focus{border-color:var(--seal)}
+.practice-check,.knowledge-check,.mistake-card,.review-empty{background:rgba(251,246,234,.8);border-color:var(--line)}
+.objective-option{background:#F7EFE1;border-color:var(--line)}
+.objective-option:hover{border-color:var(--seal)}
+.objective-option.is-correct{border-color:#8EA58B;background:#EEF3E8}
+.objective-option.is-wrong{border-color:#D8A394;background:#FBF0EA}
+.check-item.is-pass .check-state{color:#4F6B4A;border-color:#AFC3A8;background:#EEF3E8}
+.check-item.is-fail .check-state{color:var(--seal);border-color:#D8A394;background:#FBF0EA}
+.check-item.is-partial .check-state{color:#7A5A00;border-color:#D8C28B;background:#FBF4DF}
+.practice-score b{color:var(--seal)}
+.check-item input,.done-check input,.objective-option input{accent-color:var(--seal)}
+.mistake-head a,.mistake-head a:hover{color:var(--seal)}
+.mistake-option.is-correct{border-color:#8EA58B;background:#EEF3E8}
+.mistake-option.is-wrong{border-color:#D8A394;background:#FBF0EA}
+.objective-index::before{color:var(--seal)}
+.book-intro{background:rgba(251,246,234,.8);border-color:var(--line-strong)}
+.book-intro-body h3{font-family:var(--serif);font-weight:600}
+footer{color:var(--muted);border-top:1px solid var(--line)}
+footer a:hover{color:var(--seal)}
+.breadcrumb{color:var(--muted)}
+.breadcrumb .sep{color:var(--line-strong)}
+.article p a,.lesson a{color:var(--seal)}
+@media(max-width:900px){.hero::after{display:none}}
