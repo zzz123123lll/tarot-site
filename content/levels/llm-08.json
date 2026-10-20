@@ -55,7 +55,9 @@
               "lora-modules"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功07 · 模型定制与算力量化 · 第8关 · 通关要求 1",
+        "sourceQuote": "写出完整的 vllm serve 启动命令及核心生产参数(含量化格式、最大上下文长度限制、GPU 显存预留 比例、前缀缓存开关与多 LoRA 模块路径映射)(5.5 分)"
       },
       {
         "id": "c2",
@@ -87,7 +89,9 @@
               "base_url"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功07 · 模型定制与算力量化 · 第8关 · 通关要求 2",
+        "sourceQuote": "写出客戶端通过标准 OpenAI Python SDK 指定调用其中“法务审查 LoRA”的请求代码(3.5 分)"
       },
       {
         "id": "c3",
@@ -115,7 +119,9 @@
               "吞吐"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功07 · 模型定制与算力量化 · 第8关 · 通关要求 3",
+        "sourceQuote": "明确定义生产压测必看的三大核心性能指标:TTFT(首 Token 延迟)、TPOT / ITL(Token 间生成延 迟) 与 Throughput(系统总吞吐 tokens/s) 的含义与达标基线(3.5 分)。 全关卡标准"
       }
     ]
   },
@@ -130,7 +136,9 @@
         "模型蒸馏"
       ],
       "answer": 0,
-      "explanation": "来源：PagedAttention 借鉴虚拟内存分页，拆分非连续 KV Cache 块。"
+      "explanation": "来源：PagedAttention 借鉴虚拟内存分页，拆分非连续 KV Cache 块。",
+      "sourceRef": "内功07 · 模型定制与算力量化 · 第8关 · 核心原理",
+      "sourceQuote": "在 AI Infra Engineer Learning (Mod 110) 与 mlabonne/llm-course 的 The LLM Engineer 篇章 中,很多初学者用 Hugging Face 原生的 model.generate() 套个 FastAPI 就敢上线,结果 5 个用戶同时访问就 把服务器"
     },
     {
       "id": "q2",
@@ -142,7 +150,9 @@
         "关闭缓存"
       ],
       "answer": 0,
-      "explanation": "来源：只要有一条请求结束，下一排队请求立即补位。"
+      "explanation": "来源：只要有一条请求结束，下一排队请求立即补位。",
+      "sourceRef": "内功07 · 模型定制与算力量化 · 第8关 · 通关要求 1",
+      "sourceQuote": "写出完整的 vllm serve 启动命令及核心生产参数(含量化格式、最大上下文长度限制、GPU 显存预留 比例、前缀缓存开关与多 LoRA 模块路径映射)(5.5 分)"
     },
     {
       "id": "q3",
@@ -154,7 +164,9 @@
         "显存利用率"
       ],
       "answer": 0,
-      "explanation": "来源：TTFT=Time To First Token；TPOT/ITL 是 token 间延迟。"
+      "explanation": "来源：TTFT=Time To First Token；TPOT/ITL 是 token 间延迟。",
+      "sourceRef": "内功07 · 模型定制与算力量化 · 第8关 · 通关要求 2",
+      "sourceQuote": "写出客戶端通过标准 OpenAI Python SDK 指定调用其中“法务审查 LoRA”的请求代码(3.5 分)"
     }
   ],
   "reading": {
@@ -209,5 +221,11 @@
     "structure": "写出完整的 vllm serve 启动命令及核心生产参数(含量化格式、最大上下文长度限制、GPU 显存预留 比例、前缀缓存开关与多 LoRA 模块路径映射)(\n5 分);\n写出客戶端通过标准 OpenAI Python SDK 指定调用其中“法务审查 LoRA”的请求代码(\n5 分);\n明确定义生产压测必看的三大核心性能指标:TTFT(首 Token 延迟)、TPOT / ITL(Token 间生成延 迟) 与 Throughput(系统总吞吐 tokens/s) 的含义与达标基线(\n5 分)。 全关卡标准",
     "check": "压测时 TTFT、TPOT/ITL、Throughput 分别衡量什么？"
   },
-  "next": ""
+  "next": "",
+  "provenance": {
+    "book": "内功07 · 模型定制与算力量化",
+    "level": "第8关",
+    "sourceFile": "内功07_模型定制与算力量化原理_SFT微调与LoRA及GGUF-AWQ量化.pdf",
+    "coreQuote": "在 AI Infra Engineer Learning (Mod 110) 与 mlabonne/llm-course 的 The LLM Engineer 篇章 中,很多初学者用 Hugging Face 原生的 model.generate() 套个 FastAPI 就敢上线,结果 5 个用戶同时访问就 把服务器卡死!生产环境必须使用 vLLM 或 TGI 等专用推理引擎。vLLM 之所以能将吞吐量提升 10‒20 倍,核 心在于…"
+  }
 }

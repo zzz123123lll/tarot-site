@@ -27,7 +27,9 @@
               "终端"
             ]
           }
-        ]
+        ],
+        "sourceRef": "AI 现代必修课 · Claude Code 与 OpenAI Codex · 本册原文",
+        "sourceQuote": "这一册只解决一件事：网页版 AI 被困在浏览器沙盒，终端 Agent 才能直接操作你电脑上的文件、命令和项目"
       },
       {
         "id": "c2",
@@ -43,7 +45,9 @@
               "sandbox"
             ]
           }
-        ]
+        ],
+        "sourceRef": "AI 现代必修课 · Claude Code 与 OpenAI Codex · 本册原文",
+        "sourceQuote": "这一册只解决一件事：网页版 AI 被困在浏览器沙盒，终端 Agent 才能直接操作你电脑上的文件、命令和项目"
       },
       {
         "id": "c3",
@@ -59,7 +63,9 @@
               "规范"
             ]
           }
-        ]
+        ],
+        "sourceRef": "AI 现代必修课 · Claude Code 与 OpenAI Codex · 本册原文",
+        "sourceQuote": "这一册只解决一件事：网页版 AI 被困在浏览器沙盒，终端 Agent 才能直接操作你电脑上的文件、命令和项目"
       }
     ]
   },
@@ -74,7 +80,9 @@
         "词表太小"
       ],
       "answer": 0,
-      "explanation": "来源：浏览器沙盒无权访问宿主机文件系统。"
+      "explanation": "来源：浏览器沙盒无权访问宿主机文件系统。",
+      "sourceRef": "AI 现代必修课 · Claude Code 与 OpenAI Codex · 本册原文",
+      "sourceQuote": "这一册只解决一件事：网页版 AI 被困在浏览器沙盒，终端 Agent 才能直接操作你电脑上的文件、命令和项目"
     },
     {
       "id": "q2",
@@ -86,7 +94,9 @@
         "只用 CPU"
       ],
       "answer": 0,
-      "explanation": "来源：云端大脑 + 本地手脚。"
+      "explanation": "来源：云端大脑 + 本地手脚。",
+      "sourceRef": "AI 现代必修课 · Claude Code 与 OpenAI Codex · 本册原文",
+      "sourceQuote": "这一册只解决一件事：网页版 AI 被困在浏览器沙盒，终端 Agent 才能直接操作你电脑上的文件、命令和项目"
     },
     {
       "id": "q3",
@@ -98,7 +108,9 @@
         "生成图片"
       ],
       "answer": 0,
-      "explanation": "来源：用项目规范文件约束 Agent 行为。"
+      "explanation": "来源：用项目规范文件约束 Agent 行为。",
+      "sourceRef": "AI 现代必修课 · Claude Code 与 OpenAI Codex · 本册原文",
+      "sourceQuote": "这一册只解决一件事：网页版 AI 被困在浏览器沙盒，终端 Agent 才能直接操作你电脑上的文件、命令和项目"
     }
   ],
   "reading": {
@@ -149,5 +161,11 @@
     "structure": "云端模型 → 本地 Harness → 文件/终端/脚本 → 审批/沙盒 → 结果",
     "check": "为什么网页版 AI 不能直接在你的桌面创建文件？"
   },
-  "next": "tools-05"
+  "next": "tools-05",
+  "provenance": {
+    "book": "AI 现代必修课 · Claude Code 与 OpenAI Codex",
+    "level": "本册",
+    "sourceFile": "AI 现代必修课 · Claude Code 与 OpenAI Codex.pdf",
+    "coreQuote": "这一册只解决一件事：网页版 AI 被困在浏览器沙盒，终端 Agent 才能直接操作你电脑上的文件、命令和项目"
+  }
 }

@@ -40,7 +40,9 @@
               "增强"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功07 · 模型定制与算力量化 · 第4关 · 通关要求 1",
+        "sourceQuote": "针对实验1(过拟合),给出至少 3 项具体的参数调整或数据改进措施(4.5 分)"
       },
       {
         "id": "c2",
@@ -69,7 +71,9 @@
               "脏数据"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功07 · 模型定制与算力量化 · 第4关 · 通关要求 2",
+        "sourceQuote": "针对实验2(开局梯度爆炸 NaN),从学习率调度(Warmup)、梯度裁剪(max_grad_norm)与脏数据 排查三个角度给出修复方案(4.5 分)"
       },
       {
         "id": "c3",
@@ -99,7 +103,9 @@
               "价格表"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功07 · 模型定制与算力量化 · 第4关 · 通关要求 3",
+        "sourceQuote": "针对实验3,从“SFT 与 RAG 的职责边界”角度解释为什么用 500 条问答微调记不住精确价格表,并 给出正确架构建议(3.5 分)。 第三阶段:对⻬与融合篇(第 5‒6 关)——偏好对⻬(DPO/GRPO)、模型融合 与科学评测"
       }
     ]
   },
@@ -114,7 +120,9 @@
         "数据太少"
       ],
       "answer": 0,
-      "explanation": "来源：验证 Loss 在第 1 个 epoch 后反弹是典型过拟合。"
+      "explanation": "来源：验证 Loss 在第 1 个 epoch 后反弹是典型过拟合。",
+      "sourceRef": "内功07 · 模型定制与算力量化 · 第4关 · 核心原理",
+      "sourceQuote": "在 LLM Fine-Tuning Hands-on Lab 与 mlabonne/llm-course 中,启动微调脚本只是开始,能否 读懂 Weights & Biases (WandB) 或 TensorBoard 上的 Train Loss(训练损失)、Eval Loss(验证损失)与 Gradient Nor"
     },
     {
       "id": "q2",
@@ -126,7 +134,9 @@
         "batch 太小"
       ],
       "answer": 0,
-      "explanation": "来源：NaN 常与学习率过大、缺少 Warmup 或脏数据有关。"
+      "explanation": "来源：NaN 常与学习率过大、缺少 Warmup 或脏数据有关。",
+      "sourceRef": "内功07 · 模型定制与算力量化 · 第4关 · 通关要求 1",
+      "sourceQuote": "针对实验1(过拟合),给出至少 3 项具体的参数调整或数据改进措施(4.5 分)"
     },
     {
       "id": "q3",
@@ -138,7 +148,9 @@
         "压缩模型"
       ],
       "answer": 0,
-      "explanation": "来源：SFT 教回答格式与风格；新事实应走 RAG。"
+      "explanation": "来源：SFT 教回答格式与风格；新事实应走 RAG。",
+      "sourceRef": "内功07 · 模型定制与算力量化 · 第4关 · 通关要求 2",
+      "sourceQuote": "针对实验2(开局梯度爆炸 NaN),从学习率调度(Warmup)、梯度裁剪(max_grad_norm)与脏数据 排查三个角度给出修复方案(4.5 分)"
     }
   ],
   "reading": {
@@ -193,5 +205,11 @@
     "structure": "针对实验1(过拟合),给出至少 3 项具体的参数调整或数据改进措施(\n5 分);\n针对实验2(开局梯度爆炸 NaN),从学习率调度(Warmup)、梯度裁剪(max_grad_norm)与脏数据 排查三个角度给出修复方案(\n5 分);\n针对实验3,从“SFT 与 RAG 的职责边界”角度解释为什么用 500 条问答微调记不住精确价格表,并 给出正确架构建议(\n5 分)。 第三阶段:对⻬与融合篇(第 5‒6 关)——偏好对⻬(DPO/GRPO)、模型融合 与科学评测",
     "check": "验证集 Loss 反弹通常说明什么？"
   },
-  "next": "llm-05"
+  "next": "llm-05",
+  "provenance": {
+    "book": "内功07 · 模型定制与算力量化",
+    "level": "第4关",
+    "sourceFile": "内功07_模型定制与算力量化原理_SFT微调与LoRA及GGUF-AWQ量化.pdf",
+    "coreQuote": "在 LLM Fine-Tuning Hands-on Lab 与 mlabonne/llm-course 中,启动微调脚本只是开始,能否 读懂 Weights & Biases (WandB) 或 TensorBoard 上的 Train Loss(训练损失)、Eval Loss(验证损失)与 Gradient Norm(梯度范数) 曲线,才是区分新手与老手的分水岭: 典型过拟合(Overfitting):Train Loss 一路陡降…"
+  }
 }

@@ -27,7 +27,9 @@
               "notebooklm"
             ]
           }
-        ]
+        ],
+        "sourceRef": "AI 现代必修课 · 零代码个人智库与深度研究 · 本册原文",
+        "sourceQuote": "这一册只解决一件事：向内深读私有资料用源接地智库，向外做全网考证用 Deep Research"
       },
       {
         "id": "c2",
@@ -43,7 +45,9 @@
               "研究"
             ]
           }
-        ]
+        ],
+        "sourceRef": "AI 现代必修课 · 零代码个人智库与深度研究 · 本册原文",
+        "sourceQuote": "这一册只解决一件事：向内深读私有资料用源接地智库，向外做全网考证用 Deep Research"
       },
       {
         "id": "c3",
@@ -59,7 +63,9 @@
               "角标"
             ]
           }
-        ]
+        ],
+        "sourceRef": "AI 现代必修课 · 零代码个人智库与深度研究 · 本册原文",
+        "sourceQuote": "这一册只解决一件事：向内深读私有资料用源接地智库，向外做全网考证用 Deep Research"
       }
     ]
   },
@@ -74,7 +80,9 @@
         "本地训练"
       ],
       "answer": 0,
-      "explanation": "来源强调只从挂载文档中提取依据，并给出内联引用。"
+      "explanation": "来源强调只从挂载文档中提取依据，并给出内联引用。",
+      "sourceRef": "AI 现代必修课 · 零代码个人智库与深度研究 · 本册原文",
+      "sourceQuote": "这一册只解决一件事：向内深读私有资料用源接地智库，向外做全网考证用 Deep Research"
     },
     {
       "id": "q2",
@@ -86,7 +94,9 @@
         "本地部署"
       ],
       "answer": 0,
-      "explanation": "来源：Deep Research 是向外做全网深度考证的 Agent。"
+      "explanation": "来源：Deep Research 是向外做全网深度考证的 Agent。",
+      "sourceRef": "AI 现代必修课 · 零代码个人智库与深度研究 · 本册原文",
+      "sourceQuote": "这一册只解决一件事：向内深读私有资料用源接地智库，向外做全网考证用 Deep Research"
     },
     {
       "id": "q3",
@@ -98,7 +108,9 @@
         "不需要检索"
       ],
       "answer": 0,
-      "explanation": "普通聊天框会混用参数、缺少可核验引用。"
+      "explanation": "普通聊天框会混用参数、缺少可核验引用。",
+      "sourceRef": "AI 现代必修课 · 零代码个人智库与深度研究 · 本册原文",
+      "sourceQuote": "这一册只解决一件事：向内深读私有资料用源接地智库，向外做全网考证用 Deep Research"
     }
   ],
   "reading": {
@@ -149,5 +161,11 @@
     "structure": "私有资料 → 源接地智库\\n公开网络 → Deep Research 多跳循环 → 引用核验",
     "check": "为什么把 PDF 塞进普通聊天框仍然可能得到“很像但不对”的回答？"
   },
-  "next": "tools-03"
+  "next": "tools-03",
+  "provenance": {
+    "book": "AI 现代必修课 · 零代码个人智库与深度研究",
+    "level": "本册",
+    "sourceFile": "AI 现代必修课 · 零代码个人智库与深度研究.pdf",
+    "coreQuote": "这一册只解决一件事：向内深读私有资料用源接地智库，向外做全网考证用 Deep Research"
+  }
 }

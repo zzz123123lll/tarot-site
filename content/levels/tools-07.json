@@ -28,7 +28,9 @@
               "cron"
             ]
           }
-        ]
+        ],
+        "sourceRef": "AI 现代必修课 · n8n 跨软件自动化 · 本册原文",
+        "sourceQuote": "这一册只解决一件事：n8n 用事件触发器主动监听外部世界，用 JSON Items 数组自动逐条处理数据"
       },
       {
         "id": "c2",
@@ -44,7 +46,9 @@
               "数组"
             ]
           }
-        ]
+        ],
+        "sourceRef": "AI 现代必修课 · n8n 跨软件自动化 · 本册原文",
+        "sourceQuote": "这一册只解决一件事：n8n 用事件触发器主动监听外部世界，用 JSON Items 数组自动逐条处理数据"
       },
       {
         "id": "c3",
@@ -60,7 +64,9 @@
               "集成"
             ]
           }
-        ]
+        ],
+        "sourceRef": "AI 现代必修课 · n8n 跨软件自动化 · 本册原文",
+        "sourceQuote": "这一册只解决一件事：n8n 用事件触发器主动监听外部世界，用 JSON Items 数组自动逐条处理数据"
       }
     ]
   },
@@ -75,7 +81,9 @@
         "完全相同"
       ],
       "answer": 0,
-      "explanation": "来源：Dify 偏 AI 内部推理，n8n 偏主动事件与 400+ 软件连接。"
+      "explanation": "来源：Dify 偏 AI 内部推理，n8n 偏主动事件与 400+ 软件连接。",
+      "sourceRef": "AI 现代必修课 · n8n 跨软件自动化 · 本册原文",
+      "sourceQuote": "这一册只解决一件事：n8n 用事件触发器主动监听外部世界，用 JSON Items 数组自动逐条处理数据"
     },
     {
       "id": "q2",
@@ -87,7 +95,9 @@
         "本地文件"
       ],
       "answer": 0,
-      "explanation": "来源：Webhook 接收外部事件，Cron 做定时。"
+      "explanation": "来源：Webhook 接收外部事件，Cron 做定时。",
+      "sourceRef": "AI 现代必修课 · n8n 跨软件自动化 · 本册原文",
+      "sourceQuote": "这一册只解决一件事：n8n 用事件触发器主动监听外部世界，用 JSON Items 数组自动逐条处理数据"
     },
     {
       "id": "q3",
@@ -99,7 +109,9 @@
         "只取第一个"
       ],
       "answer": 0,
-      "explanation": "来源：节点默认逐 item 执行；要汇总需 Aggregate。"
+      "explanation": "来源：节点默认逐 item 执行；要汇总需 Aggregate。",
+      "sourceRef": "AI 现代必修课 · n8n 跨软件自动化 · 本册原文",
+      "sourceQuote": "这一册只解决一件事：n8n 用事件触发器主动监听外部世界，用 JSON Items 数组自动逐条处理数据"
     }
   ],
   "reading": {
@@ -150,5 +162,11 @@
     "structure": "Trigger → 抓取/读取 → N 个 Item 自动逐条处理 → Aggregate → 通知/写入",
     "check": "为什么 n8n 里不写 for 循环，20 篇文章也会被处理 20 次？"
   },
-  "next": "tools-08"
+  "next": "tools-08",
+  "provenance": {
+    "book": "AI 现代必修课 · n8n 跨软件自动化",
+    "level": "本册",
+    "sourceFile": "AI 现代必修课 · n8n 跨软件自动化.pdf",
+    "coreQuote": "这一册只解决一件事：n8n 用事件触发器主动监听外部世界，用 JSON Items 数组自动逐条处理数据"
+  }
 }

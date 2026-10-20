@@ -47,7 +47,9 @@
               "引用"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功06 · AI Agent 智能体 · 第7关 · 通关要求 1",
+        "sourceQuote": "制定工具返回值的【入窗截断与摘要规则】(如超过 1,000 字符的原始日志先提取错误码与关键堆栈 行,原始全量文件仅存本地路径引用)(5 分)"
       },
       {
         "id": "c2",
@@ -75,7 +77,9 @@
               "试错"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功06 · AI Agent 智能体 · 第7关 · 通关要求 2",
+        "sourceQuote": "设计历史轮次的【滑动窗口 + 里程碑状态压缩(State Compaction)】策略,保留已验证结论、丢弃冗 余试错过程(4.5 分)"
       },
       {
         "id": "c3",
@@ -97,7 +101,9 @@
               "200字"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功06 · AI Agent 智能体 · 第7关 · 通关要求 3",
+        "sourceQuote": "说明如何利用子智能体上下文隔离(Sub-agent Context Isolation)让主控 Agent 只接收最终 200 字 排查结论(3 分)"
       }
     ]
   },
@@ -113,7 +119,9 @@
       ],
       "answer": 0,
       "explanation": "长日志先提取错误码和关键堆栈，原始文件只留路径引用，避免上下文爆炸。",
-      "id": "q1"
+      "id": "q1",
+      "sourceRef": "内功06 · AI Agent 智能体 · 第7关 · 核心原理",
+      "sourceQuote": "在 Microsoft AI Agents for Beginners 第 11 课 ( Agentic Protocols ) 与 第 12 课 ( Context Engineering) 以及 12-Factor Agents 中,生产级智能体工程有两大前沿基石: 标准化协议(MCP / A2A / NLWeb)"
     },
     {
       "question": "工具返回超长日志时，应该先？",
@@ -125,7 +133,9 @@
       ],
       "answer": 0,
       "explanation": "控制上下文预算，先保留错误码和关键堆栈，原始文件存路径。",
-      "id": "q2"
+      "id": "q2",
+      "sourceRef": "内功06 · AI Agent 智能体 · 第7关 · 通关要求 1",
+      "sourceQuote": "制定工具返回值的【入窗截断与摘要规则】(如超过 1,000 字符的原始日志先提取错误码与关键堆栈 行,原始全量文件仅存本地路径引用)(5 分)"
     },
     {
       "question": "子智能体上下文隔离的主要好处是？",
@@ -137,7 +147,9 @@
       ],
       "answer": 0,
       "explanation": "隔离让子任务内部的试错不污染主控上下文。",
-      "id": "q3"
+      "id": "q3",
+      "sourceRef": "内功06 · AI Agent 智能体 · 第7关 · 通关要求 2",
+      "sourceQuote": "设计历史轮次的【滑动窗口 + 里程碑状态压缩(State Compaction)】策略,保留已验证结论、丢弃冗 余试错过程(4.5 分)"
     }
   ],
   "reading": {
@@ -187,5 +199,11 @@
     "why": "来源核心原理：在 Microsoft AI Agents for Beginners 第 11 课 ( Agentic Protocols ) 与 第 12 课 ( Context Engineering) 以及 12-Factor Agents 中,生产级智能体工程有两大前沿基石: 标准化协议(MCP / A2A / NLWeb):通过 Model Context Protocol (MCP) 统一大模型与外部数据源/工 具(GitHub、数据库、本地文件)的连接标准;通过 Agent-to-Agent (A2A) 协议实现跨框架智能体之间 的发现与协作。 上下文工程(Context Engineering):模型的上下文窗口不是垃圾桶!如 12-Factor Agents(Own your context window) 所述,必须对传入模型的 Token 进行精细化筛选、修剪与隔离——当工具返回长达 5 万字的原始网页或日志时,先在沙盒中提取关键摘要再塞入主对话上下文,避免“大海捞针”导致注意力 稀释和高昂 Token 账单。",
     "structure": "制定工具返回值的【入窗截断与摘要规则】(如超过 1,000 字符的原始日志先提取错误码与关键堆栈 行,原始全量文件仅存本地路径引用);\n设计历史轮次的【滑动窗口 + 里程碑状态压缩(State Compaction)】策略,保留已验证结论、丢弃冗 余试错过程(\n5 分);\n说明如何利用子智能体上下文隔离(Sub-agent Context Isolation)让主控 Agent 只接收最终 200 字 排查结论。",
     "check": "为什么不能把全部历史都塞进上下文？"
+  },
+  "provenance": {
+    "book": "内功06 · AI Agent 智能体",
+    "level": "第7关",
+    "sourceFile": "内功06_AI_Agent智能体与工具调用原理_ReAct状态机与多智能体协同.pdf",
+    "coreQuote": "在 Microsoft AI Agents for Beginners 第 11 课 ( Agentic Protocols ) 与 第 12 课 ( Context Engineering) 以及 12-Factor Agents 中,生产级智能体工程有两大前沿基石: 标准化协议(MCP / A2A / NLWeb):通过 Model Context Protocol (MCP) 统一大模型与外部数据源/工 具(GitHub、数据库…"
   }
 }

@@ -37,7 +37,9 @@
               "refiner"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功06 · AI Agent 智能体 · 第5关 · 通关要求 1",
+        "sourceQuote": "设计 Generator → Validator → Refiner 三步元认知工作流(4 分)"
       },
       {
         "id": "c2",
@@ -73,7 +75,9 @@
               "业务口径"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功06 · AI Agent 智能体 · 第5关 · 通关要求 2",
+        "sourceQuote": "在 Validator 阶段同时设置【确定性规则检查】(如拦截 DROP/DELETE/UPDATE、强制检查是否包含 LIMIT 与分区日期过滤)与【语义对⻬检查】(核对是否遗漏业务口径)(5.5 分)"
       },
       {
         "id": "c3",
@@ -95,7 +99,9 @@
               "上限"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功06 · AI Agent 智能体 · 第5关 · 通关要求 3",
+        "sourceQuote": "定义带着数据库报错堆栈(Error Traceback)回传给 Refiner 的结构化修复模板与最大重试上限(3 分)"
       }
     ]
   },
@@ -111,7 +117,9 @@
       ],
       "answer": 0,
       "explanation": "Validator 拦截危险 SQL、检查日期/LIMIT 等硬规则，并核对业务口径。",
-      "id": "q1"
+      "id": "q1",
+      "sourceRef": "内功06 · AI Agent 智能体 · 第5关 · 核心原理",
+      "sourceQuote": "为什么顶级 Agent 写出的代码或报告极少出错?因为它们不会把第一次生成的结果直接丢给用戶!"
     },
     {
       "question": "Generator → Validator → Refiner 中，确定性规则检查的例子是？",
@@ -123,7 +131,9 @@
       ],
       "answer": 0,
       "explanation": "危险语句、LIMIT、分区过滤等可以靠硬规则检查。",
-      "id": "q2"
+      "id": "q2",
+      "sourceRef": "内功06 · AI Agent 智能体 · 第5关 · 通关要求 1",
+      "sourceQuote": "设计 Generator → Validator → Refiner 三步元认知工作流(4 分)"
     },
     {
       "question": "数据库报错堆栈应该怎么处理？",
@@ -135,7 +145,9 @@
       ],
       "answer": 0,
       "explanation": "真实报错是修复 SQL 的关键反馈，应进入下一轮修复。",
-      "id": "q3"
+      "id": "q3",
+      "sourceRef": "内功06 · AI Agent 智能体 · 第5关 · 通关要求 2",
+      "sourceQuote": "在 Validator 阶段同时设置【确定性规则检查】(如拦截 DROP/DELETE/UPDATE、强制检查是否包含 LIMIT 与分区日期过滤)与【语义对⻬检查】(核对是否遗漏业务口径)(5.5 分)"
     }
   ],
   "reading": {
@@ -185,5 +197,11 @@
     "why": "来源核心原理：为什么顶级 Agent 写出的代码或报告极少出错?因为它们不会把第一次生成的结果直接丢给用戶! 根据 Microsoft AI Agents for Beginners 第 9 课(Metacognition) 与 Agentic AI Masterclass 的 Execution Hooks 机制,元认知(Metacognition)是指让 Agent 具备“自我监控、自我评估与自我纠错”能力。核心实 现模式是构建 Actor-Critic(执行者-审查者)内部循环:当 Actor 生成初稿或 SQL/Python 代码后,先由验证 器(确定性单元测试 / 语法检查器 + Critic 审查提示词)按评分标准打分;只有全部指标达标才放行输出,否 则将具体报错信息喂回给 Actor 进行定向修复(上限 2‒3 轮)。",
     "structure": "设计 Generator → Validator → Refiner 三步元认知工作流;\n在 Validator 阶段同时设置【确定性规则检查】(如拦截 DROP/DELETE/UPDATE、强制检查是否包含 LIMIT 与分区日期过滤)与【语义对⻬检查】(核对是否遗漏业务口径)(\n5 分);\n定义带着数据库报错堆栈(Error Traceback)回传给 Refiner 的结构化修复模板与最大重试上限。",
     "check": "为什么校验要同时包含硬规则和语义核对？"
+  },
+  "provenance": {
+    "book": "内功06 · AI Agent 智能体",
+    "level": "第5关",
+    "sourceFile": "内功06_AI_Agent智能体与工具调用原理_ReAct状态机与多智能体协同.pdf",
+    "coreQuote": "为什么顶级 Agent 写出的代码或报告极少出错?因为它们不会把第一次生成的结果直接丢给用戶! 根据 Microsoft AI Agents for Beginners 第 9 课(Metacognition) 与 Agentic AI Masterclass 的 Execution Hooks 机制,元认知(Metacognition)是指让 Agent 具备“自我监控、自我评估与自我纠错”能力。核心实 现模式是构建 Actor-Cr…"
   }
 }

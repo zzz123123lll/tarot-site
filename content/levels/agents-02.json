@@ -43,7 +43,9 @@
           "required": [
             "name"
           ]
-        }
+        },
+        "sourceRef": "内功06 · AI Agent 智能体 · 第2关 · 通关要求 1",
+        "sourceQuote": "编写完整的 OpenAI/Pydantic 兼容 JSON Schema,包含工具名、详细调用前提说明(description) 与 required 必填字段列表(4.5 分)"
       },
       {
         "id": "c2",
@@ -75,7 +77,9 @@
               "enum"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功06 · AI Agent 智能体 · 第2关 · 通关要求 2",
+        "sourceQuote": "为 order_id、refund_amount_cny(设定单笔上限说明)、reason_category(设定枚举值 enum)三个参数 提供精确类型与业务约束(5 分)"
       },
       {
         "id": "c3",
@@ -97,7 +101,9 @@
               "缺失"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功06 · AI Agent 智能体 · 第2关 · 通关要求 3",
+        "sourceQuote": "设计当参数校验失败时返回给 Agent 的结构化错误提示格式,引导 Agent 向用戶追问缺失信息而非盲 目报错(3 分)。 第二阶段:核心能力篇(第 3‒4 关)——目标规划拆解与智能体记忆系统"
       }
     ]
   },
@@ -113,7 +119,9 @@
       ],
       "answer": 0,
       "explanation": "模型靠 description 判断工具适用条件和调用方式；它直接影响选错率。",
-      "id": "q1"
+      "id": "q1",
+      "sourceRef": "内功06 · AI Agent 智能体 · 第2关 · 核心原理",
+      "sourceQuote": "根据 Microsoft AI Agents for Beginners 第 4 课 与 LLM Engineering 工具调用实验,大模型本身并 不 会 直 接 运 行 代 码 或 查数 据 库 , 而 是 根 据 你 提 供 的 工 具 函 数 签 名 与 文 档 字 符 串 ( Docstring / JSON"
     },
     {
       "question": "JSON Schema 中 required 字段表示？",
@@ -125,7 +133,9 @@
       ],
       "answer": 0,
       "explanation": "required 明确哪些参数不能缺失。",
-      "id": "q2"
+      "id": "q2",
+      "sourceRef": "内功06 · AI Agent 智能体 · 第2关 · 通关要求 1",
+      "sourceQuote": "编写完整的 OpenAI/Pydantic 兼容 JSON Schema,包含工具名、详细调用前提说明(description) 与 required 必填字段列表(4.5 分)"
     },
     {
       "question": "参数校验失败时，Agent 应该？",
@@ -137,7 +147,9 @@
       ],
       "answer": 0,
       "explanation": "结构化错误能引导 Agent 向用户追问，而不是乱填参数。",
-      "id": "q3"
+      "id": "q3",
+      "sourceRef": "内功06 · AI Agent 智能体 · 第2关 · 通关要求 2",
+      "sourceQuote": "为 order_id、refund_amount_cny(设定单笔上限说明)、reason_category(设定枚举值 enum)三个参数 提供精确类型与业务约束(5 分)"
     }
   ],
   "reading": {
@@ -187,5 +199,11 @@
     "why": "来源核心原理：根据 Microsoft AI Agents for Beginners 第 4 课 与 LLM Engineering 工具调用实验,大模型本身并 不 会 直 接 运 行 代 码 或 查数 据 库 , 而 是 根 据 你 提 供 的 工 具 函 数 签 名 与 文 档 字 符 串 ( Docstring / JSON Schema),输出结构化的函数名与 JSON 参数,由宿主程序执行后再将结果返回给模型。工具调用成败的 80% 取决于函数描述是否清晰说明了“何时该调、何时不该调”以及参数枚举/格式约束。 踩坑 Schema vs. 高手 Schema 对比: 新手踩坑写法:定义一个函数 def query_db(sql: str),描述仅写“查询数据库”。结果模型自己瞎猜表名 和字段名,拼出错误的 SQL 甚至引发删表⻛险。 高手强类型工具定义:将模糊的通用查询拆解为语义明确的业务原子工具(如 get_order_status_by_id(order_id: str)),并在参数描述中注明正则格式(如“必须是以 ORD- 开头的 12 位订单号”)及错误返回值格式。",
     "structure": "编写完整的 OpenAI/Pydantic 兼容 JSON Schema,包含工具名、详细调用前提说明(description) 与 required 必填字段列表(\n5 分);\n为 order_id、refund_amount_cny(设定单笔上限说明)、reason_category(设定枚举值 enum)三个参数 提供精确类型与业务约束;\n设计当参数校验失败时返回给 Agent 的结构化错误提示格式,引导 Agent 向用戶追问缺失信息而非盲 目报错。 第二阶段:核心能力篇(第 3‒4 关)——目标规划拆解与智能体记忆系统",
     "check": "为什么 description 和 required 会直接影响工具调用？"
+  },
+  "provenance": {
+    "book": "内功06 · AI Agent 智能体",
+    "level": "第2关",
+    "sourceFile": "内功06_AI_Agent智能体与工具调用原理_ReAct状态机与多智能体协同.pdf",
+    "coreQuote": "根据 Microsoft AI Agents for Beginners 第 4 课 与 LLM Engineering 工具调用实验,大模型本身并 不 会 直 接 运 行 代 码 或 查数 据 库 , 而 是 根 据 你 提 供 的 工 具 函 数 签 名 与 文 档 字 符 串 ( Docstring / JSON Schema),输出结构化的函数名与 JSON 参数,由宿主程序执行后再将结果返回给模型。工具调用成败的 80% 取决…"
   }
 }

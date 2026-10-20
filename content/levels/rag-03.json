@@ -44,7 +44,9 @@
               "is_active"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功05 · RAG 检索增强生成 · 第3关 · 通关要求 1",
+        "sourceQuote": "设计文档入库(Upsert)时的三维结构:id、document_text、embedding 与 metadata(含版本号、生效 状态 is_active、适用部门)(4.5 分)"
       },
       {
         "id": "c2",
@@ -60,7 +62,9 @@
               "过滤"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功05 · RAG 检索增强生成 · 第3关 · 通关要求 2",
+        "sourceQuote": "编写检索查询逻辑,在计算向量相似度前先通过 where={\"is_active\": True} 过滤掉历史废止文档(5 分)"
       },
       {
         "id": "c3",
@@ -82,7 +86,9 @@
               "归一化"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功05 · RAG 检索增强生成 · 第3关 · 通关要求 3",
+        "sourceQuote": "说明为什么查询向量(Query Embedding)与文档入库向量必须使用完全相同的 Embedding 模型与 归一化方式(3 分)"
       }
     ]
   },
@@ -98,7 +104,9 @@
       ],
       "answer": 0,
       "explanation": "先做元数据过滤可以避免历史版本或失效制度进入候选集。",
-      "id": "q1"
+      "id": "q1",
+      "sourceRef": "内功05 · RAG 检索增强生成 · 第3关 · 核心原理",
+      "sourceQuote": "在 StepByStep-RAG 的第二模块 SemanticSeek 与 AI Infra Engineer Learning (Mod 110) 中,传 统的 Ctrl+F 或关键词搜索在面对“用戶问:电脑连不上公司内网怎么办”而知识库原文写的是“企业 VPN 客 戶端认证失败排查指南”时,会因为字面词汇零重合而完"
     },
     {
       "question": "检索前按 is_active 过滤，主要为了？",
@@ -110,7 +118,9 @@
       ],
       "answer": 0,
       "explanation": "先过滤失效制度，避免旧版本进入候选集。",
-      "id": "q2"
+      "id": "q2",
+      "sourceRef": "内功05 · RAG 检索增强生成 · 第3关 · 通关要求 1",
+      "sourceQuote": "设计文档入库(Upsert)时的三维结构:id、document_text、embedding 与 metadata(含版本号、生效 状态 is_active、适用部门)(4.5 分)"
     },
     {
       "question": "版本号与生效状态元数据的作用是？",
@@ -122,7 +132,9 @@
       ],
       "answer": 0,
       "explanation": "元数据让检索能按版本、部门、生效状态做精确过滤。",
-      "id": "q3"
+      "id": "q3",
+      "sourceRef": "内功05 · RAG 检索增强生成 · 第3关 · 通关要求 2",
+      "sourceQuote": "编写检索查询逻辑,在计算向量相似度前先通过 where={\"is_active\": True} 过滤掉历史废止文档(5 分)"
     }
   ],
   "reading": {
@@ -172,5 +184,11 @@
     "why": "来源核心原理：在 StepByStep-RAG 的第二模块 SemanticSeek 与 AI Infra Engineer Learning (Mod 110) 中,传 统的 Ctrl+F 或关键词搜索在面对“用戶问:电脑连不上公司内网怎么办”而知识库原文写的是“企业 VPN 客 戶端认证失败排查指南”时,会因为字面词汇零重合而完全搜不到结果。语义检索(Semantic Search)通过 将文本块编码为稠密向量并存入向量数据库(如 Chroma、Qdrant、Weaviate),同时绑定结构化元数据过滤 条件(Metadata Filtering,如 department == \"IT\" 且 year >= 2025),实现“既懂弦外之音、又守精确边界” 的高效检索。",
     "structure": "设计文档入库(Upsert)时的三维结构:id、document_text、embedding 与 metadata(含版本号、生效 状态 is_active、适用部门)(\n5 分);\n编写检索查询逻辑,在计算向量相似度前先通过 where={\"is_active\": True} 过滤掉历史废止文档;\n说明为什么查询向量(Query Embedding)与文档入库向量必须使用完全相同的 Embedding 模型与 归一化方式。",
     "check": "为什么过滤要发生在相似度计算之前？"
+  },
+  "provenance": {
+    "book": "内功05 · RAG 检索增强生成",
+    "level": "第3关",
+    "sourceFile": "内功05_RAG检索增强生成原理_让AI拥有外挂知识库的底层逻辑.pdf",
+    "coreQuote": "在 StepByStep-RAG 的第二模块 SemanticSeek 与 AI Infra Engineer Learning (Mod 110) 中,传 统的 Ctrl+F 或关键词搜索在面对“用戶问:电脑连不上公司内网怎么办”而知识库原文写的是“企业 VPN 客 戶端认证失败排查指南”时,会因为字面词汇零重合而完全搜不到结果。语义检索(Semantic Search)通过 将文本块编码为稠密向量并存入向量数据库(如 Chroma…"
   }
 }

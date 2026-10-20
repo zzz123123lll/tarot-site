@@ -125,7 +125,17 @@ export function renderLevel(trackId, levelId) {
     </div>
   </section>` : '';
 
-  const page = `<!doctype html>
+  const ld = `<script type="application/ld+json">${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'LearningResource',
+  name: level.title,
+  description: level.summary,
+  url: 'https://gongjuhe.top/ai/notes/' + track.id + '/' + String(level.level).padStart(2, '0'),
+  inLanguage: 'zh-CN',
+  learningResourceType: 'article',
+  isPartOf: { '@type': 'Course', name: track.title, url: 'https://gongjuhe.top/ai/notes/' + track.id + '/' }
+})}</script>`;
+const page = `<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
@@ -137,13 +147,14 @@ export function renderLevel(trackId, levelId) {
 <meta property="og:title" content="${esc(level.title)} — ${esc(track.title)}">
 <meta property="og:description" content="${esc(level.summary)}">
 <meta property="og:image" content="https://gongjuhe.top/og-knowledge.png?v=2"
-<meta property="og:image:alt" content="AI神功：内功心法 × 神兵利器，15 册 36 关">>
+<meta property="og:image:alt" content="AI神功：内功心法 × 神兵利器，15 册 36 关">
 <link rel="icon" href="/favicon.ico">
 <link rel="stylesheet" href="/ai/notes/notes.css?v=12">
 <script src="/ai/notes/notes.js?v=8" defer></script>
-<script type="module" src="/ai/notes/practice.mjs?v=6"></script>
+<script type="module" src="/ai/notes/practice.mjs?v=7"></script>
 </head>
 <body>
+${ld}
 <a class="skip" href="#main">跳到主要内容</a>
 <div class="read-progress"></div>
 <header class="wrap top">

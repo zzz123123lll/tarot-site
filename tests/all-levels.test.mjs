@@ -59,8 +59,10 @@ for (const tf of trackFiles) {
     assert(Array.isArray(level.reading.points) && level.reading.points.length >= 3, level.id + ' reading points');
     assert(Array.isArray(level.reading.refs) && level.reading.refs.length >= 1, level.id + ' reading refs');
     assert(Array.isArray(level.knowledgeChecks) && level.knowledgeChecks.length === 3, level.id + ' knowledgeChecks');
+    assert(level.provenance && level.provenance.book && level.provenance.sourceFile, level.id + ' provenance');
     level.knowledgeChecks.forEach((q) => {
       assert(q.id && q.question && q.explanation, level.id + ' knowledgeCheck fields');
+      assert(q.sourceRef && q.sourceQuote && q.sourceQuote.length > 10, level.id + ' knowledgeCheck source');
       assert(Array.isArray(q.options) && q.options.length === 4, level.id + ' knowledgeCheck options');
       assert(Number.isInteger(q.answer) && q.answer >= 0 && q.answer < 4, level.id + ' knowledgeCheck answer');
       assert.equal(gradeObjective(q, q.answer).status, 'correct', level.id + ' objective correct');
@@ -68,6 +70,7 @@ for (const tf of trackFiles) {
     });
     assert(level.exercise && level.exercise.minLength > 0, level.id + ' exercise');
     assert(level.exercise.criteria.length === 3, level.id + ' criteria count');
+    level.exercise.criteria.forEach((c) => assert(c.sourceRef && c.sourceQuote, level.id + ' criterion source'));
 
     const expected = Number(track.scoreTotal) || (track.id === 'prompt' ? 10 : 12.5);
     const total = level.exercise.criteria.reduce((sum, c) => sum + Number(c.weight), 0);
@@ -103,6 +106,7 @@ for (const tf of trackFiles) {
     assert(html.includes('30 SECONDS'), level.id + ' 30s layer');
     assert(html.includes('3 MINUTES'), level.id + ' 3min layer');
     assert(html.includes('explain-summary'), level.id + ' explain summary');
+    assert(html.includes('application/ld+json'), level.id + ' level JSON-LD');
   }
 }
 
@@ -111,6 +115,7 @@ assert.equal((catalog.match(/data-series="/g) || []).length, 2, 'index series ca
 assert(catalog.includes('data-overall'), 'index overall progress');
 assert(catalog.includes('notes.js?v=8'), 'index script version');
 assert(catalog.includes('data-nav-toggle'), 'mobile nav toggle');
+assert(catalog.includes('application/ld+json'), 'index JSON-LD');
 for (const tf of trackFiles) {
   const track = JSON.parse(fs.readFileSync(path.join(tracksDir, tf), 'utf8'));
   const trackPage = fs.readFileSync(path.join(ROOT, 'ai/notes', track.id, 'index.html'), 'utf8');

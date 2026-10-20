@@ -50,7 +50,9 @@
           "required": [
             "messages"
           ]
-        }
+        },
+        "sourceRef": "内功07 · 模型定制与算力量化 · 第2关 · 通关要求 1",
+        "sourceQuote": "将该样本重构为包含 system、user、assistant 三角色的 ShareGPT/OpenAI 标准 JSON 数组格式(4.5 分)"
       },
       {
         "id": "c2",
@@ -77,7 +79,9 @@
               "结束符"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功07 · 模型定制与算力量化 · 第2关 · 通关要求 2",
+        "sourceQuote": "写出映射为 ChatML 模板后的完整纯文本字符串(必须显式包含 <|im_start|> 与 <|im_end|> 特殊标记) (4.5 分)"
       },
       {
         "id": "c3",
@@ -107,7 +111,9 @@
               "-100"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功07 · 模型定制与算力量化 · 第2关 · 通关要求 3",
+        "sourceQuote": "列出将数据集送入 SFTTrainer 前必做的 3 项数据清洗检查(如近重复去重 MinHash、长度截断检查、 低质回复过滤)(3.5 分)。 第二阶段:微调核心篇(第 3‒4 关)——LoRA/QLoRA 高效微调与训练曲线排障"
       }
     ]
   },
@@ -122,7 +128,9 @@
         "先删掉 system"
       ],
       "answer": 0,
-      "explanation": "来源引用：Always prioritize data quality over parameter optimization。"
+      "explanation": "来源引用：Always prioritize data quality over parameter optimization。",
+      "sourceRef": "内功07 · 模型定制与算力量化 · 第2关 · 核心原理",
+      "sourceQuote": "正如 mlabonne/llm-course 第 3‒4 章 所言:“在微调中,数据质量永远比堆砌超参数重要十倍 (Always prioritize data quality over parameter optimization)。”新手做微调最常踩的两个致命大坑: 对话模板(Chat Template)错配与结束"
     },
     {
       "id": "q2",
@@ -134,7 +142,9 @@
         "显存更小"
       ],
       "answer": 0,
-      "explanation": "来源：漏掉 eos_token，推理时不知道何时停止。"
+      "explanation": "来源：漏掉 eos_token，推理时不知道何时停止。",
+      "sourceRef": "内功07 · 模型定制与算力量化 · 第2关 · 通关要求 1",
+      "sourceQuote": "将该样本重构为包含 system、user、assistant 三角色的 ShareGPT/OpenAI 标准 JSON 数组格式(4.5 分)"
     },
     {
       "id": "q3",
@@ -146,7 +156,9 @@
         "只训练 embedding"
       ],
       "answer": 0,
-      "explanation": "来源：把 User/System 标签设为 -100，仅对 Assistant 输出计算 Loss。"
+      "explanation": "来源：把 User/System 标签设为 -100，仅对 Assistant 输出计算 Loss。",
+      "sourceRef": "内功07 · 模型定制与算力量化 · 第2关 · 通关要求 2",
+      "sourceQuote": "写出映射为 ChatML 模板后的完整纯文本字符串(必须显式包含 <|im_start|> 与 <|im_end|> 特殊标记) (4.5 分)"
     }
   ],
   "reading": {
@@ -201,5 +213,11 @@
     "structure": "将该样本重构为包含 system、user、assistant 三角色的 ShareGPT/OpenAI 标准 JSON 数组格式(\n5 分);\n写出映射为 ChatML 模板后的完整纯文本字符串(必须显式包含 <|im_start|> 与 <|im_end|> 特殊标记) (\n5 分);\n列出将数据集送入 SFTTrainer 前必做的 3 项数据清洗检查(如近重复去重 MinHash、长度截断检查、 低质回复过滤)(\n5 分)。 第二阶段:微调核心篇(第 3‒4 关)——LoRA/QLoRA 高效微调与训练曲线排障",
     "check": "如果漏掉 assistant 末尾的 EOS，推理时会发生什么？"
   },
-  "next": "llm-03"
+  "next": "llm-03",
+  "provenance": {
+    "book": "内功07 · 模型定制与算力量化",
+    "level": "第2关",
+    "sourceFile": "内功07_模型定制与算力量化原理_SFT微调与LoRA及GGUF-AWQ量化.pdf",
+    "coreQuote": "正如 mlabonne/llm-course 第 3‒4 章 所言:“在微调中,数据质量永远比堆砌超参数重要十倍 (Always prioritize data quality over parameter optimization)。”新手做微调最常踩的两个致命大坑: 对话模板(Chat Template)错配与结束符(EOS Token)丢失:基座模型与指令模型遵循严格的特殊控 制符格式(如 ChatML 的 <|im_start|…"
+  }
 }

@@ -18,6 +18,8 @@ jobs:
         run: node tests/grading.test.mjs
       - name: All 36 levels
         run: node tests/all-levels.test.mjs
+      - name: Internal links and assets
+        run: node tests/links.test.mjs
       - name: Rebuild from content
         run: node build/render-all.mjs
       - name: Generated pages must match content

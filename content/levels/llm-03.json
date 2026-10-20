@@ -47,7 +47,9 @@
               "gradient_checkpointing"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功07 · 模型定制与算力量化 · 第3关 · 通关要求 1",
+        "sourceQuote": "写出完整的 LoRA 配置字典(含 r、lora_alpha、target_modules 全 7 层挂载及 use_gradient_checkpointing)(5 分)"
       },
       {
         "id": "c2",
@@ -73,7 +75,9 @@
               "16"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功07 · 模型定制与算力量化 · 第3关 · 通关要求 2",
+        "sourceQuote": "通过调整 per_device_train_batch_size 与 gradient_accumulation_steps,在单步仅占极小显存的前提 下实现等效 Batch Size = 16(4.5 分)"
       },
       {
         "id": "c3",
@@ -100,7 +104,9 @@
               "epochs"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功07 · 模型定制与算力量化 · 第3关 · 通关要求 3",
+        "sourceQuote": "指定兼顾省显存与稳定性的优化器(如 adamw_8bit)、学习率(如 2e-4)与训练轮数 (num_train_epochs)(3 分)"
       }
     ]
   },
@@ -115,7 +121,9 @@
         "词表大小"
       ],
       "answer": 0,
-      "explanation": "来源：r 决定低秩矩阵容量，常规任务 16/32。"
+      "explanation": "来源：r 决定低秩矩阵容量，常规任务 16/32。",
+      "sourceRef": "内功07 · 模型定制与算力量化 · 第3关 · 核心原理",
+      "sourceQuote": "全量微调(Full Fine-Tuning)一个 8B 模型需要更新全部 80 亿参数,加上优化器状态(AdamW) 和梯度,往往需要 60GB‒80GB 显存。而根据 mlabonne/llm-course 的 SFT 与 Unsloth 教程,LoRA(Low- Rank Adaptation)冻结原模型权重 W,"
     },
     {
       "id": "q2",
@@ -127,7 +135,9 @@
         "等于词表大小"
       ],
       "answer": 0,
-      "explanation": "来源：业界经验法则是 lora_alpha = 1*r 或 2*r。"
+      "explanation": "来源：业界经验法则是 lora_alpha = 1*r 或 2*r。",
+      "sourceRef": "内功07 · 模型定制与算力量化 · 第3关 · 通关要求 1",
+      "sourceQuote": "写出完整的 LoRA 配置字典(含 r、lora_alpha、target_modules 全 7 层挂载及 use_gradient_checkpointing)(5 分)"
     },
     {
       "id": "q3",
@@ -139,7 +149,9 @@
         "不挂任何层"
       ],
       "answer": 0,
-      "explanation": "来源：建议挂 q/k/v/o/gate/up/down 七个线性投影层。"
+      "explanation": "来源：建议挂 q/k/v/o/gate/up/down 七个线性投影层。",
+      "sourceRef": "内功07 · 模型定制与算力量化 · 第3关 · 通关要求 2",
+      "sourceQuote": "通过调整 per_device_train_batch_size 与 gradient_accumulation_steps,在单步仅占极小显存的前提 下实现等效 Batch Size = 16(4.5 分)"
     }
   ],
   "reading": {
@@ -194,5 +206,11 @@
     "structure": "写出完整的 LoRA 配置字典(含 r、lora_alpha、target_modules 全 7 层挂载及 use_gradient_checkpointing);\n通过调整 per_device_train_batch_size 与 gradient_accumulation_steps,在单步仅占极小显存的前提 下实现等效 Batch Size = 16(\n5 分);\n指定兼顾省显存与稳定性的优化器(如 adamw_8bit)、学习率(如 2e-4)与训练轮数 (num_train_epochs)。",
     "check": "lora_alpha 和 r 的关系为什么会影响更新幅度？"
   },
-  "next": "llm-04"
+  "next": "llm-04",
+  "provenance": {
+    "book": "内功07 · 模型定制与算力量化",
+    "level": "第3关",
+    "sourceFile": "内功07_模型定制与算力量化原理_SFT微调与LoRA及GGUF-AWQ量化.pdf",
+    "coreQuote": "全量微调(Full Fine-Tuning)一个 8B 模型需要更新全部 80 亿参数,加上优化器状态(AdamW) 和梯度,往往需要 60GB‒80GB 显存。而根据 mlabonne/llm-course 的 SFT 与 Unsloth 教程,LoRA(Low- Rank Adaptation)冻结原模型权重 W,仅在旁路注入两个低秩矩阵 A 与 B(可训练参数量通常不到原模型的 1%‒2%);QLoRA 更进一步,将冻结的基座模型…"
+  }
 }

@@ -27,7 +27,9 @@
               "server"
             ]
           }
-        ]
+        ],
+        "sourceRef": "AI 现代必修课 · MCP 模型上下文协议 · 本册原文",
+        "sourceQuote": "这一册只解决一件事：MCP 用统一协议把 AI 和外部工具连接起来，本地走 stdio，远程走 Streamable HTTP"
       },
       {
         "id": "c2",
@@ -43,7 +45,9 @@
               "http"
             ]
           }
-        ]
+        ],
+        "sourceRef": "AI 现代必修课 · MCP 模型上下文协议 · 本册原文",
+        "sourceQuote": "这一册只解决一件事：MCP 用统一协议把 AI 和外部工具连接起来，本地走 stdio，远程走 Streamable HTTP"
       },
       {
         "id": "c3",
@@ -59,7 +63,9 @@
               "server"
             ]
           }
-        ]
+        ],
+        "sourceRef": "AI 现代必修课 · MCP 模型上下文协议 · 本册原文",
+        "sourceQuote": "这一册只解决一件事：MCP 用统一协议把 AI 和外部工具连接起来，本地走 stdio，远程走 Streamable HTTP"
       }
     ]
   },
@@ -74,7 +80,9 @@
         "压缩图片"
       ],
       "answer": 0,
-      "explanation": "来源：MCP 是 AI 界的 USB-C 扩展标准。"
+      "explanation": "来源：MCP 是 AI 界的 USB-C 扩展标准。",
+      "sourceRef": "AI 现代必修课 · MCP 模型上下文协议 · 本册原文",
+      "sourceQuote": "这一册只解决一件事：MCP 用统一协议把 AI 和外部工具连接起来，本地走 stdio，远程走 Streamable HTTP"
     },
     {
       "id": "q2",
@@ -86,7 +94,9 @@
         "FTP"
       ],
       "answer": 0,
-      "explanation": "来源：本地 stdio，远程 Streamable HTTP。"
+      "explanation": "来源：本地 stdio，远程 Streamable HTTP。",
+      "sourceRef": "AI 现代必修课 · MCP 模型上下文协议 · 本册原文",
+      "sourceQuote": "这一册只解决一件事：MCP 用统一协议把 AI 和外部工具连接起来，本地走 stdio，远程走 Streamable HTTP"
     },
     {
       "id": "q3",
@@ -98,7 +108,9 @@
         "训练数据"
       ],
       "answer": 0,
-      "explanation": "来源：MCP Server 暴露 tools/resources。"
+      "explanation": "来源：MCP Server 暴露 tools/resources。",
+      "sourceRef": "AI 现代必修课 · MCP 模型上下文协议 · 本册原文",
+      "sourceQuote": "这一册只解决一件事：MCP 用统一协议把 AI 和外部工具连接起来，本地走 stdio，远程走 Streamable HTTP"
     }
   ],
   "reading": {
@@ -149,5 +161,11 @@
     "structure": "Host → Client → Server（Resources/Tools/Prompts）\\n本地 stdio / 远程 Streamable HTTP",
     "check": "为什么 MCP stdio Server 里不能随便 print 调试信息？"
   },
-  "next": "tools-06"
+  "next": "tools-06",
+  "provenance": {
+    "book": "AI 现代必修课 · MCP 模型上下文协议",
+    "level": "本册",
+    "sourceFile": "AI 现代必修课 · MCP 模型上下文协议.pdf",
+    "coreQuote": "这一册只解决一件事：MCP 用统一协议把 AI 和外部工具连接起来，本地走 stdio，远程走 Streamable HTTP"
+  }
 }

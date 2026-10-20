@@ -43,7 +43,9 @@
               "json"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功05 · RAG 检索增强生成 · 第7关 · 通关要求 1",
+        "sourceQuote": "定义面向产业链研报的实体类型(如公司、核心原材料、产能指标、技术路线)与关系三元组 (Head, Relation, Tail) 抽取 JSON 格式(5 分)"
       },
       {
         "id": "c2",
@@ -72,7 +74,9 @@
               "global"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功05 · RAG 检索增强生成 · 第7关 · 通关要求 2",
+        "sourceQuote": "设计查询路由器(Query Router):准确判断哪些用戶提问应路由至标准向量/Local Search,哪些宏 观综述提问必须路由至 GraphRAG Global Search(4.5 分)"
       },
       {
         "id": "c3",
@@ -94,7 +98,9 @@
               "核心文档"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功05 · RAG 检索增强生成 · 第7关 · 通关要求 3",
+        "sourceQuote": "简述 GraphRAG 索引构建成本高的原因及如何仅对高价值核心文档启用图谱抽取(3 分)"
       }
     ]
   },
@@ -110,7 +116,9 @@
       ],
       "answer": 0,
       "explanation": "图谱擅长多跳关系与全局主题归纳，局部细节仍可用向量检索。",
-      "id": "q1"
+      "id": "q1",
+      "sourceRef": "内功05 · RAG 检索增强生成 · 第7关 · 核心原理",
+      "sourceQuote": "传统向量切片 RAG 擅长回答“局部细节查找题”,但在面对“跨全库全局归纳题”(例如:“综合这 500 份客戶投诉工单,今年最核心的三大系统性质量问题及其关联供应商分别是什么?”)时往往彻底失效, 因为 Top-5 局部片段根本无法代表全部 500 份文档的全貌!"
     },
     {
       "question": "GraphRAG 的 Global Search 更适合？",
@@ -122,7 +130,9 @@
       ],
       "answer": 0,
       "explanation": "图谱社区摘要擅长全局归纳；局部细节仍可用向量检索。",
-      "id": "q2"
+      "id": "q2",
+      "sourceRef": "内功05 · RAG 检索增强生成 · 第7关 · 通关要求 1",
+      "sourceQuote": "定义面向产业链研报的实体类型(如公司、核心原材料、产能指标、技术路线)与关系三元组 (Head, Relation, Tail) 抽取 JSON 格式(5 分)"
     },
     {
       "question": "图谱抽取成本高，合理的优化是？",
@@ -134,7 +144,9 @@
       ],
       "answer": 0,
       "explanation": "把昂贵的抽取限制在核心研报和长周期规范上，日常短资讯用轻量索引。",
-      "id": "q3"
+      "id": "q3",
+      "sourceRef": "内功05 · RAG 检索增强生成 · 第7关 · 通关要求 2",
+      "sourceQuote": "设计查询路由器(Query Router):准确判断哪些用戶提问应路由至标准向量/Local Search,哪些宏 观综述提问必须路由至 GraphRAG Global Search(4.5 分)"
     }
   ],
   "reading": {
@@ -184,5 +196,11 @@
     "why": "来源核心原理：传统向量切片 RAG 擅长回答“局部细节查找题”,但在面对“跨全库全局归纳题”(例如:“综合这 500 份客戶投诉工单,今年最核心的三大系统性质量问题及其关联供应商分别是什么?”)时往往彻底失效, 因为 Top-5 局部片段根本无法代表全部 500 份文档的全貌!微软开源的 Microsoft GraphRAG 提出了革命性解 法:在索引阶段利用大模型从文本中抽取实体(Entities)与关系(Relationships)构建知识图谱,通过 Leiden 社区发现算法对紧密关联的实体群落生成多层级的社区摘要(Community Summaries)。查询时: 局部细节问题走 Local Search(实体邻域遍历 + 原文块),宏观全局问题走 Global Search(Map-Reduce 汇总各社区摘要)。",
     "structure": "定义面向产业链研报的实体类型(如公司、核心原材料、产能指标、技术路线)与关系三元组 (Head, Relation, Tail) 抽取 JSON 格式;\n设计查询路由器(Query Router):准确判断哪些用戶提问应路由至标准向量/Local Search,哪些宏 观综述提问必须路由至 GraphRAG Global Search(\n5 分);\n简述 GraphRAG 索引构建成本高的原因及如何仅对高价值核心文档启用图谱抽取。",
     "check": "什么类型的问题不适合只走向量检索？"
+  },
+  "provenance": {
+    "book": "内功05 · RAG 检索增强生成",
+    "level": "第7关",
+    "sourceFile": "内功05_RAG检索增强生成原理_让AI拥有外挂知识库的底层逻辑.pdf",
+    "coreQuote": "传统向量切片 RAG 擅长回答“局部细节查找题”,但在面对“跨全库全局归纳题”(例如:“综合这 500 份客戶投诉工单,今年最核心的三大系统性质量问题及其关联供应商分别是什么?”)时往往彻底失效, 因为 Top-5 局部片段根本无法代表全部 500 份文档的全貌!微软开源的 Microsoft GraphRAG 提出了革命性解 法:在索引阶段利用大模型从文本中抽取实体(Entities)与关系(Relationships)构建知识图谱,…"
   }
 }

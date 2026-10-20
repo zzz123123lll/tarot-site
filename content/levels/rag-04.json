@@ -39,7 +39,9 @@
               "公式"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功05 · RAG 检索增强生成 · 第4关 · 通关要求 1",
+        "sourceQuote": "写出标准 RRF(Reciprocal Rank Fusion)打分公式(含平滑常数 k = 60)及 Python 融合排序实现 (5.5 分)"
       },
       {
         "id": "c2",
@@ -62,7 +64,9 @@
               "top-4"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功05 · RAG 检索增强生成 · 第4关 · 通关要求 2",
+        "sourceQuote": "设计粗排(Recall Top-20)→ Reranker 精排(Select Top-4)的两阶段调用流程(4 分)"
       },
       {
         "id": "c3",
@@ -84,7 +88,9 @@
               "暴力"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功05 · RAG 检索增强生成 · 第4关 · 通关要求 3",
+        "sourceQuote": "解释为什么不能直接用 Cross-Encoder Reranker 对全库 10 万篇文档做第一阶段暴力检索(3 分)。 第三阶段:生成演进篇(第 5‒6 关)——溯源生成闭环与多轮对话记忆"
       }
     ]
   },
@@ -100,7 +106,9 @@
       ],
       "answer": 0,
       "explanation": "RRF 只使用排名做融合，不需要不同检索器的分数完全可比。",
-      "id": "q1"
+      "id": "q1",
+      "sourceRef": "内功05 · RAG 检索增强生成 · 第4关 · 核心原理",
+      "sourceQuote": "纯向量语义检索有一个致命短板:对精确专有名词、产品型号代码(如“错误码 ERR-4092-B”)、 人名与法规条文编号非常不敏感!根据 RAG Zero to Hero Guide 与 RAG All-in-One 的进阶架构,工业级知识 库普遍采用“两阶段漏斗架构”: 第一阶段(粗排召回:BM25 关键词检索 + 向"
     },
     {
       "question": "RRF 用排名而不是原始分数，主要因为？",
@@ -112,7 +120,9 @@
       ],
       "answer": 0,
       "explanation": "稠密与稀疏检索的分数分布不同，排名是更稳定的融合信号。",
-      "id": "q2"
+      "id": "q2",
+      "sourceRef": "内功05 · RAG 检索增强生成 · 第4关 · 通关要求 1",
+      "sourceQuote": "写出标准 RRF(Reciprocal Rank Fusion)打分公式(含平滑常数 k = 60)及 Python 融合排序实现 (5.5 分)"
     },
     {
       "question": "Cross-Encoder Reranker 应放在哪一步？",
@@ -124,7 +134,9 @@
       ],
       "answer": 0,
       "explanation": "Cross-Encoder 计算重，适合对少量候选精排，不适合全库暴力检索。",
-      "id": "q3"
+      "id": "q3",
+      "sourceRef": "内功05 · RAG 检索增强生成 · 第4关 · 通关要求 2",
+      "sourceQuote": "设计粗排(Recall Top-20)→ Reranker 精排(Select Top-4)的两阶段调用流程(4 分)"
     }
   ],
   "reading": {
@@ -170,5 +182,11 @@
     "why": "来源核心原理：纯向量语义检索有一个致命短板:对精确专有名词、产品型号代码(如“错误码 ERR-4092-B”)、 人名与法规条文编号非常不敏感!根据 RAG Zero to Hero Guide 与 RAG All-in-One 的进阶架构,工业级知识 库普遍采用“两阶段漏斗架构”: 第一阶段(粗排召回:BM25 关键词检索 + 向量稠密检索):两路并行各取 Top-20,通过 RRF (Reciprocal Rank Fusion,倒数排名融合算法) 合并去重,兼顾精确型号匹配与语义泛化理解。 第二阶段(精排重排序:Cross-Encoder Reranker):使用 BGE-Reranker 或 Cohere Rerank 等交叉编码 模型,对粗排召回的 20 个片段与用戶问题做深度交叉注意力打分,精选出真正最相关的 Top-3 喂给大模 型。",
     "structure": "写出标准 RRF(Reciprocal Rank Fusion)打分公式(含平滑常数 k = 60)及 Python 融合排序实现 (\n5 分);\n设计粗排(Recall Top-20)→ Reranker 精排(Select Top-4)的两阶段调用流程;\n解释为什么不能直接用 Cross-Encoder Reranker 对全库 10 万篇文档做第一阶段暴力检索。 第三阶段:生成演进篇(第 5‒6 关)——溯源生成闭环与多轮对话记忆",
     "check": "为什么不能对 10 万篇文档全部跑 Cross-Encoder？"
+  },
+  "provenance": {
+    "book": "内功05 · RAG 检索增强生成",
+    "level": "第4关",
+    "sourceFile": "内功05_RAG检索增强生成原理_让AI拥有外挂知识库的底层逻辑.pdf",
+    "coreQuote": "纯向量语义检索有一个致命短板:对精确专有名词、产品型号代码(如“错误码 ERR-4092-B”)、 人名与法规条文编号非常不敏感!根据 RAG Zero to Hero Guide 与 RAG All-in-One 的进阶架构,工业级知识 库普遍采用“两阶段漏斗架构”: 第一阶段(粗排召回:BM25 关键词检索 + 向量稠密检索):两路并行各取 Top-20,通过 RRF (Reciprocal Rank Fusion,倒数排名融合算法…"
   }
 }

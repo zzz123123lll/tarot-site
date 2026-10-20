@@ -43,7 +43,9 @@
               "final decision"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功06 · AI Agent 智能体 · 第1关 · 通关要求 1",
+        "sourceQuote": "明确写出 Agent 的四步 ReAct 推理轨迹模板:Thought → Action → Observation → Final Decision (4.5 分)"
       },
       {
         "id": "c2",
@@ -65,7 +67,9 @@
               "手续费"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功06 · AI Agent 智能体 · 第1关 · 通关要求 2",
+        "sourceQuote": "定义清晰的触发条件(差价 ≥ 200 元且扣除改签手续费后净省 > 0 元)(4 分)"
       },
       {
         "id": "c3",
@@ -94,7 +98,9 @@
               "告警"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功06 · AI Agent 智能体 · 第1关 · 通关要求 3",
+        "sourceQuote": "设置防死循环与异常熔断规则(如查询接口连续失败 2 次或总步数达 4 步立即停止并告警)(4 分)"
       }
     ]
   },
@@ -110,7 +116,9 @@
       ],
       "answer": 0,
       "explanation": "先推理、再调用工具、读取观察结果，最后给出决定。",
-      "id": "q1"
+      "id": "q1",
+      "sourceRef": "内功06 · AI Agent 智能体 · 第1关 · 核心原理",
+      "sourceQuote": "在 Microsoft AI Agents for Beginners 第 1‒3 课 与 Agentic AI Masterclass Exercise 1 中,智能体 与普通大模型调用的本质区别在于 ReAct(Reasoning + Acting)循环:模型接收用戶目标后,进入“思考 (Thought)→ 决定调"
     },
     {
       "question": "ReAct 中执行 Action 之后，下一步应该？",
@@ -122,7 +130,9 @@
       ],
       "answer": 0,
       "explanation": "工具返回的 Observation 是下一步推理的依据。",
-      "id": "q2"
+      "id": "q2",
+      "sourceRef": "内功06 · AI Agent 智能体 · 第1关 · 通关要求 1",
+      "sourceQuote": "明确写出 Agent 的四步 ReAct 推理轨迹模板:Thought → Action → Observation → Final Decision (4.5 分)"
     },
     {
       "question": "设置最大步数和熔断的主要目的是？",
@@ -134,7 +144,9 @@
       ],
       "answer": 0,
       "explanation": "步数上限、失败阈值和告警能防止 Agent 无限循环。",
-      "id": "q3"
+      "id": "q3",
+      "sourceRef": "内功06 · AI Agent 智能体 · 第1关 · 通关要求 2",
+      "sourceQuote": "定义清晰的触发条件(差价 ≥ 200 元且扣除改签手续费后净省 > 0 元)(4 分)"
     }
   ],
   "reading": {
@@ -184,5 +196,11 @@
     "why": "来源核心原理：在 Microsoft AI Agents for Beginners 第 1‒3 课 与 Agentic AI Masterclass Exercise 1 中,智能体 与普通大模型调用的本质区别在于 ReAct(Reasoning + Acting)循环:模型接收用戶目标后,进入“思考 (Thought)→ 决定调用工具(Action)→ 获取环境反馈(Observation)→ 再次思考”的循环,直至满足 终止条件。在工程实现上,无论是使用 Pydantic AI、LangGraph、CrewAI 还是 OpenAI Agents SDK(详见 ed-donner/agents),都必须明确定义四个核心组件:Model(底层推理模型)、Instructions(系统级行为 准则)、Tools(可执行外部函数集)与 Loop Guard(最大循环步数限制,防死循环烧钱)。 踩坑设计 vs. 工业级设计对比: 新手踩坑设计:把所有业务逻辑硬塞进一个超长 Prompt,既不限制最大迭代步数(max_steps),也不区分 状态变量,一旦外部 API 报错,Agent 就陷入无限重试死循环,几分钟耗尽 API 额度。 工业级结构化设计:显式声明智能体状态机,设置 max_iterations = 5,并严格规范每一步的 Thought / Action / Observation 输出格式。",
     "structure": "明确写出 Agent 的四步 ReAct 推理轨迹模板:Thought → Action → Observation → Final Decision (\n5 分);\n定义清晰的触发条件(差价 ≥ 200 元且扣除改签手续费后净省 > 0 元);\n设置防死循环与异常熔断规则(如查询接口连续失败 2 次或总步数达 4 步立即停止并告警)。",
     "check": "为什么 Agent 必须设置停止条件？"
+  },
+  "provenance": {
+    "book": "内功06 · AI Agent 智能体",
+    "level": "第1关",
+    "sourceFile": "内功06_AI_Agent智能体与工具调用原理_ReAct状态机与多智能体协同.pdf",
+    "coreQuote": "在 Microsoft AI Agents for Beginners 第 1‒3 课 与 Agentic AI Masterclass Exercise 1 中,智能体 与普通大模型调用的本质区别在于 ReAct(Reasoning + Acting)循环:模型接收用戶目标后,进入“思考 (Thought)→ 决定调用工具(Action)→ 获取环境反馈(Observation)→ 再次思考”的循环,直至满足 终止条件。在工程实现上,…"
   }
 }

@@ -40,7 +40,9 @@
               "它"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功05 · RAG 检索增强生成 · 第6关 · 通关要求 1",
+        "sourceQuote": "设计前置 Query Rewriter 提示词:结合历史对话 <chat_history> 与当前追问 <latest_question>,将含 代词“它”的句子改写为主语完整、可独立检索的句子(4.5 分)"
       },
       {
         "id": "c2",
@@ -61,7 +63,9 @@
               "json"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功05 · RAG 检索增强生成 · 第6关 · 通关要求 2",
+        "sourceQuote": "针对“A 与 B 有什么区别”这类对比型问题,设计拆解为两条独立检索子查询(Sub-queries)的 JSON 输出格式,避免单次检索只召回 A 而漏掉 B(5 分)"
       },
       {
         "id": "c3",
@@ -84,7 +88,9 @@
               "闲聊"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功05 · RAG 检索增强生成 · 第6关 · 通关要求 3",
+        "sourceQuote": "说明若用戶第 2 轮只是说“谢谢,讲得很清楚”,系统应如何跳过向量库检索以节省延迟(3 分)。 第四阶段:高阶生产篇(第 7‒8 关)——知识图谱 GraphRAG、流式应用与评估 体系"
       }
     ]
   },
@@ -100,7 +106,9 @@
       ],
       "answer": 0,
       "explanation": "“它/这个”等追问需要补全主语，才能独立检索。",
-      "id": "q1"
+      "id": "q1",
+      "sourceRef": "内功05 · RAG 检索增强生成 · 第6关 · 核心原理",
+      "sourceQuote": "StepByStep-RAG 的第四模块 ConvoRAG 解决了单轮 RAG 走向真实聊天应用的最大拦路虎——多 轮对话中的指代消解(Coreference Resolution)。例如:第 1 轮用戶问“Grand Palace 酒店的豪华海景房 多少钱一晚?"
     },
     {
       "question": "用户追问“它”时，Query Rewriter 应该？",
@@ -112,7 +120,9 @@
       ],
       "answer": 0,
       "explanation": "多轮对话中的代词需要结合历史补全，否则检索缺少主语。",
-      "id": "q2"
+      "id": "q2",
+      "sourceRef": "内功05 · RAG 检索增强生成 · 第6关 · 通关要求 1",
+      "sourceQuote": "设计前置 Query Rewriter 提示词:结合历史对话 <chat_history> 与当前追问 <latest_question>,将含 代词“它”的句子改写为主语完整、可独立检索的句子(4.5 分)"
     },
     {
       "question": "“A 与 B 有什么区别”这类问题，更适合？",
@@ -124,7 +134,9 @@
       ],
       "answer": 0,
       "explanation": "拆成两个子查询能避免只召回 A 而漏掉 B。",
-      "id": "q3"
+      "id": "q3",
+      "sourceRef": "内功05 · RAG 检索增强生成 · 第6关 · 通关要求 2",
+      "sourceQuote": "针对“A 与 B 有什么区别”这类对比型问题,设计拆解为两条独立检索子查询(Sub-queries)的 JSON 输出格式,避免单次检索只召回 A 而漏掉 B(5 分)"
     }
   ],
   "reading": {
@@ -174,5 +186,11 @@
     "why": "来源核心原理：StepByStep-RAG 的第四模块 ConvoRAG 解决了单轮 RAG 走向真实聊天应用的最大拦路虎——多 轮对话中的指代消解(Coreference Resolution)。例如:第 1 轮用戶问“Grand Palace 酒店的豪华海景房 多少钱一晚?”,第 2 轮用戶紧接着问“那它包含免费双人早餐和机场接送吗?”。如果直接拿第 2 轮原话“那 它包含免费双人早餐和机场接送吗?”去向量库检索,由于丢失了主语“Grand Palace 酒店豪华海景房”,检 索 器 会 把 全 库 所 有 提 到 早 餐 的 无 关文 档 搜 出 来 ! 因 此 , 在 检索 之 前 必 须 增 加 一 步 独 立 查 询 改 写 器 (Contextual Query Rewriter),并可结合 RAG Zero to Hero Guide 中的 HyDE(假设性文档嵌入) 或 Sub-Query Decomposition(多子问题拆解)。",
     "structure": "设计前置 Query Rewriter 提示词:结合历史对话 <chat_history> 与当前追问 <latest_question>,将含 代词“它”的句子改写为主语完整、可独立检索的句子(\n5 分);\n针对“A 与 B 有什么区别”这类对比型问题,设计拆解为两条独立检索子查询(Sub-queries)的 JSON 输出格式,避免单次检索只召回 A 而漏掉 B;\n说明若用戶第 2 轮只是说“谢谢,讲得很清楚”,系统应如何跳过向量库检索以节省延迟。 第四阶段:高阶生产篇(第 7‒8 关)——知识图谱 GraphRAG、流式应用与评估 体系",
     "check": "用户只说“它”时，为什么不能直接拿原话检索？"
+  },
+  "provenance": {
+    "book": "内功05 · RAG 检索增强生成",
+    "level": "第6关",
+    "sourceFile": "内功05_RAG检索增强生成原理_让AI拥有外挂知识库的底层逻辑.pdf",
+    "coreQuote": "StepByStep-RAG 的第四模块 ConvoRAG 解决了单轮 RAG 走向真实聊天应用的最大拦路虎——多 轮对话中的指代消解(Coreference Resolution)。例如:第 1 轮用戶问“Grand Palace 酒店的豪华海景房 多少钱一晚?”,第 2 轮用戶紧接着问“那它包含免费双人早餐和机场接送吗?”。如果直接拿第 2 轮原话“那 它包含免费双人早餐和机场接送吗?”去向量库检索,由于丢失了主语“Grand Pa…"
   }
 }

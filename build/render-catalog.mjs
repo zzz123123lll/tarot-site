@@ -47,7 +47,7 @@ ${noindex ? '<meta name="robots" content="noindex,follow">' : ''}
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:image" content="https://gongjuhe.top/og-knowledge.png?v=2"
-<meta property="og:image:alt" content="AI神功：内功心法 × 神兵利器，15 册 36 关">>
+<meta property="og:image:alt" content="AI神功：内功心法 × 神兵利器，15 册 36 关">
 <link rel="icon" href="/favicon.ico">
 <link rel="stylesheet" href="/ai/notes/notes.css?v=12">
 <script src="/ai/notes/notes.js?v=8" defer></script>
@@ -79,6 +79,7 @@ function footer() {
 function renderIndex() {
   const page = `${head('全部课程 — AI神功', '内功心法 7 册（28 讲）+ 神兵利器 8 册（8 讲），从底层原理到工具实战的完整 AI 学习路线。', 'https://gongjuhe.top/ai/notes/')}
 <body>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"AI神功 · 全部课程","url":"https://gongjuhe.top/ai/notes/","isPartOf":{"@type":"WebSite","name":"AI神功","url":"https://gongjuhe.top/"}}</script>
 ${shellHeader()}
 <main id="main">
 <section class="wrap hero">
@@ -135,6 +136,7 @@ function renderNeigong() {
 </a>`).join('');
   const page = `${head('内功心法 — AI神功', '内功心法 7 册：LLM 底层、提示词、深度推理、上下文工程、RAG、Agent、模型定制。', 'https://gongjuhe.top/ai/notes/neigong/')}
 <body>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"AI神功 · 全部课程","url":"https://gongjuhe.top/ai/notes/","isPartOf":{"@type":"WebSite","name":"AI神功","url":"https://gongjuhe.top/"}}</script>
 ${shellHeader()}
 <main id="main">
 <section class="wrap track-head">
@@ -172,6 +174,7 @@ function renderTrack(t) {
 </a>`).join('');
   const page = `${head(t.title + ' — AI神功', t.subtitle, 'https://gongjuhe.top/ai/notes/' + t.id + '/')}
 <body>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"AI神功 · 全部课程","url":"https://gongjuhe.top/ai/notes/","isPartOf":{"@type":"WebSite","name":"AI神功","url":"https://gongjuhe.top/"}}</script>
 ${shellHeader()}
 <main id="main">
 <section class="wrap track-head">
@@ -203,6 +206,7 @@ ${footer()}
 function renderSearch() {
   const page = `${head('搜索 — AI神功', '搜索 AI神功 的 15 册、36 关课程；按标题、摘要和来源精读关键词查找。', 'https://gongjuhe.top/ai/notes/search/', true)}
 <body>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"AI神功 · 全部课程","url":"https://gongjuhe.top/ai/notes/","isPartOf":{"@type":"WebSite","name":"AI神功","url":"https://gongjuhe.top/"}}</script>
 ${shellHeader()}
 <main id="main">
 <section class="wrap track-head">
@@ -283,6 +287,7 @@ function renderPrivacy() {
 </section>`;
   const page = `${head('隐私说明 — AI神功', 'AI神功隐私说明：本机存储、Cloudflare 分析、搜索和邮件联系说明。', 'https://gongjuhe.top/ai/notes/privacy/')}
 <body>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"AI神功 · 全部课程","url":"https://gongjuhe.top/ai/notes/","isPartOf":{"@type":"WebSite","name":"AI神功","url":"https://gongjuhe.top/"}}</script>
 ${shellHeader()}
 <main id="main">${body}</main>
 ${footer()}
@@ -298,6 +303,7 @@ ${footer()}
 function renderReview() {
   const page = `${head('错题本 — AI神功', '本机保存的客观题错题，答对后自动移除。', 'https://gongjuhe.top/ai/notes/review/', true)}
 <body>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"AI神功 · 全部课程","url":"https://gongjuhe.top/ai/notes/","isPartOf":{"@type":"WebSite","name":"AI神功","url":"https://gongjuhe.top/"}}</script>
 ${shellHeader()}
 <main id="main">
 <section class="wrap hero">

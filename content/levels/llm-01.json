@@ -61,7 +61,9 @@
               "n = 5"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功07 · 模型定制与算力量化 · 第1关 · 通关要求 1",
+        "sourceQuote": "分别为上述三个场景配置最优的 temperature、top_p、repetition_penalty 参数组合并说明理由(6 分)"
       },
       {
         "id": "c2",
@@ -89,7 +91,9 @@
               "同时"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功07 · 模型定制与算力量化 · 第1关 · 通关要求 2",
+        "sourceQuote": "解释为什么在医疗 JSON 提取场景中,通常建议“调低 temperature 或调小 top_p 二选一”,而不建议 同时将两者设得极度激进(3.5 分)"
       },
       {
         "id": "c3",
@@ -119,7 +123,9 @@
               "四分之一"
             ]
           }
-        ]
+        ],
+        "sourceRef": "内功07 · 模型定制与算力量化 · 第1关 · 通关要求 3",
+        "sourceQuote": "简述 GQA(Grouped-Query Attention)相比传统多头注意力(MHA)是如何节省推理阶段 KV Cache 显存的(3 分)"
       }
     ]
   },
@@ -134,7 +140,9 @@
         "不需要设置"
       ],
       "answer": 0,
-      "explanation": "来源参考答案：结构化提取要求确定性，推荐 temperature=0.0。"
+      "explanation": "来源参考答案：结构化提取要求确定性，推荐 temperature=0.0。",
+      "sourceRef": "内功07 · 模型定制与算力量化 · 第1关 · 核心原理",
+      "sourceQuote": "在 mlabonne/llm-course 的 The LLM Scientist 第 1 章 与 Modern LLM Notebook 中,现代主流 开源大模型(如 Qwen3.5-9B / Llama 4、Qwen3.8 / Qwen3.5、DeepSeek-V4.1)均采用 Decoder-only Trans"
     },
     {
       "id": "q2",
@@ -146,7 +154,9 @@
         "训练轮数"
       ],
       "answer": 0,
-      "explanation": "来源核心原理：Top-p 动态截取累积概率达到 p 的候选词集合。"
+      "explanation": "来源核心原理：Top-p 动态截取累积概率达到 p 的候选词集合。",
+      "sourceRef": "内功07 · 模型定制与算力量化 · 第1关 · 通关要求 1",
+      "sourceQuote": "分别为上述三个场景配置最优的 temperature、top_p、repetition_penalty 参数组合并说明理由(6 分)"
     },
     {
       "id": "q3",
@@ -158,7 +168,9 @@
         "降低词表大小"
       ],
       "answer": 0,
-      "explanation": "来源：GQA 让多个 Q 头共享同一组 K/V 头，降低 KV Cache。"
+      "explanation": "来源：GQA 让多个 Q 头共享同一组 K/V 头，降低 KV Cache。",
+      "sourceRef": "内功07 · 模型定制与算力量化 · 第1关 · 通关要求 2",
+      "sourceQuote": "解释为什么在医疗 JSON 提取场景中,通常建议“调低 temperature 或调小 top_p 二选一”,而不建议 同时将两者设得极度激进(3.5 分)"
     }
   ],
   "reading": {
@@ -213,5 +225,11 @@
     "structure": "分别为上述三个场景配置最优的 temperature、top_p、repetition_penalty 参数组合并说明理由;\n解释为什么在医疗 JSON 提取场景中,通常建议“调低 temperature 或调小 top_p 二选一”,而不建议 同时将两者设得极度激进(\n5 分);\n简述 GQA(Grouped-Query Attention)相比传统多头注意力(MHA)是如何节省推理阶段 KV Cache 显存的。",
     "check": "为什么医疗提取不建议同时把 temperature 和 top_p 都压到极端？"
   },
-  "next": "llm-02"
+  "next": "llm-02",
+  "provenance": {
+    "book": "内功07 · 模型定制与算力量化",
+    "level": "第1关",
+    "sourceFile": "内功07_模型定制与算力量化原理_SFT微调与LoRA及GGUF-AWQ量化.pdf",
+    "coreQuote": "在 mlabonne/llm-course 的 The LLM Scientist 第 1 章 与 Modern LLM Notebook 中,现代主流 开源大模型(如 Qwen3.5-9B / Llama 4、Qwen3.8 / Qwen3.5、DeepSeek-V4.1)均采用 Decoder-only Transformer 架 构 , 并 引 入 三 大 关 键 升 级 : BPE 子 词 分 词 器 ( Byte-Pair E…"
+  }
 }

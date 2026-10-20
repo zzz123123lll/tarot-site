@@ -203,7 +203,7 @@ function init(root) {
     });
     if (resultEl) resultEl.textContent = result.correct ? '回答正确' : '回答错误';
     if (explanationEl) {
-      explanationEl.textContent = (result.correct ? '' : '正确答案：' + String.fromCharCode(65 + result.answer) + '. ' + q.options[result.answer] + '。') + q.explanation;
+      explanationEl.textContent = (result.correct ? '' : '正确答案：' + String.fromCharCode(65 + result.answer) + '. ' + q.options[result.answer] + '。') + q.explanation + (q.sourceRef ? ' 来源定位：' + q.sourceRef + '。' : '');
     }
   }
 

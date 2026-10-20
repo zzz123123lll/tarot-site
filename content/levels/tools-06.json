@@ -27,7 +27,9 @@
               "边界"
             ]
           }
-        ]
+        ],
+        "sourceRef": "AI 现代必修课 · Dify 可视化 AI 工作流 · 本册原文",
+        "sourceQuote": "这一册只解决一件事：能用确定性 DAG 工作流解决的任务，不要交给自由 Agent 随机决策"
       },
       {
         "id": "c2",
@@ -43,7 +45,9 @@
               "分治"
             ]
           }
-        ]
+        ],
+        "sourceRef": "AI 现代必修课 · Dify 可视化 AI 工作流 · 本册原文",
+        "sourceQuote": "这一册只解决一件事：能用确定性 DAG 工作流解决的任务，不要交给自由 Agent 随机决策"
       },
       {
         "id": "c3",
@@ -59,7 +63,9 @@
               "检索"
             ]
           }
-        ]
+        ],
+        "sourceRef": "AI 现代必修课 · Dify 可视化 AI 工作流 · 本册原文",
+        "sourceQuote": "这一册只解决一件事：能用确定性 DAG 工作流解决的任务，不要交给自由 Agent 随机决策"
       }
     ]
   },
@@ -74,7 +80,9 @@
         "随机采样"
       ],
       "answer": 0,
-      "explanation": "来源：固定流程用工作流消除路由跑偏和死循环。"
+      "explanation": "来源：固定流程用工作流消除路由跑偏和死循环。",
+      "sourceRef": "AI 现代必修课 · Dify 可视化 AI 工作流 · 本册原文",
+      "sourceQuote": "这一册只解决一件事：能用确定性 DAG 工作流解决的任务，不要交给自由 Agent 随机决策"
     },
     {
       "id": "q2",
@@ -86,7 +94,9 @@
         "词表更小"
       ],
       "answer": 0,
-      "explanation": "来源：有向无环图把步骤固化并可并行。"
+      "explanation": "来源：有向无环图把步骤固化并可并行。",
+      "sourceRef": "AI 现代必修课 · Dify 可视化 AI 工作流 · 本册原文",
+      "sourceQuote": "这一册只解决一件事：能用确定性 DAG 工作流解决的任务，不要交给自由 Agent 随机决策"
     },
     {
       "id": "q3",
@@ -98,7 +108,9 @@
         "Workflow 不需要模型"
       ],
       "answer": 0,
-      "explanation": "来源：Workflow 适合固定流程，Agent 适合开放目标。"
+      "explanation": "来源：Workflow 适合固定流程，Agent 适合开放目标。",
+      "sourceRef": "AI 现代必修课 · Dify 可视化 AI 工作流 · 本册原文",
+      "sourceQuote": "这一册只解决一件事：能用确定性 DAG 工作流解决的任务，不要交给自由 Agent 随机决策"
     }
   ],
   "reading": {
@@ -149,5 +161,11 @@
     "structure": "Start → 分类/分支 → 检索/翻译/校验节点 → 变量池 → 输出",
     "check": "为什么“6 步全塞进一个大 Prompt”比 DAG 更容易出错？"
   },
-  "next": "tools-07"
+  "next": "tools-07",
+  "provenance": {
+    "book": "AI 现代必修课 · Dify 可视化 AI 工作流",
+    "level": "本册",
+    "sourceFile": "AI 现代必修课 · Dify 可视化 AI 工作流.pdf",
+    "coreQuote": "这一册只解决一件事：能用确定性 DAG 工作流解决的任务，不要交给自由 Agent 随机决策"
+  }
 }
