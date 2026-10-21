@@ -212,7 +212,8 @@ function init(root) {
   function criteriaLabel(c) {
     const label = String(c.label || '').trim();
     const quote = String(c.sourceQuote || '').trim();
-    const broken = !label || label.length < 6 || /^[\d.]+\s*分/.test(label) || /[（(;,；]$/.test(label);
+    const unbalanced = (label.match(/[（(]/g) || []).length !== (label.match(/[）)]/g) || []).length;
+    const broken = !label || label.length < 6 || /^[\d.]+\s*分/.test(label) || /[（(=,，;；:]$/.test(label) || unbalanced || /\d\s*$/.test(label);
     let t = broken && quote && quote.length > label.length ? quote : label;
     t = t.replace(/[（(]\s*[\d.]+\s*分\s*[）)]\s*;?/g, '').replace(/[;；]\s*$/, '').trim();
     return t || '评分项';
