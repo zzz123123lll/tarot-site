@@ -92,9 +92,9 @@
     <section class="lesson" id="lesson"><h3>核心原理</h3><p>在 mlabonne/llm-course 的 The LLM Scientist 第 1 章 与 Modern LLM Notebook 中,现代主流 开源大模型(如 Qwen3.5-9B / Llama 4、Qwen3.8 / Qwen3.5、DeepSeek-V4.1)均采用 Decoder-only Transformer 架 构 , 并 引 入 三 大 关 键 升 级 : BPE 子 词 分 词 器 ( Byte-Pair Encoding )、 旋 转 位 置 编 码 ( RoPE ) 以 及 大 幅 降 低 长文 本 推 理 KV Cache 显 存 占 用 的 分 组 查 询 注 意 力 ( GQA, Grouped-Query Attention)。而在生成阶段,模型每一步输出的是词表上的概率分布(Logits),最终选出哪个词取决于解码 采样策略(Decoding Strategies):Temperature 控制概率分布平滑度(越低越确定,越高越发散),Top-p (Nucleus Sampling) 动态截取累积概率达到 p 的候选词集合。</p><h2>第 1 关实操练习题：为三大迥异业务场景配置精准解码采样参数并核算显存</h2><h3>任务背景</h3><p>你的团队用同一个 8B 基础大模型同时支撑三个业务接口:1 医疗病历结构化 JSON 提取;2 小说创意续写与头脑⻛暴;3 Python 算法题多路采样自动编程(Pass@5 测试)。目前三个接口全用默认 参数 temperature=1.0, top_p=1.0,导致医疗提取经常出现 JSON 语法损坏。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 分别为上述三个场景配置最优的 temperature、top_p、repetition_penalty 参数组合并说明理由(6 分);</p><p>2. 解释为什么在医疗 JSON 提取场景中,通常建议“调低 temperature 或调小 top_p 二选一”,而不建议 同时将两者设得极度激进(</p><p>3.5 分);</p><p>3. 简述 GQA(Grouped-Query Attention)相比传统多头注意力(MHA)是如何节省推理阶段 KV Cache 显存的(3 分)。</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/llm/01" data-exercise="/content/levels/llm-01.json">
       <div class="practice-head">
-        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <p class="label">PRACTICE / 本关练习 · 本地规则 + 覆盖检查</p>
         <h2>为三大迥异业务场景配置精准解码采样参数并核算显存</h2>
-        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+        <p>本地检查在你的浏览器里完成，不上传。覆盖检查需要把这段答案发送到服务器计算一次，算完即弃、不存档，需你点同意；只核对本关评分项覆盖的方向，不在评分项里的题目不会被检查。</p>
       </div>
       <div class="knowledge-check" data-objective></div>
       <div class="practice-grid">
@@ -121,7 +121,7 @@
       <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:三大业务场景解码采样参数配置与 GQA 显存原理解析 业务场景名称 推荐采样参数组合 底层原理与配置依据 1 医疗病历 JSON 提取 temperature = 0.0 top_p = 1.0 repetition_penalty = 1.0 结构化信息提取要求 100% 确定性与零语法跑偏, 采用贪婪解码(Greedy Decoding,temp=0)始终 选择最高概率 Token。 2 小说创意续写 temperature = 0.85 top_p = 0.92 repetition_penalty = 1.12 适当拉高温度平滑概率分布以激发词汇多样性,用 top_p=0.92 截断长尾生僻乱码词,配合轻度重复惩 罚避免车轱辘话。 3 算法题 Pass@5 采样 temperature = 0.6 top_p = 0.95 n = 5 多次采样生成候选代码再过单元测试时,需中等温 度(0.6)保证 5 条代码具备不同的解题分支,同时 不破坏语法正确性。 原理解析:temperature 与 top_p 均作用于采样分布收窄,若同时设置极低温度与极小 top_p 易导致极端截断与 逻辑死锁;GQA(分组查询注意力)将多个 Query 头共享同一组 Key 和 Value 头(如 32 个 Q 头共享 8 个 KV 头),直接将推理阶段的 KV Cache 显存占用与带宽读取需求压缩为传统 MHA 的 1/4。 得分要点拆解:三组参数准确匹配业务特性(6 分);解释双重截断⻛险(3.5 分);讲清 GQA 共享 KV 头降显 存机制(3 分)。 第 2 关</p></div>
     </details>
     <div class="pdf-box"><p>网页永久免费。完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%86%85%E5%8A%9F07%20%C2%B7%20%E6%A8%A1%E5%9E%8B%E5%AE%9A%E5%88%B6%E4%B8%8E%E7%AE%97%E5%8A%9B%E9%87%8F%E5%8C%96%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
-    <div class="nextprev"><a href="/ai/notes/llm/"><small>返回系列</small>内功07 · 模型定制与算力量化</a><a class="right" href="/ai/notes/llm/02"><small>下一关</small>后训练数据集构建与对话模板映射(Scientist 3: Post-Training Datasets)</a></div>
+    <div class="nextprev"><a href="/ai/notes/agents/08"><small>上一关</small>可信护栏与生产级安全架构</a><a class="right" href="/ai/notes/llm/02"><small>下一关</small>后训练数据集构建与对话模板映射(Scientist 3: Post-Training Datasets)</a></div>
   </article>
 </div>
 </main>

@@ -95,9 +95,9 @@ pdf&quot;&gt;)结构化封装检 索片段(
     <section class="lesson" id="lesson"><h3>核心原理</h3><p>在 StepByStep-RAG 的第三模块 SimpleRAG 中,检索出 Top-K 文档块后,如何把它们与用戶问题 拼装成最终 Prompt 决定了生成的可靠性。许多初学者只是简单地把检索文本拼在问题前面,结果大模型把自 己的预训练幻觉和知识库事实混在一起输出,用戶根本分不清哪句话出自哪份文件。高标准的 RAG 生成指令 必须强制执行“封闭域作答 + 句末角标溯源(如 `[来源1: 文件名#页码]`) + 证据冲突显式披露”。</p><h2>第 5 关实操练习题：设计带强制角标溯源与防脑补护栏的 SimpleRAG 生成模板</h2><h3>任务背景</h3><p>你将检索到的 3 个带编号的知识库片段注入大模型,要求模型回答客戶的医保报销比例问题, 且每一句结论都必须标明具体出处编号。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 用带 id 与 source 属性的 XML 标签(如 &lt;context id="1" source="医保手册_p</p><p>2.pdf"&gt;)结构化封装检 索片段(</p><p>4.5 分);</p><p>2. 强制规定输出中的每一个事实断言末尾必须紧跟 [来源X] 角标引用(</p><p>4.5 分);</p><p>3. 规定当所有检索片段与问题无关时,直接输出固定拒答话术且不附带虚假引用(</p><p>3.5 分)。</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/rag/05" data-exercise="/content/levels/rag-05.json">
       <div class="practice-head">
-        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <p class="label">PRACTICE / 本关练习 · 本地规则 + 覆盖检查</p>
         <h2>设计带强制角标溯源与防脑补护栏的 SimpleRAG 生成模板</h2>
-        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+        <p>本地检查在你的浏览器里完成，不上传。覆盖检查需要把这段答案发送到服务器计算一次，算完即弃、不存档，需你点同意；只核对本关评分项覆盖的方向，不在评分项里的题目不会被检查。</p>
       </div>
       <div class="knowledge-check" data-objective></div>
       <div class="practice-grid">

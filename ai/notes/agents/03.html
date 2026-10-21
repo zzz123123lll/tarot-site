@@ -92,9 +92,9 @@
     <section class="lesson" id="lesson"><h3>核心原理</h3><p>面对复杂目标(如“分析竞品最近三个月的定价变动并生成应对促销方案”),单步工具调用无法完 成。Microsoft AI Agents for Beginners 第 7 课(Planning Design) 指出,高阶智能体必须具备“先规划后 执行(Plan-and-Solve)”能力:先将宏大目标拆解为包含明确输入输出依赖关系的子任务列表(Sub-task DAG),标记哪些子任务可以并行执行(Parallel)、哪些必须串行等待(Sequential);且每完成一步后根据 实际返回结果动态修正后续计划(Re-planning)。</p><h2>第 3 关实操练习题：设计“企业新客戶背景尽调 Agent”的分步规划器</h2><h3>任务背景</h3><p>B2B 销售团队输入一个潜在客戶公司名称,希望 Agent 自动完成工商⻛险核查、近期高管新闻 动态检索、主营产品匹配度评估,并输出一份拜访简报。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设计 Planner 输出的结构化 JSON 计划表格式,每个子任务需包含 step_id、tool_name、depends_on (前置依赖数组)与 expected_output(5 分);</p><p>2. 准确区分并行阶段(工商信息查询、新闻检索、官网产品抓取互不依赖,可并发执行)与串行汇总阶 段(</p><p>4.5 分);</p><p>3. 设计动态重规划分支:若第一步工商核查发现该公司“已注销或被列为失信被执行人”,立即终止后续 新闻检索并直接输出⻛险拦截报告(3 分)。</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/agents/03" data-exercise="/content/levels/agents-03.json">
       <div class="practice-head">
-        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <p class="label">PRACTICE / 本关练习 · 本地规则 + 覆盖检查</p>
         <h2>设计“企业新客戶背景尽调 Agent”的分步规划器</h2>
-        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+        <p>本地检查在你的浏览器里完成，不上传。覆盖检查需要把这段答案发送到服务器计算一次，算完即弃、不存档，需你点同意；只核对本关评分项覆盖的方向，不在评分项里的题目不会被检查。</p>
       </div>
       <div class="knowledge-check" data-objective></div>
       <div class="practice-grid">

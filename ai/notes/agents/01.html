@@ -92,9 +92,9 @@
     <section class="lesson" id="lesson"><h3>核心原理</h3><p>在 Microsoft AI Agents for Beginners 第 1‒3 课 与 Agentic AI Masterclass Exercise 1 中,智能体 与普通大模型调用的本质区别在于 ReAct(Reasoning + Acting)循环:模型接收用戶目标后,进入“思考 (Thought)→ 决定调用工具(Action)→ 获取环境反馈(Observation)→ 再次思考”的循环,直至满足 终止条件。在工程实现上,无论是使用 Pydantic AI、LangGraph、CrewAI 还是 OpenAI Agents SDK(详见 ed-donner/agents),都必须明确定义四个核心组件:Model(底层推理模型)、Instructions(系统级行为 准则)、Tools(可执行外部函数集)与 Loop Guard(最大循环步数限制,防死循环烧钱)。 踩坑设计 vs. 工业级设计对比: 新手踩坑设计:把所有业务逻辑硬塞进一个超长 Prompt,既不限制最大迭代步数(max_steps),也不区分 状态变量,一旦外部 API 报错,Agent 就陷入无限重试死循环,几分钟耗尽 API 额度。 工业级结构化设计:显式声明智能体状态机,设置 max_iterations = 5,并严格规范每一步的 Thought / Action / Observation 输出格式。</p><h2>第 1 关实操练习题：设计“电商机票差价监控与改签助手”的 ReAct 核心循环</h2><h3>任务背景</h3><p>你需要参照 Agentic AI Masterclass 的编码范式,为一个“自动查询航班实时价格并在低于历 史购票价 200 元以上时生成改签方案”的智能体编写系统指令与循环终止条件。 待改造劣质设计:“你是一个机票助手,帮我查一下用戶买的航班现在多少钱,如果便宜了就帮他改签。”</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 明确写出 Agent 的四步 ReAct 推理轨迹模板:Thought → Action → Observation → Final Decision (</p><p>4.5 分);</p><p>2. 定义清晰的触发条件(差价 ≥ 200 元且扣除改签手续费后净省 &gt; 0 元)(4 分);</p><p>3. 设置防死循环与异常熔断规则(如查询接口连续失败 2 次或总步数达 4 步立即停止并告警)(4 分)。</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/agents/01" data-exercise="/content/levels/agents-01.json">
       <div class="practice-head">
-        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <p class="label">PRACTICE / 本关练习 · 本地规则 + 覆盖检查</p>
         <h2>设计“电商机票差价监控与改签助手”的 ReAct 核心循环</h2>
-        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+        <p>本地检查在你的浏览器里完成，不上传。覆盖检查需要把这段答案发送到服务器计算一次，算完即弃、不存档，需你点同意；只核对本关评分项覆盖的方向，不在评分项里的题目不会被检查。</p>
       </div>
       <div class="knowledge-check" data-objective></div>
       <div class="practice-grid">
@@ -121,7 +121,7 @@
       <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:机票差价监控 Agent 的 ReAct 循环与熔断规范</p><h3>【System Instructions: Flight Rebooking Agent】</h3><p>你是一个严谨的机票差价监控与改签评估智能体。请严格按照以下 ReAct 循环处理用戶订单,最大循环步数限制 为 max_steps = 4: 每一步推理必须严格输出以下结构: - Thought: 分析当前已知的订单原价、退改签政策与还需获取的实时数据。 - Action: 调用指定工具(如 get_Order_Info 或 fetch_Live_Flight_Price)。 - Observation: 接收工具返回的真实 JSON 数据。</p><h3>【业务判定与熔断规则】</h3><p>1. 净收益计算公式:净节省金额 = (历史出票价 - 当前实时票价) - 改签手续费。</p><p>2. 触发改签方案条件:必须同时满足 (历史出票价 - 当前实时票价) &gt;= 200 元,且 净节省金额 &gt; 0 元。若不</p><p>满足,立即进入 Final Decision 输出“暂不建议改签”及原因。</p><p>3. 异常熔断机制:若外部航班价格接口返回超时或 5xx 错误,最多允许重试 1 次(累计失败达 2 次立即终止</p><p>循环),严禁盲目重复调用或编造票价,直接输出接口异常告警。 得分要点拆解:清晰定义四步 ReAct 循环与步数上限(4.5 分);准确列出差价 ≥ 200 元且扣费后净省 &gt; 0 的 双重算式(4 分);包含连续失败 2 次即熔断告警的防死循环机制(4 分)。 第 2 关</p></div>
     </details>
     <div class="pdf-box"><p>网页永久免费。完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%86%85%E5%8A%9F06%20%C2%B7%20AI%20Agent%20%E6%99%BA%E8%83%BD%E4%BD%93%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
-    <div class="nextprev"><a href="/ai/notes/agents/"><small>返回系列</small>内功06 · AI Agent 智能体</a><a class="right" href="/ai/notes/agents/02"><small>下一关</small>工具调用设计模式</a></div>
+    <div class="nextprev"><a href="/ai/notes/rag/08"><small>上一关</small>流式交互应用与 RAG 黄金评估体系</a><a class="right" href="/ai/notes/agents/02"><small>下一关</small>工具调用设计模式</a></div>
   </article>
 </div>
 </main>

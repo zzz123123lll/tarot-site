@@ -94,9 +94,9 @@
     <section class="lesson" id="lesson"><h3>核心原理</h3><p>在 LLM Fine-Tuning Hands-on Lab 与 mlabonne/llm-course 中,启动微调脚本只是开始,能否 读懂 Weights &amp; Biases (WandB) 或 TensorBoard 上的 Train Loss(训练损失)、Eval Loss(验证损失)与 Gradient Norm(梯度范数) 曲线,才是区分新手与老手的分水岭: 典型过拟合(Overfitting):Train Loss 一路陡降趋近于 0.1,但 Eval Loss 在第 1 个 Epoch 后开始掉头向 上反弹!此时模型已经沦为“死记硬背训练集的复读机”,丧失了通用推理能力。 Loss 尖峰与梯度爆炸(Loss Spikes &amp; Gradient Explosion):训练中途梯度范数突然飙升、Loss 变成 NaN,通常是因为学习率过大、缺少 Warmup 预热步数,或混入了极长/格式损坏的脏数据样本。 注意 SFT 的能力边界:SFT 的本质是“教模型学会回答的格式与说话⻛格,激活预训练已有知识”,绝不 能靠少量 SFT 样本去强行灌输海量全新的实时事实(新事实应走 RAG,强行 SFT 只会加剧幻觉)。</p><h2>第 4 关实操练习题：诊断三组异常微调监控日志并开出调参处方</h2><h3>任务背景</h3><p>团队实习生跑了三次微调实验,分别出现了:1 第 2 轮起验证集 Loss 持续上升且模型回答变 成机械背诵;2 开局第 15 步 Loss 突变为 NaN 崩溃;3 微调了 500 条公司今年最新产品价格表后,模型 依然经常报价错误。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 针对实验1(过拟合),给出至少 3 项具体的参数调整或数据改进措施(</p><p>4.5 分);</p><p>2. 针对实验2(开局梯度爆炸 NaN),从学习率调度(Warmup)、梯度裁剪(max_grad_norm)与脏数据 排查三个角度给出修复方案(</p><p>4.5 分);</p><p>3. 针对实验3,从“SFT 与 RAG 的职责边界”角度解释为什么用 500 条问答微调记不住精确价格表,并 给出正确架构建议(</p><p>3.5 分)。 第三阶段:对⻬与融合篇(第 5‒6 关)——偏好对⻬(DPO/GRPO)、模型融合 与科学评测</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/llm/04" data-exercise="/content/levels/llm-04.json">
       <div class="practice-head">
-        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <p class="label">PRACTICE / 本关练习 · 本地规则 + 覆盖检查</p>
         <h2>诊断三组异常微调监控日志并开出调参处方</h2>
-        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+        <p>本地检查在你的浏览器里完成，不上传。覆盖检查需要把这段答案发送到服务器计算一次，算完即弃、不存档，需你点同意；只核对本关评分项覆盖的方向，不在评分项里的题目不会被检查。</p>
       </div>
       <div class="knowledge-check" data-objective></div>
       <div class="practice-grid">

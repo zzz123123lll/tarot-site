@@ -92,9 +92,9 @@
     <section class="lesson" id="lesson"><h3>核心原理</h3><p>StepByStep-RAG 的第四模块 ConvoRAG 解决了单轮 RAG 走向真实聊天应用的最大拦路虎——多 轮对话中的指代消解(Coreference Resolution)。例如:第 1 轮用戶问“Grand Palace 酒店的豪华海景房 多少钱一晚?”,第 2 轮用戶紧接着问“那它包含免费双人早餐和机场接送吗?”。如果直接拿第 2 轮原话“那 它包含免费双人早餐和机场接送吗?”去向量库检索,由于丢失了主语“Grand Palace 酒店豪华海景房”,检 索 器 会 把 全 库 所 有 提 到 早 餐 的 无 关文 档 搜 出 来 ! 因 此 , 在 检索 之 前 必 须 增 加 一 步 独 立 查 询 改 写 器 (Contextual Query Rewriter),并可结合 RAG Zero to Hero Guide 中的 HyDE(假设性文档嵌入) 或 Sub-Query Decomposition(多子问题拆解)。</p><h2>第 6 关实操练习题：编写多轮对话指代消解与复杂对比问题拆解器</h2><h3>任务背景</h3><p>用戶在第 1 轮问了“Pro 版会员的年费是多少?”,第 2 轮追问:“那它跟企业旗舰版在 API 每 分钟调用限额上有什么区别?”</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设计前置 Query Rewriter 提示词:结合历史对话 &lt;chat_history&gt; 与当前追问 &lt;latest_question&gt;,将含 代词“它”的句子改写为主语完整、可独立检索的句子(</p><p>4.5 分);</p><p>2. 针对“A 与 B 有什么区别”这类对比型问题,设计拆解为两条独立检索子查询(Sub-queries)的 JSON 输出格式,避免单次检索只召回 A 而漏掉 B(5 分);</p><p>3. 说明若用戶第 2 轮只是说“谢谢,讲得很清楚”,系统应如何跳过向量库检索以节省延迟(3 分)。 第四阶段:高阶生产篇(第 7‒8 关)——知识图谱 GraphRAG、流式应用与评估 体系</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/rag/06" data-exercise="/content/levels/rag-06.json">
       <div class="practice-head">
-        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <p class="label">PRACTICE / 本关练习 · 本地规则 + 覆盖检查</p>
         <h2>编写多轮对话指代消解与复杂对比问题拆解器</h2>
-        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+        <p>本地检查在你的浏览器里完成，不上传。覆盖检查需要把这段答案发送到服务器计算一次，算完即弃、不存档，需你点同意；只核对本关评分项覆盖的方向，不在评分项里的题目不会被检查。</p>
       </div>
       <div class="knowledge-check" data-objective></div>
       <div class="practice-grid">

@@ -92,9 +92,9 @@
     <section class="lesson" id="lesson"><h3>核心原理</h3><p>全量微调(Full Fine-Tuning)一个 8B 模型需要更新全部 80 亿参数,加上优化器状态(AdamW) 和梯度,往往需要 60GB‒80GB 显存。而根据 mlabonne/llm-course 的 SFT 与 Unsloth 教程,LoRA(Low- Rank Adaptation)冻结原模型权重 W,仅在旁路注入两个低秩矩阵 A 与 B(可训练参数量通常不到原模型的 1%‒2%);QLoRA 更进一步,将冻结的基座模型权重量化为 4-bit NormalFloat (NF4),结合分页优化器 (Paged Optimizers)和 Unsloth 手写算子加速,让你用一张免费的 16GB Google Colab T4 显卡就能轻松微 调 Qwen3.5-9B 或 Qwen-2.5-7B!核心超参数有三个: r(LoRA Rank 秩):决定低秩矩阵的容量,常规任务取 16 或 32,复杂领域任务取 64 或 128。 lora_alpha(缩放系数):控制旁路权重的更新幅度,业界黄金经验法则是设为 lora_alpha = 1 * r 或 2 * r。 target_modules(挂载目标线性层):切勿只挂 q_proj, v_proj!现代最佳实践是挂载 Transformer 的全部 7 个核心线性投影层(q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj),效果最接近全 量微调。</p><h2>第 3 关实操练习题：编写单卡 16GB 显存微调 8B 模型的 Unsloth/TRL 配置脚本</h2><h3>任务背景</h3><p>你只有一张 16GB 显存的 GPU,需要微调一个 8B 规模的医疗/法律垂直模型(数据集共 5,000 条高质量样本),但初版配置一启动就报 CUDA Out of Memory (OOM)。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 写出完整的 LoRA 配置字典(含 r、lora_alpha、target_modules 全 7 层挂载及 use_gradient_checkpointing)(5 分);</p><p>2. 通过调整 per_device_train_batch_size 与 gradient_accumulation_steps,在单步仅占极小显存的前提 下实现等效 Batch Size = 16(</p><p>4.5 分);</p><p>3. 指定兼顾省显存与稳定性的优化器(如 adamw_8bit)、学习率(如 2e-4)与训练轮数 (num_train_epochs)(3 分)。</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/llm/03" data-exercise="/content/levels/llm-03.json">
       <div class="practice-head">
-        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <p class="label">PRACTICE / 本关练习 · 本地规则 + 覆盖检查</p>
         <h2>编写单卡 16GB 显存微调 8B 模型的 Unsloth/TRL 配置脚本</h2>
-        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+        <p>本地检查在你的浏览器里完成，不上传。覆盖检查需要把这段答案发送到服务器计算一次，算完即弃、不存档，需你点同意；只核对本关评分项覆盖的方向，不在评分项里的题目不会被检查。</p>
       </div>
       <div class="knowledge-check" data-objective></div>
       <div class="practice-grid">

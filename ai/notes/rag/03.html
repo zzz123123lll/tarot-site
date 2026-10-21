@@ -92,9 +92,9 @@
     <section class="lesson" id="lesson"><h3>核心原理</h3><p>在 StepByStep-RAG 的第二模块 SemanticSeek 与 AI Infra Engineer Learning (Mod 110) 中,传 统的 Ctrl+F 或关键词搜索在面对“用戶问:电脑连不上公司内网怎么办”而知识库原文写的是“企业 VPN 客 戶端认证失败排查指南”时,会因为字面词汇零重合而完全搜不到结果。语义检索(Semantic Search)通过 将文本块编码为稠密向量并存入向量数据库(如 Chroma、Qdrant、Weaviate),同时绑定结构化元数据过滤 条件(Metadata Filtering,如 department == "IT" 且 year &gt;= 2025),实现“既懂弦外之音、又守精确边界” 的高效检索。</p><h2>第 3 关实操练习题：构建带元数据预过滤的本地 Chroma/Qdrant 语义检索管道</h2><h3>任务背景</h3><p>知识库里同时存有 2023 年(已废止)和 2026 年(现行有效)的差旅报销标准,单纯靠向量相 似度检索经常把 2023 年的旧住宿标准排在第一名。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设计文档入库(Upsert)时的三维结构:id、document_text、embedding 与 metadata(含版本号、生效 状态 is_active、适用部门)(</p><p>4.5 分);</p><p>2. 编写检索查询逻辑,在计算向量相似度前先通过 where={"is_active": True} 过滤掉历史废止文档(5 分);</p><p>3. 说明为什么查询向量(Query Embedding)与文档入库向量必须使用完全相同的 Embedding 模型与 归一化方式(3 分)。</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/rag/03" data-exercise="/content/levels/rag-03.json">
       <div class="practice-head">
-        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <p class="label">PRACTICE / 本关练习 · 本地规则 + 覆盖检查</p>
         <h2>构建带元数据预过滤的本地 Chroma/Qdrant 语义检索管道</h2>
-        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+        <p>本地检查在你的浏览器里完成，不上传。覆盖检查需要把这段答案发送到服务器计算一次，算完即弃、不存档，需你点同意；只核对本关评分项覆盖的方向，不在评分项里的题目不会被检查。</p>
       </div>
       <div class="knowledge-check" data-objective></div>
       <div class="practice-grid">

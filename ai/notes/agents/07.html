@@ -92,9 +92,9 @@
     <section class="lesson" id="lesson"><h3>核心原理</h3><p>在 Microsoft AI Agents for Beginners 第 11 课 ( Agentic Protocols ) 与 第 12 课 ( Context Engineering) 以及 12-Factor Agents 中,生产级智能体工程有两大前沿基石: 标准化协议(MCP / A2A / NLWeb):通过 Model Context Protocol (MCP) 统一大模型与外部数据源/工 具(GitHub、数据库、本地文件)的连接标准;通过 Agent-to-Agent (A2A) 协议实现跨框架智能体之间 的发现与协作。 上下文工程(Context Engineering):模型的上下文窗口不是垃圾桶!如 12-Factor Agents(Own your context window) 所述,必须对传入模型的 Token 进行精细化筛选、修剪与隔离——当工具返回长达 5 万字的原始网页或日志时,先在沙盒中提取关键摘要再塞入主对话上下文,避免“大海捞针”导致注意力 稀释和高昂 Token 账单。</p><h2>第 7 关实操练习题：设计长周期研发排障 Agent 的上下文压缩与隔离方案</h2><h3>任务背景</h3><p>一个运维排障 Agent 在连续调用了 10 次服务器日志查询工具后,上下文累积了 8 万 Token 的 原始报错日志,导致模型开始遗忘最初的用戶指令且响应极其缓慢。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 制定工具返回值的【入窗截断与摘要规则】(如超过 1,000 字符的原始日志先提取错误码与关键堆栈 行,原始全量文件仅存本地路径引用)(5 分);</p><p>2. 设计历史轮次的【滑动窗口 + 里程碑状态压缩(State Compaction)】策略,保留已验证结论、丢弃冗 余试错过程(</p><p>4.5 分);</p><p>3. 说明如何利用子智能体上下文隔离(Sub-agent Context Isolation)让主控 Agent 只接收最终 200 字 排查结论(3 分)。</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/agents/07" data-exercise="/content/levels/agents-07.json">
       <div class="practice-head">
-        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <p class="label">PRACTICE / 本关练习 · 本地规则 + 覆盖检查</p>
         <h2>设计长周期研发排障 Agent 的上下文压缩与隔离方案</h2>
-        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+        <p>本地检查在你的浏览器里完成，不上传。覆盖检查需要把这段答案发送到服务器计算一次，算完即弃、不存档，需你点同意；只核对本关评分项覆盖的方向，不在评分项里的题目不会被检查。</p>
       </div>
       <div class="knowledge-check" data-objective></div>
       <div class="practice-grid">

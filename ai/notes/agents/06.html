@@ -92,9 +92,9 @@
     <section class="lesson" id="lesson"><h3>核心原理</h3><p>当一个智能体挂载超过 15 个工具、系统提示词超过数千字时,它的工具选错率和指令遗忘率会急 剧上升。Microsoft AI Agents for Beginners 第 8 课(Multi-Agent) 与 Complete Agentic AI Engineering Course 给出的解法是“职责单一化与多智能体分治”。主流编排架构有三种: 主管路由模式(Supervisor / Orchestrator-Workers):由一个中央主管 Agent 接收任务、拆解分发给专 门的“代码专家 Agent”、“数据分析 Agent”、“合规审查 Agent”,最后由主管汇总结果。 交接接力模式(Handoffs / Swarm):前台分诊 Agent 识别出具体诉求后,将对话控制权与精简上下文直 接移交(Handoff)给对应的垂直专科 Agent。 并发聚合模式(Concurrent Aggregation):多个不同视角的专家 Agent 同时独立评估同一份方案(如乐 观派、悲观⻛控派、法务派),最后由聚合器合并各方意见。</p><h2>第 6 关实操练习题：设计“跨境电商全自动选品与上架团队”多智能体架构</h2><h3>任务背景</h3><p>你想用 4 个各司其职的专职 Agent 组成虚拟团队,自动完成“市场趋势挖掘 → 供应商 1688 比 价利润核算 → 侵权与违禁词合规⻛控 → 多语种详情页生成”。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 明确定义 4 个子智能体的专属名称、唯一职责边界与各自挂载的独立工具集(严禁工具跨角色混用) (5 分);</p><p>2. 设计各 Agent 之间传递的结构化交接数据包(State Payload / Handoff Schema),避免把冗长的无关 思考过程传给下游(</p><p>4.5 分);</p><p>3. 设计“一票否决回退机制”:若合规⻛控 Agent 发现外观专利侵权⻛险,如何直接打回选品阶段而非继 续生成详情页(3 分)。 第四阶段:生产落地篇(第 7‒8 关)——标准化协议、上下文工程与安全护栏</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/agents/06" data-exercise="/content/levels/agents-06.json">
       <div class="practice-head">
-        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <p class="label">PRACTICE / 本关练习 · 本地规则 + 覆盖检查</p>
         <h2>设计“跨境电商全自动选品与上架团队”多智能体架构</h2>
-        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+        <p>本地检查在你的浏览器里完成，不上传。覆盖检查需要把这段答案发送到服务器计算一次，算完即弃、不存档，需你点同意；只核对本关评分项覆盖的方向，不在评分项里的题目不会被检查。</p>
       </div>
       <div class="knowledge-check" data-objective></div>
       <div class="practice-grid">

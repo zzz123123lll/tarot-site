@@ -10,6 +10,20 @@
 
 import { judgeByRules } from "../_lib/rule-judge.js";
 
+const RATE_LIMIT = 60; // 每 IP 每分钟。规则版不花钱，但要防止被打满 Functions 配额
+const buckets = new Map();
+
+function tooMany(ip, now) {
+  const b = buckets.get(ip);
+  if (!b || now - b.ts > 60_000) {
+    buckets.set(ip, { n: 1, ts: now });
+    if (buckets.size > 5000) buckets.clear();
+    return false;
+  }
+  b.n += 1;
+  return b.n > RATE_LIMIT;
+}
+
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -22,6 +36,10 @@ function json(data, status = 200) {
 }
 
 export async function onRequestPost({ request }) {
+  if (tooMany(request.headers.get("cf-connecting-ip") || "local", Date.now())) {
+    return json({ error: "请求太频繁，休息一分钟再来" }, 429);
+  }
+
   let body;
   try {
     body = await request.json();

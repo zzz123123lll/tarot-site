@@ -92,9 +92,9 @@
     <section class="lesson" id="lesson"><h3>核心原理</h3><p>传统向量切片 RAG 擅长回答“局部细节查找题”,但在面对“跨全库全局归纳题”(例如:“综合这 500 份客戶投诉工单,今年最核心的三大系统性质量问题及其关联供应商分别是什么?”)时往往彻底失效, 因为 Top-5 局部片段根本无法代表全部 500 份文档的全貌!微软开源的 Microsoft GraphRAG 提出了革命性解 法:在索引阶段利用大模型从文本中抽取实体(Entities)与关系(Relationships)构建知识图谱,通过 Leiden 社区发现算法对紧密关联的实体群落生成多层级的社区摘要(Community Summaries)。查询时: 局部细节问题走 Local Search(实体邻域遍历 + 原文块),宏观全局问题走 Global Search(Map-Reduce 汇总各社区摘要)。</p><h2>第 7 关实操练习题：设计行业研报知识库的实体关系抽取与 Local/Global 路由策略</h2><h3>任务背景</h3><p>你正在为一家券商研究所搭建涵盖 200 份新能源产业链研报的 GraphRAG 知识库。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 定义面向产业链研报的实体类型(如公司、核心原材料、产能指标、技术路线)与关系三元组 (Head, Relation, Tail) 抽取 JSON 格式(5 分);</p><p>2. 设计查询路由器(Query Router):准确判断哪些用戶提问应路由至标准向量/Local Search,哪些宏 观综述提问必须路由至 GraphRAG Global Search(</p><p>4.5 分);</p><p>3. 简述 GraphRAG 索引构建成本高的原因及如何仅对高价值核心文档启用图谱抽取(3 分)。</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/rag/07" data-exercise="/content/levels/rag-07.json">
       <div class="practice-head">
-        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <p class="label">PRACTICE / 本关练习 · 本地规则 + 覆盖检查</p>
         <h2>设计行业研报知识库的实体关系抽取与 Local/Global 路由策略</h2>
-        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+        <p>本地检查在你的浏览器里完成，不上传。覆盖检查需要把这段答案发送到服务器计算一次，算完即弃、不存档，需你点同意；只核对本关评分项覆盖的方向，不在评分项里的题目不会被检查。</p>
       </div>
       <div class="knowledge-check" data-objective></div>
       <div class="practice-grid">

@@ -94,9 +94,9 @@
     <section class="lesson" id="lesson"><h3>核心原理</h3><p>正如 mlabonne/llm-course 第 3‒4 章 所言:“在微调中,数据质量永远比堆砌超参数重要十倍 (Always prioritize data quality over parameter optimization)。”新手做微调最常踩的两个致命大坑: 对话模板(Chat Template)错配与结束符(EOS Token)丢失:基座模型与指令模型遵循严格的特殊控 制符格式(如 ChatML 的 &lt;|im_start|&gt;user...&lt;|im_end|&gt; 或 Llama 3 的 &lt;|start_header_id|&gt;... &lt;|eot_id|&gt;)。如果在拼接训练样本时漏掉了助手回答末尾的 eos_token,微调后的模型在推理时永远不知 道何时停下来,会一直自言自语直到填满最大长度! 未只对 Assistant 回复计算 Loss(Completion-only Loss Masking):如果把用戶提问(Instruction) 也算进交叉熵损失,模型会浪费算力去背诵用戶的问题,甚至学会模仿用戶的语气反问用戶。</p><h2>第 2 关实操练习题：将原始业务问答修正为标准 ShareGPT/ChatML 微调样本</h2><h3>任务背景</h3><p>你想把中医问诊记录转化为微调数据集,参照 LLM Fine-Tuning Hands-on Lab 的数据准备规 范进行格式化与去重清洗。 待改造劣质样本:"问:最近总是失眠多梦、手脚心发热怎么办?答:这属于典型的阴虚火旺证,建议滋阴降 火。"(直接按纯文本塞入训练器,无角色边界、无系统提示、无结束符。)</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 将该样本重构为包含 system、user、assistant 三角色的 ShareGPT/OpenAI 标准 JSON 数组格式(</p><p>4.5 分);</p><p>2. 写出映射为 ChatML 模板后的完整纯文本字符串(必须显式包含 &lt;|im_start|&gt; 与 &lt;|im_end|&gt; 特殊标记) (</p><p>4.5 分);</p><p>3. 列出将数据集送入 SFTTrainer 前必做的 3 项数据清洗检查(如近重复去重 MinHash、长度截断检查、 低质回复过滤)(</p><p>3.5 分)。 第二阶段:微调核心篇(第 3‒4 关)——LoRA/QLoRA 高效微调与训练曲线排障</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/llm/02" data-exercise="/content/levels/llm-02.json">
       <div class="practice-head">
-        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <p class="label">PRACTICE / 本关练习 · 本地规则 + 覆盖检查</p>
         <h2>将原始业务问答修正为标准 ShareGPT/ChatML 微调样本</h2>
-        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+        <p>本地检查在你的浏览器里完成，不上传。覆盖检查需要把这段答案发送到服务器计算一次，算完即弃、不存档，需你点同意；只核对本关评分项覆盖的方向，不在评分项里的题目不会被检查。</p>
       </div>
       <div class="knowledge-check" data-objective></div>
       <div class="practice-grid">

@@ -93,9 +93,9 @@
     <section class="lesson" id="lesson"><h3>核心原理</h3><p>在 mlabonne/llm-course 第 6 章(Evaluation)与第 8 章(Model Merging) 中,有两个极具性 价比的进阶秘籍: 零 GPU 算力的模型融合(Model Merging with MergeKit):如果你手里有一个“擅长写代码的微调模型 A”和一个“擅长中文创意写作的微调模型 B”(两者同源,如均基于 Qwen3.5-9B 或 Qwen3.8-27B 微 调),无需重新训练,直接用 mergekit 工具通过 SLERP(球面线性插值)、TIES 或 DARE 算法将两者的权 重矩阵按比例融合,甚至用 FrankenMoE 拼装成混合专家模型,往往能凭空诞生出一个综合能力超越两者 的全能模型! 科学评估与 Goodhart 定律避坑:“当一个评测指标变成刷榜目标时,它就不再是一个好指标。”公开基准 (如 MMLU、GSM8K)极易遭受训练数据污染(Data Contamination);使用大模型当裁判(LLM-as-a- Judge)时,又存在显著的位置偏见(倾向选第一个回答)与长度偏见(倾向选长篇大论)。</p><h2>第 6 关实操练习题：编写 MergeKit 权重融合配置并设计无偏盲测评估方案</h2><h3>任务背景</h3><p>你想把同属于 Qwen3.5-9B 架构的“金融分析微调版”与“SQL 编程微调版”融合为一个模 型,并客观评测融合前后的真实业务表现。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模 型路径、density 与 weight 权重分配)(5 分);</p><p>2. 指出使用 GPT-6 Sol / Claude Opus</p><p>5.5 作为 LLM-as-a-Judge 评测两个模型胜率(Win Rate)时的三 大常见偏见(位置偏见、长度偏见、自我偏好偏见)(4 分);</p><p>3. 设计消除上述裁判偏见的实操对策(如正反交换 AB 顺序双次打分、字数归一化约束、构建业务私有黄 金测试集)(</p><p>3.5 分)。 第四阶段:量化与部署篇(第 7‒8 关)——低比特量化压缩与 vLLM 高并发推理 服务</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/llm/06" data-exercise="/content/levels/llm-06.json">
       <div class="practice-head">
-        <p class="label">PRACTICE / 本关练习 · 规则引擎 v1</p>
+        <p class="label">PRACTICE / 本关练习 · 本地规则 + 覆盖检查</p>
         <h2>编写 MergeKit 权重融合配置并设计无偏盲测评估方案</h2>
-        <p>答案只保存在这台设备的浏览器里，不上传；系统按本关评分项检查，支持部分分和“无法判断”。</p>
+        <p>本地检查在你的浏览器里完成，不上传。覆盖检查需要把这段答案发送到服务器计算一次，算完即弃、不存档，需你点同意；只核对本关评分项覆盖的方向，不在评分项里的题目不会被检查。</p>
       </div>
       <div class="knowledge-check" data-objective></div>
       <div class="practice-grid">
