@@ -245,6 +245,131 @@ function init(root) {
     }
     setStatus('检查完成');
     save();
+    enhance(answer.value).catch(function (e) { console.warn("[enhance]", e && e.message); });
+  }
+
+  // ---- 增强检查：服务端 /api/check，给出「谈到了几个方向 + 缺什么」 ----
+  // 纯附加：本地规则照旧先跑，这里只多一块报告；接口挂了也不影响原有体验。
+  function exerciseId() {
+    const m = String(exerciseUrl || '').match(/levels\/([^.]+)\.json/);
+    if (m) return m[1];
+    return String(root.dataset.key || '').split('/').filter(Boolean).slice(-2).join('-');
+  }
+
+  let enhanceBox = null;
+  function getEnhanceBox() {
+    if (enhanceBox && enhanceBox.isConnected) return enhanceBox;
+    enhanceBox = root.querySelector('[data-enhance]');
+    if (!enhanceBox) {
+      enhanceBox = document.createElement('div');
+      enhanceBox.className = 'gjh-enhance';
+      enhanceBox.setAttribute('data-enhance', '');
+      if (feedback) feedback.insertAdjacentElement('afterend', enhanceBox);
+      else root.appendChild(enhanceBox);
+    }
+    ensureEnhanceStyle();
+    return enhanceBox;
+  }
+
+  function ensureEnhanceStyle() {
+    if (document.getElementById('gjh-enhance-style')) return;
+    const st = document.createElement('style');
+    st.id = 'gjh-enhance-style';
+    st.textContent = [
+      '.gjh-enhance{margin:18px 0;padding:16px 18px;border:1px solid rgba(0,0,0,.12);border-radius:12px;font-size:14px;line-height:1.7}',
+      '.gjh-enhance h4{margin:0 0 4px;font-size:14px;font-weight:600}',
+      '.gjh-enhance .gjh-sub{margin:0 0 12px;opacity:.6;font-size:12px}',
+      '.gjh-enhance ul{list-style:none;margin:0;padding:0}',
+      '.gjh-enhance li{padding:8px 0;border-top:1px solid rgba(0,0,0,.08);display:flex;gap:8px;flex-wrap:wrap;align-items:baseline}',
+      '.gjh-enhance li:first-child{border-top:0}',
+      '.gjh-enhance .gjh-tag{flex:none;font-size:12px;padding:1px 8px;border-radius:999px;border:1px solid currentColor;opacity:.8}',
+      '.gjh-enhance .gjh-tag-none{opacity:.45}',
+      '.gjh-enhance .gjh-title{flex:1;min-width:180px}',
+      '.gjh-enhance .gjh-hits{width:100%;font-size:12px;opacity:.55}',
+      '.gjh-enhance .gjh-need{width:100%;font-size:13px;opacity:.8}',
+      '.gjh-enhance ol{margin:12px 0 0 20px;padding:0;font-size:13px}',
+      '.gjh-enhance .gjh-limits{margin:12px 0 0;font-size:12px;opacity:.5}',
+    ].join('');
+    document.head.appendChild(st);
+  }
+
+  // 页面承诺「答案只存在浏览器里」，所以上传前必须本人同意，且只问一次。
+  const CONSENT_KEY = 'gjh-enhance-consent';
+  function ensureConsent(box) {
+    let saved = null;
+    try { saved = localStorage.getItem(CONSENT_KEY); } catch (e) {}
+    if (saved === 'yes') return Promise.resolve(true);
+    if (saved === 'no') return Promise.resolve(false);
+
+    return new Promise(function (resolve) {
+      box.innerHTML =
+        '<h4>要做一次覆盖检查吗？</h4>' +
+        '<p class="gjh-sub">覆盖检查需要把这段答案发到服务器算一次，算完即弃、不存档。' +
+        '不点「允许」的话，它不会离开这台设备，原来的本地检查照常可用。</p>' +
+        '<p style="margin:10px 0 0"><button type="button" data-allow>允许，发一次</button> ' +
+        '<button type="button" data-deny>不用了</button></p>';
+      const allow = box.querySelector('[data-allow]');
+      const deny = box.querySelector('[data-deny]');
+      if (allow) allow.addEventListener('click', function () {
+        try { localStorage.setItem(CONSENT_KEY, 'yes'); } catch (e) {}
+        resolve(true);
+      });
+      if (deny) deny.addEventListener('click', function () {
+        try { localStorage.setItem(CONSENT_KEY, 'no'); } catch (e) {}
+        box.innerHTML = '<p class="gjh-sub">已跳过，答案没有离开这台设备。</p>';
+        resolve(false);
+      });
+    });
+  }
+
+  async function enhance(text) {
+    const body = String(text || '').trim();
+    if (!body || body.length < (exercise.minLength || 20)) return;
+    const box = getEnhanceBox();
+
+    const agreed = await ensureConsent(box);
+    if (!agreed) return;
+
+    box.innerHTML = '<p class="gjh-sub">正在做覆盖检查…</p>';
+
+    let data;
+    try {
+      const res = await fetch('/api/check', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ lesson: exerciseId(), answer: body }),
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      data = await res.json();
+      if (data.error) throw new Error(data.error);
+    } catch (err) {
+      box.innerHTML = '';
+      console.warn('[enhance] 覆盖检查不可用：', err.message);
+      return;
+    }
+
+    const SIG = { strong: '● 谈到了', weak: '◐ 好像提到', none: '○ 没检测到' };
+    const HEAD = {
+      covered: '方向都谈到了',
+      partial: '谈到了大部分',
+      low: '大部分没谈到',
+      keyword_only: '名词齐了，但没讲机制',
+      insufficient: '写得太短',
+    };
+
+    box.innerHTML =
+      '<h4>覆盖检查：' + data.coverage.hit + ' / ' + data.coverage.total + '　' + (HEAD[data.verdict] || '') + '</h4>' +
+      '<p class="gjh-sub">这是「谈到了几个方向」，不是分数。规则判断不了因果对错，最后要对照参考答案读一遍。</p>' +
+      '<ul>' + data.items.map(function (it) {
+        const hits = it.hits && it.hits.length ? '<span class="gjh-hits">命中：' + esc(it.hits.join('、')) + '</span>' : '';
+        const need = it.signal === 'none' ? '<span class="gjh-need">这一条要说到：' + esc(it.level2) + '</span>' : '';
+        return '<li><span class="gjh-tag ' + (it.signal === 'none' ? 'gjh-tag-none' : '') + '">' +
+          SIG[it.signal] + '</span><span class="gjh-title">' + esc(it.title) + '</span>' + hits + need + '</li>';
+      }).join('') + '</ul>' +
+      (data.next_actions && data.next_actions.length
+        ? '<ol>' + data.next_actions.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol>'
+        : '') +
+      '<p class="gjh-limits">' + (data.limits || []).map(esc).join('<br>') + '</p>';
   }
 
   checkBtn.addEventListener('click', check);
