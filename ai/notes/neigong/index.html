@@ -29,7 +29,7 @@
     <a class="hide-s" href="/#guide">学习路线</a>
     <a class="hide-s" href="/ai/notes/review/">错题本</a>
     <a class="hide-s" href="/#practice">怎么练</a>
-    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%E7%A5%9E%E5%8A%9F%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
+    <a class="hide-s" href="/#pdf">获取 PDF</a>
   </nav>
 </header>
 <main id="main">
@@ -81,12 +81,30 @@
 </a></div>
 </section>
 <section class="wrap section">
-  <div class="pdf-strip"><p>内功心法 7 册，网页免费；完整 PDF 留邮箱发。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%E7%A5%9E%E5%8A%9F%20%E5%86%85%E5%8A%9F%E5%BF%83%E6%B3%95%20PDF">留邮箱获取 PDF ↗</a></div>
+  <div class="pdf-strip"><p>内功心法 7 册，网页免费；完整 PDF 留邮箱发。</p><form class="pdf-form" data-subscribe novalidate>
+<label for="pdf-email">留邮箱，按顺序发</label>
+<input id="pdf-email" name="email" type="email" required placeholder="you@example.com" autocomplete="email" />
+<input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="pdf-hp" />
+<button type="submit">获取 PDF</button>
+<span class="pdf-form-status" data-subscribe-status role="status"></span>
+</form>
+<style>
+.pdf-form{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0}
+.pdf-form label{font-size:14px;opacity:.8}
+.pdf-form input[type=email]{flex:1 1 220px;min-width:200px;padding:9px 12px;border:1px solid rgba(0,0,0,.2);border-radius:8px;font:inherit;background:#fff;color:inherit}
+.pdf-form button{padding:9px 18px;border-radius:8px;border:1px solid currentColor;background:transparent;color:inherit;font:inherit;cursor:pointer}
+.pdf-form button:disabled{opacity:.5;cursor:default}
+.pdf-form-status{flex:1 1 100%;font-size:13px;opacity:.8}
+.pdf-form-status.is-ok{color:#1d9e75}
+.pdf-form-status.is-err{color:#a32d2d}
+.pdf-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+</style></div>
 </section>
 </main>
 <footer class="wrap">
   <span>AI神功 · 2026</span>
   <span><a href="/ai/notes/privacy/">隐私说明</a> · <a href="/ai/notes/progress/">学习进度</a> · 免费 · 不登录 · 不卖 API</span>
 </footer>
+<script type="module" src="/ai/notes/subscribe.mjs" defer></script>
 </body>
 </html>
