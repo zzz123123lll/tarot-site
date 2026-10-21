@@ -207,10 +207,21 @@ function init(root) {
     }
   }
 
+  // content 里部分关卡的 label 被切碎了（出现 "5 分);" 这种碎片），
+  // 渲染时兜一层：哪边像完整句子就用哪边，别把碎片显示给学员。
+  function criteriaLabel(c) {
+    const label = String(c.label || '').trim();
+    const quote = String(c.sourceQuote || '').trim();
+    const broken = !label || label.length < 6 || /^[\d.]+\s*分/.test(label) || /[（(;,；]$/.test(label);
+    let t = broken && quote && quote.length > label.length ? quote : label;
+    t = t.replace(/[（(]\s*[\d.]+\s*分\s*[）)]\s*;?/g, '').replace(/[;；]\s*$/, '').trim();
+    return t || '评分项';
+  }
+
   function renderCriteria() {
     criteriaBox.innerHTML = exercise.criteria.map((c) => (
       `<div class="check-item" data-criterion="${esc(c.id)}"><span class="check-state" data-state>待检查</span>` +
-      `<span>${esc(c.label)}${c.validator ? '<small class="validator-hint">' + esc(validatorHint(c.validator)) + '</small>' : ''}</span>` +
+      `<span>${esc(criteriaLabel(c))}${c.validator ? '<small class="validator-hint">' + esc(validatorHint(c.validator)) + '</small>' : ''}</span>` +
       `<span class="criterion-weight">${Number(c.weight)} 分</span></div>`
     )).join('');
   }
