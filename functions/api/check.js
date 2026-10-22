@@ -9,7 +9,7 @@
  */
 
 import { judgeByRules } from "../_lib/rule-judge.js";
-import { json, currentUser } from "../_lib/auth.js";
+import { currentUser } from "../_lib/auth.js";
 
 const RATE_LIMIT = 60; // 每 IP 每分钟。规则版不花钱，但要防止被打满 Functions 配额
 const buckets = new Map();
