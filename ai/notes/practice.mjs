@@ -1,4 +1,5 @@
 import { grade, gradeObjective } from '/shared/grading-engine.mjs';
+import { authState, pushProgress, shouldNudgeSignup, markNudged } from '/ai/notes/progress-sync.mjs';
 
 const practice = document.querySelector('.practice[data-engine="v2"]');
 if (practice) init(practice);
@@ -90,6 +91,8 @@ function init(root) {
     state.done = doneEl.checked;
     save();
     setStatus(doneEl.checked ? '已标记完成' : '已取消完成');
+    // 完成一关 → 登录用户自动把进度推到云端（低频写，符合 KV 免费额度）
+    if (doneEl.checked) autoSync();
   });
   root.querySelector('[data-save]').addEventListener('click', save);
   root.querySelector('[data-clear]').addEventListener('click', () => {
@@ -258,6 +261,25 @@ function init(root) {
     setStatus('检查完成');
     save();
     enhance(answer.value).catch(function (e) { console.warn("[enhance]", e && e.message); });
+  }
+
+  // ---- 登录用户的自动进度同步 + 未登录的一次性提示 ----
+  async function autoSync() {
+    try {
+      const st = await authState();
+      if (st.username) {
+        await pushProgress();
+        setStatus('已标记完成，进度已同步到云端');
+      } else if (shouldNudgeSignup()) {
+        markNudged();
+        if (feedback) {
+          feedback.insertAdjacentHTML('beforeend',
+            '<p class="practice-feedback" style="margin-top:8px">这一关完成得不错。' +
+            '<a href="/ai/notes/progress/">注册一个账号（免费，30 秒）</a>，' +
+            '进度会自动存到云端，换设备也能接着学。</p>');
+        }
+      }
+    } catch (e) { console.warn('[sync]', e && e.message); }
   }
 
   // ---- 增强检查：服务端 /api/check，给出「谈到了几个方向 + 缺什么」 ----
