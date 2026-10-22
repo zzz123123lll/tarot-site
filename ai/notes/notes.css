@@ -565,3 +565,27 @@ body{padding-bottom:64px}
   .ab-state{display:none}
   .ab-btn{padding:7px 12px}
 }
+
+/* ---------- 练习卡 v2（2026-10-22）：一张卡 + 状态 chip + 清单式评分项 ---------- */
+.practice{border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden;margin-top:34px}
+.practice-head{position:relative;padding:20px 22px 16px;border-bottom:1px solid var(--line);background:var(--card,#fbfbfd)}
+.practice-head h2{font-size:20px;line-height:1.45;margin:6px 0 8px;max-width:52ch}
+.practice-state{position:absolute;top:18px;right:20px;font-size:12px;padding:2px 10px;border-radius:999px;
+  border:1px solid var(--line);color:var(--muted);background:#fff;white-space:nowrap}
+.practice-state[data-state="answered"]{color:var(--accent,#0071e3);border-color:rgba(0,113,227,.3);background:rgba(0,113,227,.06)}
+.practice-state[data-state="done"]{color:var(--ok,#008009);border-color:rgba(0,128,9,.3);background:rgba(0,128,9,.06)}
+.practice-grid{padding:20px 22px 4px}
+.practice-actions{padding:14px 22px 18px;border-top:1px solid var(--line);display:flex;gap:12px;align-items:center}
+/* 完成勾选已移到页面底部动作条，这里隐藏避免两个入口 */
+.practice-actions .done-check{display:none}
+.check-list{display:grid;gap:0}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px;line-height:1.6}
+.check-item:first-child{border-top:0}
+.check-item .criterion-weight{margin-left:auto;flex:none;font-size:12px;color:var(--muted)}
+@media(max-width:700px){
+  .practice-head{padding:16px 16px 12px}
+  .practice-head h2{font-size:17px;padding-right:64px}
+  .practice-state{top:14px;right:14px}
+  .practice-grid{padding:16px 16px 2px}
+  .practice-actions{padding:12px 16px 16px}
+}

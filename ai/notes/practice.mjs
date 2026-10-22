@@ -17,6 +17,24 @@ function init(root) {
   const criteriaBox = root.querySelector('[data-criteria]');
   const objectiveBox = root.querySelector('[data-objective]');
   const checkBtn = root.querySelector('[data-check]');
+
+  // 练习卡右上角的状态：未作答 / 已作答 / 已完成
+  let stateChip = null;
+  (function mountChip() {
+    const head = root.querySelector('.practice-head');
+    if (!head) return;
+    stateChip = document.createElement('span');
+    stateChip.className = 'practice-state';
+    stateChip.setAttribute('data-practice-state', 'empty');
+    head.appendChild(stateChip);
+  })();
+  function paintState() {
+    if (!stateChip) return;
+    const done = !!doneEl.checked;
+    const hasAnswer = answer.value.trim().length > 0;
+    stateChip.dataset.state = done ? 'done' : hasAnswer ? 'answered' : 'empty';
+    stateChip.textContent = done ? '已完成' : hasAnswer ? '已作答' : '未作答';
+  }
   const answerBox = document.querySelector('.answer');
   let exercise = null;
   let knowledgeChecks = [];
@@ -49,6 +67,7 @@ function init(root) {
     state.at = Date.now();
     write();
     setStatus('已保存');
+    paintState();
   }
   function scheduleSave() {
     setStatus('保存中…');
@@ -85,12 +104,14 @@ function init(root) {
     count();
     reset();
     setStatus('已修改，待保存');
+    paintState();
     scheduleSave();
   });
   doneEl.addEventListener('change', () => {
     state.done = doneEl.checked;
     save();
     setStatus(doneEl.checked ? '已标记完成' : '已取消完成');
+    paintState();
     // 完成一关 → 登录用户自动把进度推到云端（低频写，符合 KV 免费额度）
     if (doneEl.checked) autoSync();
   });
@@ -429,6 +450,7 @@ function init(root) {
       renderObjective();
       reset();
       setStatus(state.at ? '已从本机恢复' : '草稿保存在本机浏览器');
+      paintState();
     })
     .catch((err) => {
       if (feedback) feedback.textContent = '评分数据加载失败：' + err.message + '。请刷新重试。';
