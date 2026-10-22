@@ -9,6 +9,7 @@
  */
 
 import { judgeByRules } from "../_lib/rule-judge.js";
+import { json, currentUser } from "../_lib/auth.js";
 
 const RATE_LIMIT = 60; // 每 IP 每分钟。规则版不花钱，但要防止被打满 Functions 配额
 const buckets = new Map();
@@ -35,7 +36,11 @@ function json(data, status = 200) {
   });
 }
 
-export async function onRequestPost({ request }) {
+export async function onRequestPost({ request, env }) {
+  // 覆盖检查需要登录：不注册只保留本地检查
+  if (!(await currentUser(env, request))) {
+    return json({ error: "覆盖检查需要登录。到「学习进度」页注册，30 秒。", need_login: true }, 401);
+  }
   if (tooMany(request.headers.get("cf-connecting-ip") || "local", Date.now())) {
     return json({ error: "请求太频繁，休息一分钟再来" }, 429);
   }

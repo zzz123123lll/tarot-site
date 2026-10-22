@@ -351,6 +351,12 @@ function init(root) {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ lesson: exerciseId(), answer: body }),
       });
+      if (res.status === 401) {
+        box.innerHTML = '<h4>覆盖检查需要登录</h4>' +
+          '<p class="gjh-sub">注册免费，30 秒。到「学习进度」页建个账号，登录后这里会告诉你每个方向漏了什么。' +
+          '<a href="/ai/notes/progress/">去注册 →</a></p>';
+        return;
+      }
       if (!res.ok) throw new Error('HTTP ' + res.status);
       data = await res.json();
       if (data.error) throw new Error(data.error);
