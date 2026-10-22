@@ -28,7 +28,7 @@
     <a class="hide-s" href="/#guide">学习路线</a>
     <a class="hide-s" href="/ai/notes/review/">错题本</a>
     <a class="hide-s" href="/#practice">怎么练</a>
-    <a class="cta" href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%20AI%E7%A5%9E%E5%8A%9F%20PDF&amp;body=%E6%88%91%E6%83%B3%E8%8E%B7%E5%8F%96%E5%AE%8C%E6%95%B4%20PDF%EF%BC%8C%E6%88%91%E7%9A%84%E9%82%AE%E7%AE%B1%E6%98%AF%EF%BC%9A">获取 PDF</a>
+    <a class="hide-s" href="/#pdf">获取 PDF</a>
   </nav>
 </header>
 <main id="main">
@@ -37,6 +37,31 @@
   <h1>学习进度与数据</h1>
   <p class="lead">进度、错题和草稿只保存在本机浏览器。你可以导出备份，或换设备后导入。</p>
   <div class="track-progress" data-progress-line><span data-progress-count>0 / 36 完成</span><span class="bar"><i></i></span></div>
+</section>
+<section class="wrap section">
+  <div class="account" data-account></div>
+  <style>
+    .account{max-width:760px}
+    .acc-lead{font-size:14px;line-height:1.8;opacity:.82;margin:8px 0 14px}
+    .acc-tabs{display:flex;gap:8px;margin:0 0 14px}
+    .acc-tabs button{padding:6px 16px;border-radius:999px;border:1px solid rgba(0,0,0,.18);background:transparent;color:inherit;font:inherit;font-size:13px;cursor:pointer}
+    .acc-tabs button.on{background:currentColor;color:#fff;border-color:transparent}
+    .acc-form{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin:0 0 12px}
+    .acc-form label{display:flex;flex-direction:column;gap:5px;font-size:13px;opacity:.8;flex:1 1 180px}
+    .acc-form input{padding:9px 12px;border:1px solid rgba(0,0,0,.2);border-radius:8px;font:inherit;background:#fff;color:inherit}
+    .acc-form button,.acc-actions button{padding:9px 18px;border-radius:8px;border:1px solid currentColor;background:transparent;color:inherit;font:inherit;cursor:pointer}
+    .acc-form button[type=submit]{background:currentColor;color:#fff;border-color:transparent}
+    .acc-actions{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 12px}
+    .acc-actions .ghost{opacity:.65}
+    .acc-form .danger{color:#a32d2d;border-color:#a32d2d;background:transparent}
+    .acc-note{font-size:13px;margin:8px 0;opacity:.85}
+    .acc-note.is-ok{color:#1d9e75;opacity:1}
+    .acc-note.is-err{color:#a32d2d;opacity:1}
+    .acc-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:20px;letter-spacing:1px;padding:14px 18px;border:1px dashed rgba(0,0,0,.3);border-radius:10px;display:inline-block}
+    .acc-details{margin-top:16px;font-size:13px;opacity:.85}
+    .acc-details summary{cursor:pointer}
+  </style>
+  <script type="module" src="/ai/notes/account.mjs"></script>
 </section>
 <section class="wrap section">
   <div class="progress-panel">
@@ -61,5 +86,6 @@
   <span><a href="/ai/notes/privacy/">隐私说明</a> · <a href="/ai/notes/progress/">学习进度</a> · 免费 · 不登录 · 不卖 API</span>
 </footer>
 <script type="module" src="/ai/notes/progress.mjs?v=1"></script>
+<script type="module" src="/ai/notes/subscribe.mjs" defer></script>
 </body>
 </html>
