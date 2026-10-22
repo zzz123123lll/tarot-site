@@ -65,12 +65,12 @@
       <p class="label">3 MINUTES / 3 分钟拆解</p>
       <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>业务人员用自然语言让 Agent 查询数据库生成月度销售报表,直接执行模型生成的 SQL 极易出 现字段名拼写错误、漏加时间过滤条件或慢查询锁表。</pre></div>
+        <div class="explain-code"><span>输入</span><pre>业务人员用自然语言让 Agent 查询数据库生成月度销售报表,直接执行模型生成的 SQL 极易出现字段名拼写错误、漏加时间过滤条件或慢查询锁表。</pre></div>
         <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：设计 Generator → Validator → Refiner 三步元认知工作流; / 在 Validator 阶段同时设置【确定性规则检查】(如拦截 DROP/DELETE/UPDATE、强制检查是否包含 LIMIT 与分区日期过滤)与【语义对⻬检查】(核对是否遗漏业务口径)( / 5 分);</p><h3>输出</h3><p>参考答案：参考答案:Text-to-SQL 报表智能体的 Actor-Critic 自愈闭环 def run_self_healing_sql_agent(user_query: str, max_retries: int = 3): draft_sql = sql_generator_agent.run(user_query) for attempt in range(1, max_retries + 1): # 1. 确定性安全与性能护栏检查</p></div>
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Metacognition</dt><dd>Agent 观察、评估并修正自己的推理。</dd></div><div><dt>Refiner</dt><dd>根据错误反馈修复结果的组件。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源核心原理：为什么顶级 Agent 写出的代码或报告极少出错?因为它们不会把第一次生成的结果直接丢给用戶! 根据 Microsoft AI Agents for Beginners 第 9 课(Metacognition) 与 Agentic AI Masterclass 的 Execution Hooks 机制,元认知(Metacognition)是指让 Agent 具备“自我监控、自我评估与自我纠错”能力。核心实 现模式是构建 Actor-Critic(执行者-审查者)内部循环:当 Actor 生成初稿或 SQL/Python 代码后,先由验证 器(确定性单元测试 / 语法检查器 + Critic 审查提示词)按评分标准打分;只有全部指标达标才放行输出,否 则将具体报错信息喂回给 Actor 进行定向修复(上限 2‒3 轮)。</p><h3>结构长什么样</h3><pre class="explain-structure">设计 Generator → Validator → Refiner 三步元认知工作流;
+        <div><h3>为什么有效</h3><p>来源核心原理：为什么顶级 Agent 写出的代码或报告极少出错?因为它们不会把第一次生成的结果直接丢给用戶! 根据 Microsoft AI Agents for Beginners 第 9 课(Metacognition) 与 Agentic AI Masterclass 的 Execution Hooks 机制,元认知(Metacognition)是指让 Agent 具备“自我监控、自我评估与自我纠错”能力。核心实现模式是构建 Actor-Critic(执行者-审查者)内部循环:当 Actor 生成初稿或 SQL/Python 代码后,先由验证器(确定性单元测试 / 语法检查器 + Critic 审查提示词)按评分标准打分;只有全部指标达标才放行输出,否则将具体报错信息喂回给 Actor 进行定向修复(上限 2‒3 轮)。</p><h3>结构长什么样</h3><pre class="explain-structure">设计 Generator → Validator → Refiner 三步元认知工作流;
 在 Validator 阶段同时设置【确定性规则检查】(如拦截 DROP/DELETE/UPDATE、强制检查是否包含 LIMIT 与分区日期过滤)与【语义对⻬检查】(核对是否遗漏业务口径)(
 5 分);
 定义带着数据库报错堆栈(Error Traceback)回传给 Refiner 的结构化修复模板与最大重试上限。</pre></div>
@@ -91,7 +91,7 @@
     <p class="reading-takeaway">本关先记住：设计 Generator → Validator → Refiner 三步元认知工作流;</p>
     <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/microsoft/ai-agents-for-beginners/blob/main/09-metacognition/README.md" target="_blank" rel="noopener">Microsoft · Lesson 9 Metacognition ↗</a><span>PDF 第 5 关</span></div>
   </section>
-    <section class="lesson" id="lesson"><h3>核心原理</h3><p>为什么顶级 Agent 写出的代码或报告极少出错?因为它们不会把第一次生成的结果直接丢给用戶! 根据 Microsoft AI Agents for Beginners 第 9 课(Metacognition) 与 Agentic AI Masterclass 的 Execution Hooks 机制,元认知(Metacognition)是指让 Agent 具备“自我监控、自我评估与自我纠错”能力。核心实 现模式是构建 Actor-Critic(执行者-审查者)内部循环:当 Actor 生成初稿或 SQL/Python 代码后,先由验证 器(确定性单元测试 / 语法检查器 + Critic 审查提示词)按评分标准打分;只有全部指标达标才放行输出,否 则将具体报错信息喂回给 Actor 进行定向修复(上限 2‒3 轮)。</p><h2>第 5 关实操练习题：构建“自然语言转 SQL 报表 Agent”的自检自愈闭环</h2><h3>任务背景</h3><p>业务人员用自然语言让 Agent 查询数据库生成月度销售报表,直接执行模型生成的 SQL 极易出 现字段名拼写错误、漏加时间过滤条件或慢查询锁表。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设计 Generator → Validator → Refiner 三步元认知工作流(4 分);</p><p>2. 在 Validator 阶段同时设置【确定性规则检查】(如拦截 DROP/DELETE/UPDATE、强制检查是否包含 LIMIT 与分区日期过滤)与【语义对⻬检查】(核对是否遗漏业务口径)(</p><p>5.5 分);</p><p>3. 定义带着数据库报错堆栈(Error Traceback)回传给 Refiner 的结构化修复模板与最大重试上限(3 分)。</p></section>
+    <section class="lesson" id="lesson"><h3>核心原理</h3><p>为什么顶级 Agent 写出的代码或报告极少出错?因为它们不会把第一次生成的结果直接丢给用戶!</p><p>根据 Microsoft AI Agents for Beginners 第 9 课(Metacognition) 与 Agentic AI Masterclass 的 Execution Hooks 机制,元认知(Metacognition)是指让 Agent 具备“自我监控、自我评估与自我纠错”能力。</p><p>核心实现模式是构建 Actor-Critic(执行者-审查者)内部循环:当 Actor 生成初稿或 SQL/Python 代码后,先由验证器(确定性单元测试 / 语法检查器 + Critic 审查提示词)按评分标准打分;只有全部指标达标才放行输出,否则将具体报错信息喂回给 Actor 进行定向修复(上限 2‒3 轮)。</p><h2>第 5 关实操练习题：构建“自然语言转 SQL 报表 Agent”的自检自愈闭环</h2><h3>任务背景</h3><p>业务人员用自然语言让 Agent 查询数据库生成月度销售报表,直接执行模型生成的 SQL 极易出现字段名拼写错误、漏加时间过滤条件或慢查询锁表。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设计 Generator → Validator → Refiner 三步元认知工作流(4 分);</p><p>2. 在 Validator 阶段同时设置【确定性规则检查】(如拦截 DROP/DELETE/UPDATE、强制检查是否包含 LIMIT 与分区日期过滤)与【语义对⻬检查】(核对是否遗漏业务口径)(</p><p>5.5 分);</p><p>3. 定义带着数据库报错堆栈(Error Traceback)回传给 Refiner 的结构化修复模板与最大重试上限(3 分)。</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/agents/05" data-exercise="/content/levels/agents-05.json">
       <div class="practice-head">
         <p class="label">PRACTICE / 本关练习 · 本地规则 + 覆盖检查</p>

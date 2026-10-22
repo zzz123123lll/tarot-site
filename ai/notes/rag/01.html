@@ -58,22 +58,22 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">这一关只解决一件事：在 StepByStep-RAG 的第一模块 CosineExplorer 中,作者指出理解 RAG 的起点是搞懂计算机如何 衡量两段文字“意思相近”。通过嵌入模型(Embedding Model),每段文本被映射为高维空间中的数值向量 A 与 B。</p>
+      <p class="explain-summary">这一关只解决一件事：在 StepByStep-RAG 的第一模块 CosineExplorer 中,作者指出理解 RAG 的起点是搞懂计算机如何衡量两段文字“意思相近”。通过嵌入模型(Embedding Model),每段文本被映射为高维空间中的数值向量 A 与 B。</p>
       <ul class="explain-bullets"><li>正确写出包含 L2 范数(模长)归一化的余弦相似度计算公式并防范除零异常(</li><li>5 分);</li><li>加入最低相似度阈值过滤(min_score =</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
       <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>参照 CosineExplorer.py 的教学精神,在不依赖重型黑盒框架的前提下,用基础 Python / NumPy 编写一个计算用戶问题向量与知识库候选文档向量矩阵余弦相似度、并返回大于阈值(threshold &gt;= 0.75)的前 K 个文档索引与得分的核心函数。 待改造劣质代码:def search(q, docs): return sorted(docs, key=lambda d: sum(q*d))[:3](缺陷:仅算 点积未做模长归一化,长文档或数值偏大的向量会霸榜,且无最低相关度阈值过滤。)</pre></div>
+        <div class="explain-code"><span>输入</span><pre>参照 CosineExplorer.py 的教学精神,在不依赖重型黑盒框架的前提下,用基础 Python / NumPy 编写一个计算用戶问题向量与知识库候选文档向量矩阵余弦相似度、并返回大于阈值(threshold &gt;= 0.75)的前 K 个文档索引与得分的核心函数。 待改造劣质代码:def search(q, docs): return sorted(docs, key=lambda d: sum(q*d))[:3](缺陷:仅算点积未做模长归一化,长文档或数值偏大的向量会霸榜,且无最低相关度阈值过滤。)</pre></div>
         <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：正确写出包含 L2 范数(模长)归一化的余弦相似度计算公式并防范除零异常( / 5 分); / 加入最低相似度阈值过滤(min_score =</p><h3>输出</h3><p>参考答案：参考答案与代码解析(Answer Key) 以下提供全套 8 关的 Python 核心实现代码、算法公式与工业级配置模板,助你快速落地本地知识库项目。 第 1 关参考答案:零框架依赖的 NumPy 余弦相似度检索引擎实现 import numpy as np from typing import List, Dict, Any def cosine_similarity_search( query_vec: np.ndarray, do</p></div>
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>Embedding</dt><dd>把文本映射成数值向量。</dd></div><div><dt>L2 范数</dt><dd>向量的长度，用于归一化。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源核心原理：在 StepByStep-RAG 的第一模块 CosineExplorer 中,作者指出理解 RAG 的起点是搞懂计算机如何 衡量两段文字“意思相近”。通过嵌入模型(Embedding Model),每段文本被映射为高维空间中的数值向量 A 与 B。衡量它们语义接近程度的核心指标是余弦相似度(Cosine Similarity):即两个向量夹角的余弦值 (点积除以各自模长的乘积),取值范围为 [-1, 1]。夹角越接近 0 度,余弦值越接近 1,代表语义高度重合;与 向量绝对长度(文章字数多少)无关,只看方向是否一致。</p><h3>结构长什么样</h3><pre class="explain-structure">正确写出包含 L2 范数(模长)归一化的余弦相似度计算公式并防范除零异常(
+        <div><h3>为什么有效</h3><p>来源核心原理：在 StepByStep-RAG 的第一模块 CosineExplorer 中,作者指出理解 RAG 的起点是搞懂计算机如何衡量两段文字“意思相近”。通过嵌入模型(Embedding Model),每段文本被映射为高维空间中的数值向量 A 与 B。衡量它们语义接近程度的核心指标是余弦相似度(Cosine Similarity):即两个向量夹角的余弦值 (点积除以各自模长的乘积),取值范围为 [-1, 1]。夹角越接近 0 度,余弦值越接近 1,代表语义高度重合;与向量绝对长度(文章字数多少)无关,只看方向是否一致。</p><h3>结构长什么样</h3><pre class="explain-structure">正确写出包含 L2 范数(模长)归一化的余弦相似度计算公式并防范除零异常(
 5 分);
 加入最低相似度阈值过滤(min_score =
-75),当所有候选文档得分均低于阈值时返回空列表而非强 行凑够 Top-K;
+75),当所有候选文档得分均低于阈值时返回空列表而非强行凑够 Top-K;
 按相似度从高到低排序并返回包含 {&quot;doc_id&quot;, &quot;score&quot;, &quot;text&quot;} 的结构化列表。</pre></div>
       </div>
       <p class="explain-check">余弦相似度为什么与向量长度无关？</p>
@@ -81,7 +81,7 @@
   </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
-    <p class="reading-quote">在 StepByStep-RAG 的第一模块 CosineExplorer 中,作者指出理解 RAG 的起点是搞懂计算机如何 衡量两段文字“意思相近”。通过嵌入模型(Embedding Model),每段文本被映射为高维空间中的数值向量 A 与 B。</p>
+    <p class="reading-quote">在 StepByStep-RAG 的第一模块 CosineExplorer 中,作者指出理解 RAG 的起点是搞懂计算机如何衡量两段文字“意思相近”。通过嵌入模型(Embedding Model),每段文本被映射为高维空间中的数值向量 A 与 B。</p>
     <div class="reading-grid">
       <div><h3>逐点读懂</h3><ol class="reading-points"><li>正确写出包含 L2 范数(模长)归一化的余弦相似度计算公式并防范除零异常(</li><li>5 分);</li><li>加入最低相似度阈值过滤(min_score =</li></ol></div>
       <div>
@@ -92,7 +92,7 @@
     <p class="reading-takeaway">本关先记住：正确写出包含 L2 范数(模长)归一化的余弦相似度计算公式并防范除零异常(</p>
     <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/gurucharanmk/StepByStep-RAG/blob/main/CosineExplorer/README.md" target="_blank" rel="noopener">StepByStep-RAG · CosineExplorer ↗</a><span>PDF 第 1 关</span></div>
   </section>
-    <section class="lesson" id="lesson"><h3>核心原理</h3><p>在 StepByStep-RAG 的第一模块 CosineExplorer 中,作者指出理解 RAG 的起点是搞懂计算机如何 衡量两段文字“意思相近”。通过嵌入模型(Embedding Model),每段文本被映射为高维空间中的数值向量 A 与 B。衡量它们语义接近程度的核心指标是余弦相似度(Cosine Similarity):即两个向量夹角的余弦值 (点积除以各自模长的乘积),取值范围为 [-1, 1]。夹角越接近 0 度,余弦值越接近 1,代表语义高度重合;与 向量绝对长度(文章字数多少)无关,只看方向是否一致。</p><h2>第 1 关实操练习题：编写零第三方框架依赖的余弦相似度检索函数</h2><h3>任务背景</h3><p>参照 CosineExplorer.py 的教学精神,在不依赖重型黑盒框架的前提下,用基础 Python / NumPy 编写一个计算用戶问题向量与知识库候选文档向量矩阵余弦相似度、并返回大于阈值(threshold &gt;= 0.75)的前 K 个文档索引与得分的核心函数。 待改造劣质代码:def search(q, docs): return sorted(docs, key=lambda d: sum(q*d))[:3](缺陷:仅算 点积未做模长归一化,长文档或数值偏大的向量会霸榜,且无最低相关度阈值过滤。)</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 正确写出包含 L2 范数(模长)归一化的余弦相似度计算公式并防范除零异常(</p><p>4.5 分);</p><p>2. 加入最低相似度阈值过滤(min_score =</p><p>0.75),当所有候选文档得分均低于阈值时返回空列表而非强 行凑够 Top-K(5 分);</p><p>3. 按相似度从高到低排序并返回包含 {"doc_id", "score", "text"} 的结构化列表(3 分)。</p></section>
+    <section class="lesson" id="lesson"><h3>核心原理</h3><p>在 StepByStep-RAG 的第一模块 CosineExplorer 中,作者指出理解 RAG 的起点是搞懂计算机如何衡量两段文字“意思相近”。</p><p>通过嵌入模型(Embedding Model),每段文本被映射为高维空间中的数值向量 A 与 B。</p><p>衡量它们语义接近程度的核心指标是余弦相似度(Cosine Similarity):即两个向量夹角的余弦值 (点积除以各自模长的乘积),取值范围为 [-1, 1]。</p><p>夹角越接近 0 度,余弦值越接近 1,代表语义高度重合;与向量绝对长度(文章字数多少)无关,只看方向是否一致。</p><h2>第 1 关实操练习题：编写零第三方框架依赖的余弦相似度检索函数</h2><h3>任务背景</h3><p>参照 CosineExplorer.py 的教学精神,在不依赖重型黑盒框架的前提下,用基础 Python / NumPy 编写一个计算用戶问题向量与知识库候选文档向量矩阵余弦相似度、并返回大于阈值(threshold &gt;= 0.75)的前 K 个文档索引与得分的核心函数。</p><p>待改造劣质代码:def search(q, docs): return sorted(docs, key=lambda d: sum(q*d))[:3](缺陷:仅算点积未做模长归一化,长文档或数值偏大的向量会霸榜,且无最低相关度阈值过滤。</p><p>)</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 正确写出包含 L2 范数(模长)归一化的余弦相似度计算公式并防范除零异常(</p><p>4.5 分);</p><p>2. 加入最低相似度阈值过滤(min_score =</p><p>0.75),当所有候选文档得分均低于阈值时返回空列表而非强行凑够 Top-K(5 分);</p><p>3. 按相似度从高到低排序并返回包含 {"doc_id", "score", "text"} 的结构化列表(3 分)。</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/rag/01" data-exercise="/content/levels/rag-01.json">
       <div class="practice-head">
         <p class="label">PRACTICE / 本关练习 · 本地规则 + 覆盖检查</p>
@@ -121,7 +121,7 @@
     </section>
     <details class="answer" id="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
-      <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:零框架依赖的 NumPy 余弦相似度检索引擎实现 import numpy as np from typing import List, Dict, Any def cosine_similarity_search( query_vec: np.ndarray, doc_matrix: np.ndarray, docs_meta: List[Dict[str, Any]], top_k: int = 3, min_score: float = 0.75 ) -&gt; List[Dict[str, Any]]: # 1. 计算 L2 范数(模长),加上 1e-10 防止零向量导致除零异常 query_norm = np.linalg.norm(query_vec) + 1e-10 docs_norm = np.linalg.norm(doc_matrix, axis=1) + 1e-10 # 2. 计算全库余弦相似度: (A · B) / (||A|| * ||B||) similarities = np.dot(doc_matrix, query_vec) / (docs_norm * query_norm) # 3. 过滤低于 min_score 阈值的无关文档并按得分降序排列 valid_indices = np.where(similarities &gt;= min_score)[0] if len(valid_indices) == 0: return [] # 严格触发无相关资料回退,绝不强凑低分噪音 sorted_indices = valid_indices[np.argsort(similarities[valid_indices])[::-1]][:top_k] return [ { "doc_id": docs_meta[idx]["id"], "score": round(float(similarities[idx]), 4), "text": docs_meta[idx]["text"] } for idx in sorted_indices ] 得分要点拆解:准确实现点积除以模长乘积并加 `1e-10` 防除零(4.5 分);严格过滤低于 `0.75` 的噪音文 档、支持返回空列表(5 分);按降序输出结构化字典列表(3 分)。 第 2 关</p></div>
+      <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:零框架依赖的 NumPy 余弦相似度检索引擎实现 import numpy as np from typing import List, Dict, Any def cosine_similarity_search( query_vec: np.ndarray, doc_matrix: np.ndarray, docs_meta: List[Dict[str, Any]], top_k: int = 3, min_score: float = 0.75 ) -&gt; List[Dict[str, Any]]: # 1. 计算 L2 范数(模长),加上 1e-10 防止零向量导致除零异常 query_norm = np.linalg.norm(query_vec) + 1e-10 docs_norm = np.linalg.norm(doc_matrix, axis=1) + 1e-10 # 2. 计算全库余弦相似度: (A · B) / (||A|| * ||B||) similarities = np.dot(doc_matrix, query_vec) / (docs_norm * query_norm) # 3. 过滤低于 min_score 阈值的无关文档并按得分降序排列 valid_indices = np.where(similarities &gt;= min_score)[0] if len(valid_indices) == 0: return [] # 严格触发无相关资料回退,绝不强凑低分噪音 sorted_indices = valid_indices[np.argsort(similarities[valid_indices])[::-1]][:top_k] return [ { "doc_id": docs_meta[idx]["id"], "score": round(float(similarities[idx]), 4), "text": docs_meta[idx]["text"] } for idx in sorted_indices ] 得分要点拆解:准确实现点积除以模长乘积并加 `1e-10` 防除零(4.5 分);严格过滤低于 `0.75` 的噪音文档、支持返回空列表(5 分);按降序输出结构化字典列表(3 分)。 第 2 关</p></div>
     </details>
     <div class="pdf-box"><p>网页永久免费。完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%86%85%E5%8A%9F05%20%C2%B7%20RAG%20%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
     <div class="nextprev"><a href="/ai/notes/neigong/04"><small>上一关</small>上下文工程与幻觉控制</a><a class="right" href="/ai/notes/rag/02"><small>下一关</small>文档解析与黄金分块策略</a></div>

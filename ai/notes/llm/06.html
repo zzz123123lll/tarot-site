@@ -58,41 +58,41 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">这一关只解决一件事：在 mlabonne/llm-course 第 6 章(Evaluation)与第 8 章(Model Merging) 中,有两个极具性 价比的进阶秘籍: 零 GPU 算力的模型融合(Model Merging with MergeKit):如果你手里有一个“擅长写代码的微调模型 A”和一个“擅长中文创意写作的微调模型 B”(两者同源,如均基于 Qwen3.5-9B 或 Qwen3.8-27B 微 调),无需重新训练,直接用 mergekit 工具通过 SLERP(球面线性插值)、TIES 或 DARE 算法将两者的权 重矩阵按比例融合,甚至用 FrankenMoE 拼装成混合专家模型,往往能凭空诞生出一个综合能力超越两者 的全能模型!科学评估与 Goodhart 定律避坑:“当一个评测指标变成刷榜目标时,它就不再是一个好指标。</p>
-      <ul class="explain-bullets"><li>编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模 型路径、density 与 weight 权重分配);</li><li>指出使用 GPT-6 Sol / Claude Opus</li><li>5 作为 LLM-as-a-Judge 评测两个模型胜率(Win Rate)时的三 大常见偏见(位置偏见、长度偏见、自我偏好偏见);</li></ul>
+      <p class="explain-summary">这一关只解决一件事：在 mlabonne/llm-course 第 6 章(Evaluation)与第 8 章(Model Merging) 中,有两个极具性价比的进阶秘籍: 零 GPU 算力的模型融合(Model Merging with MergeKit):如果你手里有一个“擅长写代码的微调模型 A”和一个“擅长中文创意写作的微调模型 B”(两者同源,如均基于 Qwen3.5-9B 或 Qwen3.8-27B 微调),无需重新训练,直接用 mergekit 工具通过 SLERP(球面线性插值)、TIES 或 DARE 算法将两者的权重矩阵按比例融合,甚至用 FrankenMoE 拼装成混合专家模型,往往能凭空诞生出一个综合能力超越两者的全能模型!科学评估与 Goodhart 定律避坑:“当一个评测指标变成刷榜目标时,它就不再是一个好指标。</p>
+      <ul class="explain-bullets"><li>编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模型路径、density 与 weight 权重分配);</li><li>指出使用 GPT-6 Sol / Claude Opus</li><li>5 作为 LLM-as-a-Judge 评测两个模型胜率(Win Rate)时的三大常见偏见(位置偏见、长度偏见、自我偏好偏见);</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
       <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>你想把同属于 Qwen3.5-9B 架构的“金融分析微调版”与“SQL 编程微调版”融合为一个模 型,并客观评测融合前后的真实业务表现。</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模 型路径、density 与 weight 权重分配); / 指出使用 GPT-6 Sol / Claude Opus / 5 作为 LLM-as-a-Judge 评测两个模型胜率(Win Rate)时的三 大常见偏见(位置偏见、长度偏见、自我偏好偏见);</p><h3>输出</h3><p>参考答案：参考答案:MergeKit DARE-TIES 权重融合配置与无偏评测设计 # merge_config.yaml ― 使用 DARE-TIES 融合金融微调版与 SQL 编程微调版 models: - model: ./models/Qwen3.5-9B-Finance-SFT parameters: density: 0.55 # 随机丢弃 45% 微小增量参数,消除冗余冲突 weight: 0.60 - model: ./mode</p></div>
+        <div class="explain-code"><span>输入</span><pre>你想把同属于 Qwen3.5-9B 架构的“金融分析微调版”与“SQL 编程微调版”融合为一个模型,并客观评测融合前后的真实业务表现。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模型路径、density 与 weight 权重分配); / 指出使用 GPT-6 Sol / Claude Opus / 5 作为 LLM-as-a-Judge 评测两个模型胜率(Win Rate)时的三大常见偏见(位置偏见、长度偏见、自我偏好偏见);</p><h3>输出</h3><p>参考答案：参考答案:MergeKit DARE-TIES 权重融合配置与无偏评测设计 # merge_config.yaml ― 使用 DARE-TIES 融合金融微调版与 SQL 编程微调版 models: - model: ./models/Qwen3.5-9B-Finance-SFT parameters: density: 0.55 # 随机丢弃 45% 微小增量参数,消除冗余冲突 weight: 0.60 - model: ./mode</p></div>
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>MergeKit</dt><dd>零训练融合模型权重的工具。</dd></div><div><dt>LLM-as-a-Judge</dt><dd>用大模型给模型输出打分的评测方式。</dd></div><div><dt>Data Contamination</dt><dd>评测数据混入训练数据，导致分数虚高。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源核心原理：在 mlabonne/llm-course 第 6 章(Evaluation)与第 8 章(Model Merging) 中,有两个极具性 价比的进阶秘籍: 零 GPU 算力的模型融合(Model Merging with MergeKit):如果你手里有一个“擅长写代码的微调模型 A”和一个“擅长中文创意写作的微调模型 B”(两者同源,如均基于 Qwen3.5-9B 或 Qwen3.8-27B 微 调),无需重新训练,直接用 mergekit 工具通过 SLERP(球面线性插值)、TIES 或 DARE 算法将两者的权 重矩阵按比例融合,甚至用 FrankenMoE 拼装成混合专家模型,往往能凭空诞生出一个综合能力超越两者 的全能模型! 科学评估与 Goodhart 定律避坑:“当一个评测指标变成刷榜目标时,它就不再是一个好指标。”公开基准 (如 MMLU、GSM8K)极易遭受训练数据污染(Data Contamination);使用大模型当裁判(LLM-as-a- Judge)时,又存在显著的位置偏见(倾向选第一个回答)与长度偏见(倾向选长篇大论)。</p><h3>结构长什么样</h3><pre class="explain-structure">编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模 型路径、density 与 weight 权重分配);
+        <div><h3>为什么有效</h3><p>来源核心原理：在 mlabonne/llm-course 第 6 章(Evaluation)与第 8 章(Model Merging) 中,有两个极具性价比的进阶秘籍: 零 GPU 算力的模型融合(Model Merging with MergeKit):如果你手里有一个“擅长写代码的微调模型 A”和一个“擅长中文创意写作的微调模型 B”(两者同源,如均基于 Qwen3.5-9B 或 Qwen3.8-27B 微调),无需重新训练,直接用 mergekit 工具通过 SLERP(球面线性插值)、TIES 或 DARE 算法将两者的权重矩阵按比例融合,甚至用 FrankenMoE 拼装成混合专家模型,往往能凭空诞生出一个综合能力超越两者的全能模型! 科学评估与 Goodhart 定律避坑:“当一个评测指标变成刷榜目标时,它就不再是一个好指标。”公开基准 (如 MMLU、GSM8K)极易遭受训练数据污染(Data Contamination);使用大模型当裁判(LLM-as-a- Judge)时,又存在显著的位置偏见(倾向选第一个回答)与长度偏见(倾向选长篇大论)。</p><h3>结构长什么样</h3><pre class="explain-structure">编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模型路径、density 与 weight 权重分配);
 指出使用 GPT-6 Sol / Claude Opus
-5 作为 LLM-as-a-Judge 评测两个模型胜率(Win Rate)时的三 大常见偏见(位置偏见、长度偏见、自我偏好偏见);
-设计消除上述裁判偏见的实操对策(如正反交换 AB 顺序双次打分、字数归一化约束、构建业务私有黄 金测试集)(
-5 分)。 第四阶段:量化与部署篇(第 7‒8 关)——低比特量化压缩与 vLLM 高并发推理 服务</pre></div>
+5 作为 LLM-as-a-Judge 评测两个模型胜率(Win Rate)时的三大常见偏见(位置偏见、长度偏见、自我偏好偏见);
+设计消除上述裁判偏见的实操对策(如正反交换 AB 顺序双次打分、字数归一化约束、构建业务私有黄金测试集)(
+5 分)。 第四阶段:量化与部署篇(第 7‒8 关)——低比特量化压缩与 vLLM 高并发推理服务</pre></div>
       </div>
       <p class="explain-check">为什么只看公开榜单分数不足以判断模型好坏？</p>
     </div>
   </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
-    <p class="reading-quote">在 mlabonne/llm-course 第 6 章(Evaluation)与第 8 章(Model Merging) 中,有两个极具性 价比的进阶秘籍: 零 GPU 算力的模型融合(Model Merging with MergeKit):如果你手里有一个“擅长写代码的微调模型 A”和一个“擅长中文创意写作的微调模型 B”(两者同源,如均基于 Qwen3.5-9B 或 Qwen3.8-27B 微 调),无需重新训练,直接用 mergekit 工具通过 SLERP(球面线性插值)、TIES 或 DARE 算法将两者的权 重矩阵按比例融合,甚至用 FrankenMoE 拼装成混合专家模型,往往能凭空诞生出一个综合能力超越两者 的全能模型!科学评估与 Goodhart 定律避坑:“当一个评测指标变成刷榜目标时,它就不再是一个好指标。</p>
+    <p class="reading-quote">在 mlabonne/llm-course 第 6 章(Evaluation)与第 8 章(Model Merging) 中,有两个极具性价比的进阶秘籍: 零 GPU 算力的模型融合(Model Merging with MergeKit):如果你手里有一个“擅长写代码的微调模型 A”和一个“擅长中文创意写作的微调模型 B”(两者同源,如均基于 Qwen3.5-9B 或 Qwen3.8-27B 微调),无需重新训练,直接用 mergekit 工具通过 SLERP(球面线性插值)、TIES 或 DARE 算法将两者的权重矩阵按比例融合,甚至用 FrankenMoE 拼装成混合专家模型,往往能凭空诞生出一个综合能力超越两者的全能模型!科学评估与 Goodhart 定律避坑:“当一个评测指标变成刷榜目标时,它就不再是一个好指标。</p>
     <div class="reading-grid">
-      <div><h3>逐点读懂</h3><ol class="reading-points"><li>编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模 型路径、density 与 weight 权重分配);</li><li>指出使用 GPT-6 Sol / Claude Opus</li><li>5 作为 LLM-as-a-Judge 评测两个模型胜率(Win Rate)时的三 大常见偏见(位置偏见、长度偏见、自我偏好偏见);</li></ol></div>
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模型路径、density 与 weight 权重分配);</li><li>指出使用 GPT-6 Sol / Claude Opus</li><li>5 作为 LLM-as-a-Judge 评测两个模型胜率(Win Rate)时的三大常见偏见(位置偏见、长度偏见、自我偏好偏见);</li></ol></div>
       <div>
         <h3>怎么对应本关练习</h3><p>先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。</p>
         <h3>例子在哪</h3><p>本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。</p>
       </div>
     </div>
-    <p class="reading-takeaway">本关先记住：编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模 型路径、density 与 weight 权重分配);</p>
+    <p class="reading-takeaway">本关先记住：编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模型路径、density 与 weight 权重分配);</p>
     <div class="reading-refs"><span class="label">SOURCES</span><span>PDF 第 6 关（用户提供）</span><a href="https://github.com/mlabonne/llm-course" target="_blank" rel="noopener">mlabonne/llm-course ↗</a></div>
   </section>
-    <section class="lesson" id="lesson"><h3>核心原理</h3><p>在 mlabonne/llm-course 第 6 章(Evaluation)与第 8 章(Model Merging) 中,有两个极具性 价比的进阶秘籍: 零 GPU 算力的模型融合(Model Merging with MergeKit):如果你手里有一个“擅长写代码的微调模型 A”和一个“擅长中文创意写作的微调模型 B”(两者同源,如均基于 Qwen3.5-9B 或 Qwen3.8-27B 微 调),无需重新训练,直接用 mergekit 工具通过 SLERP(球面线性插值)、TIES 或 DARE 算法将两者的权 重矩阵按比例融合,甚至用 FrankenMoE 拼装成混合专家模型,往往能凭空诞生出一个综合能力超越两者 的全能模型! 科学评估与 Goodhart 定律避坑:“当一个评测指标变成刷榜目标时,它就不再是一个好指标。”公开基准 (如 MMLU、GSM8K)极易遭受训练数据污染(Data Contamination);使用大模型当裁判(LLM-as-a- Judge)时,又存在显著的位置偏见(倾向选第一个回答)与长度偏见(倾向选长篇大论)。</p><h2>第 6 关实操练习题：编写 MergeKit 权重融合配置并设计无偏盲测评估方案</h2><h3>任务背景</h3><p>你想把同属于 Qwen3.5-9B 架构的“金融分析微调版”与“SQL 编程微调版”融合为一个模 型,并客观评测融合前后的真实业务表现。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模 型路径、density 与 weight 权重分配)(5 分);</p><p>2. 指出使用 GPT-6 Sol / Claude Opus</p><p>5.5 作为 LLM-as-a-Judge 评测两个模型胜率(Win Rate)时的三 大常见偏见(位置偏见、长度偏见、自我偏好偏见)(4 分);</p><p>3. 设计消除上述裁判偏见的实操对策(如正反交换 AB 顺序双次打分、字数归一化约束、构建业务私有黄 金测试集)(</p><p>3.5 分)。 第四阶段:量化与部署篇(第 7‒8 关)——低比特量化压缩与 vLLM 高并发推理 服务</p></section>
+    <section class="lesson" id="lesson"><h3>核心原理</h3><p>在 mlabonne/llm-course 第 6 章(Evaluation)与第 8 章(Model Merging) 中,有两个极具性价比的进阶秘籍: 零 GPU 算力的模型融合(Model Merging with MergeKit):如果你手里有一个“擅长写代码的微调模型 A”和一个“擅长中文创意写作的微调模型 B”(两者同源,如均基于 Qwen3.5-9B 或 Qwen3.8-27B 微调),无需重新训练,直接用 mergekit 工具通过 SLERP(球面线性插值)、TIES 或 DARE 算法将两者的权重矩阵按比例融合,甚至用 FrankenMoE 拼装成混合专家模型,往往能凭空诞生出一个综合能力超越两者的全能模型!</p><p>科学评估与 Goodhart 定律避坑:“当一个评测指标变成刷榜目标时,它就不再是一个好指标。</p><p>”公开基准 (如 MMLU、GSM8K)极易遭受训练数据污染(Data Contamination);使用大模型当裁判(LLM-as-a- Judge)时,又存在显著的位置偏见(倾向选第一个回答)与长度偏见(倾向选长篇大论)。</p><h2>第 6 关实操练习题：编写 MergeKit 权重融合配置并设计无偏盲测评估方案</h2><h3>任务背景</h3><p>你想把同属于 Qwen3.5-9B 架构的“金融分析微调版”与“SQL 编程微调版”融合为一个模型,并客观评测融合前后的真实业务表现。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 编写一份采用 dare_ties 或 slerp 方法的 MergeKit YAML 核心配置结构(包含基座模型声明、待融合模型路径、density 与 weight 权重分配)(5 分);</p><p>2. 指出使用 GPT-6 Sol / Claude Opus</p><p>5.5 作为 LLM-as-a-Judge 评测两个模型胜率(Win Rate)时的三大常见偏见(位置偏见、长度偏见、自我偏好偏见)(4 分);</p><p>3. 设计消除上述裁判偏见的实操对策(如正反交换 AB 顺序双次打分、字数归一化约束、构建业务私有黄金测试集)(</p><p>3.5 分)。 第四阶段:量化与部署篇(第 7‒8 关)——低比特量化压缩与 vLLM 高并发推理服务</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/llm/06" data-exercise="/content/levels/llm-06.json">
       <div class="practice-head">
         <p class="label">PRACTICE / 本关练习 · 本地规则 + 覆盖检查</p>
@@ -121,7 +121,7 @@
     </section>
     <details class="answer" id="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
-      <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:MergeKit DARE-TIES 权重融合配置与无偏评测设计 # merge_config.yaml ― 使用 DARE-TIES 融合金融微调版与 SQL 编程微调版 models: - model: ./models/Qwen3.5-9B-Finance-SFT parameters: density: 0.55 # 随机丢弃 45% 微小增量参数,消除冗余冲突 weight: 0.60 - model: ./models/Qwen3.5-9B-SQL-SFT parameters: density: 0.55 weight: 0.40 merge_method: dare_ties base_model: meta-llama/Meta-Qwen3.5-9B-Instruct parameters: int8_mask: true dtype: bfloat16 LLM-as-a-Judge 三 大 偏 见 与 消 除 对 策 : 1 针 对 位 置 偏 见 ( Position Bias ): 对 每 一 道 测 试 题 分 别 按 `(Model_A, Model_B)` 与 `(Model_B, Model_A)` 交换顺序评测两次,仅当两次结果一致时才计分;2 针对 长度偏见(Verbosity Bias):在裁判 Prompt 中明确声明“严禁因为回答字数多而给高分,冗余废话应扣 分”,并统计长度归一化胜率(Length-Controlled Win Rate);3 针对基准数据污染:从真实线上脱敏日志中 抽取 200 道模型从未见过的私有黄金测试集(Golden Dataset)。 得分要点拆解:编写规范的 `dare_ties` MergeKit YAML 配置(5 分);准确指出位置、长度与自我偏好三大 裁判偏见(4 分);给出正反双评、长度约束与私有测试集方案(3.5 分)。 第 7 关</p></div>
+      <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:MergeKit DARE-TIES 权重融合配置与无偏评测设计 # merge_config.yaml ― 使用 DARE-TIES 融合金融微调版与 SQL 编程微调版 models: - model: ./models/Qwen3.5-9B-Finance-SFT parameters: density: 0.55 # 随机丢弃 45% 微小增量参数,消除冗余冲突 weight: 0.60 - model: ./models/Qwen3.5-9B-SQL-SFT parameters: density: 0.55 weight: 0.40 merge_method: dare_ties base_model: meta-llama/Meta-Qwen3.5-9B-Instruct parameters: int8_mask: true dtype: bfloat16 LLM-as-a-Judge 三大偏见与消除对策 : 1 针对位置偏见 ( Position Bias ): 对每一道测试题分别按 `(Model_A, Model_B)` 与 `(Model_B, Model_A)` 交换顺序评测两次,仅当两次结果一致时才计分;2 针对长度偏见(Verbosity Bias):在裁判 Prompt 中明确声明“严禁因为回答字数多而给高分,冗余废话应扣分”,并统计长度归一化胜率(Length-Controlled Win Rate);3 针对基准数据污染:从真实线上脱敏日志中抽取 200 道模型从未见过的私有黄金测试集(Golden Dataset)。 得分要点拆解:编写规范的 `dare_ties` MergeKit YAML 配置(5 分);准确指出位置、长度与自我偏好三大裁判偏见(4 分);给出正反双评、长度约束与私有测试集方案(3.5 分)。 第 7 关</p></div>
     </details>
     <div class="pdf-box"><p>网页永久免费。完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%86%85%E5%8A%9F07%20%C2%B7%20%E6%A8%A1%E5%9E%8B%E5%AE%9A%E5%88%B6%E4%B8%8E%E7%AE%97%E5%8A%9B%E9%87%8F%E5%8C%96%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
     <div class="nextprev"><a href="/ai/notes/llm/05"><small>上一关</small>人类偏好对⻬ DPO、ORPO 与 GRPO(Scientist 5: Preference Alignment)</a><a class="right" href="/ai/notes/llm/07"><small>下一关</small>低比特模型量化实战(Scientist 7: Quantization ― GGUF, AWQ &amp; GPTQ)</a></div>

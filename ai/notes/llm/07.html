@@ -58,23 +58,23 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">这一关只解决一件事：模型训练好后,如何把它塞进普通笔记本电脑或低成本云服务器里高速运行?mlabonne/llm- course 第 7 章(Quantization) 给出了完整路线图:将原本占 16 位浮点数(FP16/BF16,每个参数占 2 字 节)的权重压缩为 8-bit 甚至 4-bit 整数(每个参数仅占 0.5 字节),在几乎不损失肉眼可见精度的前提下,将 显存占用直接砍掉 70% 以上!</p>
-      <ul class="explain-bullets"><li>写出大模型推理总显存占用的快速估算公式(模型权重显存 + KV Cache 动态显存 + 激活值开销),并 分别计算 8B 与 32B 模型在 FP16 与 4-bit 量化下的权重显存大小(</li><li>5 分);</li><li>分别为环境1(Mac 本地离线)和环境2(单卡 24GB 4090 跑 32B 模型)指定最匹配的量化格式、推 荐量化档位及运行引擎(</li></ul>
+      <p class="explain-summary">这一关只解决一件事：模型训练好后,如何把它塞进普通笔记本电脑或低成本云服务器里高速运行?mlabonne/llm- course 第 7 章(Quantization) 给出了完整路线图:将原本占 16 位浮点数(FP16/BF16,每个参数占 2 字节)的权重压缩为 8-bit 甚至 4-bit 整数(每个参数仅占 0.5 字节),在几乎不损失肉眼可见精度的前提下,将显存占用直接砍掉 70% 以上!</p>
+      <ul class="explain-bullets"><li>写出大模型推理总显存占用的快速估算公式(模型权重显存 + KV Cache 动态显存 + 激活值开销),并分别计算 8B 与 32B 模型在 FP16 与 4-bit 量化下的权重显存大小(</li><li>5 分);</li><li>分别为环境1(Mac 本地离线)和环境2(单卡 24GB 4090 跑 32B 模型)指定最匹配的量化格式、推荐量化档位及运行引擎(</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
       <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>客戶现场只有两类硬件环境:1 销售经理随身携带的 16GB 统一内存 MacBook Air(需断网离 线运行 8B 模型);2 公司机房一台配有单张 24GB 显存 RTX 4090 的服务器(需部署一个 32B 规模的模型 供内部 20 人并发调用)。</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：写出大模型推理总显存占用的快速估算公式(模型权重显存 + KV Cache 动态显存 + 激活值开销),并 分别计算 8B 与 32B 模型在 FP16 与 4-bit 量化下的权重显存大小( / 5 分); / 分别为环境1(Mac 本地离线)和环境2(单卡 24GB 4090 跑 32B 模型)指定最匹配的量化格式、推 荐量化档位及运行引擎(</p><h3>输出</h3><p>参考答案：参考答案:推理显存精算公式与跨平台量化选型方案 【1. 推理显存快速估算公式】 总显存占用 ≈ 模型权重显存 + KV Cache 动态显存 + 运行时激活开销(约 10%~15% 冗余) - FP16/BF16 权重显存 ≈ 参数量(B) × 2 Bytes - INT4 (4-bit) 权重显存 ≈ 参数量(B) × 0.55~0.6 Bytes(含缩放因子元数据开销) 【2. 两种模型规格显存账单核算】 - 8B 模型:FP16 </p></div>
+        <div class="explain-code"><span>输入</span><pre>客戶现场只有两类硬件环境:1 销售经理随身携带的 16GB 统一内存 MacBook Air(需断网离线运行 8B 模型);2 公司机房一台配有单张 24GB 显存 RTX 4090 的服务器(需部署一个 32B 规模的模型供内部 20 人并发调用)。</pre></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：写出大模型推理总显存占用的快速估算公式(模型权重显存 + KV Cache 动态显存 + 激活值开销),并分别计算 8B 与 32B 模型在 FP16 与 4-bit 量化下的权重显存大小( / 5 分); / 分别为环境1(Mac 本地离线)和环境2(单卡 24GB 4090 跑 32B 模型)指定最匹配的量化格式、推荐量化档位及运行引擎(</p><h3>输出</h3><p>参考答案：参考答案:推理显存精算公式与跨平台量化选型方案 【1. 推理显存快速估算公式】 总显存占用 ≈ 模型权重显存 + KV Cache 动态显存 + 运行时激活开销(约 10%~15% 冗余) - FP16/BF16 权重显存 ≈ 参数量(B) × 2 Bytes - INT4 (4-bit) 权重显存 ≈ 参数量(B) × 0.55~0.6 Bytes(含缩放因子元数据开销) 【2. 两种模型规格显存账单核算】 - 8B 模型:FP16 </p></div>
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>GGUF</dt><dd>配合 llama.cpp/Ollama 的本地量化格式。</dd></div><div><dt>AWQ</dt><dd>保护显著权重的 4-bit GPU 量化方法。</dd></div><div><dt>Calibration Dataset</dt><dd>用于观察激活分布、指导量化的样本集。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源核心原理：模型训练好后,如何把它塞进普通笔记本电脑或低成本云服务器里高速运行?mlabonne/llm- course 第 7 章(Quantization) 给出了完整路线图:将原本占 16 位浮点数(FP16/BF16,每个参数占 2 字 节)的权重压缩为 8-bit 甚至 4-bit 整数(每个参数仅占 0.5 字节),在几乎不损失肉眼可见精度的前提下,将 显存占用直接砍掉 70% 以上!三大主流工业格式选型必须分清: GGUF(配合 llama.cpp / Ollama):专为 CPU + GPU 混合推理及苹果 Mac (Apple Silicon) 本地运行而 生,支持把词汇表、元数据与权重打包进单一文件(如 Q4_K_M、Q5_K_M 量化档位)。 AWQ(Activation-Aware Weight Quantization)与 GPTQ / EXL2:专为 纯 GPU 高吞吐生产推理设 计!AWQ 发现模型中仅有 1% 的显著权重(Salient Weights,对应激活值较大的通道)对精度至关重要, 通过对这 1% 通道做缩放保护,使 4-bit 量化模型在 GPU 上兼具高速度与高精度。</p><h3>结构长什么样</h3><pre class="explain-structure">写出大模型推理总显存占用的快速估算公式(模型权重显存 + KV Cache 动态显存 + 激活值开销),并 分别计算 8B 与 32B 模型在 FP16 与 4-bit 量化下的权重显存大小(
+        <div><h3>为什么有效</h3><p>来源核心原理：模型训练好后,如何把它塞进普通笔记本电脑或低成本云服务器里高速运行?mlabonne/llm- course 第 7 章(Quantization) 给出了完整路线图:将原本占 16 位浮点数(FP16/BF16,每个参数占 2 字节)的权重压缩为 8-bit 甚至 4-bit 整数(每个参数仅占 0.5 字节),在几乎不损失肉眼可见精度的前提下,将显存占用直接砍掉 70% 以上!三大主流工业格式选型必须分清: GGUF(配合 llama.cpp / Ollama):专为 CPU + GPU 混合推理及苹果 Mac (Apple Silicon) 本地运行而生,支持把词汇表、元数据与权重打包进单一文件(如 Q4_K_M、Q5_K_M 量化档位)。 AWQ(Activation-Aware Weight Quantization)与 GPTQ / EXL2:专为纯 GPU 高吞吐生产推理设计!AWQ 发现模型中仅有 1% 的显著权重(Salient Weights,对应激活值较大的通道)对精度至关重要, 通过对这 1% 通道做缩放保护,使 4-bit 量化模型在 GPU 上兼具高速度与高精度。</p><h3>结构长什么样</h3><pre class="explain-structure">写出大模型推理总显存占用的快速估算公式(模型权重显存 + KV Cache 动态显存 + 激活值开销),并分别计算 8B 与 32B 模型在 FP16 与 4-bit 量化下的权重显存大小(
 5 分);
-分别为环境1(Mac 本地离线)和环境2(单卡 24GB 4090 跑 32B 模型)指定最匹配的量化格式、推 荐量化档位及运行引擎(
+分别为环境1(Mac 本地离线)和环境2(单卡 24GB 4090 跑 32B 模型)指定最匹配的量化格式、推荐量化档位及运行引擎(
 5 分);
-说明为什么做 AWQ/GPTQ 4-bit 量化时需要提供一个校准数据集(Calibration Dataset),且校准集应 如何选取(
+说明为什么做 AWQ/GPTQ 4-bit 量化时需要提供一个校准数据集(Calibration Dataset),且校准集应如何选取(
 5 分)。</pre></div>
       </div>
       <p class="explain-check">为什么 4-bit 量化仍需要校准集？</p>
@@ -82,18 +82,18 @@
   </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
-    <p class="reading-quote">模型训练好后,如何把它塞进普通笔记本电脑或低成本云服务器里高速运行?mlabonne/llm- course 第 7 章(Quantization) 给出了完整路线图:将原本占 16 位浮点数(FP16/BF16,每个参数占 2 字 节)的权重压缩为 8-bit 甚至 4-bit 整数(每个参数仅占 0.5 字节),在几乎不损失肉眼可见精度的前提下,将 显存占用直接砍掉 70% 以上!</p>
+    <p class="reading-quote">模型训练好后,如何把它塞进普通笔记本电脑或低成本云服务器里高速运行?mlabonne/llm- course 第 7 章(Quantization) 给出了完整路线图:将原本占 16 位浮点数(FP16/BF16,每个参数占 2 字节)的权重压缩为 8-bit 甚至 4-bit 整数(每个参数仅占 0.5 字节),在几乎不损失肉眼可见精度的前提下,将显存占用直接砍掉 70% 以上!</p>
     <div class="reading-grid">
-      <div><h3>逐点读懂</h3><ol class="reading-points"><li>写出大模型推理总显存占用的快速估算公式(模型权重显存 + KV Cache 动态显存 + 激活值开销),并 分别计算 8B 与 32B 模型在 FP16 与 4-bit 量化下的权重显存大小(</li><li>5 分);</li><li>分别为环境1(Mac 本地离线)和环境2(单卡 24GB 4090 跑 32B 模型)指定最匹配的量化格式、推 荐量化档位及运行引擎(</li></ol></div>
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>写出大模型推理总显存占用的快速估算公式(模型权重显存 + KV Cache 动态显存 + 激活值开销),并分别计算 8B 与 32B 模型在 FP16 与 4-bit 量化下的权重显存大小(</li><li>5 分);</li><li>分别为环境1(Mac 本地离线)和环境2(单卡 24GB 4090 跑 32B 模型)指定最匹配的量化格式、推荐量化档位及运行引擎(</li></ol></div>
       <div>
         <h3>怎么对应本关练习</h3><p>先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。</p>
         <h3>例子在哪</h3><p>本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。</p>
       </div>
     </div>
-    <p class="reading-takeaway">本关先记住：写出大模型推理总显存占用的快速估算公式(模型权重显存 + KV Cache 动态显存 + 激活值开销),并 分别计算 8B 与 32B 模型在 FP16 与 4-bit 量化下的权重显存大小(</p>
+    <p class="reading-takeaway">本关先记住：写出大模型推理总显存占用的快速估算公式(模型权重显存 + KV Cache 动态显存 + 激活值开销),并分别计算 8B 与 32B 模型在 FP16 与 4-bit 量化下的权重显存大小(</p>
     <div class="reading-refs"><span class="label">SOURCES</span><span>PDF 第 7 关（用户提供）</span><a href="https://github.com/mlabonne/llm-course" target="_blank" rel="noopener">mlabonne/llm-course ↗</a></div>
   </section>
-    <section class="lesson" id="lesson"><h3>核心原理</h3><p>模型训练好后,如何把它塞进普通笔记本电脑或低成本云服务器里高速运行?mlabonne/llm- course 第 7 章(Quantization) 给出了完整路线图:将原本占 16 位浮点数(FP16/BF16,每个参数占 2 字 节)的权重压缩为 8-bit 甚至 4-bit 整数(每个参数仅占 0.5 字节),在几乎不损失肉眼可见精度的前提下,将 显存占用直接砍掉 70% 以上!三大主流工业格式选型必须分清: GGUF(配合 llama.cpp / Ollama):专为 CPU + GPU 混合推理及苹果 Mac (Apple Silicon) 本地运行而 生,支持把词汇表、元数据与权重打包进单一文件(如 Q4_K_M、Q5_K_M 量化档位)。 AWQ(Activation-Aware Weight Quantization)与 GPTQ / EXL2:专为 纯 GPU 高吞吐生产推理设 计!AWQ 发现模型中仅有 1% 的显著权重(Salient Weights,对应激活值较大的通道)对精度至关重要, 通过对这 1% 通道做缩放保护,使 4-bit 量化模型在 GPU 上兼具高速度与高精度。</p><h2>第 7 关实操练习题：精准核算大模型推理显存账单并选型量化方案</h2><h3>任务背景</h3><p>客戶现场只有两类硬件环境:1 销售经理随身携带的 16GB 统一内存 MacBook Air(需断网离 线运行 8B 模型);2 公司机房一台配有单张 24GB 显存 RTX 4090 的服务器(需部署一个 32B 规模的模型 供内部 20 人并发调用)。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 写出大模型推理总显存占用的快速估算公式(模型权重显存 + KV Cache 动态显存 + 激活值开销),并 分别计算 8B 与 32B 模型在 FP16 与 4-bit 量化下的权重显存大小(</p><p>5.5 分);</p><p>2. 分别为环境1(Mac 本地离线)和环境2(单卡 24GB 4090 跑 32B 模型)指定最匹配的量化格式、推 荐量化档位及运行引擎(</p><p>4.5 分);</p><p>3. 说明为什么做 AWQ/GPTQ 4-bit 量化时需要提供一个校准数据集(Calibration Dataset),且校准集应 如何选取(</p><p>2.5 分)。</p></section>
+    <section class="lesson" id="lesson"><h3>核心原理</h3><p>模型训练好后,如何把它塞进普通笔记本电脑或低成本云服务器里高速运行?</p><p>mlabonne/llm- course 第 7 章(Quantization) 给出了完整路线图:将原本占 16 位浮点数(FP16/BF16,每个参数占 2 字节)的权重压缩为 8-bit 甚至 4-bit 整数(每个参数仅占 0.5 字节),在几乎不损失肉眼可见精度的前提下,将显存占用直接砍掉 70% 以上!</p><p>三大主流工业格式选型必须分清: GGUF(配合 llama.cpp / Ollama):专为 CPU + GPU 混合推理及苹果 Mac (Apple Silicon) 本地运行而生,支持把词汇表、元数据与权重打包进单一文件(如 Q4_K_M、Q5_K_M 量化档位)。</p><p>AWQ(Activation-Aware Weight Quantization)与 GPTQ / EXL2:专为纯 GPU 高吞吐生产推理设计!</p><p>AWQ 发现模型中仅有 1% 的显著权重(Salient Weights,对应激活值较大的通道)对精度至关重要, 通过对这 1% 通道做缩放保护,使 4-bit 量化模型在 GPU 上兼具高速度与高精度。</p><h2>第 7 关实操练习题：精准核算大模型推理显存账单并选型量化方案</h2><h3>任务背景</h3><p>客戶现场只有两类硬件环境:1 销售经理随身携带的 16GB 统一内存 MacBook Air(需断网离线运行 8B 模型);2 公司机房一台配有单张 24GB 显存 RTX 4090 的服务器(需部署一个 32B 规模的模型供内部 20 人并发调用)。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 写出大模型推理总显存占用的快速估算公式(模型权重显存 + KV Cache 动态显存 + 激活值开销),并分别计算 8B 与 32B 模型在 FP16 与 4-bit 量化下的权重显存大小(</p><p>5.5 分);</p><p>2. 分别为环境1(Mac 本地离线)和环境2(单卡 24GB 4090 跑 32B 模型)指定最匹配的量化格式、推荐量化档位及运行引擎(</p><p>4.5 分);</p><p>3. 说明为什么做 AWQ/GPTQ 4-bit 量化时需要提供一个校准数据集(Calibration Dataset),且校准集应如何选取(</p><p>2.5 分)。</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/llm/07" data-exercise="/content/levels/llm-07.json">
       <div class="practice-head">
         <p class="label">PRACTICE / 本关练习 · 本地规则 + 覆盖检查</p>
@@ -122,7 +122,7 @@
     </section>
     <details class="answer" id="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
-      <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:推理显存精算公式与跨平台量化选型方案</p><h3>【1. 推理显存快速估算公式】</h3><p>总显存占用 ≈ 模型权重显存 + KV Cache 动态显存 + 运行时激活开销(约 10%~15% 冗余) - FP16/BF16 权重显存 ≈ 参数量(B) × 2 Bytes - INT4 (4-bit) 权重显存 ≈ 参数量(B) × 0.55~0.6 Bytes(含缩放因子元数据开销)</p><h3>【2. 两种模型规格显存账单核算】</h3><p>- 8B 模型:FP16 权重需 ~16GB;4-bit 量化后权重仅需 ~4.8GB,加上 4K 上下文 KV Cache 合计约 6.5GB。 - 32B 模型:FP16 权重需 ~64GB(单卡 24GB 4090 根本装不下);4-bit 量化后权重降至 ~18.5GB,剩余 ~5.5GB 显存刚好容纳并发 KV Cache,完美塞入单张 24GB 4090!</p><h3>【3. 两大硬件环境最优方案】</h3><p>- 环境1(16GB MacBook Air 离线跑 8B):选用 GGUF 格式(推荐 Q4_K_M 或 Q5_K_M 档位),使用 llama.cpp 或 Ollama 运行,完美利用 Apple Silicon 统一内存加速。 - 环境2(单张 24GB RTX 4090 高并发跑 32B):选用 AWQ 4-bit 格式,搭配 vLLM 推理引擎运行。 - 校准集原则:AWQ/GPTQ 量化需 128~256 条与目标业务真实分布一致的文本(如中文金融/医疗语料)统计激活 值分布,切勿用纯英文维基百科去校准中文垂直模型。 得分要点拆解:准确写出显存估算公式并算出 8B(~4.8GB)与 32B(~18.5GB)4-bit 权重显存(5.5 分);为 Mac 选 GGUF+Ollama、为 4090 选 AWQ+vLLM(4.5 分);说明校准集保护显著激活通道的作用及同分布选取 原则(2.5 分)。 第 8 关</p></div>
+      <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:推理显存精算公式与跨平台量化选型方案</p><h3>【1. 推理显存快速估算公式】</h3><p>总显存占用 ≈ 模型权重显存 + KV Cache 动态显存 + 运行时激活开销(约 10%~15% 冗余) - FP16/BF16 权重显存 ≈ 参数量(B) × 2 Bytes - INT4 (4-bit) 权重显存 ≈ 参数量(B) × 0.55~0.6 Bytes(含缩放因子元数据开销)</p><h3>【2. 两种模型规格显存账单核算】</h3><p>- 8B 模型:FP16 权重需 ~16GB;4-bit 量化后权重仅需 ~4.8GB,加上 4K 上下文 KV Cache 合计约 6.5GB。 - 32B 模型:FP16 权重需 ~64GB(单卡 24GB 4090 根本装不下);4-bit 量化后权重降至 ~18.5GB,剩余 ~5.5GB 显存刚好容纳并发 KV Cache,完美塞入单张 24GB 4090!</p><h3>【3. 两大硬件环境最优方案】</h3><p>- 环境1(16GB MacBook Air 离线跑 8B):选用 GGUF 格式(推荐 Q4_K_M 或 Q5_K_M 档位),使用 llama.cpp 或 Ollama 运行,完美利用 Apple Silicon 统一内存加速。 - 环境2(单张 24GB RTX 4090 高并发跑 32B):选用 AWQ 4-bit 格式,搭配 vLLM 推理引擎运行。 - 校准集原则:AWQ/GPTQ 量化需 128~256 条与目标业务真实分布一致的文本(如中文金融/医疗语料)统计激活值分布,切勿用纯英文维基百科去校准中文垂直模型。 得分要点拆解:准确写出显存估算公式并算出 8B(~4.8GB)与 32B(~18.5GB)4-bit 权重显存(5.5 分);为 Mac 选 GGUF+Ollama、为 4090 选 AWQ+vLLM(4.5 分);说明校准集保护显著激活通道的作用及同分布选取原则(2.5 分)。 第 8 关</p></div>
     </details>
     <div class="pdf-box"><p>网页永久免费。完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%86%85%E5%8A%9F07%20%C2%B7%20%E6%A8%A1%E5%9E%8B%E5%AE%9A%E5%88%B6%E4%B8%8E%E7%AE%97%E5%8A%9B%E9%87%8F%E5%8C%96%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
     <div class="nextprev"><a href="/ai/notes/llm/06"><small>上一关</small>模型权重融合(MergeKit)与评测防污染(Scientist 6 &amp; 8: Evaluation &amp; Merging)</a><a class="right" href="/ai/notes/llm/08"><small>下一关</small>vLLM 高吞吐生产级部署(The LLM Engineer: vLLM &amp; Production Serving)</a></div>

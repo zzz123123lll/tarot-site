@@ -58,20 +58,20 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">这一关只解决一件事：在 StepByStep-RAG 的第三模块 SimpleRAG 中,检索出 Top-K 文档块后,如何把它们与用戶问题 拼装成最终 Prompt 决定了生成的可靠性。许多初学者只是简单地把检索文本拼在问题前面,结果大模型把自 己的预训练幻觉和知识库事实混在一起输出,用戶根本分不清哪句话出自哪份文件。</p>
-      <ul class="explain-bullets"><li>用带 id 与 source 属性的 XML 标签(如 &lt;context id=&quot;1&quot; source=&quot;医保手册_p</li><li>pdf&quot;&gt;)结构化封装检 索片段(</li><li>5 分);</li></ul>
+      <p class="explain-summary">这一关只解决一件事：在 StepByStep-RAG 的第三模块 SimpleRAG 中,检索出 Top-K 文档块后,如何把它们与用戶问题拼装成最终 Prompt 决定了生成的可靠性。许多初学者只是简单地把检索文本拼在问题前面,结果大模型把自己的预训练幻觉和知识库事实混在一起输出,用戶根本分不清哪句话出自哪份文件。</p>
+      <ul class="explain-bullets"><li>用带 id 与 source 属性的 XML 标签(如 &lt;context id=&quot;1&quot; source=&quot;医保手册_p</li><li>pdf&quot;&gt;)结构化封装检索片段(</li><li>5 分);</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
       <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
       <div class="explain-example">
         <div class="explain-code"><span>输入</span><pre>你将检索到的 3 个带编号的知识库片段注入大模型,要求模型回答客戶的医保报销比例问题, 且每一句结论都必须标明具体出处编号。</pre></div>
-        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：用带 id 与 source 属性的 XML 标签(如 &lt;context id=&quot;1&quot; source=&quot;医保手册_p / pdf&quot;&gt;)结构化封装检 索片段( / 5 分);</p><h3>输出</h3><p>参考答案：参考答案:带角标溯源与证据冲突披露的 SimpleRAG 生成模板 请严格依据下方 &lt;retrieved_contexts&gt; 标签内提供的知识库片段回答用戶问题。 &lt;retrieved_contexts&gt; &lt;context id=&quot;1&quot; source=&quot;员工补充医疗手册_2026.pdf#第12页&quot;&gt; 门诊医疗费用报销:起付线为每年累计 500 元,超过起付线部分按 90% 比例报销,年度封顶 2 万元。 &lt;/context&gt; &lt;con</p></div>
+        <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：用带 id 与 source 属性的 XML 标签(如 &lt;context id=&quot;1&quot; source=&quot;医保手册_p / pdf&quot;&gt;)结构化封装检索片段( / 5 分);</p><h3>输出</h3><p>参考答案：参考答案:带角标溯源与证据冲突披露的 SimpleRAG 生成模板请严格依据下方 &lt;retrieved_contexts&gt; 标签内提供的知识库片段回答用戶问题。 &lt;retrieved_contexts&gt; &lt;context id=&quot;1&quot; source=&quot;员工补充医疗手册_2026.pdf#第12页&quot;&gt; 门诊医疗费用报销:起付线为每年累计 500 元,超过起付线部分按 90% 比例报销,年度封顶 2 万元。 &lt;/context&gt; &lt;con</p></div>
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>引用溯源</dt><dd>把回答绑定到具体检索片段。</dd></div><div><dt>拒答</dt><dd>证据不足时明确说无法回答。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源核心原理：在 StepByStep-RAG 的第三模块 SimpleRAG 中,检索出 Top-K 文档块后,如何把它们与用戶问题 拼装成最终 Prompt 决定了生成的可靠性。许多初学者只是简单地把检索文本拼在问题前面,结果大模型把自 己的预训练幻觉和知识库事实混在一起输出,用戶根本分不清哪句话出自哪份文件。高标准的 RAG 生成指令 必须强制执行“封闭域作答 + 句末角标溯源(如 `[来源1: 文件名#页码]`) + 证据冲突显式披露”。</p><h3>结构长什么样</h3><pre class="explain-structure">用带 id 与 source 属性的 XML 标签(如 &lt;context id=&quot;1&quot; source=&quot;医保手册_p
-pdf&quot;&gt;)结构化封装检 索片段(
+        <div><h3>为什么有效</h3><p>来源核心原理：在 StepByStep-RAG 的第三模块 SimpleRAG 中,检索出 Top-K 文档块后,如何把它们与用戶问题拼装成最终 Prompt 决定了生成的可靠性。许多初学者只是简单地把检索文本拼在问题前面,结果大模型把自己的预训练幻觉和知识库事实混在一起输出,用戶根本分不清哪句话出自哪份文件。高标准的 RAG 生成指令必须强制执行“封闭域作答 + 句末角标溯源(如 `[来源1: 文件名#页码]`) + 证据冲突显式披露”。</p><h3>结构长什么样</h3><pre class="explain-structure">用带 id 与 source 属性的 XML 标签(如 &lt;context id=&quot;1&quot; source=&quot;医保手册_p
+pdf&quot;&gt;)结构化封装检索片段(
 5 分);
 强制规定输出中的每一个事实断言末尾必须紧跟 [来源X] 角标引用(
 5 分);
@@ -83,9 +83,9 @@ pdf&quot;&gt;)结构化封装检 索片段(
   </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
-    <p class="reading-quote">在 StepByStep-RAG 的第三模块 SimpleRAG 中,检索出 Top-K 文档块后,如何把它们与用戶问题 拼装成最终 Prompt 决定了生成的可靠性。许多初学者只是简单地把检索文本拼在问题前面,结果大模型把自 己的预训练幻觉和知识库事实混在一起输出,用戶根本分不清哪句话出自哪份文件。</p>
+    <p class="reading-quote">在 StepByStep-RAG 的第三模块 SimpleRAG 中,检索出 Top-K 文档块后,如何把它们与用戶问题拼装成最终 Prompt 决定了生成的可靠性。许多初学者只是简单地把检索文本拼在问题前面,结果大模型把自己的预训练幻觉和知识库事实混在一起输出,用戶根本分不清哪句话出自哪份文件。</p>
     <div class="reading-grid">
-      <div><h3>逐点读懂</h3><ol class="reading-points"><li>用带 id 与 source 属性的 XML 标签(如 &lt;context id=&quot;1&quot; source=&quot;医保手册_p</li><li>pdf&quot;&gt;)结构化封装检 索片段(</li><li>5 分);</li></ol></div>
+      <div><h3>逐点读懂</h3><ol class="reading-points"><li>用带 id 与 source 属性的 XML 标签(如 &lt;context id=&quot;1&quot; source=&quot;医保手册_p</li><li>pdf&quot;&gt;)结构化封装检索片段(</li><li>5 分);</li></ol></div>
       <div>
         <h3>怎么对应本关练习</h3><p>先读 30 秒与 3 分钟拆解，再读本关原文与实验，最后做客观题和实操题；答案在下方。</p>
         <h3>例子在哪</h3><p>本关任务与参考答案见页面下方；来源为本册 PDF 对应关卡。</p>
@@ -94,7 +94,7 @@ pdf&quot;&gt;)结构化封装检 索片段(
     <p class="reading-takeaway">本关先记住：用带 id 与 source 属性的 XML 标签(如 &lt;context id=&quot;1&quot; source=&quot;医保手册_p</p>
     <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/gurucharanmk/StepByStep-RAG/blob/main/SimpleRAG/README.md" target="_blank" rel="noopener">StepByStep-RAG · SimpleRAG ↗</a><span>PDF 第 5 关</span></div>
   </section>
-    <section class="lesson" id="lesson"><h3>核心原理</h3><p>在 StepByStep-RAG 的第三模块 SimpleRAG 中,检索出 Top-K 文档块后,如何把它们与用戶问题 拼装成最终 Prompt 决定了生成的可靠性。许多初学者只是简单地把检索文本拼在问题前面,结果大模型把自 己的预训练幻觉和知识库事实混在一起输出,用戶根本分不清哪句话出自哪份文件。高标准的 RAG 生成指令 必须强制执行“封闭域作答 + 句末角标溯源(如 `[来源1: 文件名#页码]`) + 证据冲突显式披露”。</p><h2>第 5 关实操练习题：设计带强制角标溯源与防脑补护栏的 SimpleRAG 生成模板</h2><h3>任务背景</h3><p>你将检索到的 3 个带编号的知识库片段注入大模型,要求模型回答客戶的医保报销比例问题, 且每一句结论都必须标明具体出处编号。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 用带 id 与 source 属性的 XML 标签(如 &lt;context id="1" source="医保手册_p</p><p>2.pdf"&gt;)结构化封装检 索片段(</p><p>4.5 分);</p><p>2. 强制规定输出中的每一个事实断言末尾必须紧跟 [来源X] 角标引用(</p><p>4.5 分);</p><p>3. 规定当所有检索片段与问题无关时,直接输出固定拒答话术且不附带虚假引用(</p><p>3.5 分)。</p></section>
+    <section class="lesson" id="lesson"><h3>核心原理</h3><p>在 StepByStep-RAG 的第三模块 SimpleRAG 中,检索出 Top-K 文档块后,如何把它们与用戶问题拼装成最终 Prompt 决定了生成的可靠性。</p><p>许多初学者只是简单地把检索文本拼在问题前面,结果大模型把自己的预训练幻觉和知识库事实混在一起输出,用戶根本分不清哪句话出自哪份文件。</p><p>高标准的 RAG 生成指令必须强制执行“封闭域作答 + 句末角标溯源(如 `[来源1: 文件名#页码]`) + 证据冲突显式披露”。</p><h2>第 5 关实操练习题：设计带强制角标溯源与防脑补护栏的 SimpleRAG 生成模板</h2><h3>任务背景</h3><p>你将检索到的 3 个带编号的知识库片段注入大模型,要求模型回答客戶的医保报销比例问题, 且每一句结论都必须标明具体出处编号。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 用带 id 与 source 属性的 XML 标签(如 &lt;context id="1" source="医保手册_p</p><p>2.pdf"&gt;)结构化封装检索片段(</p><p>4.5 分);</p><p>2. 强制规定输出中的每一个事实断言末尾必须紧跟 [来源X] 角标引用(</p><p>4.5 分);</p><p>3. 规定当所有检索片段与问题无关时,直接输出固定拒答话术且不附带虚假引用(</p><p>3.5 分)。</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/rag/05" data-exercise="/content/levels/rag-05.json">
       <div class="practice-head">
         <p class="label">PRACTICE / 本关练习 · 本地规则 + 覆盖检查</p>
@@ -123,7 +123,7 @@ pdf&quot;&gt;)结构化封装检 索片段(
     </section>
     <details class="answer" id="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
-      <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:带角标溯源与证据冲突披露的 SimpleRAG 生成模板 请严格依据下方 &lt;retrieved_contexts&gt; 标签内提供的知识库片段回答用戶问题。 &lt;retrieved_contexts&gt; &lt;context id="1" source="员工补充医疗手册_2026.pdf#第12页"&gt; 门诊医疗费用报销:起付线为每年累计 500 元,超过起付线部分按 90% 比例报销,年度封顶 2 万元。 &lt;/context&gt; &lt;context id="2" source="家属连带医疗福利说明.pdf#第4页"&gt; 员工子女门诊费用按 50% 比例报销,无起付线,年度封顶 5,000 元。 &lt;/context&gt; &lt;/retrieved_contexts&gt;</p><h3>【生成与溯源硬性规则】</h3><p>1. 严禁使用外部常识:只能使用 &lt;retrieved_contexts&gt; 中的信息。若提供的片段无法回答问题,请直接输出:</p><p>“抱歉,当前知识库中未检索到与该问题相关的明确规定。”</p><p>2. 强制句末角标引用:回答中的每一条数据或结论末尾,必须标注对应的来源编号与文件名,格式严格为 [来源</p><p>1: 员工补充医疗手册_2026.pdf#第12页]。</p><p>3. 若不同片段之间存在条款冲突,必须在回答中同时列出双方表述并注明各自来源。</p><p>用戶问题:我自己看门诊和给孩子看门诊,报销比例和起付线分别是多少? 得分要点拆解:用带 `id` 和 `source` 属性的 XML 标签包裹片段(4.5 分);强制要求句末附上 `[来源X: 文件 名#页码]` 角标(4.5 分);包含无证据拒答与条款冲突披露规则(3.5 分)。 第 6 关</p></div>
+      <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:带角标溯源与证据冲突披露的 SimpleRAG 生成模板请严格依据下方 &lt;retrieved_contexts&gt; 标签内提供的知识库片段回答用戶问题。 &lt;retrieved_contexts&gt; &lt;context id="1" source="员工补充医疗手册_2026.pdf#第12页"&gt; 门诊医疗费用报销:起付线为每年累计 500 元,超过起付线部分按 90% 比例报销,年度封顶 2 万元。 &lt;/context&gt; &lt;context id="2" source="家属连带医疗福利说明.pdf#第4页"&gt; 员工子女门诊费用按 50% 比例报销,无起付线,年度封顶 5,000 元。 &lt;/context&gt; &lt;/retrieved_contexts&gt;</p><h3>【生成与溯源硬性规则】</h3><p>1. 严禁使用外部常识:只能使用 &lt;retrieved_contexts&gt; 中的信息。若提供的片段无法回答问题,请直接输出:</p><p>“抱歉,当前知识库中未检索到与该问题相关的明确规定。”</p><p>2. 强制句末角标引用:回答中的每一条数据或结论末尾,必须标注对应的来源编号与文件名,格式严格为 [来源</p><p>1: 员工补充医疗手册_2026.pdf#第12页]。</p><p>3. 若不同片段之间存在条款冲突,必须在回答中同时列出双方表述并注明各自来源。</p><p>用戶问题:我自己看门诊和给孩子看门诊,报销比例和起付线分别是多少? 得分要点拆解:用带 `id` 和 `source` 属性的 XML 标签包裹片段(4.5 分);强制要求句末附上 `[来源X: 文件名#页码]` 角标(4.5 分);包含无证据拒答与条款冲突披露规则(3.5 分)。 第 6 关</p></div>
     </details>
     <div class="pdf-box"><p>网页永久免费。完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%86%85%E5%8A%9F05%20%C2%B7%20RAG%20%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
     <div class="nextprev"><a href="/ai/notes/rag/04"><small>上一关</small>混合检索与重排序优化</a><a class="right" href="/ai/notes/rag/06"><small>下一关</small>多轮对话与查询改写</a></div>

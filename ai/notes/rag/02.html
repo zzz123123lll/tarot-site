@@ -58,22 +58,22 @@
     <section class="explain" id="understand">
     <div class="explain-fast">
       <p class="label">30 SECONDS / 30 秒看懂</p>
-      <p class="explain-summary">这一关只解决一件事：“垃圾进,垃圾出(Garbage In, Garbage Out)。”在 RAG Zero to Hero Guide 与 RAG All-in-One 的生产实践中,80% 的 RAG 回答错误源于粗暴的固定字符切分(Fixed-size Chunking)——比如把一句关 键免责条款从中间劈成两半,或者把表格的表头切在第 1 块、第 15 行数据切在第 2 块,导致检索出来的第 2 块完全丢失了表头上下文与所属章节标题!</p>
+      <p class="explain-summary">这一关只解决一件事：“垃圾进,垃圾出(Garbage In, Garbage Out)。”在 RAG Zero to Hero Guide 与 RAG All-in-One 的生产实践中,80% 的 RAG 回答错误源于粗暴的固定字符切分(Fixed-size Chunking)——比如把一句关键免责条款从中间劈成两半,或者把表格的表头切在第 1 块、第 15 行数据切在第 2 块,导致检索出来的第 2 块完全丢失了表头上下文与所属章节标题!</p>
       <ul class="explain-bullets"><li>设定分层切分优先级分隔符列表(优先按二级/三级标题、段落换行、句号切分,严禁在句子中间硬切) (</li><li>5 分);</li><li>配置合理的 chunk_size(如 400‒600 字符)、chunk_overlap(如 60‒80 字符)及表格整体保留策略;</li></ul>
     </div>
     <div class="explain-deep">
       <p class="label">3 MINUTES / 3 分钟拆解</p>
       <p class="explain-example-title">先看来源里的例子：PDF 本关任务（来源）</p>
       <div class="explain-example">
-        <div class="explain-code"><span>输入</span><pre>公司《员工手册》第 4 章“带薪年假与病假管理”长达 3,000 字,包含多级子标题和一张薪资 扣减比例表。直接按每 300 字硬切后,员工问“司龄满 5 年请病假怎么发工资”,系统搜出的片段只有 “按 80% 发放”,却不知道这属于产假还是病假。</pre></div>
+        <div class="explain-code"><span>输入</span><pre>公司《员工手册》第 4 章“带薪年假与病假管理”长达 3,000 字,包含多级子标题和一张薪资扣减比例表。直接按每 300 字硬切后,员工问“司龄满 5 年请病假怎么发工资”,系统搜出的片段只有 “按 80% 发放”,却不知道这属于产假还是病假。</pre></div>
         <div class="explain-walk"><h3>发生了什么</h3><p>来源要求：设定分层切分优先级分隔符列表(优先按二级/三级标题、段落换行、句号切分,严禁在句子中间硬切) ( / 5 分); / 配置合理的 chunk_size(如 400‒600 字符)、chunk_overlap(如 60‒80 字符)及表格整体保留策略;</p><h3>输出</h3><p>参考答案：参考答案:抗截断递归分块与章节面包屑注入器 CHUNK_CONFIG = { &quot;separators&quot;: [&quot;\n## &quot;, &quot;\n### &quot;, &quot;\n\n&quot;, &quot;。&quot;, &quot;;&quot;, &quot; &quot;], &quot;chunk_size&quot;: 500, &quot;chunk_overlap&quot;: 75, # 15% 滑动重叠,确保跨块句子语义不断裂 &quot;keep_tables_intact&quot;: True # 检测 Markdown 表格语法 |---| 时整体保留不拆行</p></div>
       </div>
       <div class="explain-two">
         <div><h3>术语拆开</h3><dl class="explain-terms"><div><dt>chunk</dt><dd>检索时使用的一段文本。</dd></div><div><dt>overlap</dt><dd>相邻块之间保留的重叠内容，用来保住边界上下文。</dd></div></dl></div>
-        <div><h3>为什么有效</h3><p>来源核心原理：“垃圾进,垃圾出(Garbage In, Garbage Out)。”在 RAG Zero to Hero Guide 与 RAG All-in-One 的生产实践中,80% 的 RAG 回答错误源于粗暴的固定字符切分(Fixed-size Chunking)——比如把一句关 键免责条款从中间劈成两半,或者把表格的表头切在第 1 块、第 15 行数据切在第 2 块,导致检索出来的第 2 块完全丢失了表头上下文与所属章节标题!高手的黄金分块法则是:按 Markdown 章节层级递归切分 + 保留 10%‒15% 滑动窗口重叠(Chunk Overlap) + 为每个分块头部自动注入所属文档名与章节面包屑路径 (Metadata Header Injection)。</p><h3>结构长什么样</h3><pre class="explain-structure">设定分层切分优先级分隔符列表(优先按二级/三级标题、段落换行、句号切分,严禁在句子中间硬切) (
+        <div><h3>为什么有效</h3><p>来源核心原理：“垃圾进,垃圾出(Garbage In, Garbage Out)。”在 RAG Zero to Hero Guide 与 RAG All-in-One 的生产实践中,80% 的 RAG 回答错误源于粗暴的固定字符切分(Fixed-size Chunking)——比如把一句关键免责条款从中间劈成两半,或者把表格的表头切在第 1 块、第 15 行数据切在第 2 块,导致检索出来的第 2 块完全丢失了表头上下文与所属章节标题!高手的黄金分块法则是:按 Markdown 章节层级递归切分 + 保留 10%‒15% 滑动窗口重叠(Chunk Overlap) + 为每个分块头部自动注入所属文档名与章节面包屑路径 (Metadata Header Injection)。</p><h3>结构长什么样</h3><pre class="explain-structure">设定分层切分优先级分隔符列表(优先按二级/三级标题、段落换行、句号切分,严禁在句子中间硬切) (
 5 分);
 配置合理的 chunk_size(如 400‒600 字符)、chunk_overlap(如 60‒80 字符)及表格整体保留策略;
-设计分块元数据注入模板:在每个 Chunk 文本开头自动拼接 【来源文档:员工手册v2 | 所属章节:第 四章 &gt;
+设计分块元数据注入模板:在每个 Chunk 文本开头自动拼接 【来源文档:员工手册v2 | 所属章节:第四章 &gt;
 2 病假薪资标准】。 第二阶段:核心引擎篇(第 3‒4 关)——语义检索引擎、混合检索与重排序</pre></div>
       </div>
       <p class="explain-check">chunk 太小和太大分别会损失什么？</p>
@@ -81,7 +81,7 @@
   </section>
     <section class="source-reading" id="reading">
     <p class="label">SOURCE READING / 来源精读</p>
-    <p class="reading-quote">“垃圾进,垃圾出(Garbage In, Garbage Out)。”在 RAG Zero to Hero Guide 与 RAG All-in-One 的生产实践中,80% 的 RAG 回答错误源于粗暴的固定字符切分(Fixed-size Chunking)——比如把一句关 键免责条款从中间劈成两半,或者把表格的表头切在第 1 块、第 15 行数据切在第 2 块,导致检索出来的第 2 块完全丢失了表头上下文与所属章节标题!</p>
+    <p class="reading-quote">“垃圾进,垃圾出(Garbage In, Garbage Out)。”在 RAG Zero to Hero Guide 与 RAG All-in-One 的生产实践中,80% 的 RAG 回答错误源于粗暴的固定字符切分(Fixed-size Chunking)——比如把一句关键免责条款从中间劈成两半,或者把表格的表头切在第 1 块、第 15 行数据切在第 2 块,导致检索出来的第 2 块完全丢失了表头上下文与所属章节标题!</p>
     <div class="reading-grid">
       <div><h3>逐点读懂</h3><ol class="reading-points"><li>设定分层切分优先级分隔符列表(优先按二级/三级标题、段落换行、句号切分,严禁在句子中间硬切) (</li><li>5 分);</li><li>配置合理的 chunk_size(如 400‒600 字符)、chunk_overlap(如 60‒80 字符)及表格整体保留策略;</li></ol></div>
       <div>
@@ -92,7 +92,7 @@
     <p class="reading-takeaway">本关先记住：设定分层切分优先级分隔符列表(优先按二级/三级标题、段落换行、句号切分,严禁在句子中间硬切) (</p>
     <div class="reading-refs"><span class="label">SOURCES</span><a href="https://github.com/gurucharanmk/StepByStep-RAG/blob/main/RAGStream/README.md" target="_blank" rel="noopener">StepByStep-RAG · RAGStream ↗</a><span>PDF 第 2 关</span></div>
   </section>
-    <section class="lesson" id="lesson"><h3>核心原理</h3><p>“垃圾进,垃圾出(Garbage In, Garbage Out)。”在 RAG Zero to Hero Guide 与 RAG All-in-One 的生产实践中,80% 的 RAG 回答错误源于粗暴的固定字符切分(Fixed-size Chunking)——比如把一句关 键免责条款从中间劈成两半,或者把表格的表头切在第 1 块、第 15 行数据切在第 2 块,导致检索出来的第 2 块完全丢失了表头上下文与所属章节标题!高手的黄金分块法则是:按 Markdown 章节层级递归切分 + 保留 10%‒15% 滑动窗口重叠(Chunk Overlap) + 为每个分块头部自动注入所属文档名与章节面包屑路径 (Metadata Header Injection)。</p><h2>第 2 关实操练习题：重构人力资源考勤制度文档的抗截断分块器</h2><h3>任务背景</h3><p>公司《员工手册》第 4 章“带薪年假与病假管理”长达 3,000 字,包含多级子标题和一张薪资 扣减比例表。直接按每 300 字硬切后,员工问“司龄满 5 年请病假怎么发工资”,系统搜出的片段只有 “按 80% 发放”,却不知道这属于产假还是病假。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设定分层切分优先级分隔符列表(优先按二级/三级标题、段落换行、句号切分,严禁在句子中间硬切) (</p><p>4.5 分);</p><p>2. 配置合理的 chunk_size(如 400‒600 字符)、chunk_overlap(如 60‒80 字符)及表格整体保留策略(4 分);</p><p>3. 设计分块元数据注入模板:在每个 Chunk 文本开头自动拼接 【来源文档:员工手册v2 | 所属章节:第 四章 &gt;</p><p>4.2 病假薪资标准】(4 分)。 第二阶段:核心引擎篇(第 3‒4 关)——语义检索引擎、混合检索与重排序</p></section>
+    <section class="lesson" id="lesson"><h3>核心原理</h3><p>“垃圾进,垃圾出(Garbage In, Garbage Out)。</p><p>”在 RAG Zero to Hero Guide 与 RAG All-in-One 的生产实践中,80% 的 RAG 回答错误源于粗暴的固定字符切分(Fixed-size Chunking)——比如把一句关键免责条款从中间劈成两半,或者把表格的表头切在第 1 块、第 15 行数据切在第 2 块,导致检索出来的第 2 块完全丢失了表头上下文与所属章节标题!</p><p>高手的黄金分块法则是:按 Markdown 章节层级递归切分 + 保留 10%‒15% 滑动窗口重叠(Chunk Overlap) + 为每个分块头部自动注入所属文档名与章节面包屑路径 (Metadata Header Injection)。</p><h2>第 2 关实操练习题：重构人力资源考勤制度文档的抗截断分块器</h2><h3>任务背景</h3><p>公司《员工手册》第 4 章“带薪年假与病假管理”长达 3,000 字,包含多级子标题和一张薪资扣减比例表。直接按每 300 字硬切后,员工问“司龄满 5 年请病假怎么发工资”,系统搜出的片段只有 “按 80% 发放”,却不知道这属于产假还是病假。</p><h3>通关硬性要求（满分 12.5 分）</h3><p>1. 设定分层切分优先级分隔符列表(优先按二级/三级标题、段落换行、句号切分,严禁在句子中间硬切) (</p><p>4.5 分);</p><p>2. 配置合理的 chunk_size(如 400‒600 字符)、chunk_overlap(如 60‒80 字符)及表格整体保留策略(4 分);</p><p>3. 设计分块元数据注入模板:在每个 Chunk 文本开头自动拼接 【来源文档:员工手册v2 | 所属章节:第四章 &gt;</p><p>4.2 病假薪资标准】(4 分)。 第二阶段:核心引擎篇(第 3‒4 关)——语义检索引擎、混合检索与重排序</p></section>
     <section class="practice" id="practice" data-engine="v2" data-key="/ai/notes/rag/02" data-exercise="/content/levels/rag-02.json">
       <div class="practice-head">
         <p class="label">PRACTICE / 本关练习 · 本地规则 + 覆盖检查</p>
@@ -121,7 +121,7 @@
     </section>
     <details class="answer" id="answer">
       <summary><span>查看参考答案与得分点 <span class="hint">先自己写，再打开</span></span><span class="plus">＋</span></summary>
-      <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:抗截断递归分块与章节面包屑注入器 CHUNK_CONFIG = { "separators": ["\n## ", "\n### ", "\n\n", "。", ";", " "], "chunk_size": 500, "chunk_overlap": 75, # 15% 滑动重叠,确保跨块句子语义不断裂 "keep_tables_intact": True # 检测 Markdown 表格语法 |---| 时整体保留不拆行 } def inject_breadcrumb_header(doc_title: str, section_path: str, raw_chunk: str) -&gt; str: """在每个分块头部注入文档与章节层级上下文,再送入 Embedding 模型编码""" header = f"【来源文档:{doc_title} | 所属章节:{section_path}】\n" return header + raw_chunk.strip() # 注入后效果示例: # 【来源文档:员工手册2026版.pdf | 所属章节:第四章 考勤与休假 &gt; 4.2 病假薪资发放标准】 # 员工连续司龄满 5 年不满 10 年的,病假期间基础工资按本人标准薪资的 80% 计发。 得分要点拆解:按标题、段落、句号层级递归切分且不拆散表格(4.5 分);设置 `chunk_size=500` 与 `15% overlap`(4 分);在文本块头部显式拼接文档名与章节路径(4 分)。 第 3 关</p></div>
+      <div class="answer-body"><h3>参考答案与得分要点</h3><p>参考答案:抗截断递归分块与章节面包屑注入器 CHUNK_CONFIG = { "separators": ["\n## ", "\n### ", "\n\n", "。", ";", " "], "chunk_size": 500, "chunk_overlap": 75, # 15% 滑动重叠,确保跨块句子语义不断裂 "keep_tables_intact": True # 检测 Markdown 表格语法 |---| 时整体保留不拆行 } def inject_breadcrumb_header(doc_title: str, section_path: str, raw_chunk: str) -&gt; str: """在每个分块头部注入文档与章节层级上下文,再送入 Embedding 模型编码""" header = f"【来源文档:{doc_title} | 所属章节:{section_path}】\n" return header + raw_chunk.strip() # 注入后效果示例: # 【来源文档:员工手册2026版.pdf | 所属章节:第四章考勤与休假 &gt; 4.2 病假薪资发放标准】 # 员工连续司龄满 5 年不满 10 年的,病假期间基础工资按本人标准薪资的 80% 计发。 得分要点拆解:按标题、段落、句号层级递归切分且不拆散表格(4.5 分);设置 `chunk_size=500` 与 `15% overlap`(4 分);在文本块头部显式拼接文档名与章节路径(4 分)。 第 3 关</p></div>
     </details>
     <div class="pdf-box"><p>网页永久免费。完整 PDF 会按顺序发给留邮箱的读者，不转售、不群发广告。</p><a href="mailto:1336089899@qq.com?subject=%E7%B4%A2%E5%8F%96%E3%80%8A%E5%86%85%E5%8A%9F05%20%C2%B7%20RAG%20%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%E3%80%8B%E5%AE%8C%E6%95%B4%20PDF">留邮箱，获取完整 PDF ↗</a></div>
     <div class="nextprev"><a href="/ai/notes/rag/01"><small>上一关</small>向量表示与余弦相似度基础</a><a class="right" href="/ai/notes/rag/03"><small>下一关</small>语义检索引擎构建</a></div>

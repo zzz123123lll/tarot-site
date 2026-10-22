@@ -24,7 +24,7 @@ main{min-height:60vh}
 .breadcrumb{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-top:22px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--muted)}
 .breadcrumb a:hover{color:var(--ink)}
 .breadcrumb .sep{color:var(--line)}
-.article-shell{display:grid;grid-template-columns:218px minmax(0,760px);gap:54px;align-items:start;padding-top:42px;padding-bottom:70px}
+.article-shell{display:grid;grid-template-columns:200px minmax(0,660px);gap:44px;align-items:start;padding-top:42px;padding-bottom:70px}
 .side{position:sticky;top:24px;border-top:1px solid var(--line);padding-top:14px}
 .side-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
 .level-nav{list-style:none;margin:0;padding:0}
@@ -508,3 +508,29 @@ footer a:hover{color:var(--seal);border-color:var(--seal)}
 .search-filter{width:100%;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);font-family:var(--mono);font-size:10px;padding:10px;min-height:44px}
 .search-filter:focus{outline:2px solid var(--seal);outline-offset:2px}
 @media(max-width:700px){.search-filter-row{grid-template-columns:1fr}.search-filter{width:100%}}
+
+/* ---------- 阅读排版 v2（2026-10-22）----------
+   依据：中文正文 1.7–1.8 行高、每行 32–38 字最省眼力。
+   原来 17px / 1.47 / 760px ≈ 每行 44 字，偏宽且挤。 */
+.article{font-size:18px;line-height:1.78;letter-spacing:.01em}
+.article p{margin:0 0 18px}
+.article p + p{margin-top:0}
+.article h2{font-size:26px;line-height:1.35;margin:40px 0 14px;letter-spacing:-.01em}
+.article h3{font-size:19px;line-height:1.5;margin:32px 0 12px}
+.article h4{font-size:17px;line-height:1.5;margin:24px 0 10px}
+.article ul,.article ol{margin:0 0 18px;padding-left:22px}
+.article li{margin:0 0 8px;line-height:1.7}
+.article blockquote{margin:20px 0;padding:2px 0 2px 16px;border-left:3px solid var(--line);color:var(--muted)}
+.article table{width:100%;border-collapse:collapse;font-size:15px;margin:18px 0 22px}
+.article th,.article td{border-bottom:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top;line-height:1.65}
+.article th{background:var(--card,#f5f5f7);font-weight:650}
+.article code{font-size:.92em;padding:1px 5px;border-radius:5px;background:rgba(0,0,0,.05)}
+.article pre{overflow:auto;padding:14px 16px;border-radius:10px;background:rgba(0,0,0,.04);font-size:14px;line-height:1.6}
+@media(max-width:700px){
+  .article{font-size:17px;line-height:1.75;letter-spacing:0}
+  .article p{margin:0 0 15px}
+  .article h2{font-size:22px;margin:32px 0 12px}
+  .article h3{font-size:18px;margin:26px 0 10px}
+  .article table{font-size:14px}
+  .article th,.article td{padding:8px 9px}
+}
